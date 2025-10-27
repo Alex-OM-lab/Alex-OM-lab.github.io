@@ -1,15 +1,263 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Alex Laboratory AOM</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tu Nombre | Administrador de Sistemas y Ciberseguridad</title>
+  <meta name="description" content="Portafolio profesional de Administrador de Sistemas y Ciberseguridad. Proyectos, habilidades y contacto." />
+  <meta name="color-scheme" content="dark light">
+  <style>
+    :root {
+      --bg: #0e1320;
+      --panel: #12192b;
+      --text: #e6edf3;
+      --muted: #a9b1bd;
+      --brand: #3b82f6; /* azul */
+      --accent: #f59e0b; /* naranja CTA */
+      --ok: #10b981; /* verde para chips */
+      --radius: 14px;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+      color: var(--text);
+      background: radial-gradient(1200px 800px at 10% -10%, #1b2440 0%, transparent 60%),
+                  radial-gradient(1200px 800px at 110% 10%, #1a1f35 0%, transparent 55%),
+                  var(--bg);
+      scroll-behavior: smooth;
+    }
+    a { color: var(--brand); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* Header */
+    .container { width: min(1150px, 92%); margin: 0 auto; }
+    header {
+      position: sticky; top: 0; z-index: 50;
+      backdrop-filter: saturate(180%) blur(8px);
+      background: color-mix(in oklab, var(--bg) 60%, transparent);
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .nav { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing:.2px; }
+    .brand__dot { width: 10px; height: 10px; border-radius: 999px; background: var(--brand); box-shadow: 0 0 20px var(--brand); }
+
+    .menu { display: flex; gap: 22px; align-items: center; }
+    .menu a { color: var(--text); opacity:.9; font-weight: 500; }
+    .menu a.active { color: white; background: rgba(255,255,255,.06); padding: 8px 12px; border-radius: 10px; }
+
+    .btn {
+      display:inline-flex; align-items:center; justify-content:center; gap:10px;
+      padding: 10px 14px; border-radius: 999px; font-weight: 600; border: 1px solid transparent;
+      transition: transform .06s ease, box-shadow .2s ease; text-decoration:none;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn--ghost { background: transparent; border-color: rgba(255,255,255,.14); color: var(--text); }
+    .btn--primary { background: var(--accent); color: #111; }
+
+    /* Hero */
+    .hero { display:grid; grid-template-columns: 1.2fr .9fr; gap: 40px; align-items:center; padding: 56px 0 32px; }
+    .eyebrow { color: var(--muted); font-weight:600; letter-spacing:.3px; }
+    .title { font-size: clamp(38px, 5vw, 64px); line-height: 1.05; margin: 10px 0 14px; font-weight: 900; }
+    .title span {
+      background: linear-gradient(90deg,#f97316,#f59e0b,#fbbf24); /* naranja degradado */
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .lead { color: var(--muted); font-size: clamp(16px, 1.6vw, 18px); max-width: 60ch; }
+    .cta { margin-top: 22px; display:flex; gap: 12px; flex-wrap: wrap; }
+
+    .card {
+      background: linear-gradient(180deg, color-mix(in oklab, var(--panel) 92%, #12131f 8%), var(--panel));
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: var(--radius); box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .profile { display:flex; flex-direction:column; align-items:center; padding: 18px; }
+    .avatar { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 12px; border: 1px solid rgba(255,255,255,.08); }
+    .social { display:flex; gap: 14px; margin-top: 14px; }
+    .icon-btn { width:38px; height:38px; display:grid; place-items:center; border-radius: 999px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.08); }
+    .icon-btn:hover { background: rgba(255,255,255,.12); }
+    .icon { width: 20px; height: 20px; fill: currentColor; color: var(--text); }
+
+    /* Sections */
+    section { padding: 72px 0; }
+    .section-title { font-size: clamp(24px, 3vw, 34px); margin-bottom: 20px; }
+    .kicker { color: var(--muted); margin-bottom: 28px; }
+
+    /* About columns */
+    .cols { display:grid; grid-template-columns: 1fr 1fr; gap: 34px; }
+
+    /* Skills chips */
+    .chips { display:flex; flex-wrap: wrap; gap: 10px; }
+    .chip { padding: 8px 12px; border-radius: 999px; background: rgba(59,130,246,.08); border: 1px solid rgba(59,130,246,.25); color: #cfe0ff; font-weight:600; font-size: 14px; }
+
+    /* Projects grid */
+    .grid { display:grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .project { padding: 16px; display:flex; flex-direction:column; gap:12px; }
+    .project img { width:100%; aspect-ratio: 16/10; object-fit: cover; border-radius: 10px; border: 1px solid rgba(255,255,255,.06); }
+    .project h4{ margin: 0; }
+    .project p { color: var(--muted); margin:0; }
+
+    /* Contact */
+    .contact-box { display:grid; grid-template-columns: 1.1fr .9fr; gap: 22px; }
+    .contact-card { padding: 18px; }
+    form { display:grid; gap: 12px; }
+    input, textarea {
+      background: #0c1220; color: var(--text); border: 1px solid rgba(255,255,255,.12);
+      border-radius: 10px; padding: 12px 14px; font-size: 16px;
+    }
+    textarea { min-height: 140px; resize: vertical; }
+
+    footer { padding: 50px 0; color: var(--muted); text-align:center; border-top: 1px solid rgba(255,255,255,.06); margin-top: 40px; }
+
+    /* Responsive */
+    @media (max-width: 980px){ .hero{ grid-template-columns: 1fr; } .profile{ order:-1 } .contact-box { grid-template-columns: 1fr; } .grid{ grid-template-columns: 1fr 1fr; } .cols{ grid-template-columns: 1fr; } }
+    @media (max-width: 620px){ .menu{ display:none; } .grid{ grid-template-columns: 1fr; } }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce){ *{ scroll-behavior: auto !important; transition:none !important; animation:none !important; } }
+  </style>
 </head>
-<body style="font-family: Arial; text-align: center; background-color: #0d1117; color: white;">
-  <h1>👋 Bienvenido a mi pagina web, EN PROCESO CRACK</h1>
-  <p>Este es mi portafolio profesional en construcción.</p>
-  <p>Próximamente: proyectos de <strong>Ciberseguridad</strong> y <strong>Administración de Sistemas</strong>.</p>
-  <p>Y conocimientos especificos de que se hacer</p>
-  <p>Indice y explicacion de como se navega aqui</p>
+<body>
+  <header>
+    <div class="container nav">
+      <div class="brand"><span class="brand__dot"></span> <span>Mi Portafolio</span></div>
+      <nav class="menu" aria-label="Principal">
+        <a href="#home" class="active">Inicio</a>
+        <a href="#about">Sobre mí</a>
+        <a href="#skills">Skills</a>
+        <a href="#projects">Proyectos</a>
+        <a href="#contact">Contacto</a>
+        <a class="btn btn--ghost" href="assets/CV_TuNombre.pdf" download>Descargar CV</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="home" class="container">
+    <!-- HERO -->
+    <section class="hero" aria-labelledby="tituloprincipal">
+      <div>
+        <div class="eyebrow">Hola, soy</div>
+        <h1 id="tituloprincipal" class="title">Tu Nombre<br><span>ADMINISTRADOR DE SISTEMAS Y CIBERSEGURIDAD</span></h1>
+        <p class="lead">Me especializo en diseñar, securizar y operar infraestructuras robustas. Automatizo despliegues, fortalezco defensas y mejoro la fiabilidad de servicios con prácticas DevOps/SecOps.</p>
+        <div class="cta">
+          <a class="btn btn--primary" href="#projects">Ver mis proyectos</a>
+          <a class="btn btn--ghost" href="#contact">Contactar</a>
+        </div>
+      </div>
+
+      <aside class="card profile" aria-label="Perfil">
+        <img class="avatar" src="assets/foto.jpg" alt="Foto de Tu Nombre" />
+        <div class="social" aria-label="Redes sociales">
+          <a class="icon-btn" href="https://github.com/tuusuario" target="_blank" rel="noopener" aria-label="GitHub">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5a12 12 0 0 0-3.79 23.39c.6.11.82-.26.82-.58v-2.02c-3.34.73-4.04-1.61-4.04-1.61-.55-1.41-1.35-1.78-1.35-1.78-1.1-.75.09-.73.09-.73 1.22.09 1.86 1.26 1.86 1.26 1.08 1.85 2.84 1.32 3.53 1.01.11-.78.42-1.32.76-1.62-2.67-.3-5.47-1.34-5.47-5.95 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.51.12-3.16 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.65.24 2.86.12 3.16.77.84 1.24 1.91 1.24 3.22 0 4.62-2.81 5.64-5.49 5.94.43.37.81 1.1.81 2.23v3.31c0 .32.22.7.83.58A12 12 0 0 0 12 .5Z"/></svg>
+          </a>
+          <a class="icon-btn" href="https://www.linkedin.com/in/tuusuario" target="_blank" rel="noopener" aria-label="LinkedIn">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2ZM8.34 18.34H6.16V9.69h2.18v8.65ZM7.25 8.59a1.26 1.26 0 1 1 0-2.52 1.26 1.26 0 0 1 0 2.52Zm11.09 9.75h-2.17v-4.66c0-1.11-.4-1.87-1.4-1.87-.76 0-1.21.51-1.41 1-.07.17-.09.41-.09.65v4.88H10.1s.03-7.92 0-8.65h2.17v1.23c.29-.45 1.01-1.09 2.19-1.09 1.6 0 2.88 1.05 2.88 3.32v5.19Z"/></svg>
+          </a>
+          <a class="icon-btn" href="mailto:tunombre@tu-dominio.com" aria-label="Email">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 4.24-7.43 5.16a1 1 0 0 1-1.14 0L4 8.24V6l8 5.56L20 6v2.24Z"/></svg>
+          </a>
+        </div>
+      </aside>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" aria-labelledby="about-title">
+      <h2 id="about-title" class="section-title">Sobre mí</h2>
+      <p class="kicker">Orientado a la fiabilidad, seguridad y automatización.</p>
+      <div class="cols">
+        <p class="card" style="padding:18px">Soy un profesional apasionado por construir y proteger infraestructuras. Con experiencia en sistemas Linux/Windows, virtualización y cloud, me enfoco en diseñar arquitecturas seguras, reproducibles y observables.</p>
+        <p class="card" style="padding:18px">Mi enfoque es <strong>user‑centric</strong> y <strong>security‑by‑design</strong>: entiendo los riesgos, priorizo mitigaciones y documento decisiones. Me interesan la respuesta a incidentes, hardening, IaC y el monitoreo proactivo.</p>
+      </div>
+    </section>
+
+    <!-- SKILLS -->
+    <section id="skills" aria-labelledby="skills-title">
+      <h2 id="skills-title" class="section-title">Skills principales</h2>
+      <div class="chips">
+        <span class="chip">Linux</span>
+        <span class="chip">Windows Server</span>
+        <span class="chip">Networking</span>
+        <span class="chip">Docker</span>
+        <span class="chip">Kubernetes</span>
+        <span class="chip">Ansible</span>
+        <span class="chip">Terraform</span>
+        <span class="chip">Bash / PowerShell</span>
+        <span class="chip">CI/CD</span>
+        <span class="chip">Nginx / Apache</span>
+        <span class="chip">SIEM</span>
+        <span class="chip">Hardening</span>
+        <span class="chip">Cloud (AWS/Azure)</span>
+      </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects" aria-labelledby="projects-title">
+      <h2 id="projects-title" class="section-title">Proyectos destacados</h2>
+      <div class="grid">
+        <article class="card project">
+          <img src="assets/proyecto1.jpg" alt="Miniatura del Proyecto 1" />
+          <h4>Infraestructura reproducible con IaC</h4>
+          <p>Terraform + Ansible para levantar entornos seguros y auditables en AWS. Módulos reutilizables y pipelines CI.</p>
+          <div><a href="#" class="btn btn--ghost">Ver caso</a> <a href="#" class="btn btn--ghost">Código</a></div>
+        </article>
+        <article class="card project">
+          <img src="assets/proyecto2.jpg" alt="Miniatura del Proyecto 2" />
+          <h4>Plataforma de observabilidad</h4>
+          <p>Stack Prometheus + Loki + Grafana con alertas y SLOs para microservicios en Kubernetes.</p>
+          <div><a href="#" class="btn btn--ghost">Ver caso</a> <a href="#" class="btn btn--ghost">Código</a></div>
+        </article>
+        <article class="card project">
+          <img src="assets/proyecto3.jpg" alt="Miniatura del Proyecto 3" />
+          <h4>Hardening y respuesta a incidentes</h4>
+          <p>Guías CIS aplicadas, inventario de activos y playbooks de respuesta con herramientas open‑source.</p>
+          <div><a href="#" class="btn btn--ghost">Ver caso</a> <a href="#" class="btn btn--ghost">Código</a></div>
+        </article>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" aria-labelledby="contact-title">
+      <h2 id="contact-title" class="section-title">Contacto</h2>
+      <div class="contact-box">
+        <div class="card contact-card">
+          <p>¿Tienes un proyecto o una consulta técnica? Escríbeme y te respondo.</p>
+          <p><strong>Email:</strong> <a href="mailto:tunombre@tu-dominio.com">tunombre@tu-dominio.com</a></p>
+          <p><strong>LinkedIn:</strong> <a href="https://www.linkedin.com/in/tuusuario" target="_blank" rel="noopener">linkedin.com/in/tuusuario</a></p>
+        </div>
+        <div class="card contact-card">
+          <form action="mailto:tunombre@tu-dominio.com" method="post" enctype="text/plain">
+            <label>Nombre<br><input name="nombre" required /></label>
+            <label>Email<br><input name="email" type="email" required /></label>
+            <label>Mensaje<br><textarea name="mensaje" required></textarea></label>
+            <button class="btn btn--primary" type="submit">Enviar</button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">© <span id="y"></span> Tu Nombre — Administrador de Sistemas y Ciberseguridad</div>
+  </footer>
+
+  <script>
+    // Año dinámico
+    document.getElementById('y').textContent = new Date().getFullYear();
+
+    // Marca enlace activo simple según hash/scroll
+    const links = Array.from(document.querySelectorAll('.menu a[href^="#"]'));
+    const sections = links.map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+    const onScroll = () => {
+      let idx = 0;
+      const fromTop = window.scrollY + 120;
+      sections.forEach((sec, i) => { if (sec.offsetTop <= fromTop) idx = i; });
+      links.forEach(l => l.classList.remove('active'));
+      links[idx]?.classList.add('active');
+    };
+    document.addEventListener('scroll', onScroll, { passive: true });
+  </script>
 </body>
 </html>
