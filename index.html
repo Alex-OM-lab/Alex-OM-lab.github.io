@@ -61,7 +61,7 @@
     .eyebrow { color: var(--muted); font-weight:600; letter-spacing:.3px; }
     .title { font-size: clamp(38px, 5vw, 64px); line-height: 1.05; margin: 10px 0 14px; font-weight: 900; }
     .title span {
-      background: linear-gradient(90deg,#f97316,#f59e0b,#fbbf24); /* naranja degradado */
+      background: linear-gradient(90deg,#ff8a00,#ffb547,#ffd28a);
       -webkit-background-clip: text; background-clip: text; color: transparent;
     }
     .lead { color: var(--muted); font-size: clamp(16px, 1.6vw, 18px); max-width: 60ch; }
@@ -117,6 +117,17 @@
 
     /* Reduced motion */
     @media (prefers-reduced-motion: reduce){ *{ scroll-behavior: auto !important; transition:none !important; animation:none !important; } }
+    /* Typewriter + glow */
+    .type-glow { color: #fff; text-shadow: 0 0 18px rgba(255,255,255,.65), 0 0 36px rgba(255,153,0,.25); }
+    .cursor { display:inline-block; width: 0.6ch; margin-left: 2px; color: #ffae33; filter: drop-shadow(0 0 6px #ffae33); animation: blink .95s steps(1,end) infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* Hidden until typing ends */
+    .hidden-before { opacity: 0; transform: translateY(8px); transition: opacity .5s ease, transform .5s ease; }
+    .hidden-before.is-shown { opacity: 1; transform: none; }
+
+    /* Respect reduced motion */
+    @media (prefers-reduced-motion: reduce){ .cursor { animation: none; } .hidden-before { transition: none; } }
   </style>
 </head>
 <body>
@@ -139,8 +150,8 @@
     <section class="hero" aria-labelledby="tituloprincipal">
       <div>
         <div class="eyebrow">Hola, soy</div>
-        <h1 id="tituloprincipal" class="title">Tu Nombre<br><span>ADMINISTRADOR DE SISTEMAS Y CIBERSEGURIDAD</span></h1>
-        <p class="lead">Me especializo en diseñar, securizar y operar infraestructuras robustas. Automatizo despliegues, fortalezco defensas y mejoro la fiabilidad de servicios con prácticas DevOps/SecOps.</p>
+        <h1 id="tituloprincipal" class="title"><span id="type"></span><span class="cursor" aria-hidden="true">|</span></h1>
+        <p class="lead hidden-before" id="leadAfter">Me especializo en diseñar, securizar y operar infraestructuras robustas. Automatizo despliegues, fortalezco defensas y mejoro la fiabilidad de servicios con prácticas DevOps/SecOps.</p>
         <div class="cta">
           <a class="btn btn--primary" href="#projects">Ver mis proyectos</a>
           <a class="btn btn--ghost" href="#contact">Contactar</a>
@@ -258,6 +269,29 @@
       links[idx]?.classList.add('active');
     };
     document.addEventListener('scroll', onScroll, { passive: true });
+      // --- Typewriter effect (hero) ---
+    (function(){
+      const text = "Alejandro Orcajada Meseguer Administrador de Sistemas y Ciberseguridad";
+      const speed = 22; // ms per char
+      const el = document.getElementById('type');
+      const cursor = document.querySelector('.cursor');
+      const lead = document.getElementById('leadAfter');
+      let i = 0;
+      function type(){
+        if(!el) return;
+        el.classList.add('type-glow');
+        if(i < text.length){
+          el.textContent += text.charAt(i);
+          i++;
+          setTimeout(type, speed);
+        } else {
+          cursor.classList.remove('cursor'); // stop blink styling
+          lead?.classList.add('is-shown');
+        }
+      }
+      // start after small delay for dramatic effect
+      setTimeout(type, 250);
+    })();
   </script>
 </body>
 </html>
