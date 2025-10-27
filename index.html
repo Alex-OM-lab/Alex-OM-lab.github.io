@@ -19,15 +19,53 @@
     html,body{margin:0}
     body { font-family: "Poppins", system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial; background: var(--bg); color: var(--text); }
 
-    /* === TOPBAR === */
-    .topbar{position:sticky; top:0; z-index:100; backdrop-filter:saturate(160%) blur(8px); background:rgba(8,12,22,.6); border-bottom:1px solid rgba(255,255,255,.06); animation: drop .5s ease both}
-    @keyframes drop{from{transform:translateY(-10px); opacity:0} to{transform:none; opacity:1}}
+    /* === TOPBAR (base) === */
+    .topbar{position:sticky; top:0; z-index:100; backdrop-filter:saturate(160%) blur(8px); background:rgba(8,12,22,.65); border-bottom:1px solid rgba(255,255,255,.06); animation: topbarDrop .5s ease both}
+    @keyframes topbarDrop{from{transform:translateY(-8px); opacity:0} to{transform:none; opacity:1}}
     .topwrap{width:min(1100px,92%); margin:0 auto; display:flex; align-items:center; justify-content:space-between; padding:10px 0}
-    .brand{display:flex; align-items:center; gap:10px; font-weight:800}
+    .brand{display:flex; align-items:center; gap:10px; font-weight:800; color:var(--text); text-decoration:none}
     .brand-dot{width:10px; height:10px; border-radius:999px; background:var(--accent); box-shadow:0 0 16px var(--accent)}
-    .menu{display:flex; gap:14px; align-items:center}
-    .menu a{color:var(--text); opacity:.92; padding:8px 12px; border-radius:999px; text-decoration:none; font-weight:600; border:1px solid transparent; transition:transform .12s ease, background .2s ease, border-color .2s ease}
-    .menu a:hover{transform:translateY(-1px); background:rgba(245,158,11,.12); border-color:rgba(245,158,11,.35); color:var(--accent-soft)}
+
+    /* === NAV (multinivel con animación) === */
+    .menu{display:flex; gap:10px; flex-wrap:wrap}
+    .nav-link{
+      color:var(--text); text-decoration:none; padding:8px 12px; border-radius:999px; font-weight:600;
+      border:1px solid transparent; transition:transform .12s, background .2s, border-color .2s
+    }
+    .nav-link:hover{transform:translateY(-1px); background:rgba(245,158,11,.12); border-color:rgba(245,158,11,.35); color:var(--accent-soft)}
+
+    .nav-folder{position:relative}
+    .nav-btn{
+      display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border-radius:999px;
+      border:1px solid transparent; background:transparent; color:var(--text); font-weight:700; cursor:pointer;
+      transition:transform .12s, background .2s, border-color .2s
+    }
+    .nav-btn:hover{transform:translateY(-1px); background:rgba(245,158,11,.12); border-color:rgba(245,158,11,.35)}
+    .ico-folder{width:14px;height:12px;position:relative;display:inline-block}
+    .ico-folder::before{content:""; position:absolute; inset:0; border-radius:3px; background:rgba(245,158,11,.15); border:1px solid rgba(245,158,11,.35)}
+    .ico-folder::after{content:""; position:absolute; width:8px; height:3px; left:2px; top:-3px; border-radius:2px 2px 0 0; background:rgba(245,158,11,.35)}
+    .caret{width:10px;height:10px;border-right:2px solid var(--accent);border-bottom:2px solid var(--accent);
+      transform:rotate(-45deg) translateY(-1px); transition:transform .2s ease}
+
+    .sub{position:absolute; top:100%; left:0; min-width:260px; padding-top:8px; pointer-events:none}
+    .sub > ul{
+      list-style:none; margin:0; padding:8px; background:rgba(18,25,43,.98);
+      border:1px solid rgba(255,255,255,.06); border-radius:12px; box-shadow:0 12px 30px rgba(0,0,0,.35);
+      transform-origin:top left; transform:scaleY(.9); opacity:0; max-height:0; overflow:hidden;
+      transition:transform .18s ease, opacity .18s ease, max-height .28s ease
+    }
+    .sub a{display:flex; align-items:center; justify-content:space-between; gap:10px;
+      padding:10px 12px; border-radius:8px; text-decoration:none; color:var(--text); border:1px solid transparent}
+    .sub a:hover{background:rgba(245,158,11,.1); border-color:rgba(245,158,11,.25)}
+    .nested{margin-top:6px; padding-left:10px; border-left:2px dashed rgba(245,158,11,.25)}
+
+    .nav-folder[aria-open="true"] > .nav-btn .caret{transform:rotate(45deg)}
+    .nav-folder[aria-open="true"] > .sub > ul{pointer-events:auto; transform:scaleY(1); opacity:1; max-height:600px}
+
+    @media (max-width:860px){
+      .sub{position:static; padding-top:6px}
+      .sub > ul{box-shadow:none}
+    }
 
     /* === HERO === */
     .hero-wrap{min-height: 72vh; display:flex; align-items:center; justify-content:center; text-align:center; padding: 26px 14px 0;}
@@ -68,14 +106,9 @@
   <!-- NAV SUPERIOR (permanente) -->
   <header class="topbar">
     <div class="topwrap">
-      <div class="brand"><span class="brand-dot"></span> <span>AO · Portafolio</span></div>
-      <nav class="menu" aria-label="Principal">
-        <a href="#home">Portafolio</a>
-        <a href="#ciber">Ciberseguridad</a>
-        <a href="#adm">ADM. Sistemas</a>
-        <a href="#projects">Proyectos</a>
-        <a href="#contact">Contacto</a>
-      </nav>
+      <a class="brand" href="/"><span class="brand-dot"></span><span>AO · Portafolio</span></a>
+      <!-- Menú generado por JS -->
+      <nav class="menu" id="nav" aria-label="Navegación principal"></nav>
     </div>
   </header>
 
@@ -90,14 +123,14 @@
 
   <!-- CONTENIDO INFERIOR -->
   <main class="container">
-    <!-- CIBERSEGURIDAD (ancla solicitada) -->
+    <!-- CIBERSEGURIDAD -->
     <section id="ciber" aria-labelledby="ciber-title">
       <h2 id="ciber-title" class="section-title">Ciberseguridad</h2>
-      <p class="kicker">Security‑by‑design, hardening y respuesta a incidentes.</p>
+      <p class="kicker">Security-by-design, hardening y respuesta a incidentes.</p>
       <div class="card">Playbooks de respuesta, aplicación de guías CIS, inventario de activos y SIEM; priorización de riesgos y monitoreo proactivo.</div>
     </section>
 
-    <!-- ADM. SISTEMAS (ancla solicitada) -->
+    <!-- ADM. SISTEMAS -->
     <section id="adm" aria-labelledby="adm-title">
       <h2 id="adm-title" class="section-title">Administración de Sistemas</h2>
       <p class="kicker">Infraestructura reproducible y observable.</p>
@@ -173,7 +206,7 @@
     // Año
     document.getElementById('y').textContent = new Date().getFullYear();
 
-    // Doble typing: nombre -> rol -> lead
+    // ===== Doble typing: nombre -> rol -> lead =====
     const nameText = "Alejandro Orcajada Meseguer";
     const roleText = "Administrador de Sistemas y Ciberseguridad";
     const speed = 44; // ms por carácter (lento)
@@ -200,7 +233,133 @@
       }
     }
     setTimeout(typeName, 300);
+
+    // ====== NAV: árbol y render con animación ======
+    const NAV_TREE = [
+      { label: "Inicio", href: "/" },
+      { label: "Portafolio", children: [
+          { label:"Ciberseguridad", children:[
+            { label:"Análisis Forense", href:"/portafolio/Ciberseguridad/Analisis-Forense/", children:[
+              { label:"Metodologías", href:"/portafolio/Ciberseguridad/Analisis-Forense/metodologias/" },
+              { label:"Herramientas",  href:"/portafolio/Ciberseguridad/Analisis-Forense/herramientas/" },
+            ]},
+            { label:"Respuesta a Incidentes", href:"/portafolio/Ciberseguridad/Respuesta-incidentes/" }
+          ]},
+          { label:"Sistemas", children:[
+            { label:"Linux",   href:"/portafolio/sistemas/linux/" },
+            { label:"Windows", href:"/portafolio/sistemas/windows/" },
+            { label:"Automatización", href:"/portafolio/sistemas/automatizacion/" },
+          ]}
+        ]
+      },
+      { label: "Teoría y Casos Curiosos", children: [
+          { label:"Ciberseguridad", children:[
+            { label:"Análisis Forense", href:"/Teoria-casos-curiosos/ciberseguridad/Analisis-Forense/", children:[
+              { label:"Notas nivel 1", href:"/Teoria-casos-curiosos/ciberseguridad/Analisis-Forense/notas-n1/" },
+              { label:"Casos", href:"/Teoria-casos-curiosos/ciberseguridad/Analisis-Forense/casos/", children:[
+                { label:"Caso 1", href:"/Teoria-casos-curiosos/ciberseguridad/Analisis-Forense/casos/caso-1/" },
+                { label:"Caso 2", href:"/Teoria-casos-curiosos/ciberseguridad/Analisis-Forense/casos/caso-2/" },
+              ]},
+            ]},
+            { label:"Respuesta a Incidentes", href:"/Teoria-casos-curiosos/ciberseguridad/Respuesta-incidentes/" }
+          ]},
+          { label:"Sistemas", children:[
+            { label:"Redes", href:"/Teoria-casos-curiosos/sistemas/redes/" },
+            { label:"Conceptos", href:"/Teoria-casos-curiosos/sistemas/conceptos/" },
+          ]}
+        ]
+      },
+      { label: "Laboratorio", children: [
+          { label:"TryHackMe", href:"/Laboratorio/tryhackme/", children:[
+            { label:"Blue", href:"/Laboratorio/tryhackme/blue/" }
+          ]},
+          { label:"HackTheBox", href:"/Laboratorio/hackthebox/" }
+        ]
+      },
+      { label: "Contacto", href: "/contacto/" }
+    ];
+
+    function renderNav(tree){
+      const nav = document.getElementById('nav');
+      tree.forEach(node => nav.appendChild(createNode(node)));
+    }
+    function createNode(node){
+      if(!node.children){
+        const a = document.createElement('a');
+        a.className = 'nav-link';
+        a.href = node.href || '#';
+        a.textContent = node.label;
+        return a;
+      }
+      const wrapper = document.createElement('div');
+      wrapper.className = 'nav-folder';
+      wrapper.setAttribute('data-folder','');
+      wrapper.setAttribute('aria-open','false');
+
+      const btn = document.createElement('button');
+      btn.className = 'nav-btn';
+      btn.setAttribute('aria-expanded','false');
+      btn.innerHTML = `<span class="ico-folder"></span><span>${node.label}</span><span class="caret"></span>`;
+      wrapper.appendChild(btn);
+
+      const subWrap = document.createElement('div');
+      subWrap.className = 'sub';
+      const ul = document.createElement('ul');
+      node.children.forEach(child=>{
+        const li = document.createElement('li');
+        if(child.children){
+          const link = document.createElement('a');
+          link.href = child.href || '#';
+          link.innerHTML = `<span>${child.label}</span><span style="opacity:.6">›</span>`;
+          li.appendChild(link);
+
+          const nested = document.createElement('ul');
+          nested.className = 'nested';
+          child.children.forEach(grand=>{
+            const li2 = document.createElement('li');
+            const a2 = document.createElement('a');
+            a2.href = grand.href || '#';
+            a2.textContent = grand.label;
+            li2.appendChild(a2);
+            nested.appendChild(li2);
+          });
+          li.appendChild(nested);
+        }else{
+          const a = document.createElement('a');
+          a.href = child.href || '#';
+          a.textContent = child.label;
+          li.appendChild(a);
+        }
+        ul.appendChild(li);
+      });
+      subWrap.appendChild(ul);
+      wrapper.appendChild(subWrap);
+
+      btn.addEventListener('click', (e)=>{
+        e.preventDefault();
+        const open = wrapper.getAttribute('aria-open') === 'true';
+        setOpen(wrapper, !open);
+      });
+      document.addEventListener('click', (e)=>{
+        if(!wrapper.contains(e.target)) setOpen(wrapper, false);
+      });
+      btn.addEventListener('keydown',(e)=>{
+        if(e.key==='Escape') setOpen(wrapper, false);
+        if(e.key==='ArrowDown'){ setOpen(wrapper, true); ul.querySelector('a')?.focus(); }
+      });
+      return wrapper;
+    }
+    function setOpen(folder, open){
+      folder.setAttribute('aria-open', open ? 'true' : 'false');
+      const btn = folder.querySelector('.nav-btn');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      if(open){
+        document.querySelectorAll('.nav-folder').forEach(f=>{
+          if(f!==folder){ f.setAttribute('aria-open','false'); f.querySelector('.nav-btn').setAttribute('aria-expanded','false'); }
+        });
+      }
+    }
+    renderNav(NAV_TREE);
   </script>
 </body>
 </html>
-
