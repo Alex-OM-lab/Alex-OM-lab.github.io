@@ -48,7 +48,7 @@
 
     /* ====== POPOVER BASE ====== */
     .sub{position:absolute;top:100%;left:0;min-width:360px;padding-top:0}
-    /* Antiflicker superior + puente invisible hacia la derecha */
+    /* Antiflicker superior + puente invisible hacia la derecha (no se cierra al pasar) */
     .sub::before{content:"";position:absolute;top:-10px;left:0;right:0;height:12px}
     .sub::after{content:""; position:absolute; top:0; left:100%; width:20px; height:100%; background:transparent; pointer-events:auto;}
 
@@ -184,7 +184,7 @@
           <h4>Infraestructura reproducible con IaC</h4>
           <p>Terraform + Ansible para levantar entornos seguros y auditables en AWS. Módulos reutilizables y pipelines CI.</p>
         </article>
-        <article class="card project">
+        <article class="card project>
           <img src="assets/proyecto2.jpg" alt="Miniatura del Proyecto 2" />
           <h4>Plataforma de observabilidad</h4>
           <p>Stack Prometheus + Loki + Grafana con alertas y SLOs para microservicios en Kubernetes.</p>
@@ -289,7 +289,7 @@
       sideEl.classList.add('swap-out');
 
       clearTimeout(sideEl._swapTimer);
-      const OUT_MS = 120; // coincide con .12s del CSS
+      const OUT_MS = 120; // .12s en CSS
 
       sideEl._swapTimer = setTimeout(() => {
         sideEl.dataset.key = newTitle;
@@ -300,19 +300,33 @@
           li.appendChild(a.cloneNode(true));
           listEl.appendChild(li);
         });
-        void sideEl.offsetWidth; // reflow
+        void sideEl.offsetWidth;
         sideEl.classList.remove('swap-out');
         sideEl.classList.add('swap-in');
       }, OUT_MS);
     }
 
-    /* === Alinear el panel lvl3 con el item lvl2 (sin límites) === */
+    /* === Alinear panel lvl3 al item lvl2 con CLAMP dentro del marco (sub > ul) === */
     function positionSideAligned(sideEl, anchorEl, subEl){
-      const subRect = subEl.getBoundingClientRect();
-      const aRect   = anchorEl.getBoundingClientRect();
-      // Distancia del item (lvl2) al inicio del popover (.sub). No clamp.
-      const top = aRect.top - subRect.top;
-      sideEl.style.top = `${Math.max(0, top)}px`;
+      const listEl   = subEl.querySelector(':scope > ul');  // marco real del lvl2
+      const subRect  = subEl.getBoundingClientRect();
+      const listRect = listEl.getBoundingClientRect();
+      const aRect    = anchorEl.getBoundingClientRect();
+      const sideH    = sideEl.getBoundingClientRect().height;
+
+      const desiredTop = aRect.top - subRect.top;            // techo alineado con el item
+      const minTop     = listRect.top - subRect.top;         // techo del marco
+      const maxTop     = (listRect.bottom - subRect.top) - sideH; // suelo del marco - alto panel
+
+      let top;
+      if (maxTop < minTop) {
+        // si el panel es más alto que el marco visible, lo anclamos arriba del marco
+        top = minTop;
+      } else {
+        // clamp suave: solo corrige si se saldría del marco
+        top = Math.min(Math.max(desiredTop, minTop), maxTop);
+      }
+      sideEl.style.top = `${top}px`;
     }
 
     /* ===== Render NAV ===== */
@@ -400,12 +414,10 @@
               const linksLvl3 = Array.from(hiddenLvl3.querySelectorAll('a'));
               const newTitle  = `${childLvl1.label} / ${childLvl2.label}`;
 
-              positionSideAligned(side, link2, sub);      // alinear (sin límites)
-              swapSideContent(side, newTitle, linksLvl3); // swap
+              positionSideAligned(side, link2, sub);      // alinear con clamp
+              swapSideContent(side, newTitle, linksLvl3); // swap animado
               wrap.setAttribute('data-panel','show');
-
-              // Si al cambiar contenido varía la altura, actualiza posición
-              setTimeout(()=> positionSideAligned(side, link2, sub), 0);
+              setTimeout(()=> positionSideAligned(side, link2, sub), 0); // reajuste tras cambio de altura
             });
           }
 
