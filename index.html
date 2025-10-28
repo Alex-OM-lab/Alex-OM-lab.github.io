@@ -48,7 +48,6 @@
 
     /* ====== POPOVER BASE ====== */
     .sub{position:absolute;top:100%;left:0;min-width:360px;padding-top:0}
-    /* Antiflicker superior + puente invisible hacia la derecha (no se cierra al pasar) */
     .sub::before{content:"";position:absolute;top:-10px;left:0;right:0;height:12px}
     .sub::after{content:""; position:absolute; top:0; left:100%; width:20px; height:100%; background:transparent; pointer-events:auto;}
 
@@ -64,7 +63,7 @@
     .nav-folder[aria-open="true"] > .sub > ul{pointer-events:auto;transform:scaleY(1);opacity:1;max-height:80vh;overflow:auto}
     .nav-folder[aria-open="true"] > .nav-btn .caret{transform:rotate(45deg)}
 
-    /* ====== NIVEL 2 (vertical): animación suave ====== */
+    /* ====== NIVEL 2 animado ====== */
     .nested{
       max-height:0; opacity:0; transform:translateY(-4px);
       overflow:hidden; margin-top:6px; padding-left:10px;
@@ -73,7 +72,39 @@
     }
     .sub li.open > .nested{ max-height:1200px; opacity:1; transform:none; }
 
-    /* ====== PANEL LATERAL NIVEL 3 (derecha) ====== */
+    /* ===== Nivel2 efecto visual elegante ===== */
+    .nested > li > a{
+      position: relative;
+      border: 1px solid transparent;
+      transition:
+        background .18s ease,
+        border-color .18s ease,
+        box-shadow .18s ease,
+        transform .12s ease;
+    }
+    .nested > li > a::before{
+      content:"";
+      position:absolute; left:-12px; top:10px;
+      width:2px; height:0; border-radius:2px;
+      background:rgba(245,158,11,.85);
+      box-shadow:0 0 10px rgba(245,158,11,.55);
+      transition:height .22s ease;
+    }
+    .nested > li > a > span:last-child{
+      display:inline-block;
+      transition: transform .18s ease, opacity .18s ease;
+      opacity:.6;
+    }
+    .nested > li.is-hot > a{
+      background:rgba(245,158,11,.10);
+      border-color:rgba(245,158,11,.22);
+      box-shadow:0 4px 14px rgba(0,0,0,.25), inset 0 0 0 1px rgba(245,158,11,.10);
+      transform: translateY(-1px);
+    }
+    .nested > li.is-hot > a::before{ height: calc(100% - 20px); }
+    .nested > li.is-hot > a > span:last-child{ transform: translateX(4px); opacity:.85; }
+
+    /* ===== PANEL LATERAL NIVEL 3 ===== */
     .sub .side{
       position:absolute; top:0; left:calc(100% + 12px); width:340px;
       background:rgba(18,25,43,.98); border:1px solid rgba(255,255,255,.06);
@@ -86,13 +117,10 @@
     .side-list{list-style:none;margin:0;padding:0}
     .side-list a{display:block;padding:10px 12px;border-radius:8px;color:var(--text);text-decoration:none}
     .side-list a:hover{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25)}
-
-    /* ===== swap sutil del contenido lvl3 ===== */
     .side .side-title, .side .side-list { transition: opacity .12s ease, transform .12s ease; will-change: opacity, transform; }
     .side.swap-out .side-title, .side.swap-out .side-list { opacity: 0; transform: translateX(-6px); }
     .side.swap-in  .side-title, .side.swap-in  .side-list { opacity: 1; transform: translateX(0); }
 
-    /* scroll estético */
     .sub>ul::-webkit-scrollbar{width:10px}
     .sub>ul::-webkit-scrollbar-thumb{background:rgba(245,158,11,.2);border-radius:10px}
     .sub>ul::-webkit-scrollbar-track{background:rgba(255,255,255,.04)}
@@ -104,7 +132,7 @@
       .sub::after{display:none}
     }
 
-    /* ====== HERO / CONTENIDO ====== */
+    /* ===== HERO / CONTENIDO ===== */
     .hero-wrap{min-height:72vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:26px 14px 0}
     .hero h1{font-size:clamp(34px,4vw,54px);font-weight:900;color:var(--accent);margin:0 0 8px;text-shadow:0 0 18px rgba(255,153,0,.7),0 0 36px rgba(255,153,0,.25)}
     .hero h2{font-size:clamp(24px,3.2vw,40px);font-weight:800;margin:6px 0 8px;color:var(--accent-soft);text-shadow:0 0 14px rgba(255,153,0,.45)}
@@ -112,359 +140,111 @@
     @keyframes blink{50%{opacity:0}}
     .lead{max-width:900px;margin:10px auto 0;font-size:clamp(19px,1.5vw,22px);line-height:1.7;color:var(--text);opacity:0;transform:translateY(10px);transition:opacity .8s ease,transform .8s ease}
     .lead.show{opacity:1;transform:none}
-
-    .container{width:min(1100px,92%);margin:0 auto}
-    section{padding:36px 0}
-    .section-title{font-size:clamp(24px,3vw,34px);margin:0 0 10px}
-    .kicker{color:var(--muted);margin:0 0 20px}
-    .chips{display:flex;flex-wrap:wrap;gap:10px}
-    .chip{padding:8px 12px;border-radius:999px;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.35);color:#ffd8a6;font-weight:600;font-size:14px}
-    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-    .card{background:linear-gradient(180deg,color-mix(in oklab,var(--panel) 92%,#12131f 8%),var(--panel));border:1px solid rgba(255,255,255,.06);border-radius:var(--radius);padding:16px}
-    .project img{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:10px;border:1px solid rgba(255,255,255,.06)}
-    .project h4{margin:10px 0 6px}
-    .project p{margin:0;color:var(--muted)}
-    .contact-box{display:grid;grid-template-columns:1.1fr .9fr;gap:22px}
-    form{display:grid;gap:12px}
-    input,textarea{background:#0c1220;color:var(--text);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:12px 14px;font-size:16px}
-    textarea{min-height:140px;resize:vertical}
-    footer{padding:40px 0;color:#a9b1bd;text-align:center;border-top:1px solid rgba(255,255,255,.06);margin-top:10px}
-    @media (max-width:980px){.grid{grid-template-columns:1fr 1fr}.contact-box{grid-template-columns:1fr}}
-    @media (max-width:620px){.grid{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
 
-  <!-- ========================= NAV ========================== -->
-  <header class="topbar">
-    <div class="topwrap">
-      <a class="brand" href="/"><span class="brand-dot"></span><span>AO · Portafolio</span></a>
-      <nav class="menu" id="nav" aria-label="Navegación principal"></nav>
-    </div>
-  </header>
-
-  <!-- ========================= HERO ========================== -->
-  <div id="home" class="hero-wrap">
-    <div class="hero">
-      <h1><span id="typeName"></span></h1>
-      <h2><span id="typeRole"></span><span class="cursor">|</span></h2>
-      <p id="lead" class="lead">Me especializo en diseñar, securizar y operar infraestructuras robustas. Automatizo despliegues, fortalezco defensas y mejoro la fiabilidad de servicios con prácticas DevOps/SecOps.</p>
-    </div>
+<header class="topbar">
+  <div class="topwrap">
+    <a class="brand" href="/"><span class="brand-dot"></span><span>AO · Portafolio</span></a>
+    <nav class="menu" id="nav"></nav>
   </div>
+</header>
 
-  <!-- ========================= CONTENIDO ========================== -->
-  <main class="container">
-    <section id="ciber" aria-labelledby="ciber-title">
-      <h2 id="ciber-title" class="section-title">Ciberseguridad</h2>
-      <p class="kicker">Security-by-design, hardening y respuesta a incidentes.</p>
-      <div class="card">Playbooks de respuesta, aplicación de guías CIS, inventario de activos y SIEM; priorización de riesgos y monitoreo proactivo.</div>
-    </section>
+<div class="hero-wrap">
+  <div class="hero">
+    <h1><span id="typeName"></span></h1>
+    <h2><span id="typeRole"></span><span class="cursor">|</span></h2>
+    <p id="lead" class="lead">Me especializo en diseñar, securizar y operar infraestructuras robustas.</p>
+  </div>
+</div>
 
-    <section id="adm" aria-labelledby="adm-title">
-      <h2 id="adm-title" class="section-title">Administración de Sistemas</h2>
-      <p class="kicker">Infraestructura reproducible y observable.</p>
-      <div class="card">Linux/Windows, IaC (Terraform/Ansible), contenedores (Docker/K8s), redes y servidores (Nginx/Apache), CI/CD y observabilidad.</div>
-    </section>
+<script>
+document.getElementById('lead').classList.add('show');
 
-    <section id="skills" aria-labelledby="skills-title">
-      <h2 id="skills-title" class="section-title">Skills principales</h2>
-      <div class="chips">
-        <span class="chip">Linux</span><span class="chip">Windows Server</span><span class="chip">Networking</span>
-        <span class="chip">Docker</span><span class="chip">Kubernetes</span><span class="chip">Ansible</span>
-        <span class="chip">Terraform</span><span class="chip">Bash / PowerShell</span><span class="chip">CI/CD</span>
-        <span class="chip">Nginx / Apache</span><span class="chip">SIEM</span><span class="chip">Hardening</span><span class="chip">Cloud (AWS/Azure)</span>
-      </div>
-    </section>
+/* === NAV TREE (simplificado para ejemplo) === */
+const seven = base => Array.from({length:7},(_,i)=>({label:`${base} · Artículo ${i+1}`,href:"#"}));
+const NAV_TREE=[{label:"Portafolio",sticky:true,children:[
+  {label:"Ciberseguridad",children:[
+    {label:"Análisis Forense",children:seven("Análisis Forense")},
+    {label:"DevSecOps",children:seven("DevSecOps")},
+    {label:"Documentación e informes",children:seven("Docs e informes")},
+    {label:"Puesta en producción segura",children:seven("Producción segura")},
+    {label:"Respuesta a Incidentes",children:seven("Respuesta a Incidentes")},
+    {label:"Seguridad en redes",children:seven("Seguridad en redes")},
+    {label:"Seguridad de sistemas",children:seven("Seguridad de sistemas")}
+  ]},
+  {label:"Sistemas",children:[
+    {label:"Linux",children:seven("Linux")},
+    {label:"Windows",children:seven("Windows")},
+    {label:"Automatización",children:seven("Automatización")}
+  ]}
+]}];
 
-    <section id="projects" aria-labelledby="projects-title">
-      <h2 id="projects-title" class="section-title">Proyectos destacados</h2>
-      <div class="grid">
-        <article class="card project">
-          <img src="assets/proyecto1.jpg" alt="Miniatura del Proyecto 1" />
-          <h4>Infraestructura reproducible con IaC</h4>
-          <p>Terraform + Ansible para levantar entornos seguros y auditables en AWS. Módulos reutilizables y pipelines CI.</p>
-        </article>
-        <article class="card project>
-          <img src="assets/proyecto2.jpg" alt="Miniatura del Proyecto 2" />
-          <h4>Plataforma de observabilidad</h4>
-          <p>Stack Prometheus + Loki + Grafana con alertas y SLOs para microservicios en Kubernetes.</p>
-        </article>
-        <article class="card project">
-          <img src="assets/proyecto3.jpg" alt="Miniatura del Proyecto 3" />
-          <h4>Hardening y respuesta a incidentes</h4>
-          <p>Guías CIS aplicadas, inventario de activos y playbooks de respuesta con herramientas open-source.</p>
-        </article>
-      </div>
-    </section>
+/* === swap sutil lvl3 === */
+function swapSideContent(side,newTitle,newLinks){
+  const title=side.querySelector('.side-title'),list=side.querySelector('.side-list');
+  if(side.dataset.key===newTitle)return;
+  side.classList.remove('swap-in');side.classList.add('swap-out');
+  clearTimeout(side._swapTimer);
+  side._swapTimer=setTimeout(()=>{
+    side.dataset.key=newTitle;title.textContent=newTitle;
+    list.innerHTML='';newLinks.forEach(a=>{const li=document.createElement('li');li.appendChild(a.cloneNode(true));list.appendChild(li);});
+    void side.offsetWidth;side.classList.remove('swap-out');side.classList.add('swap-in');
+  },120);
+}
 
-    <section id="contact" aria-labelledby="contact-title">
-      <h2 id="contact-title" class="section-title">Contacto</h2>
-      <div class="contact-box">
-        <div class="card">
-          <p>¿Tienes un proyecto o una consulta técnica? Escríbeme y te respondo.</p>
-          <p><strong>Email:</strong> <a href="mailto:alex@tu-dominio.com">alex@tu-dominio.com</a></p>
-          <p><strong>LinkedIn:</strong> <a href="https://www.linkedin.com/in/tuusuario" target="_blank" rel="noopener">linkedin.com/in/tuusuario</a></p>
-        </div>
-        <div class="card">
-          <form action="mailto:alex@tu-dominio.com" method="post" enctype="text/plain">
-            <label>Nombre<br><input name="nombre" required /></label>
-            <label>Email<br><input name="email" type="email" required /></label>
-            <label>Mensaje<br><textarea name="mensaje" required></textarea></label>
-            <button type="submit" style="background:var(--accent);color:#111;padding:10px 16px;border-radius:10px;border:0;font-weight:700">Enviar</button>
-          </form>
-        </div>
-      </div>
-    </section>
-  </main>
+/* === alinear panel lvl3 con clamp === */
+function positionSideAligned(side,anchor,sub){
+  const list=sub.querySelector(':scope > ul');
+  const subRect=sub.getBoundingClientRect(),listRect=list.getBoundingClientRect(),aRect=anchor.getBoundingClientRect();
+  const sideH=side.getBoundingClientRect().height;
+  const desired=aRect.top-subRect.top,min=listRect.top-subRect.top,max=(listRect.bottom-subRect.top)-sideH;
+  side.style.top=`${(max<min)?min:Math.min(Math.max(desired,min),max)}px`;
+}
 
-  <footer>© <span id="y"></span> Alejandro Orcajada Meseguer — Administrador de Sistemas y Ciberseguridad</footer>
+/* === build nav === */
+const nav=document.getElementById('nav');
+NAV_TREE.forEach(node=>nav.appendChild(createNode(node)));
+function createNode(node){
+  if(!node.children){const a=document.createElement('a');a.className='nav-link';a.textContent=node.label;return a;}
+  const wrap=document.createElement('div');wrap.className='nav-folder';wrap.setAttribute('aria-open','false');
+  if(node.sticky)wrap.dataset.sticky='true';
+  const btn=document.createElement('button');btn.className='nav-btn';btn.innerHTML=`<span class="ico-folder"></span>${node.label}<span class="caret"></span>`;
+  wrap.appendChild(btn);
+  const sub=document.createElement('div');sub.className='sub';const ul=document.createElement('ul');sub.appendChild(ul);
+  let side=null;if(wrap.dataset.sticky){side=document.createElement('div');side.className='side';side.innerHTML=`<div class="side-title"></div><ul class="side-list"></ul>`;sub.appendChild(side);}
+  node.children.forEach(l1=>{
+    const li1=document.createElement('li'),a1=document.createElement('a');a1.innerHTML=`<span>${l1.label}</span><span>›</span>`;li1.appendChild(a1);
+    const ul2=document.createElement('ul');ul2.className='nested';
+    l1.children?.forEach(l2=>{
+      const li2=document.createElement('li'),a2=document.createElement('a');a2.innerHTML=`<span>${l2.label}</span><span>›</span>`;li2.appendChild(a2);
+      const hidden=document.createElement('ul');hidden.style.display='none';
+      l2.children?.forEach(x=>{const li3=document.createElement('li'),a=document.createElement('a');a.textContent=x.label;li3.appendChild(a);hidden.appendChild(li3);});
+      li2.appendChild(hidden);
 
-  <!-- ========================= SCRIPTS ========================== -->
-  <script>
-    /* ===== Año ===== */
-    document.getElementById('y').textContent = new Date().getFullYear();
-
-    /* ===== Doble typing ===== */
-    const nameText = "Alejandro Orcajada Meseguer";
-    const roleText = "Administrador de Sistemas y Ciberseguridad";
-    const speed = 44;
-    const elName = document.getElementById('typeName');
-    const elRole = document.getElementById('typeRole');
-    const cursor = document.querySelector('.cursor');
-    const lead = document.getElementById('lead');
-    let i=0,j=0;
-    function typeName(){ if(i<nameText.length){ elName.textContent += nameText.charAt(i++); setTimeout(typeName,speed); } else { setTimeout(typeRole,250);} }
-    function typeRole(){ if(j<roleText.length){ elRole.textContent += roleText.charAt(j++); setTimeout(typeRole,speed); } else { cursor.remove(); lead.classList.add('show'); } }
-    setTimeout(typeName,300);
-
-    /* ===== Datos del NAV ===== */
-    const seven = base => Array.from({length:7}, (_,i)=>({label:`${base} · Artículo ${i+1}`, href:"#"}));
-
-    const NAV_TREE = [
-      { label:"Inicio", href:"/" },
-
-      { label:"Portafolio", sticky:true, children:[
-        { label:"Ciberseguridad", href:"/portafolio/Ciberseguridad/", children:[
-          { label:"Análisis Forense", href:"#", children: seven("Análisis Forense") },
-          { label:"DevSecOps", href:"#", children: seven("DevSecOps") },
-          { label:"Documentación e informes", href:"#", children: seven("Docs e informes") },
-          { label:"Puesta en producción segura", href:"#", children: seven("Producción segura") },
-          { label:"Respuesta a Incidentes", href:"#", children: seven("Respuesta a Incidentes") },
-          { label:"Seguridad en redes", href:"#", children: seven("Seguridad en redes") },
-          { label:"Seguridad de sistemas", href:"#", children: seven("Seguridad de sistemas") }
-        ]},
-        { label:"Sistemas", href:"/portafolio/sistemas/", children:[
-          { label:"Linux", href:"#", children: seven("Linux") },
-          { label:"Windows", href:"#", children: seven("Windows") },
-          { label:"Automatización", href:"#", children: seven("Automatización") }
-        ]}
-      ]},
-
-      { label:"Teoría y Casos Curiosos", children:[
-        { label:"Ciberseguridad", href:"#", children:[
-          { label:"Análisis Forense", href:"#", children: seven("Teoría · Forense") },
-          { label:"Respuesta a Incidentes", href:"#", children: seven("Teoría · Incidentes") }
-        ]},
-        { label:"Sistemas", href:"#", children:[
-          { label:"Redes", href:"#", children: seven("Teoría · Redes") },
-          { label:"Conceptos", href:"#", children: seven("Teoría · Conceptos") }
-        ]}
-      ]},
-
-      { label:"Laboratorio", href:"/Laboratorio/", children:[
-        { label:"TryHackMe", href:"#", children: seven("THM") },
-        { label:"HackTheBox", href:"#", children: seven("HTB") }
-      ]},
-
-      { label:"Contacto", href:"/contacto/" }
-    ];
-
-    /* === swap animado del contenido del panel (lvl3) === */
-    function swapSideContent(sideEl, newTitle, newLinksArray) {
-      const titleEl = sideEl.querySelector('.side-title');
-      const listEl  = sideEl.querySelector('.side-list');
-      if (sideEl.dataset.key === newTitle) return;
-
-      sideEl.classList.remove('swap-in');
-      sideEl.classList.add('swap-out');
-
-      clearTimeout(sideEl._swapTimer);
-      const OUT_MS = 120; // .12s en CSS
-
-      sideEl._swapTimer = setTimeout(() => {
-        sideEl.dataset.key = newTitle;
-        titleEl.textContent = newTitle;
-        listEl.innerHTML = '';
-        newLinksArray.forEach(a => {
-          const li = document.createElement('li');
-          li.appendChild(a.cloneNode(true));
-          listEl.appendChild(li);
-        });
-        void sideEl.offsetWidth;
-        sideEl.classList.remove('swap-out');
-        sideEl.classList.add('swap-in');
-      }, OUT_MS);
-    }
-
-    /* === Alinear panel lvl3 al item lvl2 con CLAMP dentro del marco (sub > ul) === */
-    function positionSideAligned(sideEl, anchorEl, subEl){
-      const listEl   = subEl.querySelector(':scope > ul');  // marco real del lvl2
-      const subRect  = subEl.getBoundingClientRect();
-      const listRect = listEl.getBoundingClientRect();
-      const aRect    = anchorEl.getBoundingClientRect();
-      const sideH    = sideEl.getBoundingClientRect().height;
-
-      const desiredTop = aRect.top - subRect.top;            // techo alineado con el item
-      const minTop     = listRect.top - subRect.top;         // techo del marco
-      const maxTop     = (listRect.bottom - subRect.top) - sideH; // suelo del marco - alto panel
-
-      let top;
-      if (maxTop < minTop) {
-        // si el panel es más alto que el marco visible, lo anclamos arriba del marco
-        top = minTop;
-      } else {
-        // clamp suave: solo corrige si se saldría del marco
-        top = Math.min(Math.max(desiredTop, minTop), maxTop);
-      }
-      sideEl.style.top = `${top}px`;
-    }
-
-    /* ===== Render NAV ===== */
-    function renderNav(tree){
-      const nav = document.getElementById('nav');
-      tree.forEach(node => nav.appendChild(createNode(node)));
-
-      // hover-intent primer nivel
-      const timers = new WeakMap();
-      document.querySelectorAll('.nav-folder').forEach(folder=>{
-        folder.addEventListener('mouseenter', ()=>{
-          const t = timers.get(folder); if(t) clearTimeout(t);
-          setOpen(folder, true);
-        });
-        folder.addEventListener('mouseleave', ()=>{
-          const t = setTimeout(()=> setOpen(folder,false,true), 220);
-          timers.set(folder,t);
-        });
+      // efecto hover lvl2
+      a2.addEventListener('mouseenter',()=>{
+        const parentUL=li2.parentElement;
+        parentUL.querySelectorAll(':scope>li.is-hot').forEach(x=>x.classList.remove('is-hot'));
+        li2.classList.add('is-hot');
+        if(side){
+          const links=Array.from(hidden.querySelectorAll('a'));
+          const title=`${l1.label} / ${l2.label}`;
+          positionSideAligned(side,a2,sub);
+          swapSideContent(side,title,links);
+          wrap.setAttribute('data-panel','show');
+          setTimeout(()=>positionSideAligned(side,a2,sub),0);
+        }
       });
-    }
-
-    /* ===== Crear nodo ===== */
-    function createNode(node){
-      if(!node.children){
-        const a=document.createElement('a');
-        a.className='nav-link';
-        a.href=node.href||'#';
-        a.textContent=node.label;
-        return a;
-      }
-
-      const wrap=document.createElement('div');
-      wrap.className='nav-folder';
-      wrap.setAttribute('aria-open','false');
-      if (node.label === "Portafolio") wrap.dataset.sticky = "true";
-
-      const btn=document.createElement('button');
-      btn.className='nav-btn';
-      btn.setAttribute('aria-expanded','false');
-      const labelHTML = node.href ? `<a href="${node.href}" class="nav-btn-link">${node.label}</a>` : `<span>${node.label}</span>`;
-      btn.innerHTML=`<span class="ico-folder"></span>${labelHTML}<span class="caret"></span>`;
-      wrap.appendChild(btn);
-
-      const sub=document.createElement('div'); sub.className='sub';
-      const ul=document.createElement('ul'); sub.appendChild(ul);
-
-      // panel lateral lvl3 sólo en Portafolio
-      let side = null;
-      if (wrap.dataset.sticky === "true") {
-        side = document.createElement('div');
-        side.className = 'side';
-        side.innerHTML = `<div class="side-title">Selecciona una subcarpeta…</div><ul class="side-list"></ul>`;
-        sub.appendChild(side);
-      }
-
-      // Lvl1
-      node.children.forEach(childLvl1=>{
-        const liLvl1=document.createElement('li');
-
-        const link1=document.createElement('a');
-        link1.href=childLvl1.href||'#';
-        link1.innerHTML=`<span>${childLvl1.label}</span><span style="opacity:.6">›</span>`;
-        liLvl1.appendChild(link1);
-
-        const ulLvl2=document.createElement('ul'); ulLvl2.className='nested';
-
-        childLvl1.children?.forEach(childLvl2=>{
-          const liLvl2=document.createElement('li');
-          const link2=document.createElement('a');
-          link2.href=childLvl2.href||'#';
-          link2.innerHTML=`<span>${childLvl2.label}</span><span style="opacity:.6">›</span>`;
-          liLvl2.appendChild(link2);
-
-          const hiddenLvl3=document.createElement('ul'); hiddenLvl3.style.display='none';
-          childLvl2.children?.forEach(a3=>{
-            const li3=document.createElement('li');
-            const a=document.createElement('a');
-            a.href=a3.href||'#'; a.textContent=a3.label;
-            li3.appendChild(a); hiddenLvl3.appendChild(li3);
-          });
-          liLvl2.appendChild(hiddenLvl3);
-
-          if (wrap.dataset.sticky === "true") {
-            link2.addEventListener('mouseenter', ()=>{
-              const linksLvl3 = Array.from(hiddenLvl3.querySelectorAll('a'));
-              const newTitle  = `${childLvl1.label} / ${childLvl2.label}`;
-
-              positionSideAligned(side, link2, sub);      // alinear con clamp
-              swapSideContent(side, newTitle, linksLvl3); // swap animado
-              wrap.setAttribute('data-panel','show');
-              setTimeout(()=> positionSideAligned(side, link2, sub), 0); // reajuste tras cambio de altura
-            });
-          }
-
-          ulLvl2.appendChild(liLvl2);
-        });
-
-        liLvl1.appendChild(ulLvl2);
-        ul.appendChild(liLvl1);
-
-        link1.addEventListener('mouseenter', ()=>{ liLvl1.classList.add('open'); });
-      });
-
-      btn.addEventListener('click', e=>{
-        e.preventDefault();
-        const open = wrap.getAttribute('aria-open')==='true';
-        setOpen(wrap, !open);
-      });
-
-      btn.addEventListener('keydown', e=>{
-        if(e.key==='Escape') setOpen(wrap,false,true);
-        if(e.key==='ArrowDown'){ setOpen(wrap,true); ul.querySelector('a')?.focus(); }
-      });
-
-      wrap.appendChild(sub);
-      return wrap;
-    }
-
-    function setOpen(folder, open, resetInternos=false){
-      folder.setAttribute('aria-open', open?'true':'false');
-      folder.querySelector('.nav-btn').setAttribute('aria-expanded', open?'true':'false');
-
-      if(open){
-        document.querySelectorAll('.nav-folder').forEach(f=>{
-          if(f!==folder){
-            f.setAttribute('aria-open','false');
-            f.querySelector('.nav-btn').setAttribute('aria-expanded','false');
-            f.removeAttribute('data-panel');
-          }
-        });
-      } else if (resetInternos){
-        folder.removeAttribute('data-panel');
-        folder.querySelectorAll(':scope .sub > ul > li').forEach(li=>li.classList.remove('open'));
-      }
-    }
-
-    // Init
-    renderNav(NAV_TREE);
-  </script>
+      ul2.appendChild(li2);
+    });
+    ul2.addEventListener('mouseleave',()=>ul2.querySelectorAll(':scope>li.is-hot').forEach(x=>x.classList.remove('is-hot')));
+    li1.appendChild(ul2);ul.appendChild(li1);
+  });
+  wrap.appendChild(sub);
+  return wrap;
+}
+</script>
 </body>
 </html>
