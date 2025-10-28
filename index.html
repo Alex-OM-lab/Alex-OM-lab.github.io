@@ -48,7 +48,6 @@
 
     /* ====== POPOVER BASE ====== */
     .sub{position:absolute;top:100%;left:0;min-width:360px;padding-top:0}
-    /* Antiflicker superior + puente invisible hacia la derecha (no se cierra al pasar) */
     .sub::before{content:"";position:absolute;top:-10px;left:0;right:0;height:12px}
     .sub::after{content:""; position:absolute; top:0; left:100%; width:20px; height:100%; background:transparent; pointer-events:auto;}
 
@@ -64,7 +63,7 @@
     .nav-folder[aria-open="true"] > .sub > ul{pointer-events:auto;transform:scaleY(1);opacity:1;max-height:80vh;overflow:auto}
     .nav-folder[aria-open="true"] > .nav-btn .caret{transform:rotate(45deg)}
 
-    /* ====== NIVEL 2 (vertical): animación suave ====== */
+    /* ====== NIVEL 2 ====== */
     .nested{
       max-height:0; opacity:0; transform:translateY(-4px);
       overflow:hidden; margin-top:6px; padding-left:10px;
@@ -73,7 +72,7 @@
     }
     .sub li.open > .nested{ max-height:1200px; opacity:1; transform:none; }
 
-    /* ====== PANEL LATERAL NIVEL 3 (derecha) ====== */
+    /* ====== PANEL LATERAL NIVEL 3 ====== */
     .sub .side{
       position:absolute; top:0; left:calc(100% + 12px); width:340px;
       background:rgba(18,25,43,.98); border:1px solid rgba(255,255,255,.06);
@@ -87,12 +86,10 @@
     .side-list a{display:block;padding:10px 12px;border-radius:8px;color:var(--text);text-decoration:none}
     .side-list a:hover{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25)}
 
-    /* ===== swap sutil del contenido lvl3 ===== */
     .side .side-title, .side .side-list { transition: opacity .12s ease, transform .12s ease; will-change: opacity, transform; }
     .side.swap-out .side-title, .side.swap-out .side-list { opacity: 0; transform: translateX(-6px); }
     .side.swap-in  .side-title, .side.swap-in  .side-list { opacity: 1; transform: translateX(0); }
 
-    /* scroll estético */
     .sub>ul::-webkit-scrollbar{width:10px}
     .sub>ul::-webkit-scrollbar-thumb{background:rgba(245,158,11,.2);border-radius:10px}
     .sub>ul::-webkit-scrollbar-track{background:rgba(255,255,255,.04)}
@@ -105,7 +102,12 @@
     }
 
     /* ====== HERO / CONTENIDO ====== */
-    .hero-wrap{min-height:72vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:26px 14px 0}
+    /* ¡AQUÍ el ajuste para subir el título/subtítulo! */
+    .hero-wrap{
+      min-height:58vh;            /* antes 72vh */
+      display:flex;align-items:center;justify-content:center;text-align:center;
+      padding:8px 14px 0;         /* antes 26px arriba */
+    }
     .hero h1{font-size:clamp(34px,4vw,54px);font-weight:900;color:var(--accent);margin:0 0 8px;text-shadow:0 0 18px rgba(255,153,0,.7),0 0 36px rgba(255,153,0,.25)}
     .hero h2{font-size:clamp(24px,3.2vw,40px);font-weight:800;margin:6px 0 8px;color:var(--accent-soft);text-shadow:0 0 14px rgba(255,153,0,.45)}
     .cursor{display:inline-block;width:.6ch;margin-left:2px;color:var(--accent);filter:drop-shadow(0 0 6px var(--accent));animation:blink .95s steps(1,end) infinite}
@@ -114,7 +116,7 @@
     .lead.show{opacity:1;transform:none}
 
     .container{width:min(1100px,92%);margin:0 auto}
-    section{padding:36px 0}
+    section{padding:30px 0}      /* antes 36px: el contenido general sube un poco */
     .section-title{font-size:clamp(24px,3vw,34px);margin:0 0 10px}
     .kicker{color:var(--muted);margin:0 0 20px}
     .chips{display:flex;flex-wrap:wrap;gap:10px}
@@ -138,12 +140,7 @@
       border: 1px solid rgba(245,158,11,.15);
       background: transparent;
       border-radius: 10px;
-      transition:
-        background .18s ease,
-        border-color .18s ease,
-        box-shadow .18s ease,
-        transform .14s ease,
-        color .18s ease;
+      transition: background .18s ease, border-color .18s ease, box-shadow .18s ease, transform .14s ease, color .18s ease;
       padding: 10px 12px;
     }
     .nav-folder[data-sticky="true"] .nested > li > a::before{
@@ -156,12 +153,9 @@
     }
     .nav-folder[data-sticky="true"] .nested > li.focus2 > a,
     .nav-folder[data-sticky="true"] .nested > li > a:hover{
-      background: linear-gradient(90deg,
-                  rgba(245,158,11,.18) 0%,
-                  rgba(245,158,11,.08) 60%);
+      background: linear-gradient(90deg, rgba(245,158,11,.18) 0%, rgba(245,158,11,.08) 60%);
       border-color: rgba(245,158,11,.55);
-      box-shadow: 0 6px 18px rgba(245,158,11,.25),
-                  inset 0 0 0 1px rgba(255,255,255,.06);
+      box-shadow: 0 6px 18px rgba(245,158,11,.25), inset 0 0 0 1px rgba(255,255,255,.06);
       transform: translateX(2px);
       color: #ffe1a6;
     }
@@ -321,7 +315,6 @@
       { label:"Contacto", href:"/contacto/" }
     ];
 
-    /* === swap animado del contenido del panel (lvl3) === */
     function swapSideContent(sideEl, newTitle, newLinksArray) {
       const titleEl = sideEl.querySelector('.side-title');
       const listEl  = sideEl.querySelector('.side-list');
@@ -331,7 +324,7 @@
       sideEl.classList.add('swap-out');
 
       clearTimeout(sideEl._swapTimer);
-      const OUT_MS = 120; // .12s en CSS
+      const OUT_MS = 120;
 
       sideEl._swapTimer = setTimeout(() => {
         sideEl.dataset.key = newTitle;
@@ -348,17 +341,16 @@
       }, OUT_MS);
     }
 
-    /* === Alinear panel lvl3 al item lvl2 con CLAMP dentro del marco (sub > ul) === */
     function positionSideAligned(sideEl, anchorEl, subEl){
-      const listEl   = subEl.querySelector(':scope > ul');  // marco real del lvl2
+      const listEl   = subEl.querySelector(':scope > ul');
       const subRect  = subEl.getBoundingClientRect();
       const listRect = listEl.getBoundingClientRect();
       const aRect    = anchorEl.getBoundingClientRect();
       const sideH    = sideEl.getBoundingClientRect().height;
 
-      const desiredTop = aRect.top - subRect.top;            // techo alineado con el item
-      const minTop     = listRect.top - subRect.top;         // techo del marco
-      const maxTop     = (listRect.bottom - subRect.top) - sideH; // suelo del marco - alto panel
+      const desiredTop = aRect.top - subRect.top;
+      const minTop     = listRect.top - subRect.top;
+      const maxTop     = (listRect.bottom - subRect.top) - sideH;
 
       let top;
       if (maxTop < minTop) {
@@ -369,12 +361,10 @@
       sideEl.style.top = `${top}px`;
     }
 
-    /* ===== Render NAV ===== */
     function renderNav(tree){
       const nav = document.getElementById('nav');
       tree.forEach(node => nav.appendChild(createNode(node)));
 
-      // hover-intent primer nivel
       const timers = new WeakMap();
       document.querySelectorAll('.nav-folder').forEach(folder=>{
         folder.addEventListener('mouseenter', ()=>{
@@ -388,7 +378,6 @@
       });
     }
 
-    /* ===== Crear nodo ===== */
     function createNode(node){
       if(!node.children){
         const a=document.createElement('a');
@@ -413,7 +402,6 @@
       const sub=document.createElement('div'); sub.className='sub';
       const ul=document.createElement('ul'); sub.appendChild(ul);
 
-      // panel lateral lvl3 sólo en Portafolio
       let side = null;
       if (wrap.dataset.sticky === "true") {
         side = document.createElement('div');
@@ -422,7 +410,6 @@
         sub.appendChild(side);
       }
 
-      // Lvl1
       node.children.forEach(childLvl1=>{
         const liLvl1=document.createElement('li');
 
@@ -460,16 +447,14 @@
               setTimeout(()=> positionSideAligned(side, link2, sub), 0);
             });
 
-            /* === énfasis sincronizado (Lvl 2) === */
+            /* énfasis (Lvl 2) */
             link2.addEventListener('mouseenter', ()=>{
               liLvl2.classList.add('focus2');
               liLvl2.parentElement
                 .querySelectorAll(':scope > li.focus2')
                 .forEach(sib => { if (sib !== liLvl2) sib.classList.remove('focus2'); });
             });
-            liLvl2.addEventListener('mouseleave', ()=>{
-              liLvl2.classList.remove('focus2');
-            });
+            liLvl2.addEventListener('mouseleave', ()=> liLvl2.classList.remove('focus2'));
             link2.addEventListener('focus', ()=> liLvl2.classList.add('focus2'));
             link2.addEventListener('blur' , ()=> liLvl2.classList.remove('focus2'));
           }
