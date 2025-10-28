@@ -48,11 +48,11 @@
 
     /* ====== POPOVER BASE ====== */
     .sub{position:absolute;top:100%;left:0;min-width:360px;padding-top:0}
-    /* Puente invisible entre el popover y lo que haya a su derecha (panel lvl3) */
-    .sub::before{content:"";position:absolute;top:-10px;left:0;right:0;height:12px} /* antiflicker superior */
+    /* Antiflicker superior + puente invisible hacia la derecha */
+    .sub::before{content:"";position:absolute;top:-10px;left:0;right:0;height:12px}
     .sub::after{
       content:""; position:absolute; top:0; left:100%;
-      width:20px; height:100%; background:transparent; /* puente invisible */
+      width:20px; height:100%; background:transparent;
       pointer-events:auto;
     }
 
@@ -90,7 +90,6 @@
       padding:8px; opacity:0; transform:translateX(-6px) scale(0.98);
       pointer-events:none; transition:opacity .18s ease-out, transform .18s cubic-bezier(.18,.89,.32,1.28);
     }
-    /* Se muestra solo en Portafolio cuando hay contenido lvl3 para una subcarpeta */
     .nav-folder[data-sticky="true"][data-panel="show"][aria-open="true"] .side{
       opacity:1; transform:translateX(0) scale(1); pointer-events:auto;
     }
@@ -98,6 +97,23 @@
     .side-list{list-style:none;margin:0;padding:0}
     .side-list a{display:block;padding:10px 12px;border-radius:8px;color:var(--text);text-decoration:none}
     .side-list a:hover{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25)}
+
+    /* ===== Swap sutil del contenido lvl3 (entrada/salida) ===== */
+    .side .side-title,
+    .side .side-list {
+      transition: opacity .16s ease, transform .16s ease;
+      will-change: opacity, transform;
+    }
+    .side.swap-out .side-title,
+    .side.swap-out .side-list {
+      opacity: 0;
+      transform: translateX(-6px);
+    }
+    .side.swap-in .side-title,
+    .side.swap-in .side-list {
+      opacity: 1;
+      transform: translateX(0);
+    }
 
     /* scroll estético */
     .sub>ul::-webkit-scrollbar{width:10px}
@@ -108,7 +124,7 @@
       .sub{position:static}
       .sub>ul,.sub .side{box-shadow:none}
       .sub .side{position:static;left:auto;width:auto;margin-top:8px;opacity:1;transform:none}
-      .sub::after{display:none} /* en móvil no hace falta el puente */
+      .sub::after{display:none}
     }
 
     /* ====== HERO ====== */
@@ -144,6 +160,7 @@
 </head>
 <body>
 
+  <!-- ========================= NAV SUPERIOR ========================== -->
   <header class="topbar">
     <div class="topwrap">
       <a class="brand" href="/"><span class="brand-dot"></span><span>AO · Portafolio</span></a>
@@ -151,6 +168,7 @@
     </div>
   </header>
 
+  <!-- ========================= HERO ========================== -->
   <div id="home" class="hero-wrap">
     <div class="hero">
       <h1><span id="typeName"></span></h1>
@@ -159,6 +177,7 @@
     </div>
   </div>
 
+  <!-- ========================= CONTENIDO ========================== -->
   <main class="container">
     <section id="ciber" aria-labelledby="ciber-title">
       <h2 id="ciber-title" class="section-title">Ciberseguridad</h2>
@@ -225,9 +244,7 @@
 
   <footer>© <span id="y"></span> Alejandro Orcajada Meseguer — Administrador de Sistemas y Ciberseguridad</footer>
 
-  <!-- =========================
-       SCRIPTS (typing + NAV con panel lvl3 a la derecha)
-  ========================== -->
+  <!-- ========================= SCRIPTS ========================== -->
   <script>
     /* ===== Año ===== */
     document.getElementById('y').textContent = new Date().getFullYear();
@@ -295,6 +312,44 @@
       { label:"Contacto", href:"/contacto/" }
     ];
 
+    /* === Helper: cambia el contenido del panel lateral con animación sutil (timeout) === */
+    function swapSideContent(sideEl, newTitle, newLinksArray) {
+      const titleEl = sideEl.querySelector('.side-title');
+      const listEl  = sideEl.querySelector('.side-list');
+
+      // Evita re-render si es el mismo destino
+      if (sideEl.dataset.key === newTitle) return;
+
+      // Marca salida visual del contenido actual
+      sideEl.classList.remove('swap-in');
+      sideEl.classList.add('swap-out');
+
+      // Cancela animaciones pendientes si el usuario mueve rápido
+      clearTimeout(sideEl._swapTimer);
+
+      // Debe coincidir con el CSS (.16s)
+      const OUT_MS = 160;
+
+      sideEl._swapTimer = setTimeout(() => {
+        // Rellenar nuevo contenido
+        sideEl.dataset.key = newTitle;
+        titleEl.textContent = newTitle;
+        listEl.innerHTML = '';
+        newLinksArray.forEach(a => {
+          const li = document.createElement('li');
+          li.appendChild(a.cloneNode(true));
+          listEl.appendChild(li);
+        });
+
+        // Forzar un reflow para reiniciar transición de entrada
+        void sideEl.offsetWidth;
+
+        // Entrada
+        sideEl.classList.remove('swap-out');
+        sideEl.classList.add('swap-in');
+      }, OUT_MS);
+    }
+
     /* ===== Render del NAV ===== */
     function renderNav(tree){
       const nav = document.getElementById('nav');
@@ -343,7 +398,7 @@
       const ul=document.createElement('ul');
       sub.appendChild(ul);
 
-      // --- PANEL LATERAL (para mostrar NIVEL 3 a la derecha SOLO en Portafolio)
+      // --- PANEL LATERAL (NIVEL 3) SOLO en Portafolio
       let side = null;
       if (wrap.dataset.sticky === "true") {
         side = document.createElement('div');
@@ -365,7 +420,7 @@
         link1.innerHTML=`<span>${childLvl1.label}</span><span style="opacity:.6">›</span>`;
         liLvl1.appendChild(link1);
 
-        // Lista lvl2 (subcarpetas que cuelgan hacia ABAJO)
+        // Lista lvl2 (subcarpetas)
         const ulLvl2=document.createElement('ul'); ulLvl2.className='nested';
         childLvl1.children?.forEach(childLvl2=>{
           const liLvl2=document.createElement('li');
@@ -374,7 +429,7 @@
           link2.innerHTML=`<span>${childLvl2.label}</span><span style="opacity:.6">›</span>`;
           liLvl2.appendChild(link2);
 
-          // Guardamos (oculto) sus artículos lvl3 para alimentar el panel lateral
+          // Guardar (oculto) sus artículos lvl3 para alimentar el panel lateral
           const hiddenLvl3=document.createElement('ul');
           hiddenLvl3.style.display='none';
           childLvl2.children?.forEach(a3=>{
@@ -385,19 +440,12 @@
           });
           liLvl2.appendChild(hiddenLvl3);
 
-          // Al pasar por una subcarpeta lvl2 -> mostrar sus artículos en el panel derecho
+          // Al pasar por una subcarpeta lvl2 -> mostrar/animar sus artículos en el panel derecho
           if (wrap.dataset.sticky === "true") {
             link2.addEventListener('mouseenter', ()=>{
-              const title = side.querySelector('.side-title');
-              const list  = side.querySelector('.side-list');
-              title.textContent = `${childLvl1.label} / ${childLvl2.label}`;
-              list.innerHTML = '';
-              hiddenLvl3.querySelectorAll('a').forEach(a=>{
-                const li = document.createElement('li');
-                const copy = a.cloneNode(true);
-                li.appendChild(copy);
-                list.appendChild(li);
-              });
+              const linksLvl3 = Array.from(hiddenLvl3.querySelectorAll('a'));
+              const newTitle  = `${childLvl1.label} / ${childLvl2.label}`;
+              swapSideContent(side, newTitle, linksLvl3);
               wrap.setAttribute('data-panel','show');
             });
           }
@@ -407,7 +455,7 @@
         liLvl1.appendChild(ulLvl2);
         ul.appendChild(liLvl1);
 
-        // Abrimos lvl2 al entrar en el bloque de cada lvl1 (y no cerramos el otro)
+        // Abrir lvl2 al entrar en su bloque (persistente dentro de Portafolio)
         link1.addEventListener('mouseenter', ()=>{
           liLvl1.classList.add('open');
         });
@@ -456,3 +504,4 @@
   </script>
 </body>
 </html>
+
