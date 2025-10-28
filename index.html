@@ -53,7 +53,7 @@
       transform:rotate(-45deg) translateY(-1px);transition:transform .2s ease}
 
     /* popover base */
-    .sub{position:absolute;top:100%;left:0;min-width:360px;padding-top:0} /* sin hueco superior */
+    .sub{position:absolute;top:100%;left:0;min-width:360px;padding-top:0}
     .sub::before{content:"";position:absolute;top:-10px;left:0;right:0;height:12px} /* colchón anti-flicker */
     .sub>ul{
       list-style:none;margin:0;padding:8px;background:rgba(18,25,43,.98);
@@ -65,16 +65,19 @@
       text-decoration:none;color:var(--text);border:1px solid transparent}
     .sub a:hover{background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.25)}
 
-    /* popover ABIERTO: no se encoge y permite scroll */
+    /* popover ABIERTO: estable + scroll */
     .nav-folder[aria-open="true"] > .sub > ul{
       pointer-events:auto;transform:scaleY(1);opacity:1;
-      max-height:80vh;min-height:260px;overflow:auto; /* <- clave anti-cierre al pasar a Sistemas */
+      max-height:80vh;min-height:260px;overflow:auto;
     }
     .nav-folder[aria-open="true"] > .nav-btn .caret{transform:rotate(45deg)}
-    /* abrir nested en modo “escalera” mientras esté abierto el panel */
-    .nested{max-height:0;overflow:hidden;transition:max-height .28s ease;margin-top:6px;padding-left:10px;border-left:2px dashed rgba(245,158,11,.25)}
-    .sub li:hover > .nested{max-height:1000px}
-    .nav-folder[aria-open="true"] .nested{max-height:1000px} /* no colapsar al cambiar de fila */
+
+    /* Acordeón interno ---------------------------------- */
+    .nested{
+      max-height:0;overflow:hidden;transition:max-height .28s ease;
+      margin-top:6px;padding-left:10px;border-left:2px dashed rgba(245,158,11,.25)
+    }
+    .sub li.open > .nested{max-height:1000px}
 
     /* scrollbar estético */
     .sub>ul::-webkit-scrollbar{width:10px}
@@ -232,6 +235,7 @@
     /* ===== NAV: estructura ===== */
     const NAV_TREE = [
       { label:"Inicio", href:"/" },
+
       { label:"Portafolio", children:[
         {
           label:"Ciberseguridad",
@@ -267,6 +271,7 @@
           ]
         }
       ]},
+
       { label:"Teoría y Casos Curiosos", children:[
         {
           label:"Ciberseguridad",
@@ -294,12 +299,14 @@
           ]
         }
       ]},
+
       { label:"Laboratorio", href:"/Laboratorio/", children:[
         { label:"TryHackMe", href:"/Laboratorio/tryhackme/", children:[
           { label:"Blue", href:"/Laboratorio/tryhackme/blue/" }
         ]},
         { label:"HackTheBox", href:"/Laboratorio/hackthebox/" }
       ]},
+
       { label:"Contacto", href:"/contacto/" }
     ];
 
@@ -308,7 +315,7 @@
       const nav = document.getElementById('nav');
       tree.forEach(node => nav.appendChild(createNode(node)));
 
-      // Hover/leave con retardo usando la caja del popover (.sub)
+      // Anti-flicker: cierre con retardo usando la caja real del popover (.sub)
       const closeTimers = new WeakMap();
       document.querySelectorAll('.nav-folder').forEach(folder=>{
         const sub = folder.querySelector('.sub');
@@ -417,8 +424,33 @@
       }
     }
 
+    // ===== Acordeón dentro de cada popover (punto medio) =====
+    function wireAccordionInsidePopovers(){
+      document.querySelectorAll('.nav-folder .sub > ul').forEach(ul => {
+        const rootFolder = ul.closest('.nav-folder');
+
+        // Abre el primer item con nested la primera vez que entras
+        rootFolder.addEventListener('mouseenter', () => {
+          const firstWithNested = ul.querySelector(':scope > li > .nested')?.parentElement;
+          if (firstWithNested && !ul.querySelector(':scope > li.open')) {
+            firstWithNested.classList.add('open');
+          }
+        }, { once: true });
+
+        // Al pasar por cada LI abre su nested y cierra los demás
+        ul.querySelectorAll(':scope > li').forEach(li => {
+          li.addEventListener('mouseenter', () => {
+            ul.querySelectorAll(':scope > li.open').forEach(o => o.classList.remove('open'));
+            li.classList.add('open');
+          });
+        });
+      });
+    }
+
     // Inicializa menú
     renderNav(NAV_TREE);
+    wireAccordionInsidePopovers();
   </script>
 </body>
 </html>
+
