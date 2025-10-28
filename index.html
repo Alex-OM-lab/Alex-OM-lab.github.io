@@ -202,49 +202,97 @@
     function typeRole(){ if(j<roleText.length){ elRole.textContent += roleText.charAt(j++); setTimeout(typeRole,speed); } else { cursor.remove(); lead.classList.add('show'); } }
     setTimeout(typeName,300);
 
-    // ===== NAV: Árbol (edita las rutas según tus carpetas reales) =====
-    const NAV_TREE = [
-      { label:"Inicio", href:"/" },
-      { label:"Portafolio", children:[
-        { label:"Ciberseguridad", children:[
-          { label:"Análisis Forense", href:"/portafolio/Ciberseguridad/Analisis-Forense/", children:[
+// ===== NAV: Árbol (edita las rutas según tus carpetas reales) =====
+const NAV_TREE = [
+  { label:"Inicio", href:"/" },
+
+  { label:"Portafolio", children:[
+    {
+      label:"Ciberseguridad",
+      href:"/portafolio/Ciberseguridad/",  // ✅ AHORA ES CLICABLE además de tener hijos
+      children:[
+        {
+          label:"Análisis Forense",
+          href:"/portafolio/Ciberseguridad/Analisis-Forense/",
+          children:[
+            // ✅ ejemplo1.html añadido (archivo dentro de esta carpeta)
+            { label:"Ejemplo 1", href:"/portafolio/Ciberseguridad/Analisis-Forense/ejemplo1.html" },
             { label:"Metodologías", href:"/portafolio/Ciberseguridad/Analisis-Forense/metodologias/" },
-            { label:"Herramientas",  href:"/portafolio/Ciberseguridad/Analisis-Forense/herramientas/" },
-            { label:"Casos", href:"/portafolio/Ciberseguridad/Analisis-Forense/casos/", children:[
-              { label:"Caso Blue", href:"/portafolio/Ciberseguridad/Analisis-Forense/casos/blue/" }
-            ]}
-          ]},
-          { label:"Respuesta a Incidentes", href:"/portafolio/Ciberseguridad/Respuesta-incidentes/" }
-        ]},
-        { label:"Sistemas", children:[
-          { label:"Linux", href:"/portafolio/sistemas/linux/" },
-          { label:"Windows", href:"/portafolio/sistemas/windows/" },
-          { label:"Automatización", href:"/portafolio/sistemas/automatizacion/" }
-        ]}
-      ]},
-      { label:"Teoría y Casos Curiosos", children:[
-        { label:"Ciberseguridad", children:[
-          { label:"Análisis Forense", href:"/Teoria-casos-curiosos/ciberseguridad/Analisis-Forense/", children:[
+            { label:"Herramientas", href:"/portafolio/Ciberseguridad/Analisis-Forense/herramientas/" },
+            {
+              label:"Casos",
+              href:"/portafolio/Ciberseguridad/Analisis-Forense/casos/",
+              children:[
+                { label:"Caso Blue", href:"/portafolio/Ciberseguridad/Analisis-Forense/casos/blue/" }
+              ]
+            }
+          ]
+        },
+        { label:"DevSecOps",               href:"/portafolio/Ciberseguridad/DevSecOps/" },
+        { label:"Documentación e informes",href:"/portafolio/Ciberseguridad/Documentación-informes/" },
+        { label:"Puesta en producción segura", href:"/portafolio/Ciberseguridad/Puesta-produccion-segura/" },
+        { label:"Respuesta a Incidentes",  href:"/portafolio/Ciberseguridad/Respuesta-incidentes/" },
+        { label:"Seguridad en redes",      href:"/portafolio/Ciberseguridad/Seguridad-redes/" },
+        { label:"Seguridad de sistemas",   href:"/portafolio/Ciberseguridad/Seguridad-sistemas/" }
+      ]
+    },
+
+    {
+      label:"Sistemas",
+      href:"/portafolio/sistemas/",
+      children:[
+        { label:"Linux", href:"/portafolio/sistemas/linux/" },
+        { label:"Windows", href:"/portafolio/sistemas/windows/" },
+        { label:"Automatización", href:"/portafolio/sistemas/automatizacion/" }
+      ]
+    }
+  ]},
+
+  { label:"Teoría y Casos Curiosos", children:[
+    {
+      label:"Ciberseguridad",
+      href:"/Teoria-casos-curiosos/ciberseguridad/",
+      children:[
+        {
+          label:"Análisis Forense",
+          href:"/Teoria-casos-curiosos/ciberseguridad/Analisis-Forense/",
+          children:[
             { label:"Notas N1", href:"/Teoria-casos-curiosos/ciberseguridad/Analisis-Forense/notas-n1/" },
-            { label:"Casos", href:"/Teoria-casos-curiosos/ciberseguridad/Analisis-Forense/casos/", children:[
-              { label:"Caso curioso 1", href:"/Teoria-casos-curiosos/ciberseguridad/Analisis-Forense/casos/caso-1/" }
-            ]}
-          ]},
-          { label:"Respuesta a Incidentes", href:"/Teoria-casos-curiosos/ciberseguridad/Respuesta-incidentes/" }
-        ]},
-        { label:"Sistemas", children:[
-          { label:"Redes", href:"/Teoria-casos-curiosos/sistemas/redes/" },
-          { label:"Conceptos", href:"/Teoria-casos-curiosos/sistemas/conceptos/" }
-        ]}
-      ]},
-      { label:"Laboratorio", children:[
-        { label:"TryHackMe", href:"/Laboratorio/tryhackme/", children:[
-          { label:"Blue", href:"/Laboratorio/tryhackme/blue/" }
-        ]},
-        { label:"HackTheBox", href:"/Laboratorio/hackthebox/" }
-      ]},
-      { label:"Contacto", href:"/contacto/" }
-    ];
+            {
+              label:"Casos",
+              href:"/Teoria-casos-curiosos/ciberseguridad/Analisis-Forense/casos/",
+              children:[
+                { label:"Caso curioso 1", href:"/Teoria-casos-curiosos/ciberseguridad/Analisis-Forense/casos/caso-1/" }
+              ]
+            }
+          ]
+        },
+        { label:"Respuesta a Incidentes", href:"/Teoria-casos-curiosos/ciberseguridad/Respuesta-incidentes/" }
+      ]
+    },
+    {
+      label:"Sistemas",
+      href:"/Teoria-casos-curiosos/sistemas/",
+      children:[
+        { label:"Redes", href:"/Teoria-casos-curiosos/sistemas/redes/" },
+        { label:"Conceptos", href:"/Teoria-casos-curiosos/sistemas/conceptos/" }
+      ]
+    }
+  ]},
+
+  { label:"Laboratorio", href:"/Laboratorio/", children:[
+    {
+      label:"TryHackMe",
+      href:"/Laboratorio/tryhackme/",
+      children:[
+        { label:"Blue", href:"/Laboratorio/tryhackme/blue/" }
+      ]
+    },
+    { label:"HackTheBox", href:"/Laboratorio/hackthebox/" }
+  ]},
+
+  { label:"Contacto", href:"/contacto/" }
+];
 
     // ===== Render + interacción =====
     function renderNav(tree){
