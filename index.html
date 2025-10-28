@@ -6,7 +6,7 @@
   <title>Alejandro Orcajada Meseguer | Administrador de Sistemas y Ciberseguridad</title>
   <meta name="description" content="Portafolio profesional de Alejandro Orcajada Meseguer, Administrador de Sistemas y Ciberseguridad." />
   <style>
-    :root {
+    :root{
       --bg:#0e1320; --text:#e6edf3; --muted:#a9b1bd;
       --accent:#f59e0b; --accent-soft:#ffd08a;
       --panel:#12192b; --radius:14px;
@@ -39,30 +39,33 @@
     .caret{width:10px;height:10px;border-right:2px solid var(--accent);border-bottom:2px solid var(--accent);
       transform:rotate(-45deg) translateY(-1px);transition:transform .2s ease}
 
-    .sub{position:absolute;top:100%;left:0;min-width:360px;padding-top:8px;pointer-events:none}
+    .sub{position:absolute;top:100%;left:0;min-width:360px;padding-top:0} /* sin hueco */
+    .sub::before{content:"";position:absolute;top:-10px;left:0;right:0;height:12px} /* colchón anti-flicker */
+
     .sub>ul{list-style:none;margin:0;padding:8px;background:rgba(18,25,43,.98);
       border:1px solid rgba(255,255,255,.06);border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.35);
       transform-origin:top left;transform:scaleY(.9);opacity:0;max-height:0;overflow:hidden;
       transition:transform .18s ease,opacity .18s ease,max-height .28s ease}
+
     .sub a{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border-radius:8px;
       text-decoration:none;color:var(--text);border:1px solid transparent}
     .sub a:hover{background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.25)}
 
-    /* abrir por hover y permitir scroll alto */
-    .nav-folder:hover>.sub>ul{pointer-events:auto;transform:scaleY(1);opacity:1;max-height:80vh;overflow:auto}
-    .nav-folder:hover>.nav-btn .caret{transform:rotate(45deg)}
+    /* Estado abierto (hover/click) */
+    .nav-folder[aria-open="true"]>.sub>ul{pointer-events:auto;transform:scaleY(1);opacity:1;max-height:80vh;overflow:auto}
+    .nav-folder[aria-open="true"]>.nav-btn .caret{transform:rotate(45deg)}
 
-    /* subniveles en “escalera” */
+    /* Subniveles tipo escalera */
     .nested{max-height:0;overflow:hidden;transition:max-height .28s ease;margin-top:6px;padding-left:10px;border-left:2px dashed rgba(245,158,11,.25)}
     .sub li:hover>.nested{max-height:1000px}
 
-    /* scroll estético */
+    /* Scroll estético del popover */
     .sub>ul::-webkit-scrollbar{width:10px}
     .sub>ul::-webkit-scrollbar-thumb{background:rgba(245,158,11,.2);border-radius:10px}
     .sub>ul::-webkit-scrollbar-track{background:rgba(255,255,255,.04)}
 
     @media (max-width:860px){
-      .sub{position:static;padding-top:6px}
+      .sub{position:static}
       .sub>ul{box-shadow:none}
     }
 
@@ -199,17 +202,16 @@
     function typeRole(){ if(j<roleText.length){ elRole.textContent += roleText.charAt(j++); setTimeout(typeRole,speed); } else { cursor.remove(); lead.classList.add('show'); } }
     setTimeout(typeName,300);
 
-    // ===== NAV: Árbol con ejemplo de subcarpeta + artículo =====
+    // ===== NAV: Árbol (edita las rutas según tus carpetas reales) =====
     const NAV_TREE = [
       { label:"Inicio", href:"/" },
       { label:"Portafolio", children:[
         { label:"Ciberseguridad", children:[
-          // subcarpeta con artículos y sub-subcarpeta
           { label:"Análisis Forense", href:"/portafolio/Ciberseguridad/Analisis-Forense/", children:[
-            { label:"Metodologías", href:"/portafolio/Ciberseguridad/Analisis-Forense/metodologias/" },  // ARTÍCULO
-            { label:"Herramientas",  href:"/portafolio/Ciberseguridad/Analisis-Forense/herramientas/" },  // ARTÍCULO
+            { label:"Metodologías", href:"/portafolio/Ciberseguridad/Analisis-Forense/metodologias/" },
+            { label:"Herramientas",  href:"/portafolio/Ciberseguridad/Analisis-Forense/herramientas/" },
             { label:"Casos", href:"/portafolio/Ciberseguridad/Analisis-Forense/casos/", children:[
-              { label:"Caso Blue", href:"/portafolio/Ciberseguridad/Analisis-Forense/casos/blue/" }       // ARTÍCULO
+              { label:"Caso Blue", href:"/portafolio/Ciberseguridad/Analisis-Forense/casos/blue/" }
             ]}
           ]},
           { label:"Respuesta a Incidentes", href:"/portafolio/Ciberseguridad/Respuesta-incidentes/" }
@@ -244,27 +246,40 @@
       { label:"Contacto", href:"/contacto/" }
     ];
 
+    // ===== Render + interacción =====
     function renderNav(tree){
       const nav = document.getElementById('nav');
       tree.forEach(node => nav.appendChild(createNode(node)));
-      // abrir/cerrar por hover usando setOpen
+
+      // Hover con retardo de cierre (anti-flicker)
+      const closeTimers = new WeakMap();
       document.querySelectorAll('.nav-folder').forEach(f=>{
-        f.addEventListener('mouseenter', ()=> setOpen(f,true));
-        f.addEventListener('mouseleave', ()=> setOpen(f,false));
+        f.addEventListener('mouseenter', ()=>{
+          const t = closeTimers.get(f); if(t) clearTimeout(t);
+          setOpen(f, true);
+        });
+        f.addEventListener('mouseleave', ()=>{
+          const t = setTimeout(()=> setOpen(f,false), 200);
+          closeTimers.set(f, t);
+        });
       });
     }
+
     function createNode(node){
       if(!node.children){
         const a=document.createElement('a');
-        a.className='nav-link'; a.href=node.href||'#'; a.textContent=node.label; return a;
+        a.className='nav-link'; a.href=node.href||'#'; a.textContent=node.label;
+        return a;
       }
       const wrap=document.createElement('div'); wrap.className='nav-folder'; wrap.setAttribute('aria-open','false');
+
       const btn=document.createElement('button'); btn.className='nav-btn'; btn.setAttribute('aria-expanded','false');
       btn.innerHTML=`<span class="ico-folder"></span><span>${node.label}</span><span class="caret"></span>`;
       wrap.appendChild(btn);
 
       const sub=document.createElement('div'); sub.className='sub';
       const ul=document.createElement('ul');
+
       node.children.forEach(child=>{
         const li=document.createElement('li');
         if(child.children){
@@ -283,18 +298,45 @@
         }
         ul.appendChild(li);
       });
-      sub.appendChild(ul); wrap.appendChild(sub);
 
-      btn.addEventListener('click',e=>{e.preventDefault();setOpen(wrap,wrap.getAttribute('aria-open')!=='true')});
-      document.addEventListener('click',e=>{if(!wrap.contains(e.target)) setOpen(wrap,false)});
-      btn.addEventListener('keydown',e=>{if(e.key==='Escape')setOpen(wrap,false); if(e.key==='ArrowDown'){setOpen(wrap,true); ul.querySelector('a')?.focus();}});
+      sub.appendChild(ul);
+      wrap.appendChild(sub);
+
+      // Click accesible
+      btn.addEventListener('click', e=>{
+        e.preventDefault();
+        const open = wrap.getAttribute('aria-open')==='true';
+        setOpen(wrap, !open);
+      });
+
+      // Cerrar si se hace click fuera
+      document.addEventListener('click', e=>{
+        if(!wrap.contains(e.target)) setOpen(wrap,false);
+      });
+
+      // Teclado
+      btn.addEventListener('keydown', e=>{
+        if(e.key==='Escape') setOpen(wrap,false);
+        if(e.key==='ArrowDown'){ setOpen(wrap,true); ul.querySelector('a')?.focus(); }
+      });
+
       return wrap;
     }
+
     function setOpen(folder, open){
       folder.setAttribute('aria-open', open?'true':'false');
-      folder.querySelector('.nav-btn').setAttribute('aria-expanded', open?'true':'false');
-      if(open){ document.querySelectorAll('.nav-folder').forEach(f=>{ if(f!==folder){ f.setAttribute('aria-open','false'); f.querySelector('.nav-btn').setAttribute('aria-expanded','false'); } }); }
+      const btn = folder.querySelector('.nav-btn');
+      btn.setAttribute('aria-expanded', open?'true':'false');
+      if(open){
+        document.querySelectorAll('.nav-folder').forEach(f=>{
+          if(f!==folder){
+            f.setAttribute('aria-open','false');
+            f.querySelector('.nav-btn').setAttribute('aria-expanded','false');
+          }
+        });
+      }
     }
+
     renderNav(NAV_TREE);
   </script>
 </body>
