@@ -211,7 +211,7 @@
        SCRIPTS (NAV + TYPING)
   ========================== -->
   <script>
-    /* ===== Año en footer ===== */
+    /* ===== Año ===== */
     document.getElementById('y').textContent = new Date().getFullYear();
 
     /* ===== Doble typing ===== */
@@ -310,7 +310,7 @@
       const nav = document.getElementById('nav');
       tree.forEach(node => nav.appendChild(createNode(node)));
 
-      // Hover-intent: abrir al entrar y cerrar solo cuando se abandona todo el bloque
+      // Abrir al entrar, cerrar SOLO cuando sales del bloque entero (botón + popover)
       const timers = new WeakMap();
       document.querySelectorAll('.nav-folder').forEach(folder=>{
         folder.addEventListener('mouseenter', ()=>{
@@ -318,7 +318,7 @@
           setOpen(folder, true);
         });
         folder.addEventListener('mouseleave', ()=>{
-          const t = setTimeout(()=> setOpen(folder,false,true), 220);
+          const t = setTimeout(()=> setOpen(folder,false,true), 220); // resetInternos=true
           timers.set(folder,t);
         });
       });
@@ -337,7 +337,7 @@
       const wrap=document.createElement('div');
       wrap.className='nav-folder';
       wrap.setAttribute('aria-open','false');
-      if (node.sticky) wrap.dataset.sticky = "true"; // Portafolio
+      if (node.sticky) wrap.dataset.sticky = "true"; // SOLO Portafolio
 
       const btn=document.createElement('button');
       btn.className='nav-btn';
@@ -374,7 +374,7 @@
           });
           li.appendChild(nested);
 
-          // Abrir persistente por hover o click
+          // Abrir persistente mientras estés dentro del popover
           const open = ()=> li.classList.add('open');
           link.addEventListener('mouseenter', open);
           link.addEventListener('click', (e)=>{ e.preventDefault(); open(); });
@@ -418,19 +418,20 @@
           }
         });
 
-        // Para Portafolio: abrir a la vez Ciberseguridad y Sistemas (evita cambios de tamaño)
+        // --- MODO STICKY SOLO PARA PORTAFOLIO ---
         if (folder.dataset.sticky === "true") {
+          // Mantén abiertos simultáneamente Ciberseguridad y Sistemas mientras estés dentro
           const ul = folder.querySelector('.sub > ul');
           ul?.querySelectorAll(':scope > li > .nested').forEach(n => n.parentElement.classList.add('open'));
         }
       }else if(resetInternos){
-        // Al cerrarse el folder se resetean sus subapartados
+        // Al salir por completo del bloque, volver a estado default (sin subapartados abiertos)
         const ul = folder.querySelector('.sub > ul');
         ul?.querySelectorAll(':scope > li.open').forEach(li=>li.classList.remove('open'));
       }
     }
 
-    // Inicializa menú
+    // Init
     renderNav(NAV_TREE);
   </script>
 </body>
