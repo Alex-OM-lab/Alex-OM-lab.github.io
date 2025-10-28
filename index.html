@@ -6,9 +6,6 @@
   <title>Alejandro Orcajada Meseguer | Administrador de Sistemas y Ciberseguridad</title>
   <meta name="description" content="Portafolio profesional de Alejandro Orcajada Meseguer, Administrador de Sistemas y Ciberseguridad." />
 
-  <!-- =========================
-       ESTILOS GLOBALES
-  ========================== -->
   <style>
     :root{
       --bg:#0e1320; --text:#e6edf3; --muted:#a9b1bd;
@@ -30,14 +27,12 @@
     /* ====== NAV MULTINIVEL ====== */
     .menu{display:flex;gap:10px;flex-wrap:wrap}
 
-    /* enlace simple (sin hijos) */
     .nav-link{
       color:var(--text);text-decoration:none;padding:8px 12px;border-radius:999px;font-weight:600;
       border:1px solid transparent;transition:transform .12s,background .2s,border-color .2s
     }
     .nav-link:hover{transform:translateY(-1px);background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.35);color:var(--accent-soft)}
 
-    /* carpeta */
     .nav-folder{position:relative}
     .nav-btn{
       display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;border:1px solid transparent;
@@ -58,8 +53,8 @@
     .sub>ul{
       list-style:none;margin:0;padding:8px;background:rgba(18,25,43,.98);
       border:1px solid rgba(255,255,255,.06);border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.35);
-      transform-origin:top left;transform:scaleY(.9);opacity:0;max-height:0;overflow:hidden;
-      transition:transform .18s ease,opacity .18s ease,max-height .28s ease
+      transform-origin:top left;transform:scaleY(.92);opacity:0;max-height:0;overflow:hidden;
+      transition:transform .2s ease,opacity .2s ease,max-height .32s ease;
     }
     .sub a{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border-radius:8px;
       text-decoration:none;color:var(--text);border:1px solid transparent}
@@ -68,16 +63,16 @@
     /* popover ABIERTO: estable + scroll */
     .nav-folder[aria-open="true"] > .sub > ul{
       pointer-events:auto;transform:scaleY(1);opacity:1;
-      max-height:80vh;min-height:260px;overflow:auto;
+      max-height:80vh;min-height:220px;overflow:auto;
     }
     .nav-folder[aria-open="true"] > .nav-btn .caret{transform:rotate(45deg)}
 
-    /* Acordeón interno ---------------------------------- */
+    /* Acordeón interno */
     .nested{
-      max-height:0;overflow:hidden;transition:max-height .28s ease;
+      max-height:0;overflow:hidden;transition:max-height .3s ease;
       margin-top:6px;padding-left:10px;border-left:2px dashed rgba(245,158,11,.25)
     }
-    .sub li.open > .nested{max-height:1000px}
+    .sub li.open > .nested{max-height:1200px}
 
     /* scrollbar estético */
     .sub>ul::-webkit-scrollbar{width:10px}
@@ -219,7 +214,7 @@
     /* ===== Año en footer ===== */
     document.getElementById('y').textContent = new Date().getFullYear();
 
-    /* ===== Doble typing (nombre -> rol -> lead) ===== */
+    /* ===== Doble typing ===== */
     const nameText = "Alejandro Orcajada Meseguer";
     const roleText = "Administrador de Sistemas y Ciberseguridad";
     const speed = 44;
@@ -232,11 +227,11 @@
     function typeRole(){ if(j<roleText.length){ elRole.textContent += roleText.charAt(j++); setTimeout(typeRole,speed); } else { cursor.remove(); lead.classList.add('show'); } }
     setTimeout(typeName,300);
 
-    /* ===== NAV: estructura ===== */
+    /* ===== NAV: datos ===== */
     const NAV_TREE = [
       { label:"Inicio", href:"/" },
 
-      { label:"Portafolio", children:[
+      { label:"Portafolio", sticky:true, children:[
         {
           label:"Ciberseguridad",
           href:"/portafolio/Ciberseguridad/",
@@ -315,24 +310,22 @@
       const nav = document.getElementById('nav');
       tree.forEach(node => nav.appendChild(createNode(node)));
 
-      // Anti-flicker: cierre con retardo usando la caja real del popover (.sub)
-      const closeTimers = new WeakMap();
+      // Hover-intent: abrir al entrar y cerrar solo cuando se abandona todo el bloque
+      const timers = new WeakMap();
       document.querySelectorAll('.nav-folder').forEach(folder=>{
-        const sub = folder.querySelector('.sub');
         folder.addEventListener('mouseenter', ()=>{
-          const t = closeTimers.get(folder); if(t) clearTimeout(t);
+          const t = timers.get(folder); if(t) clearTimeout(t);
           setOpen(folder, true);
         });
-        sub.addEventListener('mouseleave', ()=>{
-          const t = setTimeout(()=> setOpen(folder,false), 250);
-          closeTimers.set(folder, t);
+        folder.addEventListener('mouseleave', ()=>{
+          const t = setTimeout(()=> setOpen(folder,false,true), 220);
+          timers.set(folder,t);
         });
       });
     }
 
     /* ===== NAV: crear nodo ===== */
     function createNode(node){
-      // enlace simple
       if(!node.children){
         const a=document.createElement('a');
         a.className='nav-link';
@@ -341,16 +334,15 @@
         return a;
       }
 
-      // carpeta
       const wrap=document.createElement('div');
       wrap.className='nav-folder';
       wrap.setAttribute('aria-open','false');
+      if (node.sticky) wrap.dataset.sticky = "true"; // Portafolio
 
       const btn=document.createElement('button');
       btn.className='nav-btn';
       btn.setAttribute('aria-expanded','false');
 
-      // si hay href en carpeta, el texto es enlace clicable
       const labelHTML = node.href
         ? `<a href="${node.href}" class="nav-btn-link">${node.label}</a>`
         : `<span>${node.label}</span>`;
@@ -358,12 +350,13 @@
       btn.innerHTML=`<span class="ico-folder"></span>${labelHTML}<span class="caret"></span>`;
       wrap.appendChild(btn);
 
-      // popover
+      // Popover
       const sub=document.createElement('div'); sub.className='sub';
       const ul=document.createElement('ul');
 
       node.children.forEach(child=>{
         const li=document.createElement('li');
+
         if(child.children){
           const link=document.createElement('a');
           link.href=child.href||'#';
@@ -380,30 +373,31 @@
             nested.appendChild(li2);
           });
           li.appendChild(nested);
+
+          // Abrir persistente por hover o click
+          const open = ()=> li.classList.add('open');
+          link.addEventListener('mouseenter', open);
+          link.addEventListener('click', (e)=>{ e.preventDefault(); open(); });
         }else{
           const a=document.createElement('a'); a.href=child.href||'#'; a.textContent=child.label; li.appendChild(a);
         }
+
         ul.appendChild(li);
       });
 
       sub.appendChild(ul);
       wrap.appendChild(sub);
 
-      // click para abrir/cerrar
+      // Click del botón: abrir/cerrar
       btn.addEventListener('click', e=>{
         e.preventDefault();
         const open = wrap.getAttribute('aria-open')==='true';
         setOpen(wrap, !open);
       });
 
-      // click fuera -> cerrar
-      document.addEventListener('click', e=>{
-        if(!wrap.contains(e.target)) setOpen(wrap,false);
-      });
-
-      // teclado
+      // Teclado
       btn.addEventListener('keydown', e=>{
-        if(e.key==='Escape') setOpen(wrap,false);
+        if(e.key==='Escape') setOpen(wrap,false,true);
         if(e.key==='ArrowDown'){ setOpen(wrap,true); ul.querySelector('a')?.focus(); }
       });
 
@@ -411,46 +405,33 @@
     }
 
     /* ===== NAV: abrir/cerrar ===== */
-    function setOpen(folder, open){
+    function setOpen(folder, open, resetInternos=false){
       folder.setAttribute('aria-open', open?'true':'false');
       folder.querySelector('.nav-btn').setAttribute('aria-expanded', open?'true':'false');
+
       if(open){
+        // Cerrar otros folders de primer nivel
         document.querySelectorAll('.nav-folder').forEach(f=>{
           if(f!==folder){
             f.setAttribute('aria-open','false');
             f.querySelector('.nav-btn').setAttribute('aria-expanded','false');
           }
         });
+
+        // Para Portafolio: abrir a la vez Ciberseguridad y Sistemas (evita cambios de tamaño)
+        if (folder.dataset.sticky === "true") {
+          const ul = folder.querySelector('.sub > ul');
+          ul?.querySelectorAll(':scope > li > .nested').forEach(n => n.parentElement.classList.add('open'));
+        }
+      }else if(resetInternos){
+        // Al cerrarse el folder se resetean sus subapartados
+        const ul = folder.querySelector('.sub > ul');
+        ul?.querySelectorAll(':scope > li.open').forEach(li=>li.classList.remove('open'));
       }
-    }
-
-    // ===== Acordeón dentro de cada popover (punto medio) =====
-    function wireAccordionInsidePopovers(){
-      document.querySelectorAll('.nav-folder .sub > ul').forEach(ul => {
-        const rootFolder = ul.closest('.nav-folder');
-
-        // Abre el primer item con nested la primera vez que entras
-        rootFolder.addEventListener('mouseenter', () => {
-          const firstWithNested = ul.querySelector(':scope > li > .nested')?.parentElement;
-          if (firstWithNested && !ul.querySelector(':scope > li.open')) {
-            firstWithNested.classList.add('open');
-          }
-        }, { once: true });
-
-        // Al pasar por cada LI abre su nested y cierra los demás
-        ul.querySelectorAll(':scope > li').forEach(li => {
-          li.addEventListener('mouseenter', () => {
-            ul.querySelectorAll(':scope > li.open').forEach(o => o.classList.remove('open'));
-            li.classList.add('open');
-          });
-        });
-      });
     }
 
     // Inicializa menú
     renderNav(NAV_TREE);
-    wireAccordionInsidePopovers();
   </script>
 </body>
 </html>
-
