@@ -62,8 +62,14 @@
     .nav-folder[aria-open="true"] > .sub > ul{pointer-events:auto;transform:scaleY(1);opacity:1;max-height:80vh;overflow:auto}
     .nav-folder[aria-open="true"] > .nav-btn .caret{transform:rotate(45deg)}
 
-    /* ====== PANEL LATERAL (solo Portafolio) ====== */
-    .sub{position:absolute}
+    /* ====== NESTED (Niveles 1→2 hacia ABAJO) ====== */
+    .nested{
+      max-height:0;overflow:hidden;transition:max-height .3s ease;
+      margin-top:6px;padding-left:10px;border-left:2px dashed rgba(245,158,11,.25)
+    }
+    .sub li.open > .nested{max-height:1200px}
+
+    /* ====== PANEL LATERAL SOLO PARA NIVEL 3 (a la derecha) ====== */
     .sub .side{
       position:absolute; top:0; left:calc(100% + 12px); width:340px;
       background:rgba(18,25,43,.98); border:1px solid rgba(255,255,255,.06);
@@ -71,6 +77,7 @@
       padding:8px; opacity:0; transform:translateX(-6px);
       pointer-events:none; transition:opacity .18s ease, transform .18s ease;
     }
+    /* Se muestra solo en Portafolio cuando hay contenido lvl3 para una subcarpeta */
     .nav-folder[data-sticky="true"][data-panel="show"][aria-open="true"] .side{
       opacity:1; transform:translateX(0); pointer-events:auto;
     }
@@ -79,10 +86,7 @@
     .side-list a{display:block;padding:10px 12px;border-radius:8px;color:var(--text);text-decoration:none}
     .side-list a:hover{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25)}
 
-    /* ====== ACORDEÓN INTERNO (para otros menús si se usa) ====== */
-    .nested{max-height:0;overflow:hidden;transition:max-height .3s ease;margin-top:6px;padding-left:10px;border-left:2px dashed rgba(245,158,11,.25)}
-    .sub li.open > .nested{max-height:1200px}
-
+    /* scroll estético */
     .sub>ul::-webkit-scrollbar{width:10px}
     .sub>ul::-webkit-scrollbar-thumb{background:rgba(245,158,11,.2);border-radius:10px}
     .sub>ul::-webkit-scrollbar-track{background:rgba(255,255,255,.04)}
@@ -151,7 +155,8 @@
     <section id="adm" aria-labelledby="adm-title">
       <h2 id="adm-title" class="section-title">Administración de Sistemas</h2>
       <p class="kicker">Infraestructura reproducible y observable.</p>
-      <div class="card">Linux/Windows, IaC (Terraform/Ansible), contenedores (Docker/K8s), redes y servidores (Nginx/Apache), CI/CD y observabilidad.</div>
+      <div class="card">Linux/Windows, IaC (Terraform/Ansible), contenedores (Docker/K8s), redes y servidores (Nginx/Apache), CI/CD y observabilidad
+            </div>
     </section>
 
     <section id="skills" aria-labelledby="skills-title">
@@ -207,11 +212,14 @@
 
   <footer>© <span id="y"></span> Alejandro Orcajada Meseguer — Administrador de Sistemas y Ciberseguridad</footer>
 
+  <!-- =========================
+       SCRIPTS (typing + NAV con panel lvl3 a la derecha)
+  ========================== -->
   <script>
     /* ===== Año ===== */
     document.getElementById('y').textContent = new Date().getFullYear();
 
-    /* ===== Typing ===== */
+    /* ===== Doble typing ===== */
     const nameText = "Alejandro Orcajada Meseguer";
     const roleText = "Administrador de Sistemas y Ciberseguridad";
     const speed = 44;
@@ -224,9 +232,13 @@
     function typeRole(){ if(j<roleText.length){ elRole.textContent += roleText.charAt(j++); setTimeout(typeRole,speed); } else { cursor.remove(); lead.classList.add('show'); } }
     setTimeout(typeName,300);
 
-    /* ===== Datos del NAV ===== */
-    // Añadí 7 artículos de ejemplo (lvl 3) bajo cada subcarpeta (lvl 2)
-    const seven = (base)=> Array.from({length:7}).map((_,i)=>({label:`${base} — Artículo ${i+1}`, href:"#"}));
+    /* ===== Datos del NAV
+       Nivel 0: Portafolio
+       Nivel 1: Ciberseguridad / Sistemas
+       Nivel 2: Subcarpetas
+       Nivel 3: Artículos (se muestran en panel derecho)
+    ===== */
+    const seven = base => Array.from({length:7}, (_,i)=>({label:`${base} · Artículo ${i+1}`, href:"#"}));
 
     const NAV_TREE = [
       { label:"Inicio", href:"/" },
@@ -238,8 +250,8 @@
           children:[
             { label:"Análisis Forense", href:"#", children: seven("Análisis Forense") },
             { label:"DevSecOps", href:"#", children: seven("DevSecOps") },
-            { label:"Documentación e informes", href:"#", children: seven("Docs & Informes") },
-            { label:"Puesta en producción segura", href:"#", children: seven("Prod Segura") },
+            { label:"Documentación e informes", href:"#", children: seven("Docs e informes") },
+            { label:"Puesta en producción segura", href:"#", children: seven("Producción segura") },
             { label:"Respuesta a Incidentes", href:"#", children: seven("Respuesta a Incidentes") },
             { label:"Seguridad en redes", href:"#", children: seven("Seguridad en redes") },
             { label:"Seguridad de sistemas", href:"#", children: seven("Seguridad de sistemas") }
@@ -257,22 +269,14 @@
       ]},
 
       { label:"Teoría y Casos Curiosos", children:[
-        {
-          label:"Ciberseguridad",
-          href:"/Teoria-casos-curiosos/ciberseguridad/",
-          children:[
-            { label:"Análisis Forense", href:"#", children: seven("Teoría · Forense") },
-            { label:"Respuesta a Incidentes", href:"#", children: seven("Teoría · Incidentes") }
-          ]
-        },
-        {
-          label:"Sistemas",
-          href:"/Teoria-casos-curiosos/sistemas/",
-          children:[
-            { label:"Redes", href:"#", children: seven("Teoría · Redes") },
-            { label:"Conceptos", href:"#", children: seven("Teoría · Conceptos") }
-          ]
-        }
+        { label:"Ciberseguridad", href:"#", children:[
+          { label:"Análisis Forense", href:"#", children: seven("Teoría · Forense") },
+          { label:"Respuesta a Incidentes", href:"#", children: seven("Teoría · Incidentes") }
+        ]},
+        { label:"Sistemas", href:"#", children:[
+          { label:"Redes", href:"#", children: seven("Teoría · Redes") },
+          { label:"Conceptos", href:"#", children: seven("Teoría · Conceptos") }
+        ]}
       ]},
 
       { label:"Laboratorio", href:"/Laboratorio/", children:[
@@ -283,11 +287,12 @@
       { label:"Contacto", href:"/contacto/" }
     ];
 
-    /* ===== Render NAV ===== */
+    /* ===== Render del NAV ===== */
     function renderNav(tree){
       const nav = document.getElementById('nav');
       tree.forEach(node => nav.appendChild(createNode(node)));
 
+      // Hover-intent por carpeta de 1er nivel
       const timers = new WeakMap();
       document.querySelectorAll('.nav-folder').forEach(folder=>{
         folder.addEventListener('mouseenter', ()=>{
@@ -301,7 +306,9 @@
       });
     }
 
+    /* ===== Crear cada nodo del árbol ===== */
     function createNode(node){
+      // enlace simple
       if(!node.children){
         const a=document.createElement('a');
         a.className='nav-link';
@@ -310,6 +317,7 @@
         return a;
       }
 
+      // carpeta 1er nivel
       const wrap=document.createElement('div');
       wrap.className='nav-folder';
       wrap.setAttribute('aria-open','false');
@@ -318,109 +326,109 @@
       const btn=document.createElement('button');
       btn.className='nav-btn';
       btn.setAttribute('aria-expanded','false');
-
-      const labelHTML = node.href
-        ? `<a href="${node.href}" class="nav-btn-link">${node.label}</a>`
-        : `<span>${node.label}</span>`;
+      const labelHTML = node.href ? `<a href="${node.href}" class="nav-btn-link">${node.label}</a>` : `<span>${node.label}</span>`;
       btn.innerHTML=`<span class="ico-folder"></span>${labelHTML}<span class="caret"></span>`;
       wrap.appendChild(btn);
 
-      // Popover
+      // popover del folder
       const sub=document.createElement('div'); sub.className='sub';
       const ul=document.createElement('ul');
-
-      node.children.forEach(child=>{
-        const li=document.createElement('li');
-
-        const link=document.createElement('a');
-        link.href=child.href||'#';
-        link.innerHTML=`<span>${child.label}</span><span style="opacity:.6">›</span>`;
-        li.appendChild(link);
-
-        // Nivel 3 (artículos) como UL oculto (para clonar hacia el panel derecho)
-        if(child.children){
-          const nested=document.createElement('ul'); nested.className='nested';
-          child.children.forEach(g=>{
-            const li2=document.createElement('li');
-            const a2=document.createElement('a');
-            a2.href=g.href||'#';
-            a2.textContent=g.label;
-            li2.appendChild(a2);
-            nested.appendChild(li2);
-          });
-          li.appendChild(nested);
-        }
-
-        ul.appendChild(li);
-      });
-
       sub.appendChild(ul);
 
-      // ==== PANEL LATERAL (sólo para Portafolio) ====
-      let side=null;
+      // --- PANEL LATERAL (para mostrar NIVEL 3 a la derecha SOLO en Portafolio)
+      let side = null;
       if (wrap.dataset.sticky === "true") {
         side = document.createElement('div');
         side.className = 'side';
-        side.innerHTML = `<div class="side-box">
-            <div class="side-title">Selecciona una subcarpeta…</div>
-            <ul class="side-list"></ul>
-          </div>`;
+        side.innerHTML = `
+          <div class="side-title">Selecciona una subcarpeta…</div>
+          <ul class="side-list"></ul>
+        `;
         sub.appendChild(side);
-
-        // Mostrar/actualizar panel al pasar por una subcarpeta (lvl 2)
-        ul.querySelectorAll(':scope > li').forEach(li=>{
-          const link = li.querySelector(':scope > a');
-          const nested = li.querySelector(':scope > .nested'); // artículos (lvl 3)
-
-          link.addEventListener('mouseenter', ()=>{
-            if (nested) {
-              // Rellena panel con artículos de esa subcarpeta
-              const title = side.querySelector('.side-title');
-              const list  = side.querySelector('.side-list');
-              title.textContent = link.textContent.trim();
-              list.innerHTML = '';
-              nested.querySelectorAll('a').forEach(a=>{
-                const item = document.createElement('li');
-                const copy = a.cloneNode(true);
-                item.appendChild(copy);
-                list.appendChild(item);
-              });
-              wrap.setAttribute('data-panel','show');
-            } else {
-              // Si no tiene artículos, oculta panel
-              wrap.removeAttribute('data-panel');
-              const list  = side.querySelector('.side-list');
-              const title = side.querySelector('.side-title');
-              title.textContent = "Sin artículos";
-              list.innerHTML = '';
-            }
-          });
-        });
       }
 
-      wrap.appendChild(sub);
+      // Rellenar lvl 1 (Ciberseguridad / Sistemas)
+      node.children.forEach(childLvl1=>{
+        const liLvl1=document.createElement('li');
 
-      // Click botón carpeta
+        // Enlace lvl1
+        const link1=document.createElement('a');
+        link1.href=childLvl1.href||'#';
+        link1.innerHTML=`<span>${childLvl1.label}</span><span style="opacity:.6">›</span>`;
+        liLvl1.appendChild(link1);
+
+        // Lista lvl2 (subcarpetas que cuelgan hacia ABAJO)
+        const ulLvl2=document.createElement('ul'); ulLvl2.className='nested';
+        childLvl1.children?.forEach(childLvl2=>{
+          const liLvl2=document.createElement('li');
+          const link2=document.createElement('a');
+          link2.href=childLvl2.href||'#';
+          link2.innerHTML=`<span>${childLvl2.label}</span><span style="opacity:.6">›</span>`;
+          liLvl2.appendChild(link2);
+
+          // Guardamos (oculto) sus artículos lvl3 para alimentar el panel lateral
+          const hiddenLvl3=document.createElement('ul');
+          hiddenLvl3.style.display='none';
+          childLvl2.children?.forEach(a3=>{
+            const li3=document.createElement('li');
+            const a=document.createElement('a');
+            a.href=a3.href||'#'; a.textContent=a3.label;
+            li3.appendChild(a); hiddenLvl3.appendChild(li3);
+          });
+          liLvl2.appendChild(hiddenLvl3);
+
+          // Al pasar por una subcarpeta lvl2 -> mostrar sus artículos en el panel derecho
+          if (wrap.dataset.sticky === "true") {
+            link2.addEventListener('mouseenter', ()=>{
+              const title = side.querySelector('.side-title');
+              const list  = side.querySelector('.side-list');
+              title.textContent = `${childLvl1.label} / ${childLvl2.label}`;
+              list.innerHTML = '';
+              hiddenLvl3.querySelectorAll('a').forEach(a=>{
+                const li = document.createElement('li');
+                const copy = a.cloneNode(true);
+                li.appendChild(copy);
+                list.appendChild(li);
+              });
+              wrap.setAttribute('data-panel','show');
+            });
+          }
+
+          ulLvl2.appendChild(liLvl2);
+        });
+        liLvl1.appendChild(ulLvl2);
+        ul.appendChild(liLvl1);
+
+        // Abrimos lvl2 al entrar en el bloque de cada lvl1 (y no cerramos el otro)
+        link1.addEventListener('mouseenter', ()=>{
+          liLvl1.classList.add('open');
+        });
+      });
+
+      // Mantener abierto/cerrar por botón
       btn.addEventListener('click', e=>{
         e.preventDefault();
         const open = wrap.getAttribute('aria-open')==='true';
         setOpen(wrap, !open);
       });
 
-      // Teclado
+      // Accesibilidad
       btn.addEventListener('keydown', e=>{
         if(e.key==='Escape') setOpen(wrap,false,true);
         if(e.key==='ArrowDown'){ setOpen(wrap,true); ul.querySelector('a')?.focus(); }
       });
 
+      wrap.appendChild(sub);
       return wrap;
     }
 
+    /* ===== Abrir/Cerrar folders de 1er nivel ===== */
     function setOpen(folder, open, resetInternos=false){
       folder.setAttribute('aria-open', open?'true':'false');
       folder.querySelector('.nav-btn').setAttribute('aria-expanded', open?'true':'false');
 
       if(open){
+        // Cerrar otros 1er nivel
         document.querySelectorAll('.nav-folder').forEach(f=>{
           if(f!==folder){
             f.setAttribute('aria-open','false');
@@ -429,7 +437,9 @@
           }
         });
       } else if (resetInternos){
-        folder.removeAttribute('data-panel'); // ocultar panel al cerrar Portafolio
+        // Ocultar panel derecho y colapsar nested de ese folder
+        folder.removeAttribute('data-panel');
+        folder.querySelectorAll(':scope .sub > ul > li').forEach(li=>li.classList.remove('open'));
       }
     }
 
