@@ -50,6 +50,8 @@
     /* popover base */
     .sub{position:absolute;top:100%;left:0;min-width:360px;padding-top:0}
     .sub::before{content:"";position:absolute;top:-10px;left:0;right:0;height:12px} /* colchón anti-flicker */
+
+    /* Estado cerrado (escala + altura) */
     .sub>ul{
       list-style:none;margin:0;padding:8px;background:rgba(18,25,43,.98);
       border:1px solid rgba(255,255,255,.06);border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.35);
@@ -60,12 +62,16 @@
       text-decoration:none;color:var(--text);border:1px solid transparent}
     .sub a:hover{background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.25)}
 
-    /* popover ABIERTO: estable + scroll */
+    /* popover ABIERTO */
     .nav-folder[aria-open="true"] > .sub > ul{
       pointer-events:auto;transform:scaleY(1);opacity:1;
-      max-height:80vh;min-height:220px;overflow:auto;
+      max-height:80vh;overflow:auto;
+      /* ojo: sin min-height por defecto para que NO quede espacio en blanco */
     }
-    .nav-folder[aria-open="true"] > .nav-btn .caret{transform:rotate(45deg)}
+    /* Solo Portafolio: altura base agradable (pero discreta) */
+    .nav-folder[data-sticky="true"][aria-open="true"] > .sub > ul{
+      min-height:140px; /* suficiente para 2 filas + respiro, sin hueco enorme */
+    }
 
     /* Acordeón interno */
     .nested{
@@ -117,9 +123,7 @@
 </head>
 <body>
 
-  <!-- =========================
-       NAV SUPERIOR
-  ========================== -->
+  <!-- ========================= NAV SUPERIOR ========================== -->
   <header class="topbar">
     <div class="topwrap">
       <a class="brand" href="/"><span class="brand-dot"></span><span>AO · Portafolio</span></a>
@@ -127,9 +131,7 @@
     </div>
   </header>
 
-  <!-- =========================
-       HERO (DOBLE TYPING)
-  ========================== -->
+  <!-- ========================= HERO (DOBLE TYPING) ========================== -->
   <div id="home" class="hero-wrap">
     <div class="hero">
       <h1><span id="typeName"></span></h1>
@@ -138,9 +140,7 @@
     </div>
   </div>
 
-  <!-- =========================
-       CONTENIDO
-  ========================== -->
+  <!-- ========================= CONTENIDO ========================== -->
   <main class="container">
     <section id="ciber" aria-labelledby="ciber-title">
       <h2 id="ciber-title" class="section-title">Ciberseguridad</h2>
@@ -207,9 +207,7 @@
 
   <footer>© <span id="y"></span> Alejandro Orcajada Meseguer — Administrador de Sistemas y Ciberseguridad</footer>
 
-  <!-- =========================
-       SCRIPTS (NAV + TYPING)
-  ========================== -->
+  <!-- ========================= SCRIPTS (NAV + TYPING) ========================== -->
   <script>
     /* ===== Año ===== */
     document.getElementById('y').textContent = new Date().getFullYear();
@@ -227,33 +225,29 @@
     function typeRole(){ if(j<roleText.length){ elRole.textContent += roleText.charAt(j++); setTimeout(typeRole,speed); } else { cursor.remove(); lead.classList.add('show'); } }
     setTimeout(typeName,300);
 
-    /* ===== NAV: datos ===== */
+    /* ===== NAV: estructura de datos ===== */
     const NAV_TREE = [
       { label:"Inicio", href:"/" },
 
       { label:"Portafolio", sticky:true, children:[
-        {
+        {  /* SOLO DOS entradas visibles aquí */
           label:"Ciberseguridad",
           href:"/portafolio/Ciberseguridad/",
           children:[
-            {
-              label:"Análisis Forense",
-              href:"/portafolio/Ciberseguridad/Analisis-Forense/",
-              children:[
-                { label:"Ejemplo 1", href:"/portafolio/Ciberseguridad/Analisis-Forense/ejemplo1.html" },
-                { label:"Metodologías", href:"/portafolio/Ciberseguridad/Analisis-Forense/metodologias/" },
-                { label:"Herramientas",  href:"/portafolio/Ciberseguridad/Analisis-Forense/herramientas/" },
-                { label:"Casos", href:"/portafolio/Ciberseguridad/Analisis-Forense/casos/", children:[
-                  { label:"Caso Blue", href:"/portafolio/Ciberseguridad/Analisis-Forense/casos/blue/" }
-                ]}
-              ]
-            },
-            { label:"DevSecOps",               href:"/portafolio/Ciberseguridad/DevSecOps/" },
-            { label:"Documentación e informes",href:"/portafolio/Ciberseguridad/Documentación-informes/" },
+            { label:"Análisis Forense", href:"/portafolio/Ciberseguridad/Analisis-Forense/", children:[
+              { label:"Ejemplo 1", href:"/portafolio/Ciberseguridad/Analisis-Forense/ejemplo1.html" },
+              { label:"Metodologías", href:"/portafolio/Ciberseguridad/Analisis-Forense/metodologias/" },
+              { label:"Herramientas",  href:"/portafolio/Ciberseguridad/Analisis-Forense/herramientas/" },
+              { label:"Casos", href:"/portafolio/Ciberseguridad/Analisis-Forense/casos/", children:[
+                { label:"Caso Blue", href:"/portafolio/Ciberseguridad/Analisis-Forense/casos/blue/" }
+              ]}
+            ]},
+            { label:"DevSecOps", href:"/portafolio/Ciberseguridad/DevSecOps/" },
+            { label:"Documentación e informes", href:"/portafolio/Ciberseguridad/Documentación-informes/" },
             { label:"Puesta en producción segura", href:"/portafolio/Ciberseguridad/Puesta-produccion-segura/" },
-            { label:"Respuesta a Incidentes",  href:"/portafolio/Ciberseguridad/Respuesta-incidentes/" },
-            { label:"Seguridad en redes",      href:"/portafolio/Ciberseguridad/Seguridad-redes/" },
-            { label:"Seguridad de sistemas",   href:"/portafolio/Ciberseguridad/Seguridad-sistemas/" }
+            { label:"Respuesta a Incidentes", href:"/portafolio/Ciberseguridad/Respuesta-incidentes/" },
+            { label:"Seguridad en redes", href:"/portafolio/Ciberseguridad/Seguridad-redes/" },
+            { label:"Seguridad de sistemas", href:"/portafolio/Ciberseguridad/Seguridad-sistemas/" }
           ]
         },
         {
@@ -272,16 +266,12 @@
           label:"Ciberseguridad",
           href:"/Teoria-casos-curiosos/ciberseguridad/",
           children:[
-            {
-              label:"Análisis Forense",
-              href:"/Teoria-casos-curiosos/ciberseguridad/Analisis-Forense/",
-              children:[
-                { label:"Notas N1", href:"/Teoria-casos-curiosos/ciberseguridad/Analisis-Forense/notas-n1/" },
-                { label:"Casos", href:"/Teoria-casos-curiosos/ciberseguridad/Analisis-Forense/casos/", children:[
-                  { label:"Caso curioso 1", href:"/Teoria-casos-curiosos/ciberseguridad/Analisis-Forense/casos/caso-1/" }
-                ]}
-              ]
-            },
+            { label:"Análisis Forense", href:"/Teoria-casos-curiosos/ciberseguridad/Analisis-Forense/", children:[
+              { label:"Notas N1", href:"/Teoria-casos-curiosos/ciberseguridad/Analisis-Forense/notas-n1/" },
+              { label:"Casos", href:"/Teoria-casos-curiosos/ciberseguridad/Analisis-Forense/casos/", children:[
+                { label:"Caso curioso 1", href:"/Teoria-casos-curiosos/ciberseguridad/Analisis-Forense/casos/caso-1/" }
+              ]}
+            ]},
             { label:"Respuesta a Incidentes", href:"/Teoria-casos-curiosos/ciberseguridad/Respuesta-incidentes/" }
           ]
         },
@@ -296,9 +286,7 @@
       ]},
 
       { label:"Laboratorio", href:"/Laboratorio/", children:[
-        { label:"TryHackMe", href:"/Laboratorio/tryhackme/", children:[
-          { label:"Blue", href:"/Laboratorio/tryhackme/blue/" }
-        ]},
+        { label:"TryHackMe", href:"/Laboratorio/tryhackme/", children:[ { label:"Blue", href:"/Laboratorio/tryhackme/blue/" } ]},
         { label:"HackTheBox", href:"/Laboratorio/hackthebox/" }
       ]},
 
@@ -310,7 +298,7 @@
       const nav = document.getElementById('nav');
       tree.forEach(node => nav.appendChild(createNode(node)));
 
-      // Abrir al entrar, cerrar SOLO cuando sales del bloque entero (botón + popover)
+      // Hover-intent en cada folder: abrir al entrar, cerrar SOLO al salir del bloque entero
       const timers = new WeakMap();
       document.querySelectorAll('.nav-folder').forEach(folder=>{
         folder.addEventListener('mouseenter', ()=>{
@@ -318,7 +306,7 @@
           setOpen(folder, true);
         });
         folder.addEventListener('mouseleave', ()=>{
-          const t = setTimeout(()=> setOpen(folder,false,true), 220); // resetInternos=true
+          const t = setTimeout(()=> setOpen(folder,false,true), 220); // resetInternos al salir
           timers.set(folder,t);
         });
       });
@@ -374,10 +362,22 @@
           });
           li.appendChild(nested);
 
-          // Abrir persistente mientras estés dentro del popover
-          const open = ()=> li.classList.add('open');
-          link.addEventListener('mouseenter', open);
-          link.addEventListener('click', (e)=>{ e.preventDefault(); open(); });
+          // --- Comportamiento de apertura ---
+          const rootFolder = wrap;
+
+          if (rootFolder.dataset.sticky === "true") {
+            // PORTAFOLIO: abrir y mantener; NO se cierran los otros li
+            const open = ()=> li.classList.add('open');
+            link.addEventListener('mouseenter', open);
+            link.addEventListener('click', (e)=>{ e.preventDefault(); open(); });
+          } else {
+            // RESTO (Teoría, etc.): abrir uno y cerrar hermanos para evitar espacio sobrante
+            link.addEventListener('mouseenter', ()=>{
+              ul.querySelectorAll(':scope > li.open').forEach(o=>o.classList.remove('open'));
+              li.classList.add('open');
+            });
+            link.addEventListener('click', (e)=>{ e.preventDefault(); li.classList.toggle('open'); });
+          }
         }else{
           const a=document.createElement('a'); a.href=child.href||'#'; a.textContent=child.label; li.appendChild(a);
         }
@@ -388,14 +388,14 @@
       sub.appendChild(ul);
       wrap.appendChild(sub);
 
-      // Click del botón: abrir/cerrar
+      // Click del botón de carpeta: abrir/cerrar
       btn.addEventListener('click', e=>{
         e.preventDefault();
         const open = wrap.getAttribute('aria-open')==='true';
         setOpen(wrap, !open);
       });
 
-      // Teclado
+      // Accesibilidad teclado
       btn.addEventListener('keydown', e=>{
         if(e.key==='Escape') setOpen(wrap,false,true);
         if(e.key==='ArrowDown'){ setOpen(wrap,true); ul.querySelector('a')?.focus(); }
@@ -404,7 +404,7 @@
       return wrap;
     }
 
-    /* ===== NAV: abrir/cerrar ===== */
+    /* ===== NAV: abrir/cerrar (folder de 1er nivel) ===== */
     function setOpen(folder, open, resetInternos=false){
       folder.setAttribute('aria-open', open?'true':'false');
       folder.querySelector('.nav-btn').setAttribute('aria-expanded', open?'true':'false');
@@ -417,15 +417,8 @@
             f.querySelector('.nav-btn').setAttribute('aria-expanded','false');
           }
         });
-
-        // --- MODO STICKY SOLO PARA PORTAFOLIO ---
-        if (folder.dataset.sticky === "true") {
-          // Mantén abiertos simultáneamente Ciberseguridad y Sistemas mientras estés dentro
-          const ul = folder.querySelector('.sub > ul');
-          ul?.querySelectorAll(':scope > li > .nested').forEach(n => n.parentElement.classList.add('open'));
-        }
-      }else if(resetInternos){
-        // Al salir por completo del bloque, volver a estado default (sin subapartados abiertos)
+      } else if (resetInternos) {
+        // Volver a estado default: cerrar subapartados abiertos dentro del folder
         const ul = folder.querySelector('.sub > ul');
         ul?.querySelectorAll(':scope > li.open').forEach(li=>li.classList.remove('open'));
       }
