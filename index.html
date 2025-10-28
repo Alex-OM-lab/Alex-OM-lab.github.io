@@ -50,11 +50,7 @@
     .sub{position:absolute;top:100%;left:0;min-width:360px;padding-top:0}
     /* Antiflicker superior + puente invisible hacia la derecha */
     .sub::before{content:"";position:absolute;top:-10px;left:0;right:0;height:12px}
-    .sub::after{
-      content:""; position:absolute; top:0; left:100%;
-      width:20px; height:100%; background:transparent;
-      pointer-events:auto;
-    }
+    .sub::after{content:""; position:absolute; top:0; left:100%; width:20px; height:100%; background:transparent; pointer-events:auto;}
 
     .sub>ul{
       list-style:none;margin:0;padding:8px;background:rgba(18,25,43,.98);
@@ -73,16 +69,11 @@
       max-height:0; opacity:0; transform:translateY(-4px);
       overflow:hidden; margin-top:6px; padding-left:10px;
       border-left:2px dashed rgba(245,158,11,.25);
-      transition:
-        max-height .28s ease,
-        opacity .22s ease,
-        transform .22s ease;
+      transition:max-height .28s ease, opacity .22s ease, transform .22s ease;
     }
-    .sub li.open > .nested{
-      max-height:1200px; opacity:1; transform:none;
-    }
+    .sub li.open > .nested{ max-height:1200px; opacity:1; transform:none; }
 
-    /* ====== PANEL LATERAL SOLO PARA NIVEL 3 (a la derecha) ====== */
+    /* ====== PANEL LATERAL NIVEL 3 (derecha) ====== */
     .sub .side{
       position:absolute; top:0; left:calc(100% + 12px); width:340px;
       background:rgba(18,25,43,.98); border:1px solid rgba(255,255,255,.06);
@@ -90,30 +81,16 @@
       padding:8px; opacity:0; transform:translateX(-6px) scale(0.98);
       pointer-events:none; transition:opacity .12s ease-out, transform .12s cubic-bezier(.18,.89,.32,1.28);
     }
-    .nav-folder[data-sticky="true"][data-panel="show"][aria-open="true"] .side{
-      opacity:1; transform:translateX(0) scale(1); pointer-events:auto;
-    }
+    .nav-folder[data-sticky="true"][data-panel="show"][aria-open="true"] .side{ opacity:1; transform:translateX(0) scale(1); pointer-events:auto; }
     .side-title{margin:6px 10px 8px;font-weight:800;color:#f3f5f8}
     .side-list{list-style:none;margin:0;padding:0}
     .side-list a{display:block;padding:10px 12px;border-radius:8px;color:var(--text);text-decoration:none}
     .side-list a:hover{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25)}
 
-    /* ===== Swap sutil del contenido lvl3 (entrada/salida) ===== */
-    .side .side-title,
-    .side .side-list {
-      transition: opacity .12s ease, transform .12s ease;
-      will-change: opacity, transform;
-    }
-    .side.swap-out .side-title,
-    .side.swap-out .side-list {
-      opacity: 0;
-      transform: translateX(-6px);
-    }
-    .side.swap-in .side-title,
-    .side.swap-in .side-list {
-      opacity: 1;
-      transform: translateX(0);
-    }
+    /* ===== swap sutil del contenido lvl3 ===== */
+    .side .side-title, .side .side-list { transition: opacity .12s ease, transform .12s ease; will-change: opacity, transform; }
+    .side.swap-out .side-title, .side.swap-out .side-list { opacity: 0; transform: translateX(-6px); }
+    .side.swap-in  .side-title, .side.swap-in  .side-list { opacity: 1; transform: translateX(0); }
 
     /* scroll estético */
     .sub>ul::-webkit-scrollbar{width:10px}
@@ -127,17 +104,15 @@
       .sub::after{display:none}
     }
 
-    /* ====== HERO ====== */
+    /* ====== HERO / CONTENIDO ====== */
     .hero-wrap{min-height:72vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:26px 14px 0}
-    .hero h1{font-size:clamp(34px,4vw,54px);font-weight:900;color:var(--accent);margin:0 0 8px;
-      text-shadow:0 0 18px rgba(255,153,0,.7),0 0 36px rgba(255,153,0,.25)}
+    .hero h1{font-size:clamp(34px,4vw,54px);font-weight:900;color:var(--accent);margin:0 0 8px;text-shadow:0 0 18px rgba(255,153,0,.7),0 0 36px rgba(255,153,0,.25)}
     .hero h2{font-size:clamp(24px,3.2vw,40px);font-weight:800;margin:6px 0 8px;color:var(--accent-soft);text-shadow:0 0 14px rgba(255,153,0,.45)}
     .cursor{display:inline-block;width:.6ch;margin-left:2px;color:var(--accent);filter:drop-shadow(0 0 6px var(--accent));animation:blink .95s steps(1,end) infinite}
     @keyframes blink{50%{opacity:0}}
     .lead{max-width:900px;margin:10px auto 0;font-size:clamp(19px,1.5vw,22px);line-height:1.7;color:var(--text);opacity:0;transform:translateY(10px);transition:opacity .8s ease,transform .8s ease}
     .lead.show{opacity:1;transform:none}
 
-    /* ====== SECCIONES ====== */
     .container{width:min(1100px,92%);margin:0 auto}
     section{padding:36px 0}
     .section-title{font-size:clamp(24px,3vw,34px);margin:0 0 10px}
@@ -160,7 +135,7 @@
 </head>
 <body>
 
-  <!-- ========================= NAV SUPERIOR ========================== -->
+  <!-- ========================= NAV ========================== -->
   <header class="topbar">
     <div class="topwrap">
       <a class="brand" href="/"><span class="brand-dot"></span><span>AO · Portafolio</span></a>
@@ -269,28 +244,20 @@
       { label:"Inicio", href:"/" },
 
       { label:"Portafolio", sticky:true, children:[
-        {
-          label:"Ciberseguridad",
-          href:"/portafolio/Ciberseguridad/",
-          children:[
-            { label:"Análisis Forense", href:"#", children: seven("Análisis Forense") },
-            { label:"DevSecOps", href:"#", children: seven("DevSecOps") },
-            { label:"Documentación e informes", href:"#", children: seven("Docs e informes") },
-            { label:"Puesta en producción segura", href:"#", children: seven("Producción segura") },
-            { label:"Respuesta a Incidentes", href:"#", children: seven("Respuesta a Incidentes") },
-            { label:"Seguridad en redes", href:"#", children: seven("Seguridad en redes") },
-            { label:"Seguridad de sistemas", href:"#", children: seven("Seguridad de sistemas") }
-          ]
-        },
-        {
-          label:"Sistemas",
-          href:"/portafolio/sistemas/",
-          children:[
-            { label:"Linux", href:"#", children: seven("Linux") },
-            { label:"Windows", href:"#", children: seven("Windows") },
-            { label:"Automatización", href:"#", children: seven("Automatización") }
-          ]
-        }
+        { label:"Ciberseguridad", href:"/portafolio/Ciberseguridad/", children:[
+          { label:"Análisis Forense", href:"#", children: seven("Análisis Forense") },
+          { label:"DevSecOps", href:"#", children: seven("DevSecOps") },
+          { label:"Documentación e informes", href:"#", children: seven("Docs e informes") },
+          { label:"Puesta en producción segura", href:"#", children: seven("Producción segura") },
+          { label:"Respuesta a Incidentes", href:"#", children: seven("Respuesta a Incidentes") },
+          { label:"Seguridad en redes", href:"#", children: seven("Seguridad en redes") },
+          { label:"Seguridad de sistemas", href:"#", children: seven("Seguridad de sistemas") }
+        ]},
+        { label:"Sistemas", href:"/portafolio/sistemas/", children:[
+          { label:"Linux", href:"#", children: seven("Linux") },
+          { label:"Windows", href:"#", children: seven("Windows") },
+          { label:"Automatización", href:"#", children: seven("Automatización") }
+        ]}
       ]},
 
       { label:"Teoría y Casos Curiosos", children:[
@@ -312,18 +279,17 @@
       { label:"Contacto", href:"/contacto/" }
     ];
 
-    /* === Helper: cambia el contenido del panel lateral con animación sutil (timeout) === */
+    /* === swap animado del contenido del panel (lvl3) === */
     function swapSideContent(sideEl, newTitle, newLinksArray) {
       const titleEl = sideEl.querySelector('.side-title');
       const listEl  = sideEl.querySelector('.side-list');
-
       if (sideEl.dataset.key === newTitle) return;
 
       sideEl.classList.remove('swap-in');
       sideEl.classList.add('swap-out');
 
       clearTimeout(sideEl._swapTimer);
-      const OUT_MS = 120; // debe coincidir con .12s del CSS
+      const OUT_MS = 120; // coincide con .12s del CSS
 
       sideEl._swapTimer = setTimeout(() => {
         sideEl.dataset.key = newTitle;
@@ -334,34 +300,38 @@
           li.appendChild(a.cloneNode(true));
           listEl.appendChild(li);
         });
-
-        // Reinicia la transición de entrada
-        void sideEl.offsetWidth;
-
+        void sideEl.offsetWidth; // reflow
         sideEl.classList.remove('swap-out');
         sideEl.classList.add('swap-in');
       }, OUT_MS);
     }
 
-    /* === Posiciona el panel lvl3 alineando su "techo" con el item lvl2 === */
+    /* === Alinear el panel lvl3 con el item lvl2 (usando .sub > ul) === */
     function positionSideAligned(sideEl, anchorEl, subEl){
-      const subBox    = subEl.getBoundingClientRect();
-      const anchorBox = anchorEl.getBoundingClientRect();
-      let top = anchorBox.top - subBox.top;     // distancia del item al inicio del popover
+      const listEl   = subEl.querySelector(':scope > ul');      // contenedor visible
+      const subRect  = subEl.getBoundingClientRect();
+      const listRect = listEl.getBoundingClientRect();
+      const aRect    = anchorEl.getBoundingClientRect();
 
+      // top del item dentro de la caja del UL (respeta padding/scroll)
+      let top = aRect.top - listRect.top;
+
+      // clamp dentro del alto visible del UL
       const sideH = sideEl.getBoundingClientRect().height;
-      const maxTop = Math.max(0, subBox.height - sideH); // clamp dentro del popover
+      const maxTop = Math.max(0, listRect.height - sideH);
       top = Math.max(0, Math.min(top, maxTop));
 
-      sideEl.style.top = `${top}px`;
+      // trasladar a coords relativas de .sub
+      const offset = listRect.top - subRect.top;
+      sideEl.style.top = `${top + offset}px`;
     }
 
-    /* ===== Render del NAV ===== */
+    /* ===== Render NAV ===== */
     function renderNav(tree){
       const nav = document.getElementById('nav');
       tree.forEach(node => nav.appendChild(createNode(node)));
 
-      // Hover-intent por carpeta de 1er nivel
+      // hover-intent primer nivel
       const timers = new WeakMap();
       document.querySelectorAll('.nav-folder').forEach(folder=>{
         folder.addEventListener('mouseenter', ()=>{
@@ -375,9 +345,8 @@
       });
     }
 
-    /* ===== Crear cada nodo del árbol ===== */
+    /* ===== Crear nodo ===== */
     function createNode(node){
-      // enlace simple
       if(!node.children){
         const a=document.createElement('a');
         a.className='nav-link';
@@ -386,7 +355,6 @@
         return a;
       }
 
-      // carpeta 1er nivel
       const wrap=document.createElement('div');
       wrap.className='nav-folder';
       wrap.setAttribute('aria-open','false');
@@ -399,35 +367,29 @@
       btn.innerHTML=`<span class="ico-folder"></span>${labelHTML}<span class="caret"></span>`;
       wrap.appendChild(btn);
 
-      // popover del folder
       const sub=document.createElement('div'); sub.className='sub';
-      const ul=document.createElement('ul');
-      sub.appendChild(ul);
+      const ul=document.createElement('ul'); sub.appendChild(ul);
 
-      // --- PANEL LATERAL (NIVEL 3) SOLO en Portafolio
+      // panel lateral lvl3 sólo en Portafolio
       let side = null;
       if (wrap.dataset.sticky === "true") {
         side = document.createElement('div');
         side.className = 'side';
-        side.innerHTML = `
-          <div class="side-title">Selecciona una subcarpeta…</div>
-          <ul class="side-list"></ul>
-        `;
+        side.innerHTML = `<div class="side-title">Selecciona una subcarpeta…</div><ul class="side-list"></ul>`;
         sub.appendChild(side);
       }
 
-      // Rellenar lvl 1 (Ciberseguridad / Sistemas)
+      // Lvl1
       node.children.forEach(childLvl1=>{
         const liLvl1=document.createElement('li');
 
-        // Enlace lvl1
         const link1=document.createElement('a');
         link1.href=childLvl1.href||'#';
         link1.innerHTML=`<span>${childLvl1.label}</span><span style="opacity:.6">›</span>`;
         liLvl1.appendChild(link1);
 
-        // Lista lvl2 (subcarpetas)
         const ulLvl2=document.createElement('ul'); ulLvl2.className='nested';
+
         childLvl1.children?.forEach(childLvl2=>{
           const liLvl2=document.createElement('li');
           const link2=document.createElement('a');
@@ -435,9 +397,7 @@
           link2.innerHTML=`<span>${childLvl2.label}</span><span style="opacity:.6">›</span>`;
           liLvl2.appendChild(link2);
 
-          // Guardar (oculto) sus artículos lvl3 para alimentar el panel lateral
-          const hiddenLvl3=document.createElement('ul');
-          hiddenLvl3.style.display='none';
+          const hiddenLvl3=document.createElement('ul'); hiddenLvl3.style.display='none';
           childLvl2.children?.forEach(a3=>{
             const li3=document.createElement('li');
             const a=document.createElement('a');
@@ -446,43 +406,33 @@
           });
           liLvl2.appendChild(hiddenLvl3);
 
-          // Al pasar por una subcarpeta lvl2 -> alinear panel + swap de contenido
           if (wrap.dataset.sticky === "true") {
             link2.addEventListener('mouseenter', ()=>{
               const linksLvl3 = Array.from(hiddenLvl3.querySelectorAll('a'));
               const newTitle  = `${childLvl1.label} / ${childLvl2.label}`;
 
-              // 1) Alinear panel al item actual
-              positionSideAligned(side, link2, sub);
-
-              // 2) Swap animado del contenido
-              swapSideContent(side, newTitle, linksLvl3);
+              positionSideAligned(side, link2, sub);      // alinear
+              swapSideContent(side, newTitle, linksLvl3); // swap
               wrap.setAttribute('data-panel','show');
-
-              // 3) Reajustar tras cambio (por si varía la altura del panel)
-              setTimeout(()=> positionSideAligned(side, link2, sub), 0);
+              setTimeout(()=> positionSideAligned(side, link2, sub), 0); // reajuste por altura
             });
           }
 
           ulLvl2.appendChild(liLvl2);
         });
+
         liLvl1.appendChild(ulLvl2);
         ul.appendChild(liLvl1);
 
-        // Abrir lvl2 al entrar en su bloque (persistente dentro de Portafolio)
-        link1.addEventListener('mouseenter', ()=>{
-          liLvl1.classList.add('open');
-        });
+        link1.addEventListener('mouseenter', ()=>{ liLvl1.classList.add('open'); });
       });
 
-      // Click botón de 1er nivel: abrir/cerrar
       btn.addEventListener('click', e=>{
         e.preventDefault();
         const open = wrap.getAttribute('aria-open')==='true';
         setOpen(wrap, !open);
       });
 
-      // Accesibilidad
       btn.addEventListener('keydown', e=>{
         if(e.key==='Escape') setOpen(wrap,false,true);
         if(e.key==='ArrowDown'){ setOpen(wrap,true); ul.querySelector('a')?.focus(); }
@@ -492,13 +442,11 @@
       return wrap;
     }
 
-    /* ===== Abrir/Cerrar folders de 1er nivel ===== */
     function setOpen(folder, open, resetInternos=false){
       folder.setAttribute('aria-open', open?'true':'false');
       folder.querySelector('.nav-btn').setAttribute('aria-expanded', open?'true':'false');
 
       if(open){
-        // Cerrar otros 1er nivel
         document.querySelectorAll('.nav-folder').forEach(f=>{
           if(f!==folder){
             f.setAttribute('aria-open','false');
@@ -507,7 +455,6 @@
           }
         });
       } else if (resetInternos){
-        // Ocultar panel derecho y colapsar nested de ese folder
         folder.removeAttribute('data-panel');
         folder.querySelectorAll(':scope .sub > ul > li').forEach(li=>li.classList.remove('open'));
       }
@@ -518,4 +465,3 @@
   </script>
 </body>
 </html>
-
