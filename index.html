@@ -131,6 +131,48 @@
     footer{padding:40px 0;color:#a9b1bd;text-align:center;border-top:1px solid rgba(255,255,255,.06);margin-top:10px}
     @media (max-width:980px){.grid{grid-template-columns:1fr 1fr}.contact-box{grid-template-columns:1fr}}
     @media (max-width:620px){.grid{grid-template-columns:1fr}}
+
+    /* ===== Enfatizar subcarpetas Lvl 2 (solo Portafolio) ===== */
+    .nav-folder[data-sticky="true"] .nested > li > a{
+      position: relative;
+      border: 1px solid rgba(245,158,11,.15);
+      background: transparent;
+      border-radius: 10px;
+      transition:
+        background .18s ease,
+        border-color .18s ease,
+        box-shadow .18s ease,
+        transform .14s ease,
+        color .18s ease;
+      padding: 10px 12px;
+    }
+    .nav-folder[data-sticky="true"] .nested > li > a::before{
+      content:"";
+      position:absolute;
+      left:6px; top:10px; bottom:10px;
+      width:3px; border-radius:2px;
+      background:transparent;
+      transition: background .18s ease, transform .14s ease;
+    }
+    .nav-folder[data-sticky="true"] .nested > li.focus2 > a,
+    .nav-folder[data-sticky="true"] .nested > li > a:hover{
+      background: linear-gradient(90deg,
+                  rgba(245,158,11,.18) 0%,
+                  rgba(245,158,11,.08) 60%);
+      border-color: rgba(245,158,11,.55);
+      box-shadow: 0 6px 18px rgba(245,158,11,.25),
+                  inset 0 0 0 1px rgba(255,255,255,.06);
+      transform: translateX(2px);
+      color: #ffe1a6;
+    }
+    .nav-folder[data-sticky="true"] .nested > li.focus2 > a::before,
+    .nav-folder[data-sticky="true"] .nested > li > a:hover::before{
+      background: var(--accent);
+      transform: scaleX(1.5);
+    }
+    .nav-folder[data-sticky="true"] .sub > ul > li.open > .nested{
+      filter: drop-shadow(0 6px 20px rgba(245,158,11,.15));
+    }
   </style>
 </head>
 <body>
@@ -184,7 +226,7 @@
           <h4>Infraestructura reproducible con IaC</h4>
           <p>Terraform + Ansible para levantar entornos seguros y auditables en AWS. Módulos reutilizables y pipelines CI.</p>
         </article>
-        <article class="card project>
+        <article class="card project">
           <img src="assets/proyecto2.jpg" alt="Miniatura del Proyecto 2" />
           <h4>Plataforma de observabilidad</h4>
           <p>Stack Prometheus + Loki + Grafana con alertas y SLOs para microservicios en Kubernetes.</p>
@@ -320,10 +362,8 @@
 
       let top;
       if (maxTop < minTop) {
-        // si el panel es más alto que el marco visible, lo anclamos arriba del marco
         top = minTop;
       } else {
-        // clamp suave: solo corrige si se saldría del marco
         top = Math.min(Math.max(desiredTop, minTop), maxTop);
       }
       sideEl.style.top = `${top}px`;
@@ -414,11 +454,24 @@
               const linksLvl3 = Array.from(hiddenLvl3.querySelectorAll('a'));
               const newTitle  = `${childLvl1.label} / ${childLvl2.label}`;
 
-              positionSideAligned(side, link2, sub);      // alinear con clamp
-              swapSideContent(side, newTitle, linksLvl3); // swap animado
+              positionSideAligned(side, link2, sub);
+              swapSideContent(side, newTitle, linksLvl3);
               wrap.setAttribute('data-panel','show');
-              setTimeout(()=> positionSideAligned(side, link2, sub), 0); // reajuste tras cambio de altura
+              setTimeout(()=> positionSideAligned(side, link2, sub), 0);
             });
+
+            /* === énfasis sincronizado (Lvl 2) === */
+            link2.addEventListener('mouseenter', ()=>{
+              liLvl2.classList.add('focus2');
+              liLvl2.parentElement
+                .querySelectorAll(':scope > li.focus2')
+                .forEach(sib => { if (sib !== liLvl2) sib.classList.remove('focus2'); });
+            });
+            liLvl2.addEventListener('mouseleave', ()=>{
+              liLvl2.classList.remove('focus2');
+            });
+            link2.addEventListener('focus', ()=> liLvl2.classList.add('focus2'));
+            link2.addEventListener('blur' , ()=> liLvl2.classList.remove('focus2'));
           }
 
           ulLvl2.appendChild(liLvl2);
