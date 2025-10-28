@@ -88,7 +88,7 @@
       background:rgba(18,25,43,.98); border:1px solid rgba(255,255,255,.06);
       border-radius:12px; box-shadow:0 12px 30px rgba(0,0,0,.35);
       padding:8px; opacity:0; transform:translateX(-6px) scale(0.98);
-      pointer-events:none; transition:opacity .18s ease-out, transform .18s cubic-bezier(.18,.89,.32,1.28);
+      pointer-events:none; transition:opacity .12s ease-out, transform .12s cubic-bezier(.18,.89,.32,1.28);
     }
     .nav-folder[data-sticky="true"][data-panel="show"][aria-open="true"] .side{
       opacity:1; transform:translateX(0) scale(1); pointer-events:auto;
@@ -317,21 +317,15 @@
       const titleEl = sideEl.querySelector('.side-title');
       const listEl  = sideEl.querySelector('.side-list');
 
-      // Evita re-render si es el mismo destino
       if (sideEl.dataset.key === newTitle) return;
 
-      // Marca salida visual del contenido actual
       sideEl.classList.remove('swap-in');
       sideEl.classList.add('swap-out');
 
-      // Cancela animaciones pendientes si el usuario mueve rápido
       clearTimeout(sideEl._swapTimer);
-
-      // Debe coincidir con el CSS (.16s)
-      const OUT_MS = 120;
+      const OUT_MS = 120; // debe coincidir con .12s del CSS
 
       sideEl._swapTimer = setTimeout(() => {
-        // Rellenar nuevo contenido
         sideEl.dataset.key = newTitle;
         titleEl.textContent = newTitle;
         listEl.innerHTML = '';
@@ -341,13 +335,25 @@
           listEl.appendChild(li);
         });
 
-        // Forzar un reflow para reiniciar transición de entrada
+        // Reinicia la transición de entrada
         void sideEl.offsetWidth;
 
-        // Entrada
         sideEl.classList.remove('swap-out');
         sideEl.classList.add('swap-in');
       }, OUT_MS);
+    }
+
+    /* === Posiciona el panel lvl3 alineando su "techo" con el item lvl2 === */
+    function positionSideAligned(sideEl, anchorEl, subEl){
+      const subBox    = subEl.getBoundingClientRect();
+      const anchorBox = anchorEl.getBoundingClientRect();
+      let top = anchorBox.top - subBox.top;     // distancia del item al inicio del popover
+
+      const sideH = sideEl.getBoundingClientRect().height;
+      const maxTop = Math.max(0, subBox.height - sideH); // clamp dentro del popover
+      top = Math.max(0, Math.min(top, maxTop));
+
+      sideEl.style.top = `${top}px`;
     }
 
     /* ===== Render del NAV ===== */
@@ -440,13 +446,21 @@
           });
           liLvl2.appendChild(hiddenLvl3);
 
-          // Al pasar por una subcarpeta lvl2 -> mostrar/animar sus artículos en el panel derecho
+          // Al pasar por una subcarpeta lvl2 -> alinear panel + swap de contenido
           if (wrap.dataset.sticky === "true") {
             link2.addEventListener('mouseenter', ()=>{
               const linksLvl3 = Array.from(hiddenLvl3.querySelectorAll('a'));
               const newTitle  = `${childLvl1.label} / ${childLvl2.label}`;
+
+              // 1) Alinear panel al item actual
+              positionSideAligned(side, link2, sub);
+
+              // 2) Swap animado del contenido
               swapSideContent(side, newTitle, linksLvl3);
               wrap.setAttribute('data-panel','show');
+
+              // 3) Reajustar tras cambio (por si varía la altura del panel)
+              setTimeout(()=> positionSideAligned(side, link2, sub), 0);
             });
           }
 
