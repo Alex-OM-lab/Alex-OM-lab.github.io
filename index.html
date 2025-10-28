@@ -16,17 +16,16 @@
     html,body{margin:0}
     body{font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,Inter,"Helvetica Neue",Arial;background:var(--bg);color:var(--text)}
 
-    /* ====== TOPBAR / LAYOUT ====== */
+    /* ====== TOPBAR ====== */
     .topbar{position:sticky;top:0;z-index:100;backdrop-filter:saturate(160%) blur(8px);
       background:rgba(8,12,22,.65);border-bottom:1px solid rgba(255,255,255,.06);animation:topbarDrop .5s ease both}
     @keyframes topbarDrop{from{transform:translateY(-8px);opacity:0}to{transform:none;opacity:1}}
     .topwrap{width:min(1100px,92%);margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:10px 0}
     .brand{display:flex;align-items:center;gap:10px;font-weight:800;color:var(--text);text-decoration:none}
     .brand-dot{width:10px;height:10px;border-radius:999px;background:var(--accent);box-shadow:0 0 16px var(--accent)}
-
-    /* ====== NAV MULTINIVEL ====== */
     .menu{display:flex;gap:10px;flex-wrap:wrap}
 
+    /* ====== NAV LINKS ====== */
     .nav-link{
       color:var(--text);text-decoration:none;padding:8px 12px;border-radius:999px;font-weight:600;
       border:1px solid transparent;transition:transform .12s,background .2s,border-color .2s
@@ -47,11 +46,10 @@
     .caret{width:10px;height:10px;border-right:2px solid var(--accent);border-bottom:2px solid var(--accent);
       transform:rotate(-45deg) translateY(-1px);transition:transform .2s ease}
 
-    /* popover base */
+    /* ====== POPOVER BASE ====== */
     .sub{position:absolute;top:100%;left:0;min-width:360px;padding-top:0}
-    .sub::before{content:"";position:absolute;top:-10px;left:0;right:0;height:12px} /* colchón anti-flicker */
+    .sub::before{content:"";position:absolute;top:-10px;left:0;right:0;height:12px} /* antiflicker */
 
-    /* Estado cerrado (escala + altura) */
     .sub>ul{
       list-style:none;margin:0;padding:8px;background:rgba(18,25,43,.98);
       border:1px solid rgba(255,255,255,.06);border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.35);
@@ -61,36 +59,41 @@
     .sub a{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border-radius:8px;
       text-decoration:none;color:var(--text);border:1px solid transparent}
     .sub a:hover{background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.25)}
+    .nav-folder[aria-open="true"] > .sub > ul{pointer-events:auto;transform:scaleY(1);opacity:1;max-height:80vh;overflow:auto}
+    .nav-folder[aria-open="true"] > .nav-btn .caret{transform:rotate(45deg)}
 
-    /* popover ABIERTO */
-    .nav-folder[aria-open="true"] > .sub > ul{
-      pointer-events:auto;transform:scaleY(1);opacity:1;
-      max-height:80vh;overflow:auto;
-      /* ojo: sin min-height por defecto para que NO quede espacio en blanco */
+    /* ====== PANEL LATERAL (solo Portafolio) ====== */
+    .sub{position:absolute}
+    .sub .side{
+      position:absolute; top:0; left:calc(100% + 12px); width:340px;
+      background:rgba(18,25,43,.98); border:1px solid rgba(255,255,255,.06);
+      border-radius:12px; box-shadow:0 12px 30px rgba(0,0,0,.35);
+      padding:8px; opacity:0; transform:translateX(-6px);
+      pointer-events:none; transition:opacity .18s ease, transform .18s ease;
     }
-    /* Solo Portafolio: altura base agradable (pero discreta) */
-    .nav-folder[data-sticky="true"][aria-open="true"] > .sub > ul{
-      min-height:10px; /* suficiente para 2 filas + respiro, sin hueco enorme */
+    .nav-folder[data-sticky="true"][data-panel="show"][aria-open="true"] .side{
+      opacity:1; transform:translateX(0); pointer-events:auto;
     }
+    .side-title{margin:6px 10px 8px;font-weight:800;color:#f3f5f8}
+    .side-list{list-style:none;margin:0;padding:0}
+    .side-list a{display:block;padding:10px 12px;border-radius:8px;color:var(--text);text-decoration:none}
+    .side-list a:hover{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25)}
 
-    /* Acordeón interno */
-    .nested{
-      max-height:0;overflow:hidden;transition:max-height .3s ease;
-      margin-top:6px;padding-left:10px;border-left:2px dashed rgba(245,158,11,.25)
-    }
+    /* ====== ACORDEÓN INTERNO (para otros menús si se usa) ====== */
+    .nested{max-height:0;overflow:hidden;transition:max-height .3s ease;margin-top:6px;padding-left:10px;border-left:2px dashed rgba(245,158,11,.25)}
     .sub li.open > .nested{max-height:1200px}
 
-    /* scrollbar estético */
     .sub>ul::-webkit-scrollbar{width:10px}
     .sub>ul::-webkit-scrollbar-thumb{background:rgba(245,158,11,.2);border-radius:10px}
     .sub>ul::-webkit-scrollbar-track{background:rgba(255,255,255,.04)}
 
     @media (max-width:860px){
       .sub{position:static}
-      .sub>ul{box-shadow:none}
+      .sub>ul,.sub .side{box-shadow:none}
+      .sub .side{position:static;left:auto;width:auto;margin-top:8px;opacity:1;transform:none}
     }
 
-    /* ====== HERO (typing) ====== */
+    /* ====== HERO ====== */
     .hero-wrap{min-height:72vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:26px 14px 0}
     .hero h1{font-size:clamp(34px,4vw,54px);font-weight:900;color:var(--accent);margin:0 0 8px;
       text-shadow:0 0 18px rgba(255,153,0,.7),0 0 36px rgba(255,153,0,.25)}
@@ -123,7 +126,6 @@
 </head>
 <body>
 
-  <!-- ========================= NAV SUPERIOR ========================== -->
   <header class="topbar">
     <div class="topwrap">
       <a class="brand" href="/"><span class="brand-dot"></span><span>AO · Portafolio</span></a>
@@ -131,7 +133,6 @@
     </div>
   </header>
 
-  <!-- ========================= HERO (DOBLE TYPING) ========================== -->
   <div id="home" class="hero-wrap">
     <div class="hero">
       <h1><span id="typeName"></span></h1>
@@ -140,7 +141,6 @@
     </div>
   </div>
 
-  <!-- ========================= CONTENIDO ========================== -->
   <main class="container">
     <section id="ciber" aria-labelledby="ciber-title">
       <h2 id="ciber-title" class="section-title">Ciberseguridad</h2>
@@ -207,12 +207,11 @@
 
   <footer>© <span id="y"></span> Alejandro Orcajada Meseguer — Administrador de Sistemas y Ciberseguridad</footer>
 
-  <!-- ========================= SCRIPTS (NAV + TYPING) ========================== -->
   <script>
     /* ===== Año ===== */
     document.getElementById('y').textContent = new Date().getFullYear();
 
-    /* ===== Doble typing ===== */
+    /* ===== Typing ===== */
     const nameText = "Alejandro Orcajada Meseguer";
     const roleText = "Administrador de Sistemas y Ciberseguridad";
     const speed = 44;
@@ -225,38 +224,34 @@
     function typeRole(){ if(j<roleText.length){ elRole.textContent += roleText.charAt(j++); setTimeout(typeRole,speed); } else { cursor.remove(); lead.classList.add('show'); } }
     setTimeout(typeName,300);
 
-    /* ===== NAV: estructura de datos ===== */
+    /* ===== Datos del NAV ===== */
+    // Añadí 7 artículos de ejemplo (lvl 3) bajo cada subcarpeta (lvl 2)
+    const seven = (base)=> Array.from({length:7}).map((_,i)=>({label:`${base} — Artículo ${i+1}`, href:"#"}));
+
     const NAV_TREE = [
       { label:"Inicio", href:"/" },
 
       { label:"Portafolio", sticky:true, children:[
-        {  /* SOLO DOS entradas visibles aquí */
+        {
           label:"Ciberseguridad",
           href:"/portafolio/Ciberseguridad/",
           children:[
-            { label:"Análisis Forense", href:"/portafolio/Ciberseguridad/Analisis-Forense/", children:[
-              { label:"Ejemplo 1", href:"/portafolio/Ciberseguridad/Analisis-Forense/ejemplo1.html" },
-              { label:"Metodologías", href:"/portafolio/Ciberseguridad/Analisis-Forense/metodologias/" },
-              { label:"Herramientas",  href:"/portafolio/Ciberseguridad/Analisis-Forense/herramientas/" },
-              { label:"Casos", href:"/portafolio/Ciberseguridad/Analisis-Forense/casos/", children:[
-                { label:"Caso Blue", href:"/portafolio/Ciberseguridad/Analisis-Forense/casos/blue/" }
-              ]}
-            ]},
-            { label:"DevSecOps", href:"/portafolio/Ciberseguridad/DevSecOps/" },
-            { label:"Documentación e informes", href:"/portafolio/Ciberseguridad/Documentación-informes/" },
-            { label:"Puesta en producción segura", href:"/portafolio/Ciberseguridad/Puesta-produccion-segura/" },
-            { label:"Respuesta a Incidentes", href:"/portafolio/Ciberseguridad/Respuesta-incidentes/" },
-            { label:"Seguridad en redes", href:"/portafolio/Ciberseguridad/Seguridad-redes/" },
-            { label:"Seguridad de sistemas", href:"/portafolio/Ciberseguridad/Seguridad-sistemas/" }
+            { label:"Análisis Forense", href:"#", children: seven("Análisis Forense") },
+            { label:"DevSecOps", href:"#", children: seven("DevSecOps") },
+            { label:"Documentación e informes", href:"#", children: seven("Docs & Informes") },
+            { label:"Puesta en producción segura", href:"#", children: seven("Prod Segura") },
+            { label:"Respuesta a Incidentes", href:"#", children: seven("Respuesta a Incidentes") },
+            { label:"Seguridad en redes", href:"#", children: seven("Seguridad en redes") },
+            { label:"Seguridad de sistemas", href:"#", children: seven("Seguridad de sistemas") }
           ]
         },
         {
           label:"Sistemas",
           href:"/portafolio/sistemas/",
           children:[
-            { label:"Linux", href:"/portafolio/sistemas/linux/" },
-            { label:"Windows", href:"/portafolio/sistemas/windows/" },
-            { label:"Automatización", href:"/portafolio/sistemas/automatizacion/" }
+            { label:"Linux", href:"#", children: seven("Linux") },
+            { label:"Windows", href:"#", children: seven("Windows") },
+            { label:"Automatización", href:"#", children: seven("Automatización") }
           ]
         }
       ]},
@@ -266,39 +261,33 @@
           label:"Ciberseguridad",
           href:"/Teoria-casos-curiosos/ciberseguridad/",
           children:[
-            { label:"Análisis Forense", href:"/Teoria-casos-curiosos/ciberseguridad/Analisis-Forense/", children:[
-              { label:"Notas N1", href:"/Teoria-casos-curiosos/ciberseguridad/Analisis-Forense/notas-n1/" },
-              { label:"Casos", href:"/Teoria-casos-curiosos/ciberseguridad/Analisis-Forense/casos/", children:[
-                { label:"Caso curioso 1", href:"/Teoria-casos-curiosos/ciberseguridad/Analisis-Forense/casos/caso-1/" }
-              ]}
-            ]},
-            { label:"Respuesta a Incidentes", href:"/Teoria-casos-curiosos/ciberseguridad/Respuesta-incidentes/" }
+            { label:"Análisis Forense", href:"#", children: seven("Teoría · Forense") },
+            { label:"Respuesta a Incidentes", href:"#", children: seven("Teoría · Incidentes") }
           ]
         },
         {
           label:"Sistemas",
           href:"/Teoria-casos-curiosos/sistemas/",
           children:[
-            { label:"Redes", href:"/Teoria-casos-curiosos/sistemas/redes/" },
-            { label:"Conceptos", href:"/Teoria-casos-curiosos/sistemas/conceptos/" }
+            { label:"Redes", href:"#", children: seven("Teoría · Redes") },
+            { label:"Conceptos", href:"#", children: seven("Teoría · Conceptos") }
           ]
         }
       ]},
 
       { label:"Laboratorio", href:"/Laboratorio/", children:[
-        { label:"TryHackMe", href:"/Laboratorio/tryhackme/", children:[ { label:"Blue", href:"/Laboratorio/tryhackme/blue/" } ]},
-        { label:"HackTheBox", href:"/Laboratorio/hackthebox/" }
+        { label:"TryHackMe", href:"#", children: seven("THM") },
+        { label:"HackTheBox", href:"#", children: seven("HTB") }
       ]},
 
       { label:"Contacto", href:"/contacto/" }
     ];
 
-    /* ===== NAV: render ===== */
+    /* ===== Render NAV ===== */
     function renderNav(tree){
       const nav = document.getElementById('nav');
       tree.forEach(node => nav.appendChild(createNode(node)));
 
-      // Hover-intent en cada folder: abrir al entrar, cerrar SOLO al salir del bloque entero
       const timers = new WeakMap();
       document.querySelectorAll('.nav-folder').forEach(folder=>{
         folder.addEventListener('mouseenter', ()=>{
@@ -306,13 +295,12 @@
           setOpen(folder, true);
         });
         folder.addEventListener('mouseleave', ()=>{
-          const t = setTimeout(()=> setOpen(folder,false,true), 220); // resetInternos al salir
+          const t = setTimeout(()=> setOpen(folder,false,true), 220);
           timers.set(folder,t);
         });
       });
     }
 
-    /* ===== NAV: crear nodo ===== */
     function createNode(node){
       if(!node.children){
         const a=document.createElement('a');
@@ -325,7 +313,7 @@
       const wrap=document.createElement('div');
       wrap.className='nav-folder';
       wrap.setAttribute('aria-open','false');
-      if (node.sticky) wrap.dataset.sticky = "true"; // SOLO Portafolio
+      if (node.label === "Portafolio") wrap.dataset.sticky = "true";
 
       const btn=document.createElement('button');
       btn.className='nav-btn';
@@ -334,7 +322,6 @@
       const labelHTML = node.href
         ? `<a href="${node.href}" class="nav-btn-link">${node.label}</a>`
         : `<span>${node.label}</span>`;
-
       btn.innerHTML=`<span class="ico-folder"></span>${labelHTML}<span class="caret"></span>`;
       wrap.appendChild(btn);
 
@@ -345,12 +332,13 @@
       node.children.forEach(child=>{
         const li=document.createElement('li');
 
-        if(child.children){
-          const link=document.createElement('a');
-          link.href=child.href||'#';
-          link.innerHTML=`<span>${child.label}</span><span style="opacity:.6">›</span>`;
-          li.appendChild(link);
+        const link=document.createElement('a');
+        link.href=child.href||'#';
+        link.innerHTML=`<span>${child.label}</span><span style="opacity:.6">›</span>`;
+        li.appendChild(link);
 
+        // Nivel 3 (artículos) como UL oculto (para clonar hacia el panel derecho)
+        if(child.children){
           const nested=document.createElement('ul'); nested.className='nested';
           child.children.forEach(g=>{
             const li2=document.createElement('li');
@@ -361,41 +349,65 @@
             nested.appendChild(li2);
           });
           li.appendChild(nested);
-
-          // --- Comportamiento de apertura ---
-          const rootFolder = wrap;
-
-          if (rootFolder.dataset.sticky === "true") {
-            // PORTAFOLIO: abrir y mantener; NO se cierran los otros li
-            const open = ()=> li.classList.add('open');
-            link.addEventListener('mouseenter', open);
-            link.addEventListener('click', (e)=>{ e.preventDefault(); open(); });
-          } else {
-            // RESTO (Teoría, etc.): abrir uno y cerrar hermanos para evitar espacio sobrante
-            link.addEventListener('mouseenter', ()=>{
-              ul.querySelectorAll(':scope > li.open').forEach(o=>o.classList.remove('open'));
-              li.classList.add('open');
-            });
-            link.addEventListener('click', (e)=>{ e.preventDefault(); li.classList.toggle('open'); });
-          }
-        }else{
-          const a=document.createElement('a'); a.href=child.href||'#'; a.textContent=child.label; li.appendChild(a);
         }
 
         ul.appendChild(li);
       });
 
       sub.appendChild(ul);
+
+      // ==== PANEL LATERAL (sólo para Portafolio) ====
+      let side=null;
+      if (wrap.dataset.sticky === "true") {
+        side = document.createElement('div');
+        side.className = 'side';
+        side.innerHTML = `<div class="side-box">
+            <div class="side-title">Selecciona una subcarpeta…</div>
+            <ul class="side-list"></ul>
+          </div>`;
+        sub.appendChild(side);
+
+        // Mostrar/actualizar panel al pasar por una subcarpeta (lvl 2)
+        ul.querySelectorAll(':scope > li').forEach(li=>{
+          const link = li.querySelector(':scope > a');
+          const nested = li.querySelector(':scope > .nested'); // artículos (lvl 3)
+
+          link.addEventListener('mouseenter', ()=>{
+            if (nested) {
+              // Rellena panel con artículos de esa subcarpeta
+              const title = side.querySelector('.side-title');
+              const list  = side.querySelector('.side-list');
+              title.textContent = link.textContent.trim();
+              list.innerHTML = '';
+              nested.querySelectorAll('a').forEach(a=>{
+                const item = document.createElement('li');
+                const copy = a.cloneNode(true);
+                item.appendChild(copy);
+                list.appendChild(item);
+              });
+              wrap.setAttribute('data-panel','show');
+            } else {
+              // Si no tiene artículos, oculta panel
+              wrap.removeAttribute('data-panel');
+              const list  = side.querySelector('.side-list');
+              const title = side.querySelector('.side-title');
+              title.textContent = "Sin artículos";
+              list.innerHTML = '';
+            }
+          });
+        });
+      }
+
       wrap.appendChild(sub);
 
-      // Click del botón de carpeta: abrir/cerrar
+      // Click botón carpeta
       btn.addEventListener('click', e=>{
         e.preventDefault();
         const open = wrap.getAttribute('aria-open')==='true';
         setOpen(wrap, !open);
       });
 
-      // Accesibilidad teclado
+      // Teclado
       btn.addEventListener('keydown', e=>{
         if(e.key==='Escape') setOpen(wrap,false,true);
         if(e.key==='ArrowDown'){ setOpen(wrap,true); ul.querySelector('a')?.focus(); }
@@ -404,23 +416,20 @@
       return wrap;
     }
 
-    /* ===== NAV: abrir/cerrar (folder de 1er nivel) ===== */
     function setOpen(folder, open, resetInternos=false){
       folder.setAttribute('aria-open', open?'true':'false');
       folder.querySelector('.nav-btn').setAttribute('aria-expanded', open?'true':'false');
 
       if(open){
-        // Cerrar otros folders de primer nivel
         document.querySelectorAll('.nav-folder').forEach(f=>{
           if(f!==folder){
             f.setAttribute('aria-open','false');
             f.querySelector('.nav-btn').setAttribute('aria-expanded','false');
+            f.removeAttribute('data-panel');
           }
         });
-      } else if (resetInternos) {
-        // Volver a estado default: cerrar subapartados abiertos dentro del folder
-        const ul = folder.querySelector('.sub > ul');
-        ul?.querySelectorAll(':scope > li.open').forEach(li=>li.classList.remove('open'));
+      } else if (resetInternos){
+        folder.removeAttribute('data-panel'); // ocultar panel al cerrar Portafolio
       }
     }
 
@@ -429,4 +438,3 @@
   </script>
 </body>
 </html>
-
