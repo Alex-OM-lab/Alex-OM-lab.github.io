@@ -48,7 +48,13 @@
 
     /* ====== POPOVER BASE ====== */
     .sub{position:absolute;top:100%;left:0;min-width:360px;padding-top:0}
-    .sub::before{content:"";position:absolute;top:-10px;left:0;right:0;height:12px} /* antiflicker */
+    /* Puente invisible entre el popover y lo que haya a su derecha (panel lvl3) */
+    .sub::before{content:"";position:absolute;top:-10px;left:0;right:0;height:12px} /* antiflicker superior */
+    .sub::after{
+      content:""; position:absolute; top:0; left:100%;
+      width:20px; height:100%; background:transparent; /* puente invisible */
+      pointer-events:auto;
+    }
 
     .sub>ul{
       list-style:none;margin:0;padding:8px;background:rgba(18,25,43,.98);
@@ -62,24 +68,31 @@
     .nav-folder[aria-open="true"] > .sub > ul{pointer-events:auto;transform:scaleY(1);opacity:1;max-height:80vh;overflow:auto}
     .nav-folder[aria-open="true"] > .nav-btn .caret{transform:rotate(45deg)}
 
-    /* ====== NESTED (Niveles 1→2 hacia ABAJO) ====== */
+    /* ====== NIVEL 2 (vertical): animación suave ====== */
     .nested{
-      max-height:0;overflow:hidden;transition:max-height .3s ease;
-      margin-top:6px;padding-left:10px;border-left:2px dashed rgba(245,158,11,.25)
+      max-height:0; opacity:0; transform:translateY(-4px);
+      overflow:hidden; margin-top:6px; padding-left:10px;
+      border-left:2px dashed rgba(245,158,11,.25);
+      transition:
+        max-height .28s ease,
+        opacity .22s ease,
+        transform .22s ease;
     }
-    .sub li.open > .nested{max-height:1200px}
+    .sub li.open > .nested{
+      max-height:1200px; opacity:1; transform:none;
+    }
 
     /* ====== PANEL LATERAL SOLO PARA NIVEL 3 (a la derecha) ====== */
     .sub .side{
       position:absolute; top:0; left:calc(100% + 12px); width:340px;
       background:rgba(18,25,43,.98); border:1px solid rgba(255,255,255,.06);
       border-radius:12px; box-shadow:0 12px 30px rgba(0,0,0,.35);
-      padding:8px; opacity:0; transform:translateX(-6px);
-      pointer-events:none; transition:opacity .18s ease, transform .18s ease;
+      padding:8px; opacity:0; transform:translateX(-6px) scale(0.98);
+      pointer-events:none; transition:opacity .18s ease-out, transform .18s cubic-bezier(.18,.89,.32,1.28);
     }
     /* Se muestra solo en Portafolio cuando hay contenido lvl3 para una subcarpeta */
     .nav-folder[data-sticky="true"][data-panel="show"][aria-open="true"] .side{
-      opacity:1; transform:translateX(0); pointer-events:auto;
+      opacity:1; transform:translateX(0) scale(1); pointer-events:auto;
     }
     .side-title{margin:6px 10px 8px;font-weight:800;color:#f3f5f8}
     .side-list{list-style:none;margin:0;padding:0}
@@ -95,6 +108,7 @@
       .sub{position:static}
       .sub>ul,.sub .side{box-shadow:none}
       .sub .side{position:static;left:auto;width:auto;margin-top:8px;opacity:1;transform:none}
+      .sub::after{display:none} /* en móvil no hace falta el puente */
     }
 
     /* ====== HERO ====== */
@@ -155,8 +169,7 @@
     <section id="adm" aria-labelledby="adm-title">
       <h2 id="adm-title" class="section-title">Administración de Sistemas</h2>
       <p class="kicker">Infraestructura reproducible y observable.</p>
-      <div class="card">Linux/Windows, IaC (Terraform/Ansible), contenedores (Docker/K8s), redes y servidores (Nginx/Apache), CI/CD y observabilidad
-            </div>
+      <div class="card">Linux/Windows, IaC (Terraform/Ansible), contenedores (Docker/K8s), redes y servidores (Nginx/Apache), CI/CD y observabilidad.</div>
     </section>
 
     <section id="skills" aria-labelledby="skills-title">
@@ -232,12 +245,7 @@
     function typeRole(){ if(j<roleText.length){ elRole.textContent += roleText.charAt(j++); setTimeout(typeRole,speed); } else { cursor.remove(); lead.classList.add('show'); } }
     setTimeout(typeName,300);
 
-    /* ===== Datos del NAV
-       Nivel 0: Portafolio
-       Nivel 1: Ciberseguridad / Sistemas
-       Nivel 2: Subcarpetas
-       Nivel 3: Artículos (se muestran en panel derecho)
-    ===== */
+    /* ===== Datos del NAV ===== */
     const seven = base => Array.from({length:7}, (_,i)=>({label:`${base} · Artículo ${i+1}`, href:"#"}));
 
     const NAV_TREE = [
@@ -405,7 +413,7 @@
         });
       });
 
-      // Mantener abierto/cerrar por botón
+      // Click botón de 1er nivel: abrir/cerrar
       btn.addEventListener('click', e=>{
         e.preventDefault();
         const open = wrap.getAttribute('aria-open')==='true';
@@ -448,3 +456,4 @@
   </script>
 </body>
 </html>
+
