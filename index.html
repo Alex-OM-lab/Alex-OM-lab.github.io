@@ -101,7 +101,7 @@
     /* ===== Swap sutil del contenido lvl3 (entrada/salida) ===== */
     .side .side-title,
     .side .side-list {
-      transition: opacity .16s ease, transform .16s ease;
+      transition: opacity .12s ease, transform .12s ease;
       will-change: opacity, transform;
     }
     .side.swap-out .side-title,
@@ -328,7 +328,7 @@
       clearTimeout(sideEl._swapTimer);
 
       // Debe coincidir con el CSS (.16s)
-      const OUT_MS = 160;
+      const OUT_MS = 120;
 
       sideEl._swapTimer = setTimeout(() => {
         // Rellenar nuevo contenido
