@@ -306,24 +306,13 @@
       }, OUT_MS);
     }
 
-    /* === Alinear el panel lvl3 con el item lvl2 (usando .sub > ul) === */
+    /* === Alinear el panel lvl3 con el item lvl2 (sin límites) === */
     function positionSideAligned(sideEl, anchorEl, subEl){
-      const listEl   = subEl.querySelector(':scope > ul');      // contenedor visible
-      const subRect  = subEl.getBoundingClientRect();
-      const listRect = listEl.getBoundingClientRect();
-      const aRect    = anchorEl.getBoundingClientRect();
-
-      // top del item dentro de la caja del UL (respeta padding/scroll)
-      let top = aRect.top - listRect.top;
-
-      // clamp dentro del alto visible del UL
-      const sideH = sideEl.getBoundingClientRect().height;
-      const maxTop = Math.max(0, listRect.height - sideH);
-      top = Math.max(0, Math.min(top, maxTop));
-
-      // trasladar a coords relativas de .sub
-      const offset = listRect.top - subRect.top;
-      sideEl.style.top = `${top + offset}px`;
+      const subRect = subEl.getBoundingClientRect();
+      const aRect   = anchorEl.getBoundingClientRect();
+      // Distancia del item (lvl2) al inicio del popover (.sub). No clamp.
+      const top = aRect.top - subRect.top;
+      sideEl.style.top = `${Math.max(0, top)}px`;
     }
 
     /* ===== Render NAV ===== */
@@ -411,10 +400,12 @@
               const linksLvl3 = Array.from(hiddenLvl3.querySelectorAll('a'));
               const newTitle  = `${childLvl1.label} / ${childLvl2.label}`;
 
-              positionSideAligned(side, link2, sub);      // alinear
+              positionSideAligned(side, link2, sub);      // alinear (sin límites)
               swapSideContent(side, newTitle, linksLvl3); // swap
               wrap.setAttribute('data-panel','show');
-              setTimeout(()=> positionSideAligned(side, link2, sub), 0); // reajuste por altura
+
+              // Si al cambiar contenido varía la altura, actualiza posición
+              setTimeout(()=> positionSideAligned(side, link2, sub), 0);
             });
           }
 
