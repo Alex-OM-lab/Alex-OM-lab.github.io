@@ -95,10 +95,12 @@
       border-radius:12px; box-shadow:0 12px 30px rgba(0,0,0,.35);
       padding:8px; opacity:0; transform:translateX(-6px) scale(0.98);
       pointer-events:none; transition:opacity .12s ease-out, transform .12s cubic-bezier(.18,.89,.32,1.28);
+      /* Para fijar el pager al fondo: */
+      display:flex; flex-direction:column;
     }
     .nav-folder[data-sticky="true"][data-panel="show"][aria-open="true"] .side{ opacity:1; transform:translateX(0) scale(1); pointer-events:auto; }
     .side-title{margin:6px 10px 8px;font-weight:800;color:#f3f5f8}
-    .side-list{list-style:none;margin:0;padding:0}
+    .side-list{list-style:none;margin:0;padding:0; flex:1; overflow:auto}
     .side-list a{display:block;padding:10px 12px;border-radius:8px;color:var(--text);text-decoration:none}
     .side-list a:hover{background:rgba(255,159,26,.1);border:1px solid rgba(255,159,26,.25)}
 
@@ -119,10 +121,12 @@
     }
 
     /* ====== HERO / CONTENIDO ====== */
+    /* Bajamos la sección ~12% (ajusta margin-top 10–15% si quieres) */
     .hero-wrap{
-      min-height:46vh;           /* subido */
+      min-height:52vh;
       display:flex;align-items:center;justify-content:center;text-align:center;
       padding:0 14px 0;
+      margin-top:12vh;           /* <-- desplaza hacia abajo */
     }
     .hero h1{font-size:clamp(34px,4vw,54px);font-weight:900;color:var(--accent);margin:0 0 6px;
       text-shadow:0 0 18px rgba(255,159,26,.7),0 0 36px rgba(255,159,26,.25)}
@@ -188,9 +192,11 @@
 
     /* ===== Paginación del panel lateral (lvl3) ===== */
     .side .pager{
-      display:flex; justify-content:flex-end; align-items:center; gap:10px;
-      margin:8px 6px 4px;
+      display:flex; justify-content:space-between; align-items:center; gap:10px;
+      margin:10px 6px 4px;
+      padding-top:6px; border-top:1px dashed rgba(255,255,255,.08);
     }
+    .pager-info{font-size:12px; opacity:.7; user-select:none}
     .pager-btn{
       position:relative; width:38px; height:32px; border-radius:10px;
       background:rgba(255,159,26,.10); border:1px solid rgba(255,159,26,.35);
@@ -211,7 +217,6 @@
       background:var(--accent); color:#111; box-shadow:0 4px 14px rgba(0,0,0,.35);
       border:1px solid rgba(255,255,255,.25);
     }
-    .pager .label{ opacity:.7; font-size:12px; margin-left:4px; user-select:none; }
   </style>
 </head>
 <body>
@@ -319,54 +324,54 @@
     setTimeout(typeName,300);
 
     /* ===== Datos del NAV ===== */
-    const seven = base => Array.from({length:7}, (_,i)=>({label:`${base} · Artículo ${i+1}`, href:"#"}));
+    // Ahora cada subcarpeta trae 12 artículos (2 páginas x 6)
+    const twelve = base => Array.from({length:12}, (_,i)=>({label:`${base} · Artículo ${i+1}`, href:"#"}));
 
     const NAV_TREE = [
       { label:"Inicio", href:"/" },
 
       { label:"Portafolio", sticky:true, children:[
         { label:"Ciberseguridad", href:"/portafolio/Ciberseguridad/", children:[
-          { label:"Análisis Forense", href:"#", children: seven("Análisis Forense") },
-          { label:"DevSecOps", href:"#", children: seven("DevSecOps") },
-          { label:"Documentación e informes", href:"#", children: seven("Docs e informes") },
-          { label:"Puesta en producción segura", href:"#", children: seven("Producción segura") },
-          { label:"Respuesta a Incidentes", href:"#", children: seven("Respuesta a Incidentes") },
-          { label:"Seguridad en redes", href:"#", children: seven("Seguridad en redes") },
-          { label:"Seguridad de sistemas", href:"#", children: seven("Seguridad de sistemas") }
+          { label:"Análisis Forense", href:"#", children: twelve("Análisis Forense") },
+          { label:"DevSecOps", href:"#", children: twelve("DevSecOps") },
+          { label:"Documentación e informes", href:"#", children: twelve("Docs e informes") },
+          { label:"Puesta en producción segura", href:"#", children: twelve("Producción segura") },
+          { label:"Respuesta a Incidentes", href:"#", children: twelve("Respuesta a Incidentes") },
+          { label:"Seguridad en redes", href:"#", children: twelve("Seguridad en redes") },
+          { label:"Seguridad de sistemas", href:"#", children: twelve("Seguridad de sistemas") }
         ]},
         { label:"Sistemas", href:"/portafolio/sistemas/", children:[
-          { label:"Linux", href:"#", children: seven("Linux") },
-          { label:"Windows", href:"#", children: seven("Windows") },
-          { label:"Automatización", href:"#", children: seven("Automatización") }
+          { label:"Linux", href:"#", children: twelve("Linux") },
+          { label:"Windows", href:"#", children: twelve("Windows") },
+          { label:"Automatización", href:"#", children: twelve("Automatización") }
         ]}
       ]},
 
       { label:"Teoría y Casos Curiosos", children:[
         { label:"Ciberseguridad", href:"#", children:[
-          { label:"Análisis Forense", href:"#", children: seven("Teoría · Forense") },
-          { label:"Respuesta a Incidentes", href:"#", children: seven("Teoría · Incidentes") }
+          { label:"Análisis Forense", href:"#", children: twelve("Teoría · Forense") },
+          { label:"Respuesta a Incidentes", href:"#", children: twelve("Teoría · Incidentes") }
         ]},
         { label:"Sistemas", href:"#", children:[
-          { label:"Redes", href:"#", children: seven("Teoría · Redes") },
-          { label:"Conceptos", href:"#", children: seven("Teoría · Conceptos") }
+          { label:"Redes", href:"#", children: twelve("Teoría · Redes") },
+          { label:"Conceptos", href:"#", children: twelve("Teoría · Conceptos") }
         ]}
       ]},
 
       { label:"Laboratorio", href:"/Laboratorio/", children:[
-        { label:"TryHackMe", href:"#", children: seven("THM") },
-        { label:"HackTheBox", href:"#", children: seven("HTB") }
+        { label:"TryHackMe", href:"#", children: twelve("THM") },
+        { label:"HackTheBox", href:"#", children: twelve("HTB") }
       ]},
 
       { label:"Contacto", href:"/contacto/" }
     ];
 
-    /* === swap animado del panel (lvl3) con paginación visual === */
+    /* === swap animado del panel (lvl3) con paginación visual (6 por página) === */
     function swapSideContent(sideEl, newTitle, newLinksArray) {
       const titleEl = sideEl.querySelector('.side-title');
-      const listEl  = sideEl.querySelector('.side-list');
-
       sideEl._pagesByKey = sideEl._pagesByKey || new Map();
-      const perPage = 7;
+
+      const perPage = 6; // <-- fijo a 6
       const pages = chunkArray(newLinksArray, perPage);
 
       const key = newTitle;
@@ -412,34 +417,31 @@
       }
       pager.innerHTML = '';
 
-      if (state.pages.length > 1) {
-        const prev = document.createElement('button');
-        prev.className = 'pager-btn prev';
-        prev.title = 'Página anterior';
-        prev.disabled = state.page === 0;
-        prev.dataset.page = state.page > 0 ? (state.page) : '';
+      // Siempre habrá 2 páginas (12 items), pero dejamos el control genérico
+      const prev = document.createElement('button');
+      prev.className = 'pager-btn prev';
+      prev.title = 'Página anterior';
+      prev.disabled = state.page === 0;
+      prev.dataset.page = state.page > 0 ? (state.page) : '';
 
-        const next = document.createElement('button');
-        next.className = 'pager-btn next';
-        next.title = 'Página siguiente';
-        next.disabled = state.page >= state.pages.length - 1;
-        next.dataset.page = state.page < state.pages.length - 1 ? (state.page + 2) : '';
+      const next = document.createElement('button');
+      next.className = 'pager-btn next';
+      next.title = 'Página siguiente';
+      next.disabled = state.page >= state.pages.length - 1;
+      next.dataset.page = state.page < state.pages.length - 1 ? (state.page + 2) : '';
 
-        const label = document.createElement('span');
-        label.className = 'label';
-        label.textContent = 'pag';
+      const info = document.createElement('span');
+      info.className = 'pager-info';
+      info.textContent = `Página ${state.page + 1} de ${state.pages.length}`;
 
-        prev.addEventListener('click', () => {
-          if (state.page > 0) { state.page--; renderSidePage(sideEl, state); }
-        });
-        next.addEventListener('click', () => {
-          if (state.page < state.pages.length - 1) { state.page++; renderSidePage(sideEl, state); }
-        });
+      prev.addEventListener('click', () => {
+        if (state.page > 0) { state.page--; renderSidePage(sideEl, state); }
+      });
+      next.addEventListener('click', () => {
+        if (state.page < state.pages.length - 1) { state.page++; renderSidePage(sideEl, state); }
+      });
 
-        pager.append(prev, next, label);
-      } else {
-        pager.remove();
-      }
+      pager.append(info, prev, next);
     }
 
     function chunkArray(arr, size){
@@ -555,7 +557,7 @@
               const newTitle  = `${childLvl1.label} / ${childLvl2.label}`;
 
               positionSideAligned(side, link2, sub);      // alinear con clamp
-              swapSideContent(side, newTitle, linksLvl3); // swap + paginación
+              swapSideContent(side, newTitle, linksLvl3); // swap + paginación (6 por página)
               wrap.setAttribute('data-panel','show');
               setTimeout(()=> positionSideAligned(side, link2, sub), 0); // reajuste tras cambio de altura
             });
@@ -619,4 +621,3 @@
   </script>
 </body>
 </html>
-
