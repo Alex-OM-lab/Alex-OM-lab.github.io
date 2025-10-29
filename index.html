@@ -267,8 +267,9 @@
       padding:14px;
     }
     .cube-head{
-      display:flex; align-items:baseline; justify-content:space-between; gap:12px;
+      display:flex; align-items:baseline; justify-content:center; gap:12px; /* centrado */
       margin-bottom:10px;
+      text-align:center;
     }
     .cube-head h3{margin:0; font-size:clamp(20px,2.2vw,26px)}
     .cube-track{
@@ -339,8 +340,12 @@
       transform:scale(1.25);
     }
 
-    /* Destacar central (opcional: leve zoom) */
-    .cube.is-featured{ outline:1px solid rgba(255,159,26,.35); box-shadow:0 10px 28px rgba(255,159,26,.18) }
+    /* Destacado automático: solo cuando NO hay hover en el carrusel */
+    .cube.is-featured{ outline:none; box-shadow:none; }
+    .cube-carousel:not(:hover) .cube.is-featured{
+      outline:1px solid rgba(255,159,26,.35);
+      box-shadow:0 10px 28px rgba(255,159,26,.18);
+    }
 
     /* Responsive: 3 y 2/1 visibles */
     @media (max-width:1020px){ .cube{ flex-basis:calc((100% - 14px*2)/3) } }
@@ -352,7 +357,6 @@
       .cube-track{ transition:none }
     }
   </style>
-</head>
 <body>
 
   <!-- ========================= NAV ========================== -->
@@ -433,8 +437,7 @@
 
       <div class="cube-carousel" data-autoplay="true" data-interval="3200" data-shuffle="true" aria-roledescription="carrusel">
         <div class="cube-head">
-          <h3>Explora lo más reciente</h3>
-          <span class="kicker" id="cube-status" aria-live="polite" style="opacity:.75">Avanza automáticamente · Pausa al interactuar</span>
+          <h3>Artículos interesantes</h3>
         </div>
 
         <div class="cube-viewport" role="region" aria-label="Carrusel de artículos" style="overflow:hidden">
@@ -598,8 +601,22 @@
       info.className = 'pager-info';
       info.textContent = `Página ${state.page + 1} de ${state.pages.length}`;
 
-      prev.addEventListener('click', () => { if (state.page > 0) { state.page--; renderSidePage(sideEl, state); }});
-      next.addEventListener('click', () => { if (state.page < state.pages.length - 1) { state.page++; renderSidePage(sideEl, state); }});
+      // Evitar perder foco/cerrar panel al usar paginación
+      [prev, next].forEach(b=>{
+        b.addEventListener('mousedown', e => e.preventDefault());
+        b.addEventListener('click', e => {
+          e.stopPropagation();
+          const folder = b.closest('.nav-folder');
+          if (folder) setOpen(folder, true);
+        });
+      });
+
+      prev.addEventListener('click', () => {
+        if (state.page > 0) { state.page--; renderSidePage(sideEl, state); }
+      });
+      next.addEventListener('click', () => {
+        if (state.page < state.pages.length - 1) { state.page++; renderSidePage(sideEl, state); }
+      });
 
       pager.append(info, prev, next);
     }
@@ -645,11 +662,22 @@
         });
       });
 
-      // cerrar al hacer click fuera
+      // mantener abierto al paginar (captura) y cerrar solo si click es fuera
       document.addEventListener('click', (e)=>{
         const anyOpen = document.querySelector('.nav-folder[aria-open="true"]');
         if(anyOpen && !anyOpen.contains(e.target)) setOpen(anyOpen,false,true);
       });
+
+      // Captura antes que otros handlers: clicks en .pager-btn no cierran
+      document.addEventListener('click', (e)=>{
+        const btn = e.target.closest('.pager-btn');
+        if (!btn) return;
+        const folder = btn.closest('.nav-folder');
+        if (folder){
+          e.stopPropagation();
+          setOpen(folder, true);
+        }
+      }, true);
     }
 
     /* ===== Crear nodo ===== */
@@ -800,14 +828,13 @@
       const dotsEl = document.getElementById('cubeDots');
       const btnPrev = document.getElementById('cubePrev');
       const btnNext = document.getElementById('cubeNext');
-      const status = document.getElementById('cube-status');
 
       // Datos placeholder (inventados)
       const ITEMS = Array.from({length:12}).map((_,i)=>({
         id: i+1,
         titulo: `Artículo ${i+1}: Placeholder`,
         resumen: `Resumen breve del contenido ${i+1}. Texto ficticio para probar el layout.`,
-        img: `assets/placeholder_${(i%6)+1}.jpg`, // usa tus propias imágenes si quieres
+        img: `assets/placeholder_${(i%6)+1}.jpg`,
         href: "#"
       }));
 
@@ -856,17 +883,14 @@
       };
 
       const jumpIfNeeded = ()=>{
-        // si hemos avanzado a la copia, reubicar sin transición
         if(index >= max){
           index = index % max;
           track.style.transition = 'none';
           track.style.transform = `translateX(${-index*itemWidth()}px)`;
-          // reflow para que nueva transición funcione
           void track.offsetWidth;
           track.style.transition = '';
         } else if(index < 0){
-          // si vamos atrás más allá del inicio, saltar al final equivalente
-          index = (index + max) % max + max; // mover a copia
+          index = (index + max) % max + max;
           track.style.transition = 'none';
           track.style.transform = `translateX(${-index*itemWidth()}px)`;
           void track.offsetWidth;
@@ -885,11 +909,9 @@
       const start = ()=>{
         if(timer || !autoplay) return;
         timer = setInterval(()=>{ next(); jumpIfNeeded(); }, intervalMs);
-        status.textContent = "Avanza automáticamente · Pausa al interactuar";
       };
       const stop = ()=>{
         clearInterval(timer); timer = null;
-        status.textContent = "Pausado";
       };
 
       // Pausa en hover/focus dentro del carrusel
@@ -927,7 +949,7 @@
       // Recalcular en resize
       window.addEventListener('resize', ()=>{ goTo(index); });
 
-      // Destacar central (sólo visual en desktop: el 1º de la vista)
+      // Destacar central (solo cuando no hay hover; la lógica CSS lo controla)
       const updateFeatured = ()=>{
         const cubes = Array.from(track.querySelectorAll('.cube'));
         cubes.forEach(c=>c.classList.remove('is-featured'));
