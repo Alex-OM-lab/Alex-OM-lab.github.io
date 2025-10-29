@@ -431,6 +431,54 @@
   .site-panel{ transition:none }
   .site-handle{ transition:none }
 }
+    /* ===== MAPA DEL SITIO — sección fija ===== */
+.sitemap { margin-top: 30px; }
+.sitemap .card {
+  border-radius: var(--radius);
+  border:1px solid rgba(255,255,255,.06);
+  background:linear-gradient(180deg,color-mix(in oklab,var(--panel) 92%,#0f1422 8%),var(--panel));
+  padding:14px;
+}
+.sitemap .sm-head { display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:10px; }
+.sitemap .sm-head h2 { margin:0; }
+.sitemap .sm-head .kicker { margin:0; color:var(--muted); }
+
+.sitemap .sm-cols{
+  display:grid; grid-template-columns: 1.1fr 1.1fr 1.2fr 1.2fr; gap:12px;
+}
+.sitemap .sm-col{
+  background:#0c1323; border:1px solid rgba(255,255,255,.06); border-radius:12px;
+  padding:10px; overflow:hidden;
+  max-height: 0; opacity:0; transform: translateY(-4px);
+  transition:max-height .28s ease, opacity .2s ease, transform .2s ease;
+}
+.sitemap .sm-col.is-open{ max-height: 56vh; opacity:1; transform:none; }
+.sitemap .sm-col h4{ margin:2px 0 8px; font-size:14px; color:var(--muted) }
+.sitemap .sm-list{ list-style:none; margin:0; padding:0; overflow:auto; max-height:48vh; }
+
+.sitemap .item{
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+  padding:9px 10px; border-radius:10px; border:1px solid transparent;
+  color:var(--text); background:transparent; width:100%;
+  cursor:pointer; text-align:left; font-weight:700;
+}
+.sitemap .item:hover{ background:rgba(255,159,26,.10); border-color:rgba(255,159,26,.25) }
+.sitemap .item.is-active{
+  background:linear-gradient(90deg, rgba(255,159,26,.18), rgba(255,159,26,.08) 70%);
+  border-color:rgba(255,159,26,.55); color:#ffe1a6;
+}
+.sitemap .chev{ opacity:.6 }
+
+.sitemap .article{
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+  padding:8px 10px; border-radius:8px; border:1px solid rgba(255,255,255,.06);
+  background:#0a1020; text-decoration:none; color:var(--text);
+}
+.sitemap .article + .article{ margin-top:8px; }
+.sitemap .article:hover{ border-color:rgba(255,159,26,.35); background:#0b1426 }
+
+@media (max-width:980px){ .sitemap .sm-cols{ grid-template-columns: 1fr 1fr } }
+@media (max-width:640px){ .sitemap .sm-cols{ grid-template-columns: 1fr } }
   </style>
 <body>
 
@@ -527,6 +575,34 @@
         <div class="cube-dots" id="cubeDots" aria-hidden="true"></div>
       </div>
     </section>
+    <!-- ========================= MAPA DEL SITIO ========================== -->
+<section id="sitemap" class="sitemap" aria-labelledby="sitemap-title">
+  <div class="card">
+    <div class="sm-head">
+      <h2 id="sitemap-title" class="section-title">Mapa del sitio</h2>
+      <p class="kicker">Explora el contenido por niveles: raíz → áreas → subcarpetas → artículos.</p>
+    </div>
+
+    <div class="sm-cols">
+      <div class="sm-col is-open">
+        <h4>Nivel 0</h4>
+        <ul class="sm-list" id="smL0"></ul>
+      </div>
+      <div class="sm-col" id="wrapL1">
+        <h4>Nivel 1</h4>
+        <ul class="sm-list" id="smL1"></ul>
+      </div>
+      <div class="sm-col" id="wrapL2">
+        <h4>Nivel 2</h4>
+        <ul class="sm-list" id="smL2"></ul>
+      </div>
+      <div class="sm-col" id="wrapL3">
+        <h4>Nivel 3 (Artículos)</h4>
+        <ul class="sm-list" id="smL3"></ul>
+      </div>
+    </div>
+  </div>
+</section>
     <!-- /CARRUSEL -->
 
     <section id="contact" aria-labelledby="contact-title">
@@ -1027,36 +1103,6 @@ function renderNav(tree){
       goTo(0);
       if(autoplay) start();
     })();
-    /* ============== MAPA DEL SITIO (datos + UI) ============== */
-/* 1) Datos: nombres reales de Nivel 2 que mostraste + 6 artículos placeholder */
-const SITE_MAP = {
-  titulo: "Portafolio Profesional",
-  areas: [
-    {
-      nombre: "Ciberseguridad",
-      subcarpetas: [
-        "Análisis Forense",
-        "DevSecOps",
-        "Documentación e informes",
-        "Puesta en producción segura",
-        "Respuesta a incidentes",
-        "Seguridad en redes",
-        "Seguridad de sistemas"
-      ]
-    },
-    {
-      nombre: "Administración de Sistemas",
-      subcarpetas: [
-        "Administración de redes",
-        "Backups y recuperación",
-        "Bases de datos",
-        "Gestión de sistemas",
-        "Seguridad en sistemas",
-        "Virtualización y conectividad"
-      ]
-    }
-  ]
-};
 
 // Genera 6 artículos placeholder por subcarpeta
 function makeArticlesFor(folder){
@@ -1155,38 +1201,100 @@ document.addEventListener('click', (e)=>{
   if(drawer.getAttribute('aria-expanded')!=='true') return;
   if(!panel.contains(e.target) && !handle.contains(e.target)) setDrawer(false);
 });
+    /* ===== MAPA DEL SITIO (sección fija) ===== */
+/* Estructura: 2 raíces (Nivel 0) → 2 áreas (Nivel 1) → subcarpetas (Nivel 2) → 6 artículos (Nivel 3) */
+const SITE_TREE = [
+  { raiz: "Teoría y datos curiosos",
+    areas: [
+      { nombre: "Ciberseguridad", subcarpetas: [
+        "Análisis Forense","DevSecOps","Documentación e informes",
+        "Puesta en producción segura","Respuesta a incidentes",
+        "Seguridad en redes","Seguridad de sistemas"
+      ]},
+      { nombre: "Sistemas", subcarpetas: [
+        "Administración de redes","Backups y recuperación","Bases de datos",
+        "Gestión de sistemas","Seguridad en sistemas","Virtualización y conectividad"
+      ]}
+    ]
+  },
+  { raiz: "Portafolio",
+    areas: [
+      { nombre: "Ciberseguridad", subcarpetas: [
+        "Análisis Forense","DevSecOps","Documentación e informes",
+        "Puesta en producción segura","Respuesta a incidentes",
+        "Seguridad en redes","Seguridad de sistemas"
+      ]},
+      { nombre: "Sistemas", subcarpetas: [
+        "Administración de redes","Backups y recuperación","Bases de datos",
+        "Gestión de sistemas","Seguridad en sistemas","Virtualización y conectividad"
+      ]}
+    ]
+  }
+];
+
+const smL0 = document.getElementById('smL0');
+const smL1 = document.getElementById('smL1');
+const smL2 = document.getElementById('smL2');
+const smL3 = document.getElementById('smL3');
+
+const wrapL1 = document.getElementById('wrapL1');
+const wrapL2 = document.getElementById('wrapL2');
+const wrapL3 = document.getElementById('wrapL3');
+
+let sel0 = null, sel1 = null, sel2 = null;
+
+const btn = (txt, active, onclick) => {
+  const li = document.createElement('li');
+  const b  = document.createElement('button');
+  b.type='button'; b.className='item' + (active?' is-active':'');
+  b.innerHTML = `<span>${txt}</span><span class="chev">›</span>`;
+  b.addEventListener('click', onclick);
+  li.appendChild(b); return li;
+};
+const article = (txt, href='#') => {
+  const li = document.createElement('li');
+  const a  = document.createElement('a');
+  a.href=href; a.className='article';
+  a.innerHTML = `<span>${txt}</span><span>↗</span>`;
+  li.appendChild(a); return li;
+};
+const makeSix = name => Array.from({length:6},(_,i)=>`Artículo ${i+1} — ${name}`);
+
+function renderL0(){
+  smL0.innerHTML=''; smL1.innerHTML=''; smL2.innerHTML=''; smL3.innerHTML='';
+  wrapL1.classList.remove('is-open'); wrapL2.classList.remove('is-open'); wrapL3.classList.remove('is-open');
+  SITE_TREE.forEach((n,ix)=>{
+    smL0.appendChild(btn(n.raiz, sel0===ix, ()=>{ sel0=ix; sel1=null; sel2=null; renderL1(); }));
+  });
+}
+function renderL1(){
+  smL1.innerHTML=''; smL2.innerHTML=''; smL3.innerHTML='';
+  wrapL1.classList.add('is-open'); wrapL2.classList.remove('is-open'); wrapL3.classList.remove('is-open');
+  if(sel0===null) return;
+  SITE_TREE[sel0].areas.forEach((area,ix)=>{
+    smL1.appendChild(btn(area.nombre, sel1===ix, ()=>{ sel1=ix; sel2=null; renderL2(); }));
+  });
+}
+function renderL2(){
+  smL2.innerHTML=''; smL3.innerHTML='';
+  wrapL2.classList.add('is-open'); wrapL3.classList.remove('is-open');
+  if(sel0===null || sel1===null) return;
+  const area = SITE_TREE[sel0].areas[sel1];
+  area.subcarpetas.forEach((sub,ix)=>{
+    smL2.appendChild(btn(sub, sel2===ix, ()=>{ sel2=ix; renderL3(); }));
+  });
+}
+function renderL3(){
+  smL3.innerHTML='';
+  wrapL3.classList.add('is-open');
+  if(sel0===null || sel1===null || sel2===null) return;
+  const sub = SITE_TREE[sel0].areas[sel1].subcarpetas[sel2];
+  makeSix(sub).forEach(t => smL3.appendChild(article(t)));
+}
+
+/* Estado inicial: mostrar sólo Nivel 0 (dos tarjetas) */
+renderL0();
   </script>
-  <!-- ===== MAPA DEL SITIO (cajón) ===== -->
-<div class="site-drawer" id="siteDrawer" aria-expanded="false">
-  <button class="site-handle" id="siteHandle" aria-controls="sitePanel" aria-expanded="false">
-    <span class="dot"></span> Mapa del sitio
-  </button>
 
-  <div class="site-panel" id="sitePanel" role="dialog" aria-label="Mapa del sitio">
-    <div class="site-head">
-      <h3>Portafolio Profesional — mapa del sitio</h3>
-      <button class="site-close" id="siteClose">Cerrar</button>
-    </div>
-
-    <div class="site-cols">
-      <div class="site-col">
-        <h4>Nivel 0</h4>
-        <ul class="site-list" id="colL0"></ul>
-      </div>
-      <div class="site-col">
-        <h4>Nivel 1</h4>
-        <ul class="site-list" id="colL1"></ul>
-      </div>
-      <div class="site-col">
-        <h4>Nivel 2</h4>
-        <ul class="site-list" id="colL2"></ul>
-      </div>
-      <div class="site-col">
-        <h4>Nivel 3 (Artículos)</h4>
-        <ul class="site-list" id="colL3"></ul>
-      </div>
-    </div>
-  </div>
-</div>
 </body>
 </html>
