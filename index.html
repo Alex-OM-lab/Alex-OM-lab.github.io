@@ -566,61 +566,60 @@
       }
     }
 
-    function renderSidePage(sideEl, state){
-      const listEl = sideEl.querySelector('.side-list');
-      listEl.innerHTML = '';
+function renderSidePage(sideEl, state){
+  const listEl = sideEl.querySelector('.side-list');
+  listEl.innerHTML = '';
 
-      const current = state.pages[state.page] || [];
-      current.forEach(a => {
-        const li = document.createElement('li');
-        li.appendChild(a.cloneNode(true));
-        listEl.appendChild(li);
-      });
+  const current = state.pages[state.page] || [];
+  current.forEach(a => {
+    const li = document.createElement('li');
+    li.appendChild(a.cloneNode(true));
+    listEl.appendChild(li);
+  });
 
-      let pager = sideEl.querySelector('.pager');
-      if (!pager) {
-        pager = document.createElement('div');
-        pager.className = 'pager';
-        sideEl.appendChild(pager);
-      }
-      pager.innerHTML = '';
+  let pager = sideEl.querySelector('.pager');
+  if (!pager) {
+    pager = document.createElement('div');
+    pager.className = 'pager';
+    sideEl.appendChild(pager);
+  }
+  pager.innerHTML = '';
 
-      const prev = document.createElement('button');
-      prev.className = 'pager-btn prev';
-      prev.title = 'Página anterior';
-      prev.disabled = state.page === 0;
-      prev.dataset.page = state.page > 0 ? (state.page) : '';
+  const prev = document.createElement('button');
+  prev.className = 'pager-btn prev';
+  prev.title = 'Página anterior';
+  prev.disabled = state.page === 0;
+  prev.dataset.page = state.page > 0 ? (state.page) : '';
 
-      const next = document.createElement('button');
-      next.className = 'pager-btn next';
-      next.title = 'Página siguiente';
-      next.disabled = state.page >= state.pages.length - 1;
-      next.dataset.page = state.page < state.pages.length - 1 ? (state.page + 2) : '';
+  const next = document.createElement('button');
+  next.className = 'pager-btn next';
+  next.title = 'Página siguiente';
+  next.disabled = state.page >= state.pages.length - 1;
+  next.dataset.page = state.page < state.pages.length - 1 ? (state.page + 2) : '';
 
-      const info = document.createElement('span');
-      info.className = 'pager-info';
-      info.textContent = `Página ${state.page + 1} de ${state.pages.length}`;
+  const info = document.createElement('span');
+  info.className = 'pager-info';
+  info.textContent = `Página ${state.page + 1} de ${state.pages.length}`;
 
-      // Evitar perder foco/cerrar panel al usar paginación
-      [prev, next].forEach(b=>{
-        b.addEventListener('mousedown', e => e.preventDefault());
-        b.addEventListener('click', e => {
-          e.stopPropagation();
-          const folder = b.closest('.nav-folder');
-          if (folder) setOpen(folder, true);
-        });
-      });
+  // ✅ Evitar perder foco/cerrar panel al usar paginación y mantenerlo abierto
+  [prev, next].forEach(b=>{
+    b.addEventListener('mousedown', e => e.preventDefault()); // evita blur por mousedown
+    b.addEventListener('click', () => {
+      const folder = b.closest('.nav-folder');
+      if (folder) setOpen(folder, true);
+    });
+  });
 
-      prev.addEventListener('click', () => {
-        if (state.page > 0) { state.page--; renderSidePage(sideEl, state); }
-      });
-      next.addEventListener('click', () => {
-        if (state.page < state.pages.length - 1) { state.page++; renderSidePage(sideEl, state); }
-      });
+  // Handlers reales de paginación
+  prev.addEventListener('click', () => {
+    if (state.page > 0) { state.page--; renderSidePage(sideEl, state); }
+  });
+  next.addEventListener('click', () => {
+    if (state.page < state.pages.length - 1) { state.page++; renderSidePage(sideEl, state); }
+  });
 
-      pager.append(info, prev, next);
-    }
-
+  pager.append(info, prev, next);
+}
     function chunkArray(arr, size){
       const out = [];
       for(let i=0;i<arr.length;i+=size) out.push(arr.slice(i, i+size));
@@ -645,40 +644,40 @@
     }
 
     /* ===== Render NAV (izquierda) ===== */
-    function renderNav(tree){
-      const nav = document.getElementById('nav');
-      tree.forEach(node => nav.appendChild(createNode(node)));
+function renderNav(tree){
+  const nav = document.getElementById('nav');
+  tree.forEach(node => nav.appendChild(createNode(node)));
 
-      // hover-intent primer nivel
-      const timers = new WeakMap();
-      document.querySelectorAll('.nav-folder').forEach(folder=>{
-        folder.addEventListener('mouseenter', ()=>{
-          const t = timers.get(folder); if(t) clearTimeout(t);
-          setOpen(folder, true);
-        });
-        folder.addEventListener('mouseleave', ()=>{
-          const t = setTimeout(()=> setOpen(folder,false,true), 220);
-          timers.set(folder,t);
-        });
-      });
+  // hover-intent primer nivel
+  const timers = new WeakMap();
+  document.querySelectorAll('.nav-folder').forEach(folder=>{
+    folder.addEventListener('mouseenter', ()=>{
+      const t = timers.get(folder); if(t) clearTimeout(t);
+      setOpen(folder, true);
+    });
+    folder.addEventListener('mouseleave', ()=>{
+      const t = setTimeout(()=> setOpen(folder,false,true), 220);
+      timers.set(folder,t);
+    });
+  });
 
-      // mantener abierto al paginar (captura) y cerrar solo si click es fuera
-      document.addEventListener('click', (e)=>{
-        const anyOpen = document.querySelector('.nav-folder[aria-open="true"]');
-        if(anyOpen && !anyOpen.contains(e.target)) setOpen(anyOpen,false,true);
-      });
+  // Cerrar solo si el click es FUERA del folder abierto (en burbuja)
+  document.addEventListener('click', (e)=>{
+    // 👇 ignorar clicks en los botones de paginación
+    if (e.target.closest('.pager-btn')) return;
 
-      // Captura antes que otros handlers: clicks en .pager-btn no cierran
-      document.addEventListener('click', (e)=>{
-        const btn = e.target.closest('.pager-btn');
-        if (!btn) return;
-        const folder = btn.closest('.nav-folder');
-        if (folder){
-          e.stopPropagation();
-          setOpen(folder, true);
-        }
-      }, true);
-    }
+    const anyOpen = document.querySelector('.nav-folder[aria-open="true"]');
+    if(anyOpen && !anyOpen.contains(e.target)) setOpen(anyOpen,false,true);
+  });
+
+  // Mantener abierto al usar la paginación (en burbuja y SIN stopPropagation)
+  document.addEventListener('click', (e)=>{
+    const btn = e.target.closest('.pager-btn');
+    if (!btn) return;
+    const folder = btn.closest('.nav-folder');
+    if (folder) setOpen(folder, true);
+  });
+}
 
     /* ===== Crear nodo ===== */
     function createNode(node){
