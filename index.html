@@ -348,6 +348,89 @@
     @media (prefers-reduced-motion: reduce){
       .cube-track{ transition:none }
     }
+
+    /* ====== MAPA DEL SITIO (cajón deslizante) ====== */
+.site-drawer {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 80;
+  pointer-events: none;
+}
+.site-handle {
+  pointer-events: auto;
+  display:flex; align-items:center; justify-content:center; gap:10px;
+  width: max(240px, 36%); margin: 0 auto 10px;
+  padding: 10px 14px;
+  border:1px solid rgba(255,255,255,.08);
+  background: rgba(17,26,45,.84);
+  backdrop-filter: saturate(160%) blur(6px);
+  color: var(--text); font-weight:800; border-radius: 999px;
+  box-shadow: 0 6px 24px rgba(0,0,0,.35);
+  cursor: pointer; user-select: none;
+  transition: transform .14s ease, border-color .18s ease, background .18s ease;
+}
+.site-handle:hover { transform: translateY(-1px); border-color: rgba(255,159,26,.35); }
+.site-handle .dot { width:8px; height:8px; border-radius:999px; background:var(--accent); box-shadow:0 0 12px var(--accent); }
+
+.site-panel {
+  pointer-events: auto;
+  width:min(1200px, 94%); margin:0 auto 16px;
+  border:1px solid rgba(255,255,255,.08);
+  background: linear-gradient(180deg, color-mix(in oklab, var(--panel) 92%, #0f1422 8%), var(--panel));
+  border-radius: var(--radius);
+  box-shadow: 0 -10px 40px rgba(0,0,0,.45);
+  overflow: hidden;
+  transform: translateY(100%); opacity: 0;
+  transition: transform .28s cubic-bezier(.2,.8,.2,1), opacity .2s ease;
+}
+.site-drawer[aria-expanded="true"] .site-panel { transform: translateY(0); opacity: 1; }
+
+.site-head { display:flex; align-items:center; justify-content:space-between; gap:14px; padding:12px 14px; border-bottom:1px solid rgba(255,255,255,.06); }
+.site-head h3 { margin:0; font-size:clamp(18px,2vw,22px); }
+.site-close {
+  background: rgba(255,159,26,.12); border:1px solid rgba(255,159,26,.35);
+  color:#ffe2b0; border-radius:10px; padding:6px 10px; font-weight:800; cursor:pointer;
+}
+.site-close:hover { background: rgba(255,159,26,.18); border-color: rgba(255,159,26,.6); transform:translateY(-1px); }
+
+.site-cols {
+  display:grid; grid-template-columns: 1.1fr 1.1fr 1.2fr 1.2fr; gap:12px; padding:12px;
+}
+.site-col {
+  border:1px solid rgba(255,255,255,.06);
+  background: #0c1323; border-radius: 12px; padding:10px;
+  display:flex; flex-direction:column; min-height: 220px; max-height: 44vh;
+}
+.site-col h4 { margin:4px 0 10px; font-size:14px; color:var(--muted); letter-spacing:.2px; }
+.site-list { list-style:none; margin:0; padding:0; overflow:auto; }
+
+/* Ítems */
+.site-item {
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+  padding:9px 10px; border-radius:10px; cursor:pointer; user-select:none;
+  border:1px solid transparent; color:var(--text); text-decoration:none;
+}
+.site-item:hover { background: rgba(255,159,26,.10); border-color: rgba(255,159,26,.25); }
+.site-item.is-active { background: linear-gradient(90deg, rgba(255,159,26,.16), rgba(255,159,26,.08) 70%); border-color: rgba(255,159,26,.55); color:#ffe1a6; }
+.site-item .chev { opacity:.6; }
+
+/* Artículos (nivel 3) */
+.site-article { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:8px 10px; border-radius:8px; border:1px solid rgba(255,255,255,.06); background:#0a1020; }
+.site-article + .site-article { margin-top:8px; }
+.site-article:hover { border-color: rgba(255,159,26,.35); background: #0b1426; }
+
+/* Líneas de árbol (decorativas) */
+.site-col .site-list > li { position:relative; }
+.site-col:not(:first-child) .site-list > li::before{
+  content:""; position:absolute; left:-8px; top:18px; width:8px; height:1px;
+  background: rgba(255,159,26,.25);
+}
+@media (max-width:980px){ .site-cols { grid-template-columns: 1fr 1fr; } }
+@media (max-width:640px){ .site-cols { grid-template-columns: 1fr; } }
+
+/* Reduce motion */
+@media (prefers-reduced-motion: reduce){
+  .site-panel{ transition:none }
+  .site-handle{ transition:none }
+}
   </style>
 <body>
 
@@ -944,6 +1027,166 @@ function renderNav(tree){
       goTo(0);
       if(autoplay) start();
     })();
+    /* ============== MAPA DEL SITIO (datos + UI) ============== */
+/* 1) Datos: nombres reales de Nivel 2 que mostraste + 6 artículos placeholder */
+const SITE_MAP = {
+  titulo: "Portafolio Profesional",
+  areas: [
+    {
+      nombre: "Ciberseguridad",
+      subcarpetas: [
+        "Análisis Forense",
+        "DevSecOps",
+        "Documentación e informes",
+        "Puesta en producción segura",
+        "Respuesta a incidentes",
+        "Seguridad en redes",
+        "Seguridad de sistemas"
+      ]
+    },
+    {
+      nombre: "Administración de Sistemas",
+      subcarpetas: [
+        "Administración de redes",
+        "Backups y recuperación",
+        "Bases de datos",
+        "Gestión de sistemas",
+        "Seguridad en sistemas",
+        "Virtualización y conectividad"
+      ]
+    }
+  ]
+};
+
+// Genera 6 artículos placeholder por subcarpeta
+function makeArticlesFor(folder){
+  return Array.from({length:6}, (_,i)=>({
+    titulo:`Artículo ${i+1} — Placeholder`,
+    href:"#"
+  }));
+}
+
+/* 2) Elementos */
+const drawer  = document.getElementById('siteDrawer');
+const handle  = document.getElementById('siteHandle');
+const panel   = document.getElementById('sitePanel');
+const btnClose= document.getElementById('siteClose');
+
+const colL0 = document.getElementById('colL0');
+const colL1 = document.getElementById('colL1');
+const colL2 = document.getElementById('colL2');
+const colL3 = document.getElementById('colL3');
+
+/* 3) Abrir/cerrar cajón */
+function setDrawer(open){
+  drawer.setAttribute('aria-expanded', open ? 'true' : 'false');
+  handle.setAttribute('aria-expanded', open ? 'true' : 'false');
+}
+handle.addEventListener('click', ()=> setDrawer(drawer.getAttribute('aria-expanded')!=='true'));
+btnClose.addEventListener('click', ()=> setDrawer(false));
+
+/* 4) Render helpers */
+function liItem(label, onClick, active=false){
+  const li = document.createElement('li');
+  const a  = document.createElement('button');
+  a.type = 'button';
+  a.className = 'site-item' + (active?' is-active':'');
+  a.innerHTML = `<span>${label}</span><span class="chev">›</span>`;
+  a.addEventListener('click', onClick);
+  li.appendChild(a);
+  return li;
+}
+function liArticle(label, href){
+  const li = document.createElement('li');
+  const a  = document.createElement('a');
+  a.className='site-article';
+  a.href = href; a.innerHTML = `<span>${label}</span><span>↗</span>`;
+  li.appendChild(a); return li;
+}
+
+/* 5) Estado y flujo izq→der */
+let selL0 = 0;       // Portafolio (único)
+let selL1 = null;    // Área
+let selL2 = null;    // Subcarpeta
+
+function renderL0(){
+  colL0.innerHTML=''; colL1.innerHTML=''; colL2.innerHTML=''; colL3.innerHTML='';
+  colL0.appendChild(liItem(SITE_MAP.titulo, ()=>{ selL1=null; selL2=null; renderL1(); }, true));
+  renderL1();
+}
+function renderL1(){
+  colL1.innerHTML=''; colL2.innerHTML=''; colL3.innerHTML='';
+  SITE_MAP.areas.forEach((area,ix)=>{
+    colL1.appendChild(
+      liItem(area.nombre, ()=>{
+        selL1 = ix; selL2 = null; renderL2();
+      }, selL1===ix)
+    );
+  });
+}
+function renderL2(){
+  colL2.innerHTML=''; colL3.innerHTML='';
+  if(selL1===null) return;
+  const area = SITE_MAP.areas[selL1];
+  area.subcarpetas.forEach((sub,ix)=>{
+    colL2.appendChild(
+      liItem(sub, ()=>{
+        selL2 = ix; renderL3();
+      }, selL2===ix)
+    );
+  });
+}
+function renderL3(){
+  colL3.innerHTML='';
+  if(selL1===null || selL2===null) return;
+  const area = SITE_MAP.areas[selL1];
+  const sub  = area.subcarpetas[selL2];
+  const articles = makeArticlesFor(sub);
+  articles.forEach(a => colL3.appendChild(liArticle(a.titulo, a.href)));
+}
+
+/* 6) Iniciar con la primera área abierta por defecto */
+renderL0();
+selL1 = 0; renderL2();
+selL2 = 0; renderL3();
+
+/* 7) Cerrar cajón al pulsar fuera del panel (sin molestar con clics internos) */
+document.addEventListener('click', (e)=>{
+  if(drawer.getAttribute('aria-expanded')!=='true') return;
+  if(!panel.contains(e.target) && !handle.contains(e.target)) setDrawer(false);
+});
   </script>
+  <!-- ===== MAPA DEL SITIO (cajón) ===== -->
+<div class="site-drawer" id="siteDrawer" aria-expanded="false">
+  <button class="site-handle" id="siteHandle" aria-controls="sitePanel" aria-expanded="false">
+    <span class="dot"></span> Mapa del sitio
+  </button>
+
+  <div class="site-panel" id="sitePanel" role="dialog" aria-label="Mapa del sitio">
+    <div class="site-head">
+      <h3>Portafolio Profesional — mapa del sitio</h3>
+      <button class="site-close" id="siteClose">Cerrar</button>
+    </div>
+
+    <div class="site-cols">
+      <div class="site-col">
+        <h4>Nivel 0</h4>
+        <ul class="site-list" id="colL0"></ul>
+      </div>
+      <div class="site-col">
+        <h4>Nivel 1</h4>
+        <ul class="site-list" id="colL1"></ul>
+      </div>
+      <div class="site-col">
+        <h4>Nivel 2</h4>
+        <ul class="site-list" id="colL2"></ul>
+      </div>
+      <div class="site-col">
+        <h4>Nivel 3 (Artículos)</h4>
+        <ul class="site-list" id="colL3"></ul>
+      </div>
+    </div>
+  </div>
+</div>
 </body>
 </html>
