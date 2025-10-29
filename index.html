@@ -339,14 +339,6 @@
       box-shadow:0 0 10px rgba(255,159,26,.6);
       transform:scale(1.25);
     }
-
-    /* Destacado automático: solo cuando NO hay hover en el carrusel */
-    .cube.is-featured{ outline:none; box-shadow:none; }
-    .cube-carousel:not(:hover) .cube.is-featured{
-      outline:1px solid rgba(255,159,26,.35);
-      box-shadow:0 10px 28px rgba(255,159,26,.18);
-    }
-
     /* Responsive: 3 y 2/1 visibles */
     @media (max-width:1020px){ .cube{ flex-basis:calc((100% - 14px*2)/3) } }
     @media (max-width:720px) { .cube{ flex-basis:calc((100% - 14px)/2) } }
@@ -947,17 +939,6 @@ function renderNav(tree){
 
       // Recalcular en resize
       window.addEventListener('resize', ()=>{ goTo(index); });
-
-      // Destacar central (solo cuando no hay hover; la lógica CSS lo controla)
-      const updateFeatured = ()=>{
-        const cubes = Array.from(track.querySelectorAll('.cube'));
-        cubes.forEach(c=>c.classList.remove('is-featured'));
-        const firstVisible = cubes[index] || cubes[0];
-        firstVisible?.classList.add('is-featured');
-      };
-      const observer = new MutationObserver(updateFeatured);
-      observer.observe(track,{attributes:true,attributeFilter:['style']});
-      updateFeatured();
 
       // Arrancar
       goTo(0);
