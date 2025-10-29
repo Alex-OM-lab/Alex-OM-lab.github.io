@@ -2,80 +2,96 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Alejandro Orcajada Meseguer | Administrador de Sistemas y Ciberseguridad</title>
-  <meta name="description" content="Portafolio profesional de Alejandro Orcajada Meseguer, Administrador de Sistemas y Ciberseguridad." />
+  <meta name="viewport" content="width=1200" /> <!-- Solo escritorio por ahora -->
+  <title>AOM | Portfolio Profesional</title>
+  <meta name="description" content="Portafolio profesional de Alejandro Orcajada Meseguer: Administración de Sistemas, Ciberseguridad y DevOps." />
 
   <style>
-    /* ===== PALETA OSCURA CÁLIDA (azul profundo + naranjas) ===== */
+    /* =====================================================================
+       ⚙️ VARIABLES GLOBALES (AJUSTA AQUÍ COLORES, ESPACIADOS Y TIPOGRAFÍA)
+       ===================================================================== */
     :root{
-      --bg:#0b1220;
-      --panel:#111a2d;
-      --text:#e9eef6;
-      --muted:#a8b2c2;
-      --accent:#ff9f1a;
-      --accent-soft:#ffd79a;
-      --radius:14px;
+      /* 🎨 Paleta (oscuro + naranja cálido) */
+      --bg-1:#0b1220;    /* fondo base */
+      --bg-2:#0a0f1a;    /* fondo profundo para el gradiente */
+      --panel:#111a2d;   /* tarjetas/paneles */
+      --text:#e9eef6;    /* texto principal */
+      --muted:#a8b2c2;   /* texto secundario */
+      --accent:#ff9f1a;  /* naranja principal */
+      --accent-soft:#ffd79a; /* naranja suave */
 
-      /* tamaños menú */
-      --nav-font:15.5px;     /* ↑ tamaño letra */
-      --nav-pad-y:12px;      /* ↑ altura del topbar */
-      --nav-gap:12px;        /* ↑ separación entre items */
+      /* 🧭 Topbar */
+      --nav-font:16px;   /* tamaño letra menú */
+      --nav-pad-y:12px;  /* alto del topbar (padding vertical) */
+      --nav-gap:14px;    /* separación entre items */
 
-      /* hero offset (puedes subir/bajar fácil) */
-      --hero-offset:1vh;    /* pon 10vh o 15vh si quieres */
+      /* 🦸 Hero */
+      --hero-offset:10vh;  /* mueve el hero verticalmente (↓ mayor, ↑ menor) */
+      --hero-minh:52vh;    /* altura mínima del hero */
+
+      /* 🧩 Tarjetas / bloques */
+      --radius:14px;     /* radio estándar */
+      --shadow:0 10px 28px rgba(0,0,0,.35);
+      --border:1px solid rgba(255,255,255,.06);
+
+      /* 🔁 Artículos aleatorios */
+      --cards-per-page:6; /* muestra 6 artículos por página */
     }
 
+    /* =====================================================================
+       🧱 BASE
+       ===================================================================== */
     *{box-sizing:border-box}
     html,body{margin:0}
     body{
       font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,Inter,"Helvetica Neue",Arial;
+      color:var(--text);
+      /* 🌌 Gradiente sutil de fondo (azul noche → casi negro azulado) */
       background:
-        radial-gradient(1400px 800px at 80% -100px, rgba(255,159,26,.06), transparent 60%),
-        radial-gradient(1200px 700px at -200px 20%, rgba(255,215,154,.05), transparent 60%),
-        var(--bg);
-      color:var(--text)
+        radial-gradient(1200px 700px at 80% -200px, rgba(255,159,26,.06), transparent 60%),
+        linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 100%);
     }
+    a{color:inherit}
 
-    /* ====== TOPBAR ====== */
+    .container{width:min(1100px,92%);margin:0 auto}
+    section{padding:36px 0}
+    .section-title{font-size:clamp(24px,3vw,34px);margin:0 0 10px}
+    .kicker{color:var(--muted);margin:0 0 20px}
+
+    /* =====================================================================
+       🧭 TOPBAR / MENÚ SUPERIOR
+       - Orden: [Teoría y Casos] [Portafolio] [Laboratorio] [Contacto]   |   [Inicio]
+       ===================================================================== */
     .topbar{
-      position:sticky;top:0;z-index:100;
+      position:sticky;top:0;z-index:1000;
       backdrop-filter:saturate(160%) blur(8px);
       background:rgba(9,14,26,.74);
-      border-bottom:1px solid rgba(255,255,255,.06);
-      animation:topbarDrop .5s ease both;
+      border-bottom:var(--border);
+      box-shadow:0 10px 24px rgba(0,0,0,.25);
     }
     /* Línea naranja inferior */
     .topbar::after{
-      content:""; position:absolute; left:0; right:0; bottom:0;
-      height:3px;
-      background:linear-gradient(90deg, rgba(255,159,26,.0) 0%, rgba(255,159,26,.85) 22%, rgba(255,215,154,.9) 50%, rgba(255,159,26,.85) 78%, rgba(255,159,26,.0) 100%);
+      content:""; position:absolute; left:0; right:0; bottom:0; height:3px;
+      background:linear-gradient(90deg, rgba(255,159,26,0) 0%, rgba(255,159,26,.85) 22%, rgba(255,215,154,.9) 50%, rgba(255,159,26,.85) 78%, rgba(255,159,26,0) 100%);
       box-shadow:0 0 10px rgba(255,159,26,.35), 0 0 20px rgba(255,159,26,.22);
       pointer-events:none;
     }
-    @keyframes topbarDrop{from{transform:translateY(-8px);opacity:0}to{transform:none;opacity:1}}
-
     .topwrap{
       width:min(1100px,92%);margin:0 auto;
       display:flex;align-items:center;justify-content:space-between;
-      padding:calc(var(--nav-pad-y) - 2px) 0; /* más alto */
-      position:relative;
+      padding:calc(var(--nav-pad-y) - 2px) 0;
     }
-
     .brand{display:flex;align-items:center;gap:10px;font-weight:800;color:var(--text);text-decoration:none}
     .brand-dot{width:10px;height:10px;border-radius:999px;background:var(--accent);box-shadow:0 0 16px var(--accent)}
-
-    /* Menú dividido: izquierda (principal) + derecha (Inicio) */
-    .menu-left{display:flex;gap:var(--nav-gap);flex-wrap:wrap;align-items:center}
+    .menu-left{display:flex;gap:var(--nav-gap);align-items:center}
     .menu-right{display:flex;align-items:center}
 
-    /* ====== NAV LINKS ====== */
     .nav-link{
       color:var(--text);text-decoration:none;
-      padding:8px 14px;border-radius:999px;font-weight:700;
-      font-size:var(--nav-font);
+      padding:8px 14px;border-radius:999px;font-weight:700;font-size:var(--nav-font);
       border:1px solid transparent;
       transition:transform .12s,background .2s,border-color .2s,color .2s;
+      position:relative;
     }
     .nav-link:hover{
       transform:translateY(-1px);
@@ -83,177 +99,137 @@
       border-color:rgba(255,159,26,.35);
       color:var(--accent-soft)
     }
-
-    .nav-folder{position:relative}
-    .nav-btn{
-      display:inline-flex;align-items:center;gap:8px;
-      padding:8px 14px;border-radius:999px;border:1px solid transparent;
-      background:transparent;color:var(--text);
-      font-weight:800;font-size:var(--nav-font);
-      cursor:pointer;transition:transform .12s,background .2s,border-color .2s
+    /* Subrayado fino naranja al pasar */
+    .nav-link::after{
+      content:""; position:absolute; left:14px; right:14px; bottom:6px; height:2px;
+      background:linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity:0; transform:translateY(2px); transition:opacity .2s, transform .2s;
     }
-    .nav-btn:hover{transform:translateY(-1px);background:rgba(255,159,26,.12);border-color:rgba(255,159,26,.35)}
-    .nav-btn-link{color:var(--text);text-decoration:none;font-weight:800;transition:color .2s ease}
-    .nav-btn-link:hover{color:var(--accent-soft)}
-    .ico-folder{width:14px;height:12px;position:relative;display:inline-block}
-    .ico-folder::before{content:"";position:absolute;inset:0;border-radius:3px;background:rgba(255,159,26,.15);border:1px solid rgba(255,159,26,.35)}
-    .ico-folder::after{content:"";position:absolute;width:8px;height:3px;left:2px;top:-3px;border-radius:2px 2px 0 0;background:rgba(255,159,26,.35)}
-    .caret{width:10px;height:10px;border-right:2px solid var(--accent);border-bottom:2px solid var(--accent);
-      transform:rotate(-45deg) translateY(-1px);transition:transform .2s ease}
+    .nav-link:hover::after{opacity:1; transform:translateY(0)}
 
-    /* ====== POPOVER BASE ====== */
-    .sub{position:absolute;top:100%;left:0;min-width:360px;padding-top:0}
-    .sub::before{content:"";position:absolute;top:-10px;left:0;right:0;height:12px}
-    .sub::after{content:""; position:absolute; top:0; left:100%; width:20px; height:100%; background:transparent; pointer-events:auto;}
-
-    .sub>ul{
-      list-style:none;margin:0;padding:8px;background:rgba(17,26,45,.98);
-      border:1px solid rgba(255,255,255,.06);border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.35);
-      transform-origin:top left;transform:scaleY(.92);opacity:0;max-height:0;overflow:hidden;
-      transition:transform .2s ease,opacity .2s ease,max-height .32s ease;
-    }
-    .sub a{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border-radius:8px;
-      text-decoration:none;color:var(--text);border:1px solid transparent}
-    .sub a:hover{background:rgba(255,159,26,.1);border-color:rgba(255,159,26,.25)}
-    .nav-folder[aria-open="true"] > .sub > ul{pointer-events:auto;transform:scaleY(1);opacity:1;max-height:80vh;overflow:auto}
-    .nav-folder[aria-open="true"] > .nav-btn .caret{transform:rotate(45deg)}
-
-    /* ====== NIVEL 2 (vertical) ====== */
-    .nested{
-      max-height:0; opacity:0; transform:translateY(-4px);
-      overflow:hidden; margin-top:6px; padding-left:10px;
-      border-left:2px dashed rgba(255,159,26,.25);
-      transition:max-height .28s ease, opacity .22s ease, transform .22s ease;
-    }
-    .sub li.open > .nested{ max-height:1200px; opacity:1; transform:none; }
-
-    /* ====== PANEL LATERAL NIVEL 3 ====== */
-    .sub .side{
-      position:absolute; top:0; left:calc(100% + 12px); width:340px;
-      background:rgba(17,26,45,.98); border:1px solid rgba(255,255,255,.06);
-      border-radius:12px; box-shadow:0 12px 30px rgba(0,0,0,.35);
-      padding:8px; opacity:0; transform:translateX(-6px) scale(0.98);
-      pointer-events:none; transition:opacity .12s ease-out, transform .12s cubic-bezier(.18,.89,.32,1.28);
-      display:flex; flex-direction:column;          /* fija pager abajo */
-    }
-    .nav-folder[data-sticky="true"][data-panel="show"][aria-open="true"] .side{ opacity:1; transform:translateX(0) scale(1); pointer-events:auto; }
-    .side-title{margin:6px 10px 8px;font-weight:800;color:#f3f5f8}
-    .side-list{list-style:none;margin:0;padding:0; flex:1; overflow:auto}
-    .side-list a{display:block;padding:10px 12px;border-radius:8px;color:var(--text);text-decoration:none}
-    .side-list a:hover{background:rgba(255,159,26,.1);border:1px solid rgba(255,159,26,.25)}
-
-    .side .side-title, .side .side-list { transition: opacity .12s ease, transform .12s ease; will-change: opacity, transform; }
-    .side.swap-out .side-title, .side.swap-out .side-list { opacity: 0; transform: translateX(-6px); }
-    .side.swap-in  .side-title, .side.swap-in  .side-list { opacity: 1; transform: translateX(0); }
-
-    /* ===== Scroll ===== */
-    .sub>ul::-webkit-scrollbar{width:10px}
-    .sub>ul::-webkit-scrollbar-thumb{background:rgba(255,159,26,.2);border-radius:10px}
-    .sub>ul::-webkit-scrollbar-track{background:rgba(255,255,255,.04)}
-
-    @media (max-width:860px){
-      .sub{position:static}
-      .sub>ul,.sub .side{box-shadow:none}
-      .sub .side{position:static;left:auto;width:auto;margin-top:8px;opacity:1;transform:none}
-      .sub::after{display:none}
-    }
-
-    /* ====== HERO / CONTENIDO ====== */
+    /* =====================================================================
+       🦸 HERO (con typing animado)
+       - Ajusta la altura y el offset con --hero-minh y --hero-offset
+       ===================================================================== */
     .hero-wrap{
-      min-height:52vh;
+      min-height:var(--hero-minh);
       display:flex;align-items:center;justify-content:center;text-align:center;
       padding:0 14px 0;
       margin-top:var(--hero-offset);
     }
-    .hero h1{font-size:clamp(34px,4vw,54px);font-weight:900;color:var(--accent);margin:0 0 6px;
-      text-shadow:0 0 18px rgba(255,159,26,.7),0 0 36px rgba(255,159,26,.25)}
-    .hero h2{font-size:clamp(24px,3.2vw,40px);font-weight:800;margin:4px 0 8px;color:var(--accent-soft);
-      text-shadow:0 0 14px rgba(255,159,26,.45)}
+    .hero h1{
+      font-size:clamp(34px,4vw,54px);font-weight:900;color:var(--accent);
+      margin:0 0 6px;text-shadow:0 0 18px rgba(255,159,26,.7),0 0 36px rgba(255,159,26,.25)
+    }
+    .hero h2{
+      font-size:clamp(24px,3.2vw,40px);font-weight:800;margin:4px 0 8px;color:var(--accent-soft);
+      text-shadow:0 0 14px rgba(255,159,26,.45)
+    }
     .cursor{display:inline-block;width:.6ch;margin-left:2px;color:var(--accent);filter:drop-shadow(0 0 6px var(--accent));animation:blink .95s steps(1,end) infinite}
     @keyframes blink{50%{opacity:0}}
-    .lead{max-width:900px;margin:6px auto 0;font-size:clamp(19px,1.5vw,22px);line-height:1.7;color:var(--text);opacity:0;transform:translateY(10px);transition:opacity .8s ease,transform .8s ease}
+    .lead{
+      max-width:900px;margin:6px auto 0;font-size:clamp(19px,1.5vw,22px);
+      line-height:1.7;color:var(--text);opacity:0;transform:translateY(10px);
+      transition:opacity .8s ease, transform .8s ease;
+    }
     .lead.show{opacity:1;transform:none}
 
-    .container{width:min(1100px,92%);margin:0 auto}
-    section{padding:26px 0}
-    .section-title{font-size:clamp(24px,3vw,34px);margin:0 0 10px}
-    .kicker{color:var(--muted);margin:0 0 20px}
-    .chips{display:flex;flex-wrap:wrap;gap:10px}
-    .chip{padding:8px 12px;border-radius:999px;background:rgba(255,159,26,.12);border:1px solid rgba(255,159,26,.35);color:#ffe2b0;font-weight:600;font-size:14px}
-    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-    .card{background:linear-gradient(180deg,color-mix(in oklab,var(--panel) 92%,#0f1422 8%),var(--panel));border:1px solid rgba(255,255,255,.06);border-radius:var(--radius);padding:16px}
-    .project img{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:10px;border:1px solid rgba(255,255,255,.06)}
-    .project h4{margin:10px 0 6px}
-    .project p{margin:0;color:var(--muted)}
-    .contact-box{display:grid;grid-template-columns:1.1fr .9fr;gap:22px}
-    form{display:grid;gap:12px}
-    input,textarea{background:#0c1323;color:var(--text);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:12px 14px;font-size:16px}
-    textarea{min-height:140px;resize:vertical}
-    footer{padding:40px 0;color:#a9b1bd;text-align:center;border-top:1px solid rgba(255,255,255,.06);margin-top:10px}
+    /* =====================================================================
+       🧩 ESPECIALIDADES (tarjetas planas con hover sutil)
+       ===================================================================== */
+    .specialties{display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
+    .specialty{
+      background:var(--panel); border:var(--border);
+      border-radius:var(--radius); padding:16px 16px 14px; min-height:130px;
+      transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+      box-shadow:0 0 0 rgba(0,0,0,0);
+    }
+    .specialty:hover{
+      transform:translateY(-4px);
+      border-color:rgba(255,159,26,.35);
+      box-shadow:0 10px 22px rgba(0,0,0,.35);
+    }
+    .spk{font-size:13px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;margin-bottom:6px}
+    .spt{font-size:18px;font-weight:800;margin:0 0 6px}
+    .spd{font-size:14px;color:var(--muted);margin:0}
 
-    @media (max-width:980px){.grid{grid-template-columns:1fr 1fr}.contact-box{grid-template-columns:1fr}}
-    @media (max-width:620px){.grid{grid-template-columns:1fr}}
+    /* =====================================================================
+       📘 CONTENIDO / ÍNDICE (bloques clicables)
+       ===================================================================== */
+    .index-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .index-block{
+      background:linear-gradient(180deg, color-mix(in oklab, var(--panel) 94%, #0f1422 6%), var(--panel));
+      border:var(--border); border-radius:var(--radius); padding:18px;
+      transition:transform .16s ease, border-color .16s ease, box-shadow .16s ease;
+    }
+    .index-block:hover{transform:translateY(-3px); border-color:rgba(255,159,26,.35); box-shadow:var(--shadow)}
+    .index-block h4{margin:0 0 8px; font-size:18px}
+    .index-links{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+    .index-links a{
+      display:block; background:#0e162a; border:var(--border); border-radius:10px;
+      padding:10px 12px; text-decoration:none; color:var(--text); font-size:14px;
+      transition:background .18s ease, border-color .18s ease, transform .12s ease;
+    }
+    .index-links a:hover{background:#0f1a31; border-color:rgba(255,159,26,.35); transform:translateX(2px)}
 
-    /* ===== Enfatizar subcarpetas Lvl 2 (Portafolio) ===== */
-    .nav-folder[data-sticky="true"] .nested > li > a{
-      position: relative;
-      border: 1px solid rgba(255,159,26,.15);
-      background: transparent;
-      border-radius: 10px;
-      transition: background .18s ease, border-color .18s ease, box-shadow .18s ease, transform .14s ease, color .18s ease;
-      padding: 10px 12px;
+    /* =====================================================================
+       🔁 ARTÍCULOS ALEATORIOS + PAGINACIÓN
+       ===================================================================== */
+    .articles-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+    .articles-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .article-card{
+      background:var(--panel); border:var(--border); border-radius:12px;
+      padding:12px; display:grid; grid-template-rows:120px auto;
+      transition:transform .16s ease, border-color .16s ease, box-shadow .16s ease;
     }
-    .nav-folder[data-sticky="true"] .nested > li > a::before{
-      content:"";
-      position:absolute;
-      left:6px; top:10px; bottom:10px;
-      width:3px; border-radius:2px;
-      background:transparent;
-      transition: background .18s ease, transform .14s ease;
+    .article-card:hover{transform:translateY(-3px); border-color:rgba(255,159,26,.35); box-shadow:var(--shadow)}
+    .a-thumb{
+      background:#0f162a; border-radius:8px; display:flex; align-items:center; justify-content:center;
+      color:var(--muted); font-size:13px; border:1px dashed rgba(255,255,255,.08);
     }
-    .nav-folder[data-sticky="true"] .nested > li.focus2 > a,
-    .nav-folder[data-sticky="true"] .nested > li > a:hover{
-      background: linear-gradient(90deg, rgba(255,159,26,.18) 0%, rgba(255,159,26,.08) 60%);
-      border-color: rgba(255,159,26,.55);
-      box-shadow: 0 6px 18px rgba(255,159,26,.25), inset 0 0 0 1px rgba(255,255,255,.06);
-      transform: translateX(2px);
-      color: #ffe1a6;
-    }
-    .nav-folder[data-sticky="true"] .nested > li.focus2 > a::before,
-    .nav-folder[data-sticky="true"] .nested > li > a:hover::before{
-      background: var(--accent);
-      transform: scaleX(1.5);
-    }
-    .nav-folder[data-sticky="true"] .sub > ul > li.open > .nested{
-      filter: drop-shadow(0 6px 20px rgba(255,159,26,.15));
-    }
+    .a-content{padding:10px 6px 6px}
+    .a-title{font-weight:800; margin:0 0 6px; font-size:16px; line-height:1.35}
+    .a-meta{font-size:12px; color:var(--muted)}
 
-    /* ===== Paginación del panel lateral (lvl3) ===== */
-    .side .pager{
-      display:flex; justify-content:space-between; align-items:center; gap:10px;
-      margin:10px 6px 4px;
-      padding-top:6px; border-top:1px dashed rgba(255,255,255,.08);
-    }
-    .pager-info{font-size:12px; opacity:.7; user-select:none}
+    /* Paginación (blanco tenue con borde naranja; hover invertido) */
+    .pager{display:flex; gap:10px; align-items:center}
     .pager-btn{
-      position:relative; width:38px; height:32px; border-radius:10px;
-      background:rgba(255,159,26,.10); border:1px solid rgba(255,159,26,.35);
-      cursor:pointer; font-weight:800;
-      display:inline-flex; align-items:center; justify-content:center;
-      transition:transform .12s ease, background .18s ease, border-color .18s ease, opacity .18s ease;
-      color:#ffd8a6;
+      border:2px solid var(--accent); background:transparent; color:var(--text);
+      padding:8px 12px; border-radius:10px; font-weight:800; cursor:pointer;
+      transition:background .18s ease, color .18s ease, transform .12s ease, opacity .18s ease;
     }
-    .pager-btn:hover{ transform:translateY(-1px); background:rgba(255,159,26,.18); border-color:rgba(255,159,26,.6); }
-    .pager-btn:disabled{ opacity:.45; cursor:not-allowed; transform:none; }
-    .pager-btn.prev::before,
-    .pager-btn.next::before{ content:"›"; font-size:18px; line-height:1; }
-    .pager-btn.prev::before{ transform:rotate(180deg); }
-    .pager-btn::after{
-      content:attr(data-page);
-      position:absolute; right:-6px; top:-8px;
-      font-size:12px; line-height:1; padding:2px 6px; border-radius:999px;
-      background:var(--accent); color:#111; box-shadow:0 4px 14px rgba(0,0,0,.35);
-      border:1px solid rgba(255,255,255,.25);
+    .pager-btn:hover{background:var(--accent); color:#111; transform:translateY(-1px)}
+    .pager-btn:disabled{opacity:.45; cursor:not-allowed; transform:none}
+    .pager-info{opacity:.75; font-size:13px}
+
+    /* =====================================================================
+       ✉️ CONTACTO (plano, limpio)
+       ===================================================================== */
+    .contact-wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:18px}
+    .card{
+      background:var(--panel); border:var(--border); border-radius:var(--radius); padding:18px;
+    }
+    form{display:grid;gap:12px}
+    input,textarea{
+      background:#0c1323;color:var(--text);
+      border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:12px 14px;font-size:16px
+    }
+    textarea{min-height:140px;resize:vertical}
+    .btn{
+      background:var(--accent);color:#111;padding:12px 16px;border-radius:10px;border:0;font-weight:800;cursor:pointer
+    }
+    .btn:hover{filter:brightness(1.05)}
+
+    /* =====================================================================
+       ⏹️ FOOTER
+       ===================================================================== */
+    footer{
+      padding:40px 0;color:#a9b1bd;text-align:center;border-top:var(--border);margin-top:10px; position:relative;
+    }
+    footer::before{
+      content:""; position:absolute; left:0; right:0; top:0; height:2px;
+      background:linear-gradient(90deg, rgba(255,159,26,0) 0%, rgba(255,159,26,.8) 50%, rgba(255,159,26,0) 100%);
+      opacity:.8;
     }
   </style>
 </head>
@@ -262,12 +238,17 @@
   <!-- ========================= NAV ========================== -->
   <header class="topbar">
     <div class="topwrap">
-      <a class="brand" href="/"><span class="brand-dot"></span><span>AO · Portafolio</span></a>
+      <a class="brand" href="/"><span class="brand-dot"></span><span>AOM · Portfolio</span></a>
 
-      <!-- Menú izquierda (nuevo orden) -->
-      <nav class="menu-left" id="nav" aria-label="Navegación principal"></nav>
+      <!-- Izquierda: orden pedido -->
+      <nav class="menu-left">
+        <a class="nav-link" href="/Teoria-casos-curiosos/">Teoría y Casos</a>
+        <a class="nav-link" href="/portafolio/">Portafolio</a>
+        <a class="nav-link" href="/Laboratorio/">Laboratorio</a>
+        <a class="nav-link" href="/contacto/">Contacto</a>
+      </nav>
 
-      <!-- Menú derecha: Inicio -->
+      <!-- Derecha: Inicio -->
       <nav class="menu-right">
         <a class="nav-link" href="/">Inicio</a>
       </nav>
@@ -279,60 +260,136 @@
     <div class="hero">
       <h1><span id="typeName"></span></h1>
       <h2><span id="typeRole"></span><span class="cursor">|</span></h2>
-      <p id="lead" class="lead">Me especializo en diseñar, securizar y operar infraestructuras robustas. Automatizo despliegues, fortalezco defensas y mejoro la fiabilidad de servicios con prácticas DevOps/SecOps.</p>
+      <p id="lead" class="lead">
+        Me especializo en diseñar, securizar y operar infraestructuras robustas. Automatizo despliegues,
+        fortalezco defensas y mejoro la fiabilidad de servicios con prácticas DevOps/SecOps.
+      </p>
     </div>
   </div>
 
   <!-- ========================= CONTENIDO ========================== -->
   <main class="container">
-    <section id="ciber" aria-labelledby="ciber-title">
-      <h2 id="ciber-title" class="section-title">Ciberseguridad</h2>
-      <p class="kicker">Security-by-design, hardening y respuesta a incidentes.</p>
-      <div class="card">Playbooks de respuesta, aplicación de guías CIS, inventario de activos y SIEM; priorización de riesgos y monitoreo proactivo.</div>
-    </section>
 
-    <section id="adm" aria-labelledby="adm-title">
-      <h2 id="adm-title" class="section-title">Administración de Sistemas</h2>
-      <p class="kicker">Infraestructura reproducible y observable.</p>
-      <div class="card">Linux/Windows, IaC (Terraform/Ansible), contenedores (Docker/K8s), redes y servidores (Nginx/Apache), CI/CD y observabilidad.</div>
-    </section>
+    <!-- 🧩 ESPECIALIDADES -->
+    <section id="specialties" aria-labelledby="sp-title">
+      <h2 id="sp-title" class="section-title">Especialidades</h2>
+      <p class="kicker">Foco técnico con impacto: operación, seguridad, automatización y alta disponibilidad.</p>
 
-    <section id="skills" aria-labelledby="skills-title">
-      <h2 id="skills-title" class="section-title">Skills principales</h2>
-      <div class="chips">
-        <span class="chip">Linux</span><span class="chip">Windows Server</span><span class="chip">Networking</span>
-        <span class="chip">Docker</span><span class="chip">Kubernetes</span><span class="chip">Ansible</span>
-        <span class="chip">Terraform</span><span class="chip">Bash / PowerShell</span><span class="chip">CI/CD</span>
-        <span class="chip">Nginx / Apache</span><span class="chip">SIEM</span><span class="chip">Hardening</span><span class="chip">Cloud (AWS/Azure)</span>
-      </div>
-    </section>
-
-    <section id="projects" aria-labelledby="projects-title">
-      <h2 id="projects-title" class="section-title">Proyectos destacados</h2>
-      <div class="grid">
-        <article class="card project">
-          <img src="assets/proyecto1.jpg" alt="Miniatura del Proyecto 1" />
-          <h4>Infraestructura reproducible con IaC</h4>
-          <p>Terraform + Ansible para levantar entornos seguros y auditables en AWS. Módulos reutilizables y pipelines CI.</p>
+      <div class="specialties">
+        <!-- 💡 Duplica/borra tarjetas a gusto -->
+        <article class="specialty">
+          <div class="spk">Ciberseguridad</div>
+          <h3 class="spt">Hardening & Respuesta</h3>
+          <p class="spd">Aplicación de guías CIS, gestión de vulnerabilidades, playbooks y monitoreo basado en riesgo.</p>
         </article>
-        <article class="card project">
-          <img src="assets/proyecto2.jpg" alt="Miniatura del Proyecto 2" />
-          <h4>Plataforma de observabilidad</h4>
-          <p>Stack Prometheus + Loki + Grafana con alertas y SLOs para microservicios en Kubernetes.</p>
+        <article class="specialty">
+          <div class="spk">DevOps</div>
+          <h3 class="spt">CI/CD & Observabilidad</h3>
+          <p class="spd">Pipelines reproducibles, SLOs, trazabilidad y alertas proactivas para entornos de microservicios.</p>
         </article>
-        <article class="card project">
-          <img src="assets/proyecto3.jpg" alt="Miniatura del Proyecto 3" />
-          <h4>Hardening y respuesta a incidentes</h4>
-          <p>Guías CIS aplicadas, inventario de activos y playbooks de respuesta con herramientas open-source.</p>
+        <article class="specialty">
+          <div class="spk">Infraestructura</div>
+          <h3 class="spt">IaC & Kubernetes</h3>
+          <p class="spd">Terraform, Ansible y K8s para despliegues repetibles, seguros y escalables.</p>
+        </article>
+        <article class="specialty">
+          <div class="spk">Sistemas</div>
+          <h3 class="spt">Linux / Windows</h3>
+          <p class="spd">Administración, políticas, redes, balanceadores, Nginx/Apache y servicios críticos.</p>
+        </article>
+        <article class="specialty">
+          <div class="spk">Cloud</div>
+          <h3 class="spt">AWS / Azure</h3>
+          <p class="spd">Diseño seguro, integración con IAM, costes controlados y automatización de despliegues.</p>
         </article>
       </div>
     </section>
 
+    <!-- 📘 CONTENIDO / ÍNDICE -->
+    <section id="index" aria-labelledby="idx-title">
+      <h2 id="idx-title" class="section-title">Contenido</h2>
+      <p class="kicker">Explora por áreas. Este índice agrupa categorías y accesos directos.</p>
+
+      <div class="index-grid">
+        <!-- Bloque 1 -->
+        <div class="index-block">
+          <h4>Portafolio · Ciberseguridad</h4>
+          <div class="index-links">
+            <a href="/portafolio/Ciberseguridad/forense/">Análisis Forense</a>
+            <a href="/portafolio/Ciberseguridad/devsecops/">DevSecOps</a>
+            <a href="/portafolio/Ciberseguridad/produccion-segura/">Producción segura</a>
+            <a href="/portafolio/Ciberseguridad/ri/">Respuesta a Incidentes</a>
+            <a href="/portafolio/Ciberseguridad/redes/">Seguridad en redes</a>
+            <a href="/portafolio/Ciberseguridad/sistemas/">Seguridad de sistemas</a>
+          </div>
+        </div>
+        <!-- Bloque 2 -->
+        <div class="index-block">
+          <h4>Portafolio · Sistemas</h4>
+          <div class="index-links">
+            <a href="/portafolio/sistemas/linux/">Linux</a>
+            <a href="/portafolio/sistemas/windows/">Windows</a>
+            <a href="/portafolio/sistemas/automatizacion/">Automatización</a>
+            <a href="/portafolio/sistemas/observabilidad/">Observabilidad</a>
+            <a href="/portafolio/sistemas/redes/">Redes</a>
+            <a href="/portafolio/sistemas/servicios/">Servicios</a>
+          </div>
+        </div>
+        <!-- Bloque 3 -->
+        <div class="index-block">
+          <h4>Teoría y Casos · Ciberseguridad</h4>
+          <div class="index-links">
+            <a href="/Teoria-casos-curiosos/forense/">Análisis Forense</a>
+            <a href="/Teoria-casos-curiosos/incidentes/">Respuesta a Incidentes</a>
+            <a href="/Teoria-casos-curiosos/amenazas/">Amenazas y TTPs</a>
+            <a href="/Teoria-casos-curiosos/controles/">Controles y marcos</a>
+            <a href="/Teoria-casos-curiosos/siem/">SIEM / Detección</a>
+            <a href="/Teoria-casos-curiosos/hardening/">Hardening</a>
+          </div>
+        </div>
+        <!-- Bloque 4 -->
+        <div class="index-block">
+          <h4>Teoría y Casos · Sistemas</h4>
+          <div class="index-links">
+            <a href="/Teoria-casos-curiosos/redes/">Redes</a>
+            <a href="/Teoria-casos-curiosos/conceptos/">Conceptos</a>
+            <a href="/Teoria-casos-curiosos/storage/">Storage</a>
+            <a href="/Teoria-casos-curiosos/virtualizacion/">Virtualización</a>
+            <a href="/Teoria-casos-curiosos/backup/">Backup</a>
+            <a href="/Teoria-casos-curiosos/infra/">Infraestructura</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 🔁 ARTÍCULOS ALEATORIOS -->
+    <section id="random" aria-labelledby="rnd-title">
+      <div class="articles-head">
+        <div>
+          <h2 id="rnd-title" class="section-title">Artículos aleatorios</h2>
+          <p class="kicker">Un vistazo distinto cada vez. Cambia de página si quieres ver otros.</p>
+        </div>
+        <div class="pager">
+          <!-- ⚠️ Los botones se rellenan por JS -->
+          <button id="prevPage" class="pager-btn">‹</button>
+          <span id="pageInfo" class="pager-info">Página 1 de 1</span>
+          <button id="nextPage" class="pager-btn">›</button>
+        </div>
+      </div>
+
+      <div id="articles" class="articles-grid">
+        <!-- ⚠️ Cards inyectadas por JS -->
+      </div>
+    </section>
+
+    <!-- ✉️ CONTACTO -->
     <section id="contact" aria-labelledby="contact-title">
       <h2 id="contact-title" class="section-title">Contacto</h2>
-      <div class="contact-box">
+      <p class="kicker">¿Tienes un proyecto o consulta técnica? Escríbeme y te respondo.</p>
+
+      <div class="contact-wrap">
         <div class="card">
-          <p>¿Tienes un proyecto o una consulta técnica? Escríbeme y te respondo.</p>
+          <p>Me interesa trabajar en proyectos donde la fiabilidad, la seguridad y la automatización marcan la diferencia.</p>
           <p><strong>Email:</strong> <a href="mailto:alex@tu-dominio.com">alex@tu-dominio.com</a></p>
           <p><strong>LinkedIn:</strong> <a href="https://www.linkedin.com/in/tuusuario" target="_blank" rel="noopener">linkedin.com/in/tuusuario</a></p>
         </div>
@@ -341,7 +398,7 @@
             <label>Nombre<br><input name="nombre" required /></label>
             <label>Email<br><input name="email" type="email" required /></label>
             <label>Mensaje<br><textarea name="mensaje" required></textarea></label>
-            <button type="submit" style="background:var(--accent);color:#111;padding:10px 16px;border-radius:10px;border:0;font-weight:700">Enviar</button>
+            <button type="submit" class="btn">Enviar</button>
           </form>
         </div>
       </div>
@@ -352,308 +409,142 @@
 
   <!-- ========================= SCRIPTS ========================== -->
   <script>
-    /* ===== Año ===== */
+    /* =============================================================
+       📅 Año en el footer
+       ============================================================= */
     document.getElementById('y').textContent = new Date().getFullYear();
 
-    /* ===== Doble typing ===== */
+    /* =============================================================
+       ⌨️ Typing animado (mantiene tu comportamiento)
+       - Ajusta los textos o la velocidad aquí.
+       ============================================================= */
     const nameText = "Alejandro Orcajada Meseguer";
     const roleText = "Administrador de Sistemas y Ciberseguridad";
-    const speed = 44;
+    const speed = 44; // ⏱️ velocidad de typing (ms por carácter)
+
     const elName = document.getElementById('typeName');
     const elRole = document.getElementById('typeRole');
     const cursor = document.querySelector('.cursor');
     const lead = document.getElementById('lead');
     let i=0,j=0;
-    function typeName(){ if(i<nameText.length){ elName.textContent += nameText.charAt(i++); setTimeout(typeName,speed); } else { setTimeout(typeRole,250);} }
-    function typeRole(){ if(j<roleText.length){ elRole.textContent += roleText.charAt(j++); setTimeout(typeRole,speed); } else { cursor.remove(); lead.classList.add('show'); } }
-    setTimeout(typeName,300);
 
-    /* ===== Datos del NAV ===== */
-    // 12 artículos por subcarpeta (2 páginas x 6)
-    const twelve = base => Array.from({length:12}, (_,i)=>({label:`${base} · Artículo ${i+1}`, href:"#"}));
+    function typeName(){
+      if(i<nameText.length){
+        elName.textContent += nameText.charAt(i++);
+        setTimeout(typeName, speed);
+      } else { setTimeout(typeRole, 250); }
+    }
+    function typeRole(){
+      if(j<roleText.length){
+        elRole.textContent += roleText.charAt(j++);
+        setTimeout(typeRole, speed);
+      } else { cursor.remove(); lead.classList.add('show'); }
+    }
+    setTimeout(typeName, 300);
 
-    // ORDEN: Teoría y Casos, Portafolio, Laboratorio, Contacto (Inicio va a la derecha)
-    const NAV_TREE = [
-      { label:"Teoría y Casos Curiosos", children:[
-        { label:"Ciberseguridad", href:"#", children:[
-          { label:"Análisis Forense", href:"#", children: twelve("Teoría · Forense") },
-          { label:"Respuesta a Incidentes", href:"#", children: twelve("Teoría · Incidentes") }
-        ]},
-        { label:"Sistemas", href:"#", children:[
-          { label:"Redes", href:"#", children: twelve("Teoría · Redes") },
-          { label:"Conceptos", href:"#", children: twelve("Teoría · Conceptos") }
-        ]}
-      ]},
-
-      { label:"Portafolio", sticky:true, children:[
-        { label:"Ciberseguridad", href:"/portafolio/Ciberseguridad/", children:[
-          { label:"Análisis Forense", href:"#", children: twelve("Análisis Forense") },
-          { label:"DevSecOps", href:"#", children: twelve("DevSecOps") },
-          { label:"Documentación e informes", href:"#", children: twelve("Docs e informes") },
-          { label:"Puesta en producción segura", href:"#", children: twelve("Producción segura") },
-          { label:"Respuesta a Incidentes", href:"#", children: twelve("Respuesta a Incidentes") },
-          { label:"Seguridad en redes", href:"#", children: twelve("Seguridad en redes") },
-          { label:"Seguridad de sistemas", href:"#", children: twelve("Seguridad de sistemas") }
-        ]},
-        { label:"Sistemas", href:"/portafolio/sistemas/", children:[
-          { label:"Linux", href:"#", children: twelve("Linux") },
-          { label:"Windows", href:"#", children: twelve("Windows") },
-          { label:"Automatización", href:"#", children: twelve("Automatización") }
-        ]}
-      ]},
-
-      { label:"Laboratorio", href:"/Laboratorio/", children:[
-        { label:"TryHackMe", href:"#", children: twelve("THM") },
-        { label:"HackTheBox", href:"#", children: twelve("HTB") }
-      ]},
-
-      { label:"Contacto", href:"/contacto/" }
+    /* =============================================================
+       🔁 Artículos aleatorios con paginación (6 por página)
+       - Para añadir/editar artículos, toca el array ALL_ARTICLES.
+       - El orden cambia en cada carga (shuffle).
+       ============================================================= */
+    const ALL_ARTICLES = [
+      // 📝 Ejemplos técnicos de muestra (cámbialos libremente)
+      {title:"CIS Benchmarks en producción: guía práctica", cat:"Ciberseguridad", url:"#"},
+      {title:"Playbooks de respuesta a incidentes con herramientas libres", cat:"Ciberseguridad", url:"#"},
+      {title:"De monolito a microservicios: migración con K8s", cat:"Sistemas", url:"#"},
+      {title:"Terraform + Ansible: patrón para entornos reproducibles", cat:"DevOps", url:"#"},
+      {title:"SLOs y alertas efectivas con Prometheus & Alertmanager", cat:"Observabilidad", url:"#"},
+      {title:"Zero Trust en redes híbridas: primeros pasos", cat:"Seguridad en redes", url:"#"},
+      {title:"Loki + Grafana: centralización de logs a bajo coste", cat:"Observabilidad", url:"#"},
+      {title:"Contenedores seguros: políticas y escaneo de imágenes", cat:"DevSecOps", url:"#"},
+      {title:"Automatización de backups verificados", cat:"Sistemas", url:"#"},
+      {title:"Hardening de servicios críticos (Nginx/SSH)", cat:"Ciberseguridad", url:"#"},
+      {title:"Pipeline CI para pruebas de seguridad", cat:"DevSecOps", url:"#"},
+      {title:"Alta disponibilidad: patrones y antipatrones", cat:"Arquitectura", url:"#"},
+      {title:"Inventario de activos y exposición", cat:"Ciberseguridad", url:"#"},
+      {title:"Trazabilidad con OpenTelemetry", cat:"Observabilidad", url:"#"},
+      {title:"Despliegue blue/green con validación automatizada", cat:"DevOps", url:"#"},
+      {title:"Segmentación de red y control de acceso", cat:"Redes", url:"#"},
+      {title:"Auditoría de cambios y SIEM", cat:"Ciberseguridad", url:"#"},
+      {title:"Gestión de costes en AWS con IaC", cat:"Cloud", url:"#"}
     ];
 
-    /* === swap animado + paginación (6 por página) === */
-    function swapSideContent(sideEl, newTitle, newLinksArray) {
-      const titleEl = sideEl.querySelector('.side-title');
-      sideEl._pagesByKey = sideEl._pagesByKey || new Map();
+    // 🔀 Mezcla aleatoria simple
+    function shuffle(arr){ return arr.map(v=>[Math.random(),v]).sort((a,b)=>a[0]-b[0]).map(p=>p[1]); }
 
-      const perPage = 6;
-      const pages = chunkArray(newLinksArray, perPage);
+    // 🔢 Paginación
+    const PER_PAGE = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--cards-per-page')) || 6;
+    let state = { page: 0, pages: [] };
 
-      const key = newTitle;
-      const prevState = sideEl._pagesByKey.get(key) || { page: 0, pages: [] };
-      const state = { page: Math.min(prevState.page, Math.max(pages.length - 1, 0)), pages };
-      sideEl._pagesByKey.set(key, state);
-
-      if (sideEl.dataset.key !== newTitle) {
-        sideEl.classList.remove('swap-in');
-        sideEl.classList.add('swap-out');
-        clearTimeout(sideEl._swapTimer);
-        const OUT_MS = 120;
-
-        sideEl._swapTimer = setTimeout(() => {
-          sideEl.dataset.key = newTitle;
-          titleEl.textContent = newTitle;
-          renderSidePage(sideEl, state);
-          void sideEl.offsetWidth;
-          sideEl.classList.remove('swap-out');
-          sideEl.classList.add('swap-in');
-        }, OUT_MS);
-      } else {
-        renderSidePage(sideEl, state);
-      }
+    function paginate(data, perPage){
+      const pages = [];
+      for(let i=0;i<data.length;i+=perPage) pages.push(data.slice(i, i+perPage));
+      return pages;
     }
 
-    function renderSidePage(sideEl, state){
-      const listEl = sideEl.querySelector('.side-list');
-      listEl.innerHTML = '';
+    function renderArticles(){
+      const wrap = document.getElementById('articles');
+      wrap.innerHTML = "";
 
-      const current = state.pages[state.page] || [];
-      current.forEach(a => {
-        const li = document.createElement('li');
-        li.appendChild(a.cloneNode(true));
-        listEl.appendChild(li);
+      const pageData = state.pages[state.page] || [];
+      pageData.forEach(item=>{
+        const card = document.createElement('article');
+        card.className = 'article-card';
+        card.innerHTML = `
+          <div class="a-thumb">Miniatura</div>
+          <div class="a-content">
+            <h4 class="a-title"><a href="${item.url}">${item.title}</a></h4>
+            <div class="a-meta">${item.cat}</div>
+          </div>`;
+        wrap.appendChild(card);
       });
 
-      let pager = sideEl.querySelector('.pager');
-      if (!pager) {
-        pager = document.createElement('div');
-        pager.className = 'pager';
-        sideEl.appendChild(pager);
-      }
-      pager.innerHTML = '';
+      // Botones + Info
+      const prev = document.getElementById('prevPage');
+      const next = document.getElementById('nextPage');
+      const info = document.getElementById('pageInfo');
 
-      const prev = document.createElement('button');
-      prev.className = 'pager-btn prev';
-      prev.title = 'Página anterior';
       prev.disabled = state.page === 0;
-      prev.dataset.page = state.page > 0 ? (state.page) : '';
-
-      const next = document.createElement('button');
-      next.className = 'pager-btn next';
-      next.title = 'Página siguiente';
       next.disabled = state.page >= state.pages.length - 1;
-      next.dataset.page = state.page < state.pages.length - 1 ? (state.page + 2) : '';
-
-      const info = document.createElement('span');
-      info.className = 'pager-info';
       info.textContent = `Página ${state.page + 1} de ${state.pages.length}`;
-
-      prev.addEventListener('click', () => { if (state.page > 0) { state.page--; renderSidePage(sideEl, state); }});
-      next.addEventListener('click', () => { if (state.page < state.pages.length - 1) { state.page++; renderSidePage(sideEl, state); }});
-
-      pager.append(info, prev, next);
     }
 
-    function chunkArray(arr, size){
-      const out = [];
-      for(let i=0;i<arr.length;i+=size) out.push(arr.slice(i, i+size));
-      return out;
+    function initArticles(){
+      const shuffled = shuffle(ALL_ARTICLES);
+      state.pages = paginate(shuffled, PER_PAGE);
+      state.page = 0;
+      renderArticles();
     }
 
-    /* === Alinear panel lvl3 al item lvl2 dentro del marco (sub > ul) === */
-    function positionSideAligned(sideEl, anchorEl, subEl){
-      const listEl   = subEl.querySelector(':scope > ul');
-      const subRect  = subEl.getBoundingClientRect();
-      const listRect = listEl.getBoundingClientRect();
-      const aRect    = anchorEl.getBoundingClientRect();
-      const sideH    = sideEl.getBoundingClientRect().height;
+    document.getElementById('prevPage').addEventListener('click', ()=>{
+      if(state.page>0){ state.page--; renderArticles(); }
+    });
+    document.getElementById('nextPage').addEventListener('click', ()=>{
+      if(state.pages && state.page < state.pages.length-1){ state.page++; renderArticles(); }
+    });
 
-      const desiredTop = aRect.top - subRect.top;
-      const minTop     = listRect.top - subRect.top;
-      const maxTop     = (listRect.bottom - subRect.top) - sideH;
+    initArticles();
 
-      let top;
-      if (maxTop < minTop) top = minTop; else top = Math.min(Math.max(desiredTop, minTop), maxTop);
-      sideEl.style.top = `${top}px`;
-    }
-
-    /* ===== Render NAV (izquierda) ===== */
-    function renderNav(tree){
-      const nav = document.getElementById('nav');
-      tree.forEach(node => nav.appendChild(createNode(node)));
-
-      // hover-intent primer nivel
-      const timers = new WeakMap();
-      document.querySelectorAll('.nav-folder').forEach(folder=>{
-        folder.addEventListener('mouseenter', ()=>{
-          const t = timers.get(folder); if(t) clearTimeout(t);
-          setOpen(folder, true);
-        });
-        folder.addEventListener('mouseleave', ()=>{
-          const t = setTimeout(()=> setOpen(folder,false,true), 220);
-          timers.set(folder,t);
-        });
+    /* =============================================================
+       🧪 (Opcional) Reveal suave al hacer scroll para secciones
+       - Si luego quieres quitarlo, elimina todo este bloque.
+       ============================================================= */
+    const observer = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting){
+          e.target.style.transition = 'opacity .6s ease, transform .6s ease';
+          e.target.style.opacity = '1';
+          e.target.style.transform = 'none';
+        }
       });
-    }
+    }, {threshold:.12});
 
-    /* ===== Crear nodo ===== */
-    function createNode(node){
-      if(!node.children){
-        const a=document.createElement('a');
-        a.className='nav-link';
-        a.href=node.href||'#';
-        a.textContent=node.label;
-        return a;
-      }
-
-      const wrap=document.createElement('div');
-      wrap.className='nav-folder';
-      wrap.setAttribute('aria-open','false');
-      if (node.label === "Portafolio") wrap.dataset.sticky = "true";
-
-      const btn=document.createElement('button');
-      btn.className='nav-btn';
-      btn.setAttribute('aria-expanded','false');
-      const labelHTML = node.href ? `<a href="${node.href}" class="nav-btn-link">${node.label}</a>` : `<span>${node.label}</span>`;
-      btn.innerHTML=`<span class="ico-folder"></span>${labelHTML}<span class="caret"></span>`;
-      wrap.appendChild(btn);
-
-      const sub=document.createElement('div'); sub.className='sub';
-      const ul=document.createElement('ul'); sub.appendChild(ul);
-
-      // panel lateral lvl3 sólo en Portafolio
-      let side = null;
-      if (wrap.dataset.sticky === "true") {
-        side = document.createElement('div');
-        side.className = 'side';
-        side.innerHTML = `<div class="side-title">Selecciona una subcarpeta…</div><ul class="side-list"></ul>`;
-        sub.appendChild(side);
-      }
-
-      // Lvl1
-      node.children.forEach(childLvl1=>{
-        const liLvl1=document.createElement('li');
-
-        const link1=document.createElement('a');
-        link1.href=childLvl1.href||'#';
-        link1.innerHTML=`<span>${childLvl1.label}</span><span style="opacity:.6">›</span>`;
-        liLvl1.appendChild(link1);
-
-        const ulLvl2=document.createElement('ul'); ulLvl2.className='nested';
-
-        childLvl1.children?.forEach(childLvl2=>{
-          const liLvl2=document.createElement('li');
-          const link2=document.createElement('a');
-          link2.href=childLvl2.href||'#';
-          link2.innerHTML=`<span>${childLvl2.label}</span><span style="opacity:.6">›</span>`;
-          liLvl2.appendChild(link2);
-
-          const hiddenLvl3=document.createElement('ul'); hiddenLvl3.style.display='none';
-          childLvl2.children?.forEach(a3=>{
-            const li3=document.createElement('li');
-            const a=document.createElement('a');
-            a.href=a3.href||'#'; a.textContent=a3.label;
-            li3.appendChild(a); hiddenLvl3.appendChild(li3);
-          });
-          liLvl2.appendChild(hiddenLvl3);
-
-          if (wrap.dataset.sticky === "true") {
-            link2.addEventListener('mouseenter', ()=>{
-              const linksLvl3 = Array.from(hiddenLvl3.querySelectorAll('a'));
-              const newTitle  = `${childLvl1.label} / ${childLvl2.label}`;
-
-              positionSideAligned(side, link2, sub);
-              swapSideContent(side, newTitle, linksLvl3);
-              wrap.setAttribute('data-panel','show');
-              setTimeout(()=> positionSideAligned(side, link2, sub), 0);
-            });
-
-            /* énfasis sincronizado (Lvl 2) */
-            link2.addEventListener('mouseenter', ()=>{
-              liLvl2.classList.add('focus2');
-              liLvl2.parentElement
-                .querySelectorAll(':scope > li.focus2')
-                .forEach(sib => { if (sib !== liLvl2) sib.classList.remove('focus2'); });
-            });
-            liLvl2.addEventListener('mouseleave', ()=> liLvl2.classList.remove('focus2'));
-            link2.addEventListener('focus', ()=> liLvl2.classList.add('focus2'));
-            link2.addEventListener('blur' , ()=> liLvl2.classList.remove('focus2'));
-          }
-
-          ulLvl2.appendChild(liLvl2);
-        });
-
-        liLvl1.appendChild(ulLvl2);
-        ul.appendChild(liLvl1);
-
-        link1.addEventListener('mouseenter', ()=>{ liLvl1.classList.add('open'); });
-      });
-
-      btn.addEventListener('click', e=>{
-        e.preventDefault();
-        const open = wrap.getAttribute('aria-open')==='true';
-        setOpen(wrap, !open);
-      });
-
-      btn.addEventListener('keydown', e=>{
-        if(e.key==='Escape') setOpen(wrap,false,true);
-        if(e.key==='ArrowDown'){ setOpen(wrap,true); ul.querySelector('a')?.focus(); }
-      });
-
-      wrap.appendChild(sub);
-      return wrap;
-    }
-
-    function setOpen(folder, open, resetInternos=false){
-      folder.setAttribute('aria-open', open?'true':'false');
-      folder.querySelector('.nav-btn').setAttribute('aria-expanded', open?'true':'false');
-
-      if(open){
-        document.querySelectorAll('.nav-folder').forEach(f=>{
-          if(f!==folder){
-            f.setAttribute('aria-open','false');
-            f.querySelector('.nav-btn').setAttribute('aria-expanded','false');
-            f.removeAttribute('data-panel');
-          }
-        });
-      } else if (resetInternos){
-        folder.removeAttribute('data-panel');
-        folder.querySelectorAll(':scope .sub > ul > li').forEach(li=>li.classList.remove('open'));
-      }
-    }
-
-    // Init
-    renderNav(NAV_TREE);
+    // Aplica efecto a tarjetas/bloques al cargar
+    document.querySelectorAll('.specialty,.index-block,.article-card,.card').forEach(el=>{
+      el.style.opacity = '.01';
+      el.style.transform = 'translateY(8px)';
+      observer.observe(el);
+    });
   </script>
 </body>
 </html>
-
