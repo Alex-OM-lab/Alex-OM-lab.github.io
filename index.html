@@ -7,18 +7,34 @@
   <meta name="description" content="Portafolio profesional de Alejandro Orcajada Meseguer, Administrador de Sistemas y Ciberseguridad." />
 
   <style>
+    /* ===== PALETA OSCURA CÁLIDA (azul profundo + naranjas) ===== */
     :root{
-      --bg:#0e1320; --text:#e6edf3; --muted:#a9b1bd;
-      --accent:#f59e0b; --accent-soft:#ffd08a;
-      --panel:#12192b; --radius:14px;
+      --bg:#0b1220;              /* fondo principal: azul noche */
+      --panel:#111a2d;           /* paneles: un toque más claro */
+      --text:#e9eef6;            /* texto principal */
+      --muted:#a8b2c2;           /* texto secundario */
+      --accent:#ff9f1a;          /* naranja cálido principal */
+      --accent-soft:#ffd79a;     /* naranja suave para luces */
+      --radius:14px;
     }
+
     *{box-sizing:border-box}
     html,body{margin:0}
-    body{font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,Inter,"Helvetica Neue",Arial;background:var(--bg);color:var(--text)}
+    body{
+      font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,Inter,"Helvetica Neue",Arial;
+      background:
+        radial-gradient(1400px 800px at 80% -100px, rgba(255,159,26,.06), transparent 60%),
+        radial-gradient(1200px 700px at -200px 20%, rgba(255,215,154,.05), transparent 60%),
+        var(--bg);
+      color:var(--text)
+    }
 
     /* ====== TOPBAR ====== */
-    .topbar{position:sticky;top:0;z-index:100;backdrop-filter:saturate(160%) blur(8px);
-      background:rgba(8,12,22,.65);border-bottom:1px solid rgba(255,255,255,.06);animation:topbarDrop .5s ease both}
+    .topbar{
+      position:sticky;top:0;z-index:100;backdrop-filter:saturate(160%) blur(8px);
+      background:rgba(9,14,26,.68);border-bottom:1px solid rgba(255,255,255,.06);
+      animation:topbarDrop .5s ease both
+    }
     @keyframes topbarDrop{from{transform:translateY(-8px);opacity:0}to{transform:none;opacity:1}}
     .topwrap{width:min(1100px,92%);margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:10px 0}
     .brand{display:flex;align-items:center;gap:10px;font-weight:800;color:var(--text);text-decoration:none}
@@ -30,19 +46,19 @@
       color:var(--text);text-decoration:none;padding:8px 12px;border-radius:999px;font-weight:600;
       border:1px solid transparent;transition:transform .12s,background .2s,border-color .2s
     }
-    .nav-link:hover{transform:translateY(-1px);background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.35);color:var(--accent-soft)}
+    .nav-link:hover{transform:translateY(-1px);background:rgba(255,159,26,.12);border-color:rgba(255,159,26,.35);color:var(--accent-soft)}
 
     .nav-folder{position:relative}
     .nav-btn{
       display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;border:1px solid transparent;
       background:transparent;color:var(--text);font-weight:700;cursor:pointer;transition:transform .12s,background .2s,border-color .2s
     }
-    .nav-btn:hover{transform:translateY(-1px);background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.35)}
+    .nav-btn:hover{transform:translateY(-1px);background:rgba(255,159,26,.12);border-color:rgba(255,159,26,.35)}
     .nav-btn-link{color:var(--text);text-decoration:none;font-weight:700;transition:color .2s ease}
     .nav-btn-link:hover{color:var(--accent-soft)}
     .ico-folder{width:14px;height:12px;position:relative;display:inline-block}
-    .ico-folder::before{content:"";position:absolute;inset:0;border-radius:3px;background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.35)}
-    .ico-folder::after{content:"";position:absolute;width:8px;height:3px;left:2px;top:-3px;border-radius:2px 2px 0 0;background:rgba(245,158,11,.35)}
+    .ico-folder::before{content:"";position:absolute;inset:0;border-radius:3px;background:rgba(255,159,26,.15);border:1px solid rgba(255,159,26,.35)}
+    .ico-folder::after{content:"";position:absolute;width:8px;height:3px;left:2px;top:-3px;border-radius:2px 2px 0 0;background:rgba(255,159,26,.35)}
     .caret{width:10px;height:10px;border-right:2px solid var(--accent);border-bottom:2px solid var(--accent);
       transform:rotate(-45deg) translateY(-1px);transition:transform .2s ease}
 
@@ -52,22 +68,22 @@
     .sub::after{content:""; position:absolute; top:0; left:100%; width:20px; height:100%; background:transparent; pointer-events:auto;}
 
     .sub>ul{
-      list-style:none;margin:0;padding:8px;background:rgba(18,25,43,.98);
+      list-style:none;margin:0;padding:8px;background:rgba(17,26,45,.98);
       border:1px solid rgba(255,255,255,.06);border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.35);
       transform-origin:top left;transform:scaleY(.92);opacity:0;max-height:0;overflow:hidden;
       transition:transform .2s ease,opacity .2s ease,max-height .32s ease;
     }
     .sub a{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border-radius:8px;
       text-decoration:none;color:var(--text);border:1px solid transparent}
-    .sub a:hover{background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.25)}
+    .sub a:hover{background:rgba(255,159,26,.1);border-color:rgba(255,159,26,.25)}
     .nav-folder[aria-open="true"] > .sub > ul{pointer-events:auto;transform:scaleY(1);opacity:1;max-height:80vh;overflow:auto}
     .nav-folder[aria-open="true"] > .nav-btn .caret{transform:rotate(45deg)}
 
-    /* ====== NIVEL 2 ====== */
+    /* ====== NIVEL 2 (vertical) ====== */
     .nested{
       max-height:0; opacity:0; transform:translateY(-4px);
       overflow:hidden; margin-top:6px; padding-left:10px;
-      border-left:2px dashed rgba(245,158,11,.25);
+      border-left:2px dashed rgba(255,159,26,.25);
       transition:max-height .28s ease, opacity .22s ease, transform .22s ease;
     }
     .sub li.open > .nested{ max-height:1200px; opacity:1; transform:none; }
@@ -75,7 +91,7 @@
     /* ====== PANEL LATERAL NIVEL 3 ====== */
     .sub .side{
       position:absolute; top:0; left:calc(100% + 12px); width:340px;
-      background:rgba(18,25,43,.98); border:1px solid rgba(255,255,255,.06);
+      background:rgba(17,26,45,.98); border:1px solid rgba(255,255,255,.06);
       border-radius:12px; box-shadow:0 12px 30px rgba(0,0,0,.35);
       padding:8px; opacity:0; transform:translateX(-6px) scale(0.98);
       pointer-events:none; transition:opacity .12s ease-out, transform .12s cubic-bezier(.18,.89,.32,1.28);
@@ -84,14 +100,15 @@
     .side-title{margin:6px 10px 8px;font-weight:800;color:#f3f5f8}
     .side-list{list-style:none;margin:0;padding:0}
     .side-list a{display:block;padding:10px 12px;border-radius:8px;color:var(--text);text-decoration:none}
-    .side-list a:hover{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25)}
+    .side-list a:hover{background:rgba(255,159,26,.1);border:1px solid rgba(255,159,26,.25)}
 
     .side .side-title, .side .side-list { transition: opacity .12s ease, transform .12s ease; will-change: opacity, transform; }
     .side.swap-out .side-title, .side.swap-out .side-list { opacity: 0; transform: translateX(-6px); }
     .side.swap-in  .side-title, .side.swap-in  .side-list { opacity: 1; transform: translateX(0); }
 
+    /* ===== Scroll ===== */
     .sub>ul::-webkit-scrollbar{width:10px}
-    .sub>ul::-webkit-scrollbar-thumb{background:rgba(245,158,11,.2);border-radius:10px}
+    .sub>ul::-webkit-scrollbar-thumb{background:rgba(255,159,26,.2);border-radius:10px}
     .sub>ul::-webkit-scrollbar-track{background:rgba(255,255,255,.04)}
 
     @media (max-width:860px){
@@ -102,42 +119,43 @@
     }
 
     /* ====== HERO / CONTENIDO ====== */
-    /* ¡AQUÍ el ajuste para subir el título/subtítulo! */
     .hero-wrap{
-      min-height:58vh;            /* antes 72vh */
+      min-height:46vh;           /* subido */
       display:flex;align-items:center;justify-content:center;text-align:center;
-      padding:8px 14px 0;         /* antes 26px arriba */
+      padding:0 14px 0;
     }
-    .hero h1{font-size:clamp(34px,4vw,54px);font-weight:900;color:var(--accent);margin:0 0 8px;text-shadow:0 0 18px rgba(255,153,0,.7),0 0 36px rgba(255,153,0,.25)}
-    .hero h2{font-size:clamp(24px,3.2vw,40px);font-weight:800;margin:6px 0 8px;color:var(--accent-soft);text-shadow:0 0 14px rgba(255,153,0,.45)}
+    .hero h1{font-size:clamp(34px,4vw,54px);font-weight:900;color:var(--accent);margin:0 0 6px;
+      text-shadow:0 0 18px rgba(255,159,26,.7),0 0 36px rgba(255,159,26,.25)}
+    .hero h2{font-size:clamp(24px,3.2vw,40px);font-weight:800;margin:4px 0 8px;color:var(--accent-soft);
+      text-shadow:0 0 14px rgba(255,159,26,.45)}
     .cursor{display:inline-block;width:.6ch;margin-left:2px;color:var(--accent);filter:drop-shadow(0 0 6px var(--accent));animation:blink .95s steps(1,end) infinite}
     @keyframes blink{50%{opacity:0}}
-    .lead{max-width:900px;margin:10px auto 0;font-size:clamp(19px,1.5vw,22px);line-height:1.7;color:var(--text);opacity:0;transform:translateY(10px);transition:opacity .8s ease,transform .8s ease}
+    .lead{max-width:900px;margin:6px auto 0;font-size:clamp(19px,1.5vw,22px);line-height:1.7;color:var(--text);opacity:0;transform:translateY(10px);transition:opacity .8s ease,transform .8s ease}
     .lead.show{opacity:1;transform:none}
 
     .container{width:min(1100px,92%);margin:0 auto}
-    section{padding:30px 0}      /* antes 36px: el contenido general sube un poco */
+    section{padding:26px 0}
     .section-title{font-size:clamp(24px,3vw,34px);margin:0 0 10px}
     .kicker{color:var(--muted);margin:0 0 20px}
     .chips{display:flex;flex-wrap:wrap;gap:10px}
-    .chip{padding:8px 12px;border-radius:999px;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.35);color:#ffd8a6;font-weight:600;font-size:14px}
+    .chip{padding:8px 12px;border-radius:999px;background:rgba(255,159,26,.12);border:1px solid rgba(255,159,26,.35);color:#ffe2b0;font-weight:600;font-size:14px}
     .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-    .card{background:linear-gradient(180deg,color-mix(in oklab,var(--panel) 92%,#12131f 8%),var(--panel));border:1px solid rgba(255,255,255,.06);border-radius:var(--radius);padding:16px}
+    .card{background:linear-gradient(180deg,color-mix(in oklab,var(--panel) 92%,#0f1422 8%),var(--panel));border:1px solid rgba(255,255,255,.06);border-radius:var(--radius);padding:16px}
     .project img{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:10px;border:1px solid rgba(255,255,255,.06)}
     .project h4{margin:10px 0 6px}
     .project p{margin:0;color:var(--muted)}
     .contact-box{display:grid;grid-template-columns:1.1fr .9fr;gap:22px}
     form{display:grid;gap:12px}
-    input,textarea{background:#0c1220;color:var(--text);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:12px 14px;font-size:16px}
+    input,textarea{background:#0c1323;color:var(--text);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:12px 14px;font-size:16px}
     textarea{min-height:140px;resize:vertical}
     footer{padding:40px 0;color:#a9b1bd;text-align:center;border-top:1px solid rgba(255,255,255,.06);margin-top:10px}
     @media (max-width:980px){.grid{grid-template-columns:1fr 1fr}.contact-box{grid-template-columns:1fr}}
     @media (max-width:620px){.grid{grid-template-columns:1fr}}
 
-    /* ===== Enfatizar subcarpetas Lvl 2 (solo Portafolio) ===== */
+    /* ===== Enfatizar subcarpetas Lvl 2 (Portafolio) ===== */
     .nav-folder[data-sticky="true"] .nested > li > a{
       position: relative;
-      border: 1px solid rgba(245,158,11,.15);
+      border: 1px solid rgba(255,159,26,.15);
       background: transparent;
       border-radius: 10px;
       transition: background .18s ease, border-color .18s ease, box-shadow .18s ease, transform .14s ease, color .18s ease;
@@ -153,9 +171,9 @@
     }
     .nav-folder[data-sticky="true"] .nested > li.focus2 > a,
     .nav-folder[data-sticky="true"] .nested > li > a:hover{
-      background: linear-gradient(90deg, rgba(245,158,11,.18) 0%, rgba(245,158,11,.08) 60%);
-      border-color: rgba(245,158,11,.55);
-      box-shadow: 0 6px 18px rgba(245,158,11,.25), inset 0 0 0 1px rgba(255,255,255,.06);
+      background: linear-gradient(90deg, rgba(255,159,26,.18) 0%, rgba(255,159,26,.08) 60%);
+      border-color: rgba(255,159,26,.55);
+      box-shadow: 0 6px 18px rgba(255,159,26,.25), inset 0 0 0 1px rgba(255,255,255,.06);
       transform: translateX(2px);
       color: #ffe1a6;
     }
@@ -165,8 +183,35 @@
       transform: scaleX(1.5);
     }
     .nav-folder[data-sticky="true"] .sub > ul > li.open > .nested{
-      filter: drop-shadow(0 6px 20px rgba(245,158,11,.15));
+      filter: drop-shadow(0 6px 20px rgba(255,159,26,.15));
     }
+
+    /* ===== Paginación del panel lateral (lvl3) ===== */
+    .side .pager{
+      display:flex; justify-content:flex-end; align-items:center; gap:10px;
+      margin:8px 6px 4px;
+    }
+    .pager-btn{
+      position:relative; width:38px; height:32px; border-radius:10px;
+      background:rgba(255,159,26,.10); border:1px solid rgba(255,159,26,.35);
+      cursor:pointer; font-weight:800;
+      display:inline-flex; align-items:center; justify-content:center;
+      transition:transform .12s ease, background .18s ease, border-color .18s ease, opacity .18s ease;
+      color:#ffd8a6;
+    }
+    .pager-btn:hover{ transform:translateY(-1px); background:rgba(255,159,26,.18); border-color:rgba(255,159,26,.6); }
+    .pager-btn:disabled{ opacity:.45; cursor:not-allowed; transform:none; }
+    .pager-btn.prev::before,
+    .pager-btn.next::before{ content:"›"; font-size:18px; line-height:1; }
+    .pager-btn.prev::before{ transform:rotate(180deg); }
+    .pager-btn::after{
+      content:attr(data-page);
+      position:absolute; right:-6px; top:-8px;
+      font-size:12px; line-height:1; padding:2px 6px; border-radius:999px;
+      background:var(--accent); color:#111; box-shadow:0 4px 14px rgba(0,0,0,.35);
+      border:1px solid rgba(255,255,255,.25);
+    }
+    .pager .label{ opacity:.7; font-size:12px; margin-left:4px; user-select:none; }
   </style>
 </head>
 <body>
@@ -315,32 +360,95 @@
       { label:"Contacto", href:"/contacto/" }
     ];
 
+    /* === swap animado del panel (lvl3) con paginación visual === */
     function swapSideContent(sideEl, newTitle, newLinksArray) {
       const titleEl = sideEl.querySelector('.side-title');
       const listEl  = sideEl.querySelector('.side-list');
-      if (sideEl.dataset.key === newTitle) return;
 
-      sideEl.classList.remove('swap-in');
-      sideEl.classList.add('swap-out');
+      sideEl._pagesByKey = sideEl._pagesByKey || new Map();
+      const perPage = 7;
+      const pages = chunkArray(newLinksArray, perPage);
 
-      clearTimeout(sideEl._swapTimer);
-      const OUT_MS = 120;
+      const key = newTitle;
+      const prevState = sideEl._pagesByKey.get(key) || { page: 0, pages: [] };
+      const state = { page: Math.min(prevState.page, Math.max(pages.length - 1, 0)), pages };
+      sideEl._pagesByKey.set(key, state);
 
-      sideEl._swapTimer = setTimeout(() => {
-        sideEl.dataset.key = newTitle;
-        titleEl.textContent = newTitle;
-        listEl.innerHTML = '';
-        newLinksArray.forEach(a => {
-          const li = document.createElement('li');
-          li.appendChild(a.cloneNode(true));
-          listEl.appendChild(li);
-        });
-        void sideEl.offsetWidth;
-        sideEl.classList.remove('swap-out');
-        sideEl.classList.add('swap-in');
-      }, OUT_MS);
+      if (sideEl.dataset.key !== newTitle) {
+        sideEl.classList.remove('swap-in');
+        sideEl.classList.add('swap-out');
+        clearTimeout(sideEl._swapTimer);
+        const OUT_MS = 120;
+
+        sideEl._swapTimer = setTimeout(() => {
+          sideEl.dataset.key = newTitle;
+          titleEl.textContent = newTitle;
+          renderSidePage(sideEl, state);
+          void sideEl.offsetWidth;
+          sideEl.classList.remove('swap-out');
+          sideEl.classList.add('swap-in');
+        }, OUT_MS);
+      } else {
+        renderSidePage(sideEl, state);
+      }
     }
 
+    function renderSidePage(sideEl, state){
+      const listEl = sideEl.querySelector('.side-list');
+      listEl.innerHTML = '';
+
+      const current = state.pages[state.page] || [];
+      current.forEach(a => {
+        const li = document.createElement('li');
+        li.appendChild(a.cloneNode(true));
+        listEl.appendChild(li);
+      });
+
+      let pager = sideEl.querySelector('.pager');
+      if (!pager) {
+        pager = document.createElement('div');
+        pager.className = 'pager';
+        sideEl.appendChild(pager);
+      }
+      pager.innerHTML = '';
+
+      if (state.pages.length > 1) {
+        const prev = document.createElement('button');
+        prev.className = 'pager-btn prev';
+        prev.title = 'Página anterior';
+        prev.disabled = state.page === 0;
+        prev.dataset.page = state.page > 0 ? (state.page) : '';
+
+        const next = document.createElement('button');
+        next.className = 'pager-btn next';
+        next.title = 'Página siguiente';
+        next.disabled = state.page >= state.pages.length - 1;
+        next.dataset.page = state.page < state.pages.length - 1 ? (state.page + 2) : '';
+
+        const label = document.createElement('span');
+        label.className = 'label';
+        label.textContent = 'pag';
+
+        prev.addEventListener('click', () => {
+          if (state.page > 0) { state.page--; renderSidePage(sideEl, state); }
+        });
+        next.addEventListener('click', () => {
+          if (state.page < state.pages.length - 1) { state.page++; renderSidePage(sideEl, state); }
+        });
+
+        pager.append(prev, next, label);
+      } else {
+        pager.remove();
+      }
+    }
+
+    function chunkArray(arr, size){
+      const out = [];
+      for(let i=0;i<arr.length;i+=size) out.push(arr.slice(i, i+size));
+      return out;
+    }
+
+    /* === Alinear panel lvl3 al item lvl2 dentro del marco (sub > ul) === */
     function positionSideAligned(sideEl, anchorEl, subEl){
       const listEl   = subEl.querySelector(':scope > ul');
       const subRect  = subEl.getBoundingClientRect();
@@ -361,10 +469,12 @@
       sideEl.style.top = `${top}px`;
     }
 
+    /* ===== Render NAV ===== */
     function renderNav(tree){
       const nav = document.getElementById('nav');
       tree.forEach(node => nav.appendChild(createNode(node)));
 
+      // hover-intent primer nivel
       const timers = new WeakMap();
       document.querySelectorAll('.nav-folder').forEach(folder=>{
         folder.addEventListener('mouseenter', ()=>{
@@ -378,6 +488,7 @@
       });
     }
 
+    /* ===== Crear nodo ===== */
     function createNode(node){
       if(!node.children){
         const a=document.createElement('a');
@@ -402,6 +513,7 @@
       const sub=document.createElement('div'); sub.className='sub';
       const ul=document.createElement('ul'); sub.appendChild(ul);
 
+      // panel lateral lvl3 sólo en Portafolio
       let side = null;
       if (wrap.dataset.sticky === "true") {
         side = document.createElement('div');
@@ -410,6 +522,7 @@
         sub.appendChild(side);
       }
 
+      // Lvl1
       node.children.forEach(childLvl1=>{
         const liLvl1=document.createElement('li');
 
@@ -441,13 +554,13 @@
               const linksLvl3 = Array.from(hiddenLvl3.querySelectorAll('a'));
               const newTitle  = `${childLvl1.label} / ${childLvl2.label}`;
 
-              positionSideAligned(side, link2, sub);
-              swapSideContent(side, newTitle, linksLvl3);
+              positionSideAligned(side, link2, sub);      // alinear con clamp
+              swapSideContent(side, newTitle, linksLvl3); // swap + paginación
               wrap.setAttribute('data-panel','show');
-              setTimeout(()=> positionSideAligned(side, link2, sub), 0);
+              setTimeout(()=> positionSideAligned(side, link2, sub), 0); // reajuste tras cambio de altura
             });
 
-            /* énfasis (Lvl 2) */
+            /* énfasis sincronizado (Lvl 2) */
             link2.addEventListener('mouseenter', ()=>{
               liLvl2.classList.add('focus2');
               liLvl2.parentElement
@@ -506,3 +619,4 @@
   </script>
 </body>
 </html>
+
