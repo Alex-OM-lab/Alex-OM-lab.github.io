@@ -9,13 +9,21 @@
   <style>
     /* ===== PALETA OSCURA CÁLIDA (azul profundo + naranjas) ===== */
     :root{
-      --bg:#0b1220;              /* fondo principal: azul noche */
-      --panel:#111a2d;           /* paneles: un toque más claro */
-      --text:#e9eef6;            /* texto principal */
-      --muted:#a8b2c2;           /* texto secundario */
-      --accent:#ff9f1a;          /* naranja cálido principal */
-      --accent-soft:#ffd79a;     /* naranja suave para luces */
+      --bg:#0b1220;
+      --panel:#111a2d;
+      --text:#e9eef6;
+      --muted:#a8b2c2;
+      --accent:#ff9f1a;
+      --accent-soft:#ffd79a;
       --radius:14px;
+
+      /* tamaños menú */
+      --nav-font:15.5px;     /* ↑ tamaño letra */
+      --nav-pad-y:12px;      /* ↑ altura del topbar */
+      --nav-gap:12px;        /* ↑ separación entre items */
+
+      /* hero offset (puedes subir/bajar fácil) */
+      --hero-offset:12vh;    /* pon 10vh o 15vh si quieres */
     }
 
     *{box-sizing:border-box}
@@ -31,30 +39,61 @@
 
     /* ====== TOPBAR ====== */
     .topbar{
-      position:sticky;top:0;z-index:100;backdrop-filter:saturate(160%) blur(8px);
-      background:rgba(9,14,26,.68);border-bottom:1px solid rgba(255,255,255,.06);
-      animation:topbarDrop .5s ease both
+      position:sticky;top:0;z-index:100;
+      backdrop-filter:saturate(160%) blur(8px);
+      background:rgba(9,14,26,.74);
+      border-bottom:1px solid rgba(255,255,255,.06);
+      animation:topbarDrop .5s ease both;
+    }
+    /* Línea naranja inferior */
+    .topbar::after{
+      content:""; position:absolute; left:0; right:0; bottom:0;
+      height:3px;
+      background:linear-gradient(90deg, rgba(255,159,26,.0) 0%, rgba(255,159,26,.85) 22%, rgba(255,215,154,.9) 50%, rgba(255,159,26,.85) 78%, rgba(255,159,26,.0) 100%);
+      box-shadow:0 0 10px rgba(255,159,26,.35), 0 0 20px rgba(255,159,26,.22);
+      pointer-events:none;
     }
     @keyframes topbarDrop{from{transform:translateY(-8px);opacity:0}to{transform:none;opacity:1}}
-    .topwrap{width:min(1100px,92%);margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:10px 0}
+
+    .topwrap{
+      width:min(1100px,92%);margin:0 auto;
+      display:flex;align-items:center;justify-content:space-between;
+      padding:calc(var(--nav-pad-y) - 2px) 0; /* más alto */
+      position:relative;
+    }
+
     .brand{display:flex;align-items:center;gap:10px;font-weight:800;color:var(--text);text-decoration:none}
     .brand-dot{width:10px;height:10px;border-radius:999px;background:var(--accent);box-shadow:0 0 16px var(--accent)}
-    .menu{display:flex;gap:10px;flex-wrap:wrap}
+
+    /* Menú dividido: izquierda (principal) + derecha (Inicio) */
+    .menu-left{display:flex;gap:var(--nav-gap);flex-wrap:wrap;align-items:center}
+    .menu-right{display:flex;align-items:center}
 
     /* ====== NAV LINKS ====== */
     .nav-link{
-      color:var(--text);text-decoration:none;padding:8px 12px;border-radius:999px;font-weight:600;
-      border:1px solid transparent;transition:transform .12s,background .2s,border-color .2s
+      color:var(--text);text-decoration:none;
+      padding:8px 14px;border-radius:999px;font-weight:700;
+      font-size:var(--nav-font);
+      border:1px solid transparent;
+      transition:transform .12s,background .2s,border-color .2s,color .2s;
     }
-    .nav-link:hover{transform:translateY(-1px);background:rgba(255,159,26,.12);border-color:rgba(255,159,26,.35);color:var(--accent-soft)}
+    .nav-link:hover{
+      transform:translateY(-1px);
+      background:rgba(255,159,26,.12);
+      border-color:rgba(255,159,26,.35);
+      color:var(--accent-soft)
+    }
 
     .nav-folder{position:relative}
     .nav-btn{
-      display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;border:1px solid transparent;
-      background:transparent;color:var(--text);font-weight:700;cursor:pointer;transition:transform .12s,background .2s,border-color .2s
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 14px;border-radius:999px;border:1px solid transparent;
+      background:transparent;color:var(--text);
+      font-weight:800;font-size:var(--nav-font);
+      cursor:pointer;transition:transform .12s,background .2s,border-color .2s
     }
     .nav-btn:hover{transform:translateY(-1px);background:rgba(255,159,26,.12);border-color:rgba(255,159,26,.35)}
-    .nav-btn-link{color:var(--text);text-decoration:none;font-weight:700;transition:color .2s ease}
+    .nav-btn-link{color:var(--text);text-decoration:none;font-weight:800;transition:color .2s ease}
     .nav-btn-link:hover{color:var(--accent-soft)}
     .ico-folder{width:14px;height:12px;position:relative;display:inline-block}
     .ico-folder::before{content:"";position:absolute;inset:0;border-radius:3px;background:rgba(255,159,26,.15);border:1px solid rgba(255,159,26,.35)}
@@ -95,8 +134,7 @@
       border-radius:12px; box-shadow:0 12px 30px rgba(0,0,0,.35);
       padding:8px; opacity:0; transform:translateX(-6px) scale(0.98);
       pointer-events:none; transition:opacity .12s ease-out, transform .12s cubic-bezier(.18,.89,.32,1.28);
-      /* Para fijar el pager al fondo: */
-      display:flex; flex-direction:column;
+      display:flex; flex-direction:column;          /* fija pager abajo */
     }
     .nav-folder[data-sticky="true"][data-panel="show"][aria-open="true"] .side{ opacity:1; transform:translateX(0) scale(1); pointer-events:auto; }
     .side-title{margin:6px 10px 8px;font-weight:800;color:#f3f5f8}
@@ -121,12 +159,11 @@
     }
 
     /* ====== HERO / CONTENIDO ====== */
-    /* Bajamos la sección ~12% (ajusta margin-top 10–15% si quieres) */
     .hero-wrap{
       min-height:52vh;
       display:flex;align-items:center;justify-content:center;text-align:center;
       padding:0 14px 0;
-      margin-top:100vh;           /* <-- desplaza hacia abajo */
+      margin-top:var(--hero-offset);
     }
     .hero h1{font-size:clamp(34px,4vw,54px);font-weight:900;color:var(--accent);margin:0 0 6px;
       text-shadow:0 0 18px rgba(255,159,26,.7),0 0 36px rgba(255,159,26,.25)}
@@ -153,6 +190,7 @@
     input,textarea{background:#0c1323;color:var(--text);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:12px 14px;font-size:16px}
     textarea{min-height:140px;resize:vertical}
     footer{padding:40px 0;color:#a9b1bd;text-align:center;border-top:1px solid rgba(255,255,255,.06);margin-top:10px}
+
     @media (max-width:980px){.grid{grid-template-columns:1fr 1fr}.contact-box{grid-template-columns:1fr}}
     @media (max-width:620px){.grid{grid-template-columns:1fr}}
 
@@ -225,7 +263,14 @@
   <header class="topbar">
     <div class="topwrap">
       <a class="brand" href="/"><span class="brand-dot"></span><span>AO · Portafolio</span></a>
-      <nav class="menu" id="nav" aria-label="Navegación principal"></nav>
+
+      <!-- Menú izquierda (nuevo orden) -->
+      <nav class="menu-left" id="nav" aria-label="Navegación principal"></nav>
+
+      <!-- Menú derecha: Inicio -->
+      <nav class="menu-right">
+        <a class="nav-link" href="/">Inicio</a>
+      </nav>
     </div>
   </header>
 
@@ -324,11 +369,21 @@
     setTimeout(typeName,300);
 
     /* ===== Datos del NAV ===== */
-    // Ahora cada subcarpeta trae 12 artículos (2 páginas x 6)
+    // 12 artículos por subcarpeta (2 páginas x 6)
     const twelve = base => Array.from({length:12}, (_,i)=>({label:`${base} · Artículo ${i+1}`, href:"#"}));
 
+    // ORDEN: Teoría y Casos, Portafolio, Laboratorio, Contacto (Inicio va a la derecha)
     const NAV_TREE = [
-      { label:"Inicio", href:"/" },
+      { label:"Teoría y Casos Curiosos", children:[
+        { label:"Ciberseguridad", href:"#", children:[
+          { label:"Análisis Forense", href:"#", children: twelve("Teoría · Forense") },
+          { label:"Respuesta a Incidentes", href:"#", children: twelve("Teoría · Incidentes") }
+        ]},
+        { label:"Sistemas", href:"#", children:[
+          { label:"Redes", href:"#", children: twelve("Teoría · Redes") },
+          { label:"Conceptos", href:"#", children: twelve("Teoría · Conceptos") }
+        ]}
+      ]},
 
       { label:"Portafolio", sticky:true, children:[
         { label:"Ciberseguridad", href:"/portafolio/Ciberseguridad/", children:[
@@ -347,17 +402,6 @@
         ]}
       ]},
 
-      { label:"Teoría y Casos Curiosos", children:[
-        { label:"Ciberseguridad", href:"#", children:[
-          { label:"Análisis Forense", href:"#", children: twelve("Teoría · Forense") },
-          { label:"Respuesta a Incidentes", href:"#", children: twelve("Teoría · Incidentes") }
-        ]},
-        { label:"Sistemas", href:"#", children:[
-          { label:"Redes", href:"#", children: twelve("Teoría · Redes") },
-          { label:"Conceptos", href:"#", children: twelve("Teoría · Conceptos") }
-        ]}
-      ]},
-
       { label:"Laboratorio", href:"/Laboratorio/", children:[
         { label:"TryHackMe", href:"#", children: twelve("THM") },
         { label:"HackTheBox", href:"#", children: twelve("HTB") }
@@ -366,12 +410,12 @@
       { label:"Contacto", href:"/contacto/" }
     ];
 
-    /* === swap animado del panel (lvl3) con paginación visual (6 por página) === */
+    /* === swap animado + paginación (6 por página) === */
     function swapSideContent(sideEl, newTitle, newLinksArray) {
       const titleEl = sideEl.querySelector('.side-title');
       sideEl._pagesByKey = sideEl._pagesByKey || new Map();
 
-      const perPage = 6; // <-- fijo a 6
+      const perPage = 6;
       const pages = chunkArray(newLinksArray, perPage);
 
       const key = newTitle;
@@ -417,7 +461,6 @@
       }
       pager.innerHTML = '';
 
-      // Siempre habrá 2 páginas (12 items), pero dejamos el control genérico
       const prev = document.createElement('button');
       prev.className = 'pager-btn prev';
       prev.title = 'Página anterior';
@@ -434,12 +477,8 @@
       info.className = 'pager-info';
       info.textContent = `Página ${state.page + 1} de ${state.pages.length}`;
 
-      prev.addEventListener('click', () => {
-        if (state.page > 0) { state.page--; renderSidePage(sideEl, state); }
-      });
-      next.addEventListener('click', () => {
-        if (state.page < state.pages.length - 1) { state.page++; renderSidePage(sideEl, state); }
-      });
+      prev.addEventListener('click', () => { if (state.page > 0) { state.page--; renderSidePage(sideEl, state); }});
+      next.addEventListener('click', () => { if (state.page < state.pages.length - 1) { state.page++; renderSidePage(sideEl, state); }});
 
       pager.append(info, prev, next);
     }
@@ -463,15 +502,11 @@
       const maxTop     = (listRect.bottom - subRect.top) - sideH;
 
       let top;
-      if (maxTop < minTop) {
-        top = minTop;
-      } else {
-        top = Math.min(Math.max(desiredTop, minTop), maxTop);
-      }
+      if (maxTop < minTop) top = minTop; else top = Math.min(Math.max(desiredTop, minTop), maxTop);
       sideEl.style.top = `${top}px`;
     }
 
-    /* ===== Render NAV ===== */
+    /* ===== Render NAV (izquierda) ===== */
     function renderNav(tree){
       const nav = document.getElementById('nav');
       tree.forEach(node => nav.appendChild(createNode(node)));
@@ -556,10 +591,10 @@
               const linksLvl3 = Array.from(hiddenLvl3.querySelectorAll('a'));
               const newTitle  = `${childLvl1.label} / ${childLvl2.label}`;
 
-              positionSideAligned(side, link2, sub);      // alinear con clamp
-              swapSideContent(side, newTitle, linksLvl3); // swap + paginación (6 por página)
+              positionSideAligned(side, link2, sub);
+              swapSideContent(side, newTitle, linksLvl3);
               wrap.setAttribute('data-panel','show');
-              setTimeout(()=> positionSideAligned(side, link2, sub), 0); // reajuste tras cambio de altura
+              setTimeout(()=> positionSideAligned(side, link2, sub), 0);
             });
 
             /* énfasis sincronizado (Lvl 2) */
@@ -621,3 +656,4 @@
   </script>
 </body>
 </html>
+
