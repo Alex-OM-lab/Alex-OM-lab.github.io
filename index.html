@@ -479,7 +479,7 @@
 
 @media (max-width:980px){ .sitemap .sm-cols{ grid-template-columns: 1fr 1fr } }
 @media (max-width:640px){ .sitemap .sm-cols{ grid-template-columns: 1fr } }
-    /* ===== ÁRBOL VISUAL (SVG) ===== */
+/* ===== ÁRBOL VISUAL (SVG) ===== */
 .graph .card{
   border-radius: var(--radius);
   border:1px solid rgba(255,255,255,.06);
@@ -488,10 +488,14 @@
 }
 .graph-head{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:10px; }
 .graph-head h2{ margin:0 }
+
+/* escenario más grande para “jugar” */
 .graph-stage{
   position:relative; border:1px solid rgba(255,255,255,.06); border-radius:12px;
-  background:#0c1323; overflow:hidden; height:520px;
+  background:#0c1323; overflow:hidden; height:680px;  /* ↑ más alto */
 }
+
+/* leyenda */
 .graph-legend{
   display:flex; gap:14px; align-items:center; justify-content:flex-end; margin-top:10px;
   color:var(--muted); font-size:13px;
@@ -502,35 +506,35 @@
 .graph-legend .lvl2{ background:#8fd6ff }
 .graph-legend .lvl3{ background:#9be2b0 }
 
-.node{ cursor:pointer; transition:filter .18s ease }
-.node:hover{ filter:brightness(1.05) }
-.node rect{
-  rx:10; ry:10;
-  fill:#0e1730; stroke:rgba(255,255,255,.10); stroke-width:1.2;
-}
+/* nodos */
+.node{ cursor:pointer; }
+.node rect{ rx:10; ry:10; fill:#0e1730; stroke:rgba(255,255,255,.10); stroke-width:1.2; }
 .node[data-lvl="0"] rect{ fill:rgba(255,159,26,.18); stroke:rgba(255,159,26,.55) }
 .node[data-lvl="1"] rect{ fill:rgba(255,215,154,.12); stroke:rgba(255,215,154,.5) }
 .node[data-lvl="2"] rect{ fill:rgba(143,214,255,.10); stroke:rgba(143,214,255,.45) }
 .node[data-lvl="3"] rect{ fill:rgba(155,226,176,.10); stroke:rgba(155,226,176,.4) }
+.node .title{ fill:#e9eef6; font-weight:800; font-size:14px; }
+.node .sub{ fill:#a8b2c2; font-size:12.5px; }
 
-.node .title{
-  fill:#e9eef6; font-weight:800; font-size:14px;
-}
-.node .sub{
-  fill:#a8b2c2; font-size:12.5px;
-}
+/* animaciones de aparición */
+.node{ opacity:0; transform:translateX(22px); transition:opacity .35s ease, transform .35s ease; }
+.node.is-in{ opacity:1; transform:none; }
 
-.link{
-  fill:none; stroke:rgba(255,159,26,.35); stroke-width:2;
-  filter: drop-shadow(0 0 3px rgba(255,159,26,.12));
-}
+/* enlaces + animación de trazo */
+.link{ fill:none; stroke:rgba(255,159,26,.35); stroke-width:2; filter: drop-shadow(0 0 3px rgba(255,159,26,.12)); }
 .link.l1{ stroke:rgba(255,215,154,.35) }
 .link.l2{ stroke:rgba(143,214,255,.35) }
 .link.l3{ stroke:rgba(155,226,176,.35) }
-
-.badge{
-  font-size:11px; font-weight:800; fill:#111;
+.link.draw{
+  stroke-dasharray: 600;
+  stroke-dashoffset: 600;
+  animation: draw .6s ease forwards;
 }
+@keyframes draw{ to{ stroke-dashoffset:0 } }
+
+/* cursores para pan/zoom */
+.graph-stage.is-panning{ cursor:grabbing; }
+.graph-stage .svgroot{ cursor:grab; }
   </style>
 <body>
 
@@ -663,10 +667,13 @@
       <p class="kicker">Esquema interactivo — haz clic para desplegar niveles.</p>
     </div>
 
-    <div class="graph-stage" id="graphStage">
-      <svg id="graphSvg" viewBox="0 0 1200 520" preserveAspectRatio="xMidYMid meet" role="img"
-           aria-label="Esquema del contenido por niveles"></svg>
-    </div>
+<div class="graph-stage" id="graphStage">
+  <svg id="graphSvg" class="svgroot" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid meet" role="img"
+       aria-label="Esquema del contenido por niveles">
+    <!-- Contenedor que trasladamos/escalamos -->
+    <g id="graphRoot"></g>
+  </svg>
+</div>
 
     <div class="graph-legend">
       <span class="dot lvl0"></span> Nivel 0
@@ -1238,138 +1245,213 @@ const GRAPH_TREE = [
   }
 ];
 
-/* ======== Utilidades de layout ======== */
-function makeSix(name){ return Array.from({length:6},(_,i)=>`Artículo ${i+1} — ${name}`); }
+/* ======== Config y estado ======== */
 const G = {
   svg: document.getElementById('graphSvg'),
+  root: document.getElementById('graphRoot'),
   stage: document.getElementById('graphStage'),
   state: { sel0:null, sel1:null, sel2:null },
-  colX: [80, 350, 700, 980],                 // x por columna (niveles 0..3)
-  nodeW: [200, 220, 260, 240],               // ancho de los nodos por nivel
+
+  // layout base
+  colX: [120, 460, 940, 1300],
+  nodeW: [220, 240, 280, 260],
   nodeH: 56,
-  vGap : 20
+  vGap : 22,
+
+  // pan/zoom
+  tx: 0, ty: 0, scale: 1,
+  minScale: 0.6,
+  maxScale: 2.2,
 };
 
-function clearSvg(){
-  while(G.svg.firstChild) G.svg.removeChild(G.svg.firstChild);
+/* ======== Util ======== */
+function makeSix(name){ return Array.from({length:6}, (_,i)=>`Artículo ${i+1} — ${name}`); }
+function clearRoot(){ while(G.root.firstChild) G.root.removeChild(G.root.firstChild); }
+function applyTransform(){
+  G.root.setAttribute('transform', `translate(${G.tx},${G.ty}) scale(${G.scale})`);
+}
+function screenToSvgPoint(clientX, clientY){
+  const pt = G.svg.createSVGPoint();
+  pt.x = clientX; pt.y = clientY;
+  const ctm = G.svg.getScreenCTM();
+  return pt.matrixTransform(ctm.inverse());
 }
 
-function drawNode({x,y,w,h,lvl,title,sub,onClick}){
+/* ======== Dibujo ======== */
+function drawNode({x,y,w,h,lvl,title,sub,onClick,delay=0}){
   const g = document.createElementNS('http://www.w3.org/2000/svg','g');
   g.classList.add('node'); g.dataset.lvl = String(lvl);
   g.setAttribute('transform', `translate(${x},${y})`);
   if(onClick) g.addEventListener('click', onClick);
 
   const r = document.createElementNS('http://www.w3.org/2000/svg','rect');
-  r.setAttribute('x', 0); r.setAttribute('y', 0); r.setAttribute('width', w); r.setAttribute('height', h);
+  r.setAttribute('width', w); r.setAttribute('height', h);
   g.appendChild(r);
 
   const t = document.createElementNS('http://www.w3.org/2000/svg','text');
-  t.setAttribute('x', 14); t.setAttribute('y', 22); t.setAttribute('class','title');
-  t.textContent = title;
+  t.setAttribute('x', 14); t.setAttribute('y', 22); t.setAttribute('class','title'); t.textContent = title;
   g.appendChild(t);
 
   if(sub){
     const s = document.createElementNS('http://www.w3.org/2000/svg','text');
-    s.setAttribute('x', 14); s.setAttribute('y', 40); s.setAttribute('class','sub');
-    s.textContent = sub;
+    s.setAttribute('x', 14); s.setAttribute('y', 40); s.setAttribute('class','sub'); s.textContent = sub;
     g.appendChild(s);
   }
 
-  // pequeña “badge” con el nivel
+  // badge lvl
   const bkg = document.createElementNS('http://www.w3.org/2000/svg','rect');
-  bkg.setAttribute('x', w-34); bkg.setAttribute('y', 8); bkg.setAttribute('width', 22); bkg.setAttribute('height', 16);
-  bkg.setAttribute('rx','6'); bkg.setAttribute('fill', lvl===0?'var(--accent)':'#ffd79a');
+  bkg.setAttribute('x', w-34); bkg.setAttribute('y', 8);
+  bkg.setAttribute('width', 22); bkg.setAttribute('height', 16);
+  bkg.setAttribute('rx','6');
+  bkg.setAttribute('fill', lvl===0?'var(--accent)':'#ffd79a');
   g.appendChild(bkg);
   const bt = document.createElementNS('http://www.w3.org/2000/svg','text');
-  bt.setAttribute('x', w-23); bt.setAttribute('y', 20); bt.setAttribute('class','badge');
-  bt.textContent = lvl; g.appendChild(bt);
+  bt.setAttribute('x', w-23); bt.setAttribute('y', 20); bt.setAttribute('class','badge'); bt.textContent = lvl;
+  g.appendChild(bt);
 
-  G.svg.appendChild(g);
-  return {x,y,w,h};
+  // insertar y animar (stagger por nivel)
+  G.root.appendChild(g);
+  requestAnimationFrame(()=>{ setTimeout(()=> g.classList.add('is-in'), delay); });
+
+  return {x,y,w,h, el:g};
 }
 
-function drawLink(from, to, lvl){
+function drawLink(from, to, lvl, delay=0){
   const path = document.createElementNS('http://www.w3.org/2000/svg','path');
   const x1 = from.x + from.w, y1 = from.y + from.h/2;
   const x2 = to.x,           y2 = to.y + to.h/2;
   const dx = Math.max(40, (x2 - x1)/2);
-  const d = `M ${x1} ${y1} C ${x1+dx} ${y1}, ${x2-dx} ${y2}, ${x2} ${y2}`;
-  path.setAttribute('d', d);
+  path.setAttribute('d', `M ${x1} ${y1} C ${x1+dx} ${y1}, ${x2-dx} ${y2}, ${x2} ${y2}`);
   path.setAttribute('class', `link l${lvl}`);
-  G.svg.appendChild(path);
+  G.root.appendChild(path);
+  // animación del trazo
+  setTimeout(()=> path.classList.add('draw'), delay);
 }
 
-/* ======== Render según estado ======== */
+/* ======== Render según estado (con animaciones) ======== */
 function renderGraph(){
-  if(!G.svg) return;
-  clearSvg();
+  clearRoot();
 
+  const H = 900; // altura virtual del viewBox
   const { sel0, sel1, sel2 } = G.state;
   const nodeH = G.nodeH, vGap = G.vGap;
 
-  // Nivel 0 (dos raíces)
+  // Nivel 0
   const roots = GRAPH_TREE.map(r=>r.raiz);
   const totalH0 = roots.length*nodeH + (roots.length-1)*vGap;
-  let y0 = (520 - totalH0)/2;
+  let y0 = (H - totalH0)/2;
   const nodes0 = roots.map((txt,ix)=>{
     const box = drawNode({
       x:G.colX[0], y:y0 + ix*(nodeH+vGap), w:G.nodeW[0], h:nodeH, lvl:0,
-      title:txt, sub:"", onClick:()=>{ G.state.sel0 = ix; G.state.sel1=null; G.state.sel2=null; renderGraph(); }
+      title:txt, onClick:()=>{ G.state.sel0 = ix; G.state.sel1=null; G.state.sel2=null; renderGraph(); },
+      delay: 50 + ix*40
     });
     return box;
   });
 
-  // Nivel 1 (áreas) si hay raíz
   if(sel0!=null){
     const areas = GRAPH_TREE[sel0].areas.map(a=>a.nombre);
     const totalH1 = areas.length*nodeH + (areas.length-1)*vGap;
-    let y1 = (520 - totalH1)/2;
+    let y1 = (H - totalH1)/2;
     const nodes1 = areas.map((txt,ix)=>{
       const box = drawNode({
         x:G.colX[1], y:y1 + ix*(nodeH+vGap), w:G.nodeW[1], h:nodeH, lvl:1,
-        title:txt, sub:"", onClick:()=>{ G.state.sel1 = ix; G.state.sel2=null; renderGraph(); }
+        title:txt, onClick:()=>{ G.state.sel1 = ix; G.state.sel2=null; renderGraph(); },
+        delay: 100 + ix*40
       });
-      drawLink(nodes0[sel0], box, 1);
+      drawLink(nodes0[sel0], box, 1, 80 + ix*40);
       return box;
     });
 
-    // Nivel 2 (subcarpetas) si hay área
     if(sel1!=null){
       const subs = GRAPH_TREE[sel0].areas[sel1].subcarpetas;
       const totalH2 = subs.length*nodeH + (subs.length-1)*vGap;
-      let y2 = (520 - totalH2)/2;
+      let y2 = (H - totalH2)/2;
       const nodes2 = subs.map((txt,ix)=>{
         const box = drawNode({
           x:G.colX[2], y:y2 + ix*(nodeH+vGap), w:G.nodeW[2], h:nodeH, lvl:2,
-          title:txt, sub:"", onClick:()=>{ G.state.sel2 = ix; renderGraph(); }
+          title:txt, onClick:()=>{ G.state.sel2 = ix; renderGraph(); },
+          delay: 140 + ix*35
         });
-        drawLink(nodes1[sel1], box, 2);
+        drawLink(nodes1[sel1], box, 2, 120 + ix*35);
         return box;
       });
 
-      // Nivel 3 (6 artículos placeholder) si hay subcarpeta
       if(sel2!=null){
         const items = makeSix(subs[sel2]);
         const totalH3 = items.length*nodeH + (items.length-1)*vGap;
-        let y3 = (520 - totalH3)/2;
+        let y3 = (H - totalH3)/2;
 
         items.forEach((txt,ix)=>{
           const box = drawNode({
             x:G.colX[3], y:y3 + ix*(nodeH+vGap), w:G.nodeW[3], h:nodeH, lvl:3,
-            title:txt, sub:"↗", onClick:()=>{/* aquí podrás navegar si quieres */ }
+            title:txt, sub:"↗", onClick:()=>{/* navegación futura */ },
+            delay: 160 + ix*30
           });
-          drawLink(nodes2[sel2], box, 3);
+          drawLink(nodes2[sel2], box, 3, 150 + ix*30);
         });
       }
     }
   }
+
+  applyTransform();
 }
 
-// Inicial: mostrar solo Nivel 0
-renderGraph();
+/* ======== Pan con arrastre ======== */
+(function enablePan(){
+  let dragging = false, start, startTx, startTy;
 
-// Responsivo: al cambiar tamaño, vuelve a dibujar (mantiene estado)
+  G.svg.addEventListener('mousedown', (e)=>{
+    // solo arrastramos si el clic no es sobre un link (<a>) en el futuro
+    dragging = true;
+    G.stage.classList.add('is-panning');
+    start = screenToSvgPoint(e.clientX, e.clientY);
+    startTx = G.tx; startTy = G.ty;
+    e.preventDefault();
+  });
+
+  window.addEventListener('mousemove', (e)=>{
+    if(!dragging) return;
+    const pt = screenToSvgPoint(e.clientX, e.clientY);
+    G.tx = startTx + (pt.x - start.x);
+    G.ty = startTy + (pt.y - start.y);
+    applyTransform();
+  });
+
+  window.addEventListener('mouseup', ()=>{
+    dragging = false;
+    G.stage.classList.remove('is-panning');
+  });
+})();
+
+/* ======== Zoom con rueda (centrado en puntero) ======== */
+(function enableWheelZoom(){
+  G.stage.addEventListener('wheel', (e)=>{
+    e.preventDefault();
+    const delta = -e.deltaY; // rueda hacia arriba => positivo
+    const zoomFactor = (e.ctrlKey ? 1.08 : 1.04);
+    const scaleTarget = delta > 0 ? G.scale * zoomFactor : G.scale / zoomFactor;
+    const newScale = Math.max(G.minScale, Math.min(G.maxScale, scaleTarget));
+
+    if(newScale === G.scale) return;
+
+    // mantener el punto bajo el cursor estable
+    const p1 = screenToSvgPoint(e.clientX, e.clientY);
+    const k  = newScale / G.scale;
+    G.tx = p1.x - k*(p1.x - G.tx);
+    G.ty = p1.y - k*(p1.y - G.ty);
+    G.scale = newScale;
+    applyTransform();
+  }, { passive:false });
+})();
+
+/* ======== Doble clic para centrar/reset ======== */
+G.stage.addEventListener('dblclick', ()=>{
+  G.scale = 1; G.tx = 0; G.ty = 0; applyTransform();
+});
+
+/* ======== Inicial ======== */
+renderGraph();
 window.addEventListener('resize', renderGraph);
 </script>
 </body>
