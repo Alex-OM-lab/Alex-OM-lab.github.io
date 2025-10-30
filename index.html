@@ -5,99 +5,542 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Alejandro Orcajada Meseguer | Administrador de Sistemas y Ciberseguridad</title>
   <meta name="description" content="Portafolio profesional de Alejandro Orcajada Meseguer, Administrador de Sistemas y Ciberseguridad." />
-  <!-- enlace al css del mapa -->
-  <link rel="stylesheet" href="assets/css/graph.css">
 </head>
-<style>
-  /* ===== PALETA OSCURA CÁLIDA (azul profundo + naranjas) ===== */
-  :root {
-    --bg:#0b1220;
-    --panel:#111a2d;
-    --text:#e9eef6;
-    --muted:#a8b2c2;
-    --accent:#ff9f1a;
-    --accent-soft:#ffd79a;
-    --radius:14px;
-    --nav-font:15.5px;
-    --nav-pad-y:12px;
-    --nav-gap:12px;
-    --hero-offset:12vh;
-  }
+  <style>
+    /* ===== PALETA OSCURA CÁLIDA (azul profundo + naranjas) ===== */
+    :root{
+      --bg:#0b1220;
+      --panel:#111a2d;
+      --text:#e9eef6;
+      --muted:#a8b2c2;
+      --accent:#ff9f1a;
+      --accent-soft:#ffd79a;
+      --radius:14px;
 
-  *{box-sizing:border-box}
-  html,body{margin:0}
-  body{
-    font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,Inter,"Helvetica Neue",Arial;
-    background:
-      radial-gradient(1400px 800px at 80% -100px, rgba(255,159,26,.06), transparent 60%),
-      radial-gradient(1200px 700px at -200px 20%, rgba(255,215,154,.05), transparent 60%),
-      var(--bg);
-    color:var(--text)
-  }
+      /* tamaños menú */
+      --nav-font:15.5px;
+      --nav-pad-y:12px;
+      --nav-gap:12px;
 
-  /* ====== TOPBAR ====== */
-  .topbar{
-    position:sticky;top:0;z-index:100;
-    backdrop-filter:saturate(160%) blur(8px);
-    background:rgba(9,14,26,.74);
-    border-bottom:1px solid rgba(255,255,255,.06);
-    animation:topbarDrop .5s ease both;
-  }
-  .topbar::after{
-    content:""; position:absolute; left:0; right:0; bottom:0;
-    height:3px;
-    background:linear-gradient(90deg, rgba(255,159,26,.0) 0%, rgba(255,159,26,.85) 22%, rgba(255,215,154,.9) 50%, rgba(255,159,26,.85) 78%, rgba(255,159,26,.0) 100%);
-    box-shadow:0 0 10px rgba(255,159,26,.35), 0 0 20px rgba(255,159,26,.22);
-    pointer-events:none;
-  }
-  @keyframes topbarDrop{from{transform:translateY(-8px);opacity:0}to{transform:none;opacity:1}}
+      /* hero offset */
+      --hero-offset:12vh;
+    }
 
-  .topwrap{
-    width:min(1100px,92%);margin:0 auto;
-    display:flex;align-items:center;justify-content:space-between;
-    padding:calc(var(--nav-pad-y) - 2px) 0;
-    position:relative;
-  }
+    *{box-sizing:border-box}
+    html,body{margin:0}
+    body{
+      font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,Inter,"Helvetica Neue",Arial;
+      background:
+        radial-gradient(1400px 800px at 80% -100px, rgba(255,159,26,.06), transparent 60%),
+        radial-gradient(1200px 700px at -200px 20%, rgba(255,215,154,.05), transparent 60%),
+        var(--bg);
+      color:var(--text)
+    }
 
-  .brand{display:flex;align-items:center;gap:10px;font-weight:800;color:var(--text);text-decoration:none}
-  .brand-dot{width:10px;height:10px;border-radius:999px;background:var(--accent);box-shadow:0 0 16px var(--accent)}
+    /* ====== TOPBAR ====== */
+    .topbar{
+      position:sticky;top:0;z-index:100;
+      backdrop-filter:saturate(160%) blur(8px);
+      background:rgba(9,14,26,.74);
+      border-bottom:1px solid rgba(255,255,255,.06);
+      animation:topbarDrop .5s ease both;
+    }
+    .topbar::after{
+      content:""; position:absolute; left:0; right:0; bottom:0;
+      height:3px;
+      background:linear-gradient(90deg, rgba(255,159,26,.0) 0%, rgba(255,159,26,.85) 22%, rgba(255,215,154,.9) 50%, rgba(255,159,26,.85) 78%, rgba(255,159,26,.0) 100%);
+      box-shadow:0 0 10px rgba(255,159,26,.35), 0 0 20px rgba(255,159,26,.22);
+      pointer-events:none;
+    }
+    @keyframes topbarDrop{from{transform:translateY(-8px);opacity:0}to{transform:none;opacity:1}}
 
-  .menu-left{display:flex;gap:var(--nav-gap);flex-wrap:wrap;align-items:center}
-  .menu-right{display:flex;align-items:center}
+    .topwrap{
+      width:min(1100px,92%);margin:0 auto;
+      display:flex;align-items:center;justify-content:space-between;
+      padding:calc(var(--nav-pad-y) - 2px) 0;
+      position:relative;
+    }
 
-  /* ====== NAV LINKS ====== */
-  .nav-link{
-    color:var(--text);text-decoration:none;
-    padding:8px 14px;border-radius:999px;font-weight:700;
-    font-size:var(--nav-font);
-    border:1px solid transparent;
-    transition:transform .12s,background .2s,border-color .2s,color .2s;
-  }
-  .nav-link:hover{
-    transform:translateY(-1px);
-    background:rgba(255,159,26,.12);
-    border-color:rgba(255,159,26,.35);
-    color:var(--accent-soft)
-  }
+    .brand{display:flex;align-items:center;gap:10px;font-weight:800;color:var(--text);text-decoration:none}
+    .brand-dot{width:10px;height:10px;border-radius:999px;background:var(--accent);box-shadow:0 0 16px var(--accent)}
 
-  /* ... (el resto de tu CSS general intacto) ... */
+    .menu-left{display:flex;gap:var(--nav-gap);flex-wrap:wrap;align-items:center}
+    .menu-right{display:flex;align-items:center}
 
-  /* todo el bloque desde "/* ===== ÁRBOL VISUAL (SVG)" hasta el final se elimina */
-</style>
+    /* ====== NAV LINKS ====== */
+    .nav-link{
+      color:var(--text);text-decoration:none;
+      padding:8px 14px;border-radius:999px;font-weight:700;
+      font-size:var(--nav-font);
+      border:1px solid transparent;
+      transition:transform .12s,background .2s,border-color .2s,color .2s;
+    }
+    .nav-link:hover{
+      transform:translateY(-1px);
+      background:rgba(255,159,26,.12);
+      border-color:rgba(255,159,26,.35);
+      color:var(--accent-soft)
+    }
+
+    .nav-folder{position:relative}
+    .nav-btn{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 14px;border-radius:999px;border:1px solid transparent;
+      background:transparent;color:var(--text);
+      font-weight:800;font-size:var(--nav-font);
+      cursor:pointer;transition:transform .12s,background .2s,border-color .2s
+    }
+    .nav-btn:hover{transform:translateY(-1px);background:rgba(255,159,26,.12);border-color:rgba(255,159,26,.35)}
+    .nav-btn-link{color:var(--text);text-decoration:none;font-weight:800;transition:color .2s ease}
+    .nav-btn-link:hover{color:var(--accent-soft)}
+    .ico-folder{width:14px;height:12px;position:relative;display:inline-block}
+    .ico-folder::before{content:"";position:absolute;inset:0;border-radius:3px;background:rgba(255,159,26,.15);border:1px solid rgba(255,159,26,.35)}
+    .ico-folder::after{content:"";position:absolute;width:8px;height:3px;left:2px;top:-3px;border-radius:2px 2px 0 0;background:rgba(255,159,26,.35)}
+    .caret{width:10px;height:10px;border-right:2px solid var(--accent);border-bottom:2px solid var(--accent);
+      transform:rotate(-45deg) translateY(-1px);transition:transform .2s ease}
+
+    /* ====== POPOVER BASE ====== */
+    .sub{position:absolute;top:100%;left:0;min-width:360px;padding-top:0}
+    .sub::before{content:"";position:absolute;top:-10px;left:0;right:0;height:12px}
+    .sub::after{content:""; position:absolute; top:0; left:100%; width:20px; height:100%; background:transparent; pointer-events:auto;}
+
+    .sub>ul{
+      list-style:none;margin:0;padding:8px;background:rgba(17,26,45,.98);
+      border:1px solid rgba(255,255,255,.06);border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.35);
+      transform-origin:top left;transform:scaleY(.92);opacity:0;max-height:0;overflow:hidden;
+      transition:transform .2s ease,opacity .2s ease,max-height .32s ease;
+    }
+    .sub a{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border-radius:8px;
+      text-decoration:none;color:var(--text);border:1px solid transparent}
+    .sub a:hover{background:rgba(255,159,26,.1);border-color:rgba(255,159,26,.25)}
+    .nav-folder[aria-open="true"] > .sub > ul{pointer-events:auto;transform:scaleY(1);opacity:1;max-height:80vh;overflow:auto}
+    .nav-folder[aria-open="true"] > .nav-btn .caret{transform:rotate(45deg)}
+
+    /* ====== NIVEL 2 (vertical) ====== */
+    .nested{
+      max-height:0; opacity:0; transform:translateY(-4px);
+      overflow:hidden; margin-top:6px; padding-left:10px;
+      border-left:2px dashed rgba(255,159,26,.25);
+      transition:max-height .28s ease, opacity .22s ease, transform .22s ease;
+    }
+    .sub li.open > .nested{ max-height:1200px; opacity:1; transform:none; }
+
+    /* ====== PANEL LATERAL NIVEL 3 ====== */
+    .sub .side{
+      position:absolute; top:0; left:calc(100% + 12px); width:340px;
+      background:rgba(17,26,45,.98); border:1px solid rgba(255,255,255,.06);
+      border-radius:12px; box-shadow:0 12px 30px rgba(0,0,0,.35);
+      padding:8px; opacity:0; transform:translateX(-6px) scale(0.98);
+      pointer-events:none; transition:opacity .12s ease-out, transform .12s cubic-bezier(.18,.89,.32,1.28);
+      display:flex; flex-direction:column;
+    }
+    .nav-folder[data-sticky="true"][data-panel="show"][aria-open="true"] .side{ opacity:1; transform:translateX(0) scale(1); pointer-events:auto; }
+    .side-title{margin:6px 10px 8px;font-weight:800;color:#f3f5f8}
+    .side-list{list-style:none;margin:0;padding:0; flex:1; overflow:auto}
+    .side-list a{display:block;padding:10px 12px;border-radius:8px;color:var(--text);text-decoration:none}
+    .side-list a:hover{background:rgba(255,159,26,.1);border:1px solid rgba(255,159,26,.25)}
+
+    .side .side-title, .side .side-list { transition: opacity .12s ease, transform .12s ease; will-change: opacity, transform; }
+    .side.swap-out .side-title, .side.swap-out .side-list { opacity: 0; transform: translateX(-6px); }
+    .side.swap-in  .side-title, .side.swap-in  .side-list { opacity: 1; transform: translateX(0); }
+
+    /* ===== Scroll ===== */
+    .sub>ul::-webkit-scrollbar{width:10px}
+    .sub>ul::-webkit-scrollbar-thumb{background:rgba(255,159,26,.2);border-radius:10px}
+    .sub>ul::-webkit-scrollbar-track{background:rgba(255,255,255,.04)}
+
+    @media (max-width:860px){
+      .sub{position:static}
+      .sub>ul,.sub .side{box-shadow:none}
+      .sub .side{position:static;left:auto;width:auto;margin-top:8px;opacity:1;transform:none}
+      .sub::after{display:none}
+    }
+
+    /* ====== HERO / CONTENIDO ====== */
+    .hero-wrap{
+      min-height:52vh;
+      display:flex;align-items:center;justify-content:center;text-align:center;
+      padding:0 14px 0;
+      margin-top:var(--hero-offset);
+    }
+    .hero h1{font-size:clamp(34px,4vw,54px);font-weight:900;color:var(--accent);margin:0 0 6px;
+      text-shadow:0 0 18px rgba(255,159,26,.7),0 0 36px rgba(255,159,26,.25)}
+    .hero h2{font-size:clamp(24px,3.2vw,40px);font-weight:800;margin:4px 0 8px;color:var(--accent-soft);
+      text-shadow:0 0 14px rgba(255,159,26,.45)}
+    .cursor{display:inline-block;width:.6ch;margin-left:2px;color:var(--accent);filter:drop-shadow(0 0 6px var(--accent));animation:blink .95s steps(1,end) infinite}
+    @keyframes blink{50%{opacity:0}}
+    .lead{max-width:900px;margin:6px auto 0;font-size:clamp(19px,1.5vw,22px);line-height:1.7;color:var(--text);opacity:0;transform:translateY(10px);transition:opacity .8s ease,transform .8s ease}
+    .lead.show{opacity:1;transform:none}
+
+    .container{width:min(1100px,92%);margin:0 auto}
+    section{padding:26px 0}
+    .section-title{font-size:clamp(24px,3vw,34px);margin:0 0 10px}
+    .kicker{color:var(--muted);margin:0 0 20px}
+    .chips{display:flex;flex-wrap:wrap;gap:10px}
+    .chip{padding:8px 12px;border-radius:999px;background:rgba(255,159,26,.12);border:1px solid rgba(255,159,26,.35);color:#ffe2b0;font-weight:600;font-size:14px}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .card{background:linear-gradient(180deg,color-mix(in oklab,var(--panel) 92%,#0f1422 8%),var(--panel));border:1px solid rgba(255,255,255,.06);border-radius:var(--radius);padding:16px}
+    .project img{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:10px;border:1px solid rgba(255,255,255,.06)}
+    .project h4{margin:10px 0 6px}
+    .project p{margin:0;color:var(--muted)}
+    .contact-box{display:grid;grid-template-columns:1.1fr .9fr;gap:22px}
+    form{display:grid;gap:12px}
+    input,textarea{background:#0c1323;color:var(--text);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:12px 14px;font-size:16px}
+    textarea{min-height:140px;resize:vertical}
+    footer{padding:40px 0;color:#a9b1bd;text-align:center;border-top:1px solid rgba(255,255,255,.06);margin-top:10px}
+
+    @media (max-width:980px){.grid{grid-template-columns:1fr 1fr}.contact-box{grid-template-columns:1fr}}
+    @media (max-width:620px){.grid{grid-template-columns:1fr}}
+
+    /* ===== Enfatizar subcarpetas Lvl 2 (Portafolio) ===== */
+    .nav-folder[data-sticky="true"] .nested > li > a{
+      position: relative;
+      border: 1px solid rgba(255,159,26,.15);
+      background: transparent;
+      border-radius: 10px;
+      transition: background .18s ease, border-color .18s ease, box-shadow .18s ease, transform .14s ease, color .18s ease;
+      padding: 10px 12px;
+    }
+    .nav-folder[data-sticky="true"] .nested > li > a::before{
+      content:"";
+      position:absolute;
+      left:6px; top:10px; bottom:10px;
+      width:3px; border-radius:2px;
+      background:transparent;
+      transition: background .18s ease, transform .14s ease;
+    }
+    .nav-folder[data-sticky="true"] .nested > li.focus2 > a,
+    .nav-folder[data-sticky="true"] .nested > li > a:hover{
+      background: linear-gradient(90deg, rgba(255,159,26,.18) 0%, rgba(255,159,26,.08) 60%);
+      border-color: rgba(255,159,26,.55);
+      box-shadow: 0 6px 18px rgba(255,159,26,.25), inset 0 0 0 1px rgba(255,255,255,.06);
+      transform: translateX(2px);
+      color: #ffe1a6;
+    }
+    .nav-folder[data-sticky="true"] .nested > li.focus2 > a::before,
+    .nav-folder[data-sticky="true"] .nested > li > a:hover::before{
+      background: var(--accent);
+      transform: scaleX(1.5);
+    }
+    .nav-folder[data-sticky="true"] .sub > ul > li.open > .nested{
+      filter: drop-shadow(0 6px 20px rgba(255,159,26,.15));
+    }
+
+    /* ===== Paginación del panel lateral (lvl3) ===== */
+    .side .pager{
+      display:flex; justify-content:space-between; align-items:center; gap:10px;
+      margin:10px 6px 4px;
+      padding-top:6px; border-top:1px dashed rgba(255,255,255,.08);
+    }
+    .pager-info{font-size:12px; opacity:.7; user-select:none}
+    .pager-btn{
+      position:relative; width:38px; height:32px; border-radius:10px;
+      background:rgba(255,159,26,.10); border:1px solid rgba(255,159,26,.35);
+      cursor:pointer; font-weight:800;
+      display:inline-flex; align-items:center; justify-content:center;
+      transition:transform .12s ease, background .18s ease, border-color .18s ease, opacity .18s ease;
+      color:#ffd8a6;
+    }
+    .pager-btn:hover{ transform:translateY(-1px); background:rgba(255,159,26,.18); border-color:rgba(255,159,26,.6); }
+    .pager-btn:disabled{ opacity:.45; cursor:not-allowed; transform:none; }
+    .pager-btn.prev::before,
+    .pager-btn.next::before{ content:"›"; font-size:18px; line-height:1; }
+    .pager-btn.prev::before{ transform:rotate(180deg); }
+    .pager-btn::after{
+      content:attr(data-page);
+      position:absolute; right:-6px; top:-8px;
+      font-size:12px; line-height:1; padding:2px 6px; border-radius:999px;
+      background:var(--accent); color:#111; box-shadow:0 4px 14px rgba(0,0,0,.35);
+      border:1px solid rgba(255,255,255,.25);
+    }
+
+    /* ============================================================
+       ========  CARRUSEL DE CUBOS (placeholder)  =================
+       Mantiene la estética y variables. 5 visibles en desktop.
+       ============================================================ */
+    .cube-carousel{
+      position:relative;
+      overflow:hidden;
+      border-radius:var(--radius);
+      background:linear-gradient(180deg,color-mix(in oklab,var(--panel) 92%,#0f1422 8%),var(--panel));
+      border:1px solid rgba(255,255,255,.06);
+      padding:14px;
+    }
+    .cube-head{
+      display:flex; align-items:baseline; justify-content:center; gap:12px; /* centrado */
+      margin-bottom:10px;
+      text-align:center;
+    }
+    .cube-head h3{margin:0; font-size:clamp(20px,2.2vw,26px)}
+    .cube-track{
+      display:flex;
+      gap:14px;
+      will-change: transform;
+      transition: transform .6s cubic-bezier(.22,.61,.36,1);
+    }
+    .cube{
+      flex:0 0 calc((100% - 14px*4)/5); /* 5 visibles con 4 gaps */
+      background:#0c1323;
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:12px;
+      overflow:hidden;
+      box-shadow:0 6px 18px rgba(0,0,0,.22);
+      display:flex; flex-direction:column;
+    }
+    .cube:hover{ border-color:rgba(255,159,26,.35); box-shadow:0 10px 28px rgba(255,159,26,.12); transform:translateY(-1px); transition:transform .12s ease }
+    .cube-media{
+      width:100%; aspect-ratio:16/10; background:#0a1020; position:relative;
+      border-bottom:1px solid rgba(255,255,255,.06);
+    }
+    .cube-media img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover}
+    .cube-body{padding:10px 12px 12px; display:flex; flex-direction:column; gap:8px}
+    .cube-title{margin:0; font-weight:800; font-size:15.5px; color:var(--text)}
+    .cube-meta{font-size:12.5px; color:var(--muted)}
+    .cube-link{
+      margin-top:auto;
+      align-self:flex-start;
+      text-decoration:none; font-weight:700; font-size:13.5px;
+      color:#ffe2b0; padding:6px 10px; border-radius:999px;
+      background:rgba(255,159,26,.12); border:1px solid rgba(255,159,26,.35);
+      transition:background .18s,border-color .18s,transform .12s;
+    }
+    .cube-link:hover{ background:rgba(255,159,26,.18); border-color:rgba(255,159,26,.6); transform:translateY(-1px) }
+
+    /* Flechas */
+    .cube-nav{
+      position:absolute; inset:0; pointer-events:none;
+    }
+    .cube-btn{
+      position:absolute; top:50%; translate:0 -50%;
+      width:42px; height:42px; border-radius:999px;
+      background:rgba(17,26,45,.75);
+      border:1px solid rgba(255,255,255,.08);
+      display:flex; align-items:center; justify-content:center;
+      font-weight:900; color:#ffd79a; cursor:pointer;
+      opacity:0; pointer-events:none;
+      transition:opacity .18s ease, transform .12s ease, background .18s ease, border-color .18s ease;
+      box-shadow:0 4px 16px rgba(0,0,0,.35);
+    }
+    .cube-btn:hover{ transform:translateY(-1px); background:rgba(17,26,45,.9); border-color:rgba(255,159,26,.35) }
+    .cube-btn.prev{ left:6px }
+    .cube-btn.next{ right:6px }
+    .cube-carousel:hover .cube-btn,
+    .cube-carousel:has(.cube-btn:focus-visible){ opacity:1; pointer-events:auto }
+
+    /* Indicadores */
+    .cube-dots{ display:flex; gap:6px; justify-content:center; margin-top:12px }
+    .cube-dot{
+      width:7px; height:7px; border-radius:999px;
+      background:rgba(255,255,255,.22);
+      transition:transform .12s, background .18s, box-shadow .18s;
+    }
+    .cube-dot.is-active{
+      background:var(--accent);
+      box-shadow:0 0 10px rgba(255,159,26,.6);
+      transform:scale(1.25);
+    }
+    /* Responsive: 3 y 2/1 visibles */
+    @media (max-width:1020px){ .cube{ flex-basis:calc((100% - 14px*2)/3) } }
+    @media (max-width:720px) { .cube{ flex-basis:calc((100% - 14px)/2) } }
+    @media (max-width:520px) { .cube{ flex-basis:100% } }
+
+    /* Reduce motion: desactivar autoplay */
+    @media (prefers-reduced-motion: reduce){
+      .cube-track{ transition:none }
+    }
+
+    /* ====== MAPA DEL SITIO (cajón deslizante) ====== */
+.site-drawer {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 80;
+  pointer-events: none;
+}
+.site-handle {
+  pointer-events: auto;
+  display:flex; align-items:center; justify-content:center; gap:10px;
+  width: max(240px, 36%); margin: 0 auto 10px;
+  padding: 10px 14px;
+  border:1px solid rgba(255,255,255,.08);
+  background: rgba(17,26,45,.84);
+  backdrop-filter: saturate(160%) blur(6px);
+  color: var(--text); font-weight:800; border-radius: 999px;
+  box-shadow: 0 6px 24px rgba(0,0,0,.35);
+  cursor: pointer; user-select: none;
+  transition: transform .14s ease, border-color .18s ease, background .18s ease;
+}
+.site-handle:hover { transform: translateY(-1px); border-color: rgba(255,159,26,.35); }
+.site-handle .dot { width:8px; height:8px; border-radius:999px; background:var(--accent); box-shadow:0 0 12px var(--accent); }
+
+.site-panel {
+  pointer-events: auto;
+  width:min(1200px, 94%); margin:0 auto 16px;
+  border:1px solid rgba(255,255,255,.08);
+  background: linear-gradient(180deg, color-mix(in oklab, var(--panel) 92%, #0f1422 8%), var(--panel));
+  border-radius: var(--radius);
+  box-shadow: 0 -10px 40px rgba(0,0,0,.45);
+  overflow: hidden;
+  transform: translateY(100%); opacity: 0;
+  transition: transform .28s cubic-bezier(.2,.8,.2,1), opacity .2s ease;
+}
+.site-drawer[aria-expanded="true"] .site-panel { transform: translateY(0); opacity: 1; }
+
+.site-head { display:flex; align-items:center; justify-content:space-between; gap:14px; padding:12px 14px; border-bottom:1px solid rgba(255,255,255,.06); }
+.site-head h3 { margin:0; font-size:clamp(18px,2vw,22px); }
+.site-close {
+  background: rgba(255,159,26,.12); border:1px solid rgba(255,159,26,.35);
+  color:#ffe2b0; border-radius:10px; padding:6px 10px; font-weight:800; cursor:pointer;
+}
+.site-close:hover { background: rgba(255,159,26,.18); border-color: rgba(255,159,26,.6); transform:translateY(-1px); }
+
+.site-cols {
+  display:grid; grid-template-columns: 1.1fr 1.1fr 1.2fr 1.2fr; gap:12px; padding:12px;
+}
+.site-col {
+  border:1px solid rgba(255,255,255,.06);
+  background: #0c1323; border-radius: 12px; padding:10px;
+  display:flex; flex-direction:column; min-height: 220px; max-height: 44vh;
+}
+.site-col h4 { margin:4px 0 10px; font-size:14px; color:var(--muted); letter-spacing:.2px; }
+.site-list { list-style:none; margin:0; padding:0; overflow:auto; }
+
+/* Ítems */
+.site-item {
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+  padding:9px 10px; border-radius:10px; cursor:pointer; user-select:none;
+  border:1px solid transparent; color:var(--text); text-decoration:none;
+}
+.site-item:hover { background: rgba(255,159,26,.10); border-color: rgba(255,159,26,.25); }
+.site-item.is-active { background: linear-gradient(90deg, rgba(255,159,26,.16), rgba(255,159,26,.08) 70%); border-color: rgba(255,159,26,.55); color:#ffe1a6; }
+.site-item .chev { opacity:.6; }
+
+/* Artículos (nivel 3) */
+.site-article { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:8px 10px; border-radius:8px; border:1px solid rgba(255,255,255,.06); background:#0a1020; }
+.site-article + .site-article { margin-top:8px; }
+.site-article:hover { border-color: rgba(255,159,26,.35); background: #0b1426; }
+
+/* Líneas de árbol (decorativas) */
+.site-col .site-list > li { position:relative; }
+.site-col:not(:first-child) .site-list > li::before{
+  content:""; position:absolute; left:-8px; top:18px; width:8px; height:1px;
+  background: rgba(255,159,26,.25);
+}
+@media (max-width:980px){ .site-cols { grid-template-columns: 1fr 1fr; } }
+@media (max-width:640px){ .site-cols { grid-template-columns: 1fr; } }
+
+/* Reduce motion */
+@media (prefers-reduced-motion: reduce){
+  .site-panel{ transition:none }
+  .site-handle{ transition:none }
+}
+
+    /* ===== MAPA DEL SITIO — sección fija ===== */
+.sitemap { margin-top: 30px; }
+.sitemap .card {
+  border-radius: var(--radius);
+  border:1px solid rgba(255,255,255,.06);
+  background:linear-gradient(180deg,color-mix(in oklab,var(--panel) 92%,#0f1422 8%),var(--panel));
+  padding:14px;
+}
+.sitemap .sm-head { display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:10px; }
+.sitemap .sm-head h2 { margin:0; }
+.sitemap .sm-head .kicker { margin:0; color:var(--muted); }
+
+.sitemap .sm-cols{
+  display:grid; grid-template-columns: 1.1fr 1.1fr 1.2fr 1.2fr; gap:12px;
+}
+.sitemap .sm-col{
+  background:#0c1323; border:1px solid rgba(255,255,255,.06); border-radius:12px;
+  padding:10px; overflow:hidden;
+  max-height: 0; opacity:0; transform: translateY(-4px);
+  transition:max-height .28s ease, opacity .2s ease, transform .2s ease;
+}
+.sitemap .sm-col.is-open{ max-height: 56vh; opacity:1; transform:none; }
+.sitemap .sm-col h4{ margin:2px 0 8px; font-size:14px; color:var(--muted) }
+.sitemap .sm-list{ list-style:none; margin:0; padding:0; overflow:auto; max-height:48vh; }
+
+.sitemap .item{
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+  padding:9px 10px; border-radius:10px; border:1px solid transparent;
+  color:var(--text); background:transparent; width:100%;
+  cursor:pointer; text-align:left; font-weight:700;
+}
+.sitemap .item:hover{ background:rgba(255,159,26,.10); border-color:rgba(255,159,26,.25) }
+.sitemap .item.is-active{
+  background:linear-gradient(90deg, rgba(255,159,26,.18), rgba(255,159,26,.08) 70%);
+  border-color:rgba(255,159,26,.55); color:#ffe1a6;
+}
+.sitemap .chev{ opacity:.6 }
+
+.sitemap .article{
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+  padding:8px 10px; border-radius:8px; border:1px solid rgba(255,255,255,.06);
+  background:#0a1020; text-decoration:none; color:var(--text);
+}
+.sitemap .article + .article{ margin-top:8px; }
+.sitemap .article:hover{ border-color:rgba(255,159,26,.35); background:#0b1426 }
+
+@media (max-width:980px){ .sitemap .sm-cols{ grid-template-columns: 1fr 1fr } }
+@media (max-width:640px){ .sitemap .sm-cols{ grid-template-columns: 1fr } }
+
+/* ===== ÁRBOL VISUAL (SVG) ===== (estilos conservados, sin HTML/JS del mapa) */
+.graph .card{
+  border-radius: var(--radius);
+  border:1px solid rgba(255,255,255,.06);
+  background:linear-gradient(180deg,color-mix(in oklab,var(--panel) 92%,#0f1422 8%),var(--panel));
+  padding:14px;
+}
+.graph-head{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:10px; }
+.graph-head h2{ margin:0 }
+.graph-stage{
+  position:relative; border:1px solid rgba(255,255,255,.06); border-radius:12px;
+  background:#0c1323; overflow:hidden; height:680px;
+}
+#graphSvg{ width:100%; height:100%; display:block; }
+.node .badge{ fill:#111; font-weight:900; font-size:11px; }
+.graph-legend{
+  display:flex; gap:14px; align-items:center; justify-content:flex-end; margin-top:10px;
+  color:var(--muted); font-size:13px;
+}
+.graph-legend .dot{ width:10px; height:10px; border-radius:999px; display:inline-block; box-shadow:0 0 10px rgba(0,0,0,.25) }
+.graph-legend .lvl0{ background:var(--accent) }
+.graph-legend .lvl1{ background:#ffd79a }
+.graph-legend .lvl2{ background:#8fd6ff }
+.graph-legend .lvl3{ background:#9be2b0 }
+.node{ cursor:pointer; }
+.node rect{ rx:10; ry:10; fill:#0e1730; stroke:rgba(255,255,255,.10); stroke-width:1.2; }
+.node[data-lvl="0"] rect{ fill:rgba(255,159,26,.18); stroke:rgba(255,159,26,.55) }
+.node[data-lvl="1"] rect{ fill:rgba(255,215,154,.12); stroke:rgba(255,215,154,.5) }
+.node[data-lvl="2"] rect{ fill:rgba(143,214,255,.10); stroke:rgba(143,214,255,.45) }
+.node[data-lvl="3"] rect{ fill:rgba(155,226,176,.10); stroke:rgba(155,226,176,.4) }
+.node .title{ fill:#e9eef6; font-weight:800; font-size:14px; }
+.node .sub{ fill:#a8b2c2; font-size:12.5px; }
+.node{ opacity:0; transition:opacity .35s ease; }
+.node.is-in{ opacity:1; }
+.link{ fill:none; stroke:rgba(255,159,26,.35); stroke-width:2; filter: drop-shadow(0 0 3px rgba(255,159,26,.12)); }
+.link.l1{ stroke:rgba(255,215,154,.35) }
+.link.l2{ stroke:rgba(143,214,255,.35) }
+.link.l3{ stroke:rgba(155,226,176,.35) }
+.link.draw{
+  stroke-dasharray: 600;
+  stroke-dashoffset: 600;
+  animation: draw .6s ease forwards;
+}
+@keyframes draw{ to{ stroke-dashoffset:0 } }
+.graph-stage.is-panning{ cursor:grabbing; }
+.graph-stage .svgroot{ cursor:grab; }
+.node .node-in{ transform:translateX(22px); transition:transform .35s ease; }
+.node.is-in .node-in{ transform:none; }
+  </style>
 <body>
 
   <!-- ========================= NAV ========================== -->
   <header class="topbar">
     <div class="topwrap">
-      <a class="brand" href="./">
-        <span class="brand-dot"></span>
-        <span>AO · Portafolio</span>
-      </a>
+      <a class="brand" href="./"><span class="brand-dot"></span><span>AO · Portafolio</span></a>
 
       <!-- Menú izquierda -->
       <nav class="menu-left" id="nav" aria-label="Navegación principal"></nav>
 
-      <!-- Menú derecha -->
+      <!-- Menú derecha: Inicio -->
       <nav class="menu-right">
         <a class="nav-link" href="./">Inicio</a>
       </nav>
@@ -109,10 +552,7 @@
     <div class="hero">
       <h1><span id="typeName"></span></h1>
       <h2><span id="typeRole"></span><span class="cursor">|</span></h2>
-      <p id="lead" class="lead">
-        Me especializo en diseñar, securizar y operar infraestructuras robustas.
-        Automatizo despliegues, fortalezco defensas y mejoro la fiabilidad de servicios con prácticas DevOps/SecOps.
-      </p>
+      <p id="lead" class="lead">Me especializo en diseñar, securizar y operar infraestructuras robustas. Automatizo despliegues, fortalezco defensas y mejoro la fiabilidad de servicios con prácticas DevOps/SecOps.</p>
     </div>
   </div>
 
@@ -121,33 +561,25 @@
     <section id="ciber" aria-labelledby="ciber-title">
       <h2 id="ciber-title" class="section-title">Ciberseguridad</h2>
       <p class="kicker">Security-by-design, hardening y respuesta a incidentes.</p>
-      <div class="card">
-        Playbooks de respuesta, aplicación de guías CIS, inventario de activos y SIEM; priorización de riesgos y monitoreo proactivo.
-      </div>
+      <div class="card">Playbooks de respuesta, aplicación de guías CIS, inventario de activos y SIEM; priorización de riesgos y monitoreo proactivo.</div>
     </section>
 
     <section id="adm" aria-labelledby="adm-title">
       <h2 id="adm-title" class="section-title">Administración de Sistemas</h2>
       <p class="kicker">Infraestructura reproducible y observable.</p>
-      <div class="card">
-        Linux/Windows, IaC (Terraform/Ansible), contenedores (Docker/K8s), redes y servidores (Nginx/Apache), CI/CD y observabilidad.
-      </div>
+      <div class="card">Linux/Windows, IaC (Terraform/Ansible), contenedores (Docker/K8s), redes y servidores (Nginx/Apache), CI/CD y observabilidad.</div>
     </section>
 
     <section id="skills" aria-labelledby="skills-title">
       <h2 id="skills-title" class="section-title">Skills principales</h2>
       <div class="chips">
-        <span class="chip">Linux</span><span class="chip">Windows Server</span>
-        <span class="chip">Networking</span><span class="chip">Docker</span>
-        <span class="chip">Kubernetes</span><span class="chip">Ansible</span>
-        <span class="chip">Terraform</span><span class="chip">Bash / PowerShell</span>
-        <span class="chip">CI/CD</span><span class="chip">Nginx / Apache</span>
-        <span class="chip">SIEM</span><span class="chip">Hardening</span>
-        <span class="chip">Cloud (AWS/Azure)</span>
+        <span class="chip">Linux</span><span class="chip">Windows Server</span><span class="chip">Networking</span>
+        <span class="chip">Docker</span><span class="chip">Kubernetes</span><span class="chip">Ansible</span>
+        <span class="chip">Terraform</span><span class="chip">Bash / PowerShell</span><span class="chip">CI/CD</span>
+        <span class="chip">Nginx / Apache</span><span class="chip">SIEM</span><span class="chip">Hardening</span><span class="chip">Cloud (AWS/Azure)</span>
       </div>
     </section>
 
-    <!-- ========================= PROYECTOS ========================== -->
     <section id="projects" aria-labelledby="projects-title">
       <h2 id="projects-title" class="section-title">Proyectos destacados</h2>
       <div class="grid">
@@ -156,13 +588,11 @@
           <h4>Infraestructura reproducible con IaC</h4>
           <p>Terraform + Ansible para levantar entornos seguros y auditables en AWS. Módulos reutilizables y pipelines CI.</p>
         </article>
-
         <article class="card project">
           <img src="assets/proyecto2.jpg" alt="Miniatura del Proyecto 2" loading="lazy" />
           <h4>Plataforma de observabilidad</h4>
           <p>Stack Prometheus + Loki + Grafana con alertas y SLOs para microservicios en Kubernetes.</p>
         </article>
-
         <article class="card project">
           <img src="assets/proyecto3.jpg" alt="Miniatura del Proyecto 3" loading="lazy" />
           <h4>Hardening y respuesta a incidentes</h4>
@@ -171,7 +601,9 @@
       </div>
     </section>
 
-    <!-- ========================= CARRUSEL ========================== -->
+    <!-- =======================================================
+         NUEVA SECCIÓN: Carrusel de cubos (contenido placeholder)
+         ======================================================= -->
     <section id="news-cubes" aria-labelledby="news-cubes-title">
       <h2 id="news-cubes-title" class="section-title">Lecturas y artículos</h2>
       <p class="kicker">Novedades seleccionadas — desplazamiento suave y continuo.</p>
@@ -181,16 +613,16 @@
           <h3>Artículos interesantes</h3>
         </div>
 
-        <div class="cube-viewport" role="region" aria-label="Carrusel de artículos">
+        <div class="cube-viewport" role="region" aria-label="Carrusel de artículos" style="overflow:hidden">
           <div class="cube-track" id="cubeTrack" role="list"></div>
         </div>
 
-        <div class="cube-nav">
-          <button class="cube-btn prev" id="cubePrev" aria-label="Artículo anterior">‹</button>
-          <button class="cube-btn next" id="cubeNext" aria-label="Artículo siguiente">›</button>
+        <div class="cube-nav" aria-hidden="false">
+          <button class="cube-btn prev" type="button" id="cubePrev" aria-label="Artículo anterior">‹</button>
+          <button class="cube-btn next" type="button" id="cubeNext" aria-label="Artículo siguiente">›</button>
         </div>
 
-        <div class="cube-dots" id="cubeDots"></div>
+        <div class="cube-dots" id="cubeDots" aria-hidden="true"></div>
       </div>
     </section>
 
@@ -223,31 +655,8 @@
       </div>
     </section>
 
-    <!-- ========================= MAPA VISUAL (externo) ========================== -->
-    <section id="site-graph" aria-labelledby="site-graph-title" class="graph">
-      <div class="card">
-        <div class="graph-head">
-          <h2 id="site-graph-title" class="section-title">Mapa visual</h2>
-          <p class="kicker">Esquema interactivo — haz clic para desplegar niveles.</p>
-        </div>
+    <!-- *** OJO: Se ha eliminado aquí la sección del ÁRBOL VISUAL (SVG) *** -->
 
-        <div class="graph-stage" id="graphStage">
-          <svg id="graphSvg" class="svgroot" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid meet" role="img"
-               aria-label="Esquema del contenido por niveles">
-            <g id="graphRoot"></g>
-          </svg>
-        </div>
-
-        <div class="graph-legend">
-          <span class="dot lvl0"></span> Nivel 0
-          <span class="dot lvl1"></span> Nivel 1
-          <span class="dot lvl2"></span> Nivel 2
-          <span class="dot lvl3"></span> Nivel 3
-        </div>
-      </div>
-    </section>
-
-    <!-- ========================= CONTACTO ========================== -->
     <section id="contact" aria-labelledby="contact-title">
       <h2 id="contact-title" class="section-title">Contacto</h2>
       <div class="contact-box">
@@ -256,11 +665,10 @@
           <p><strong>Email:</strong> <a href="mailto:alex@tu-dominio.com">alex@tu-dominio.com</a></p>
           <p><strong>LinkedIn:</strong> <a href="https://www.linkedin.com/in/tuusuario" target="_blank" rel="noopener">linkedin.com/in/tuusuario</a></p>
         </div>
-
         <div class="card">
           <form action="mailto:alex@tu-dominio.com" method="post" enctype="text/plain">
-            <label>Nombre<br><input name="nombre" required></label>
-            <label>Email<br><input name="email" type="email" required></label>
+            <label>Nombre<br><input name="nombre" required /></label>
+            <label>Email<br><input name="email" type="email" required /></label>
             <label>Mensaje<br><textarea name="mensaje" required></textarea></label>
             <button type="submit" style="background:var(--accent);color:#111;padding:10px 16px;border-radius:10px;border:0;font-weight:700">Enviar</button>
           </form>
@@ -269,13 +677,441 @@
     </section>
   </main>
 
-  <footer>
-    © <span id="y"></span> Alejandro Orcajada Meseguer — Administrador de Sistemas y Ciberseguridad
-  </footer>
+  <footer>© <span id="y"></span> Alejandro Orcajada Meseguer — Administrador de Sistemas y Ciberseguridad</footer>
 
-  <!-- ========================= JS PRINCIPAL ========================== -->
-  <script src="assets/js/main.js"></script>
-  <script src="assets/js/graph.js"></script>
+<script>
+  /* ========= Año en footer ========= */
+  document.getElementById('y').textContent = new Date().getFullYear();
 
+  /* ========= Doble typing del héroe ========= */
+  (function(){
+    const nameText = "Alejandro Orcajada Meseguer";
+    const roleText = "Administrador de Sistemas y Ciberseguridad";
+    const speed = 44;
+    const elName = document.getElementById('typeName');
+    const elRole = document.getElementById('typeRole');
+    const cursor = document.querySelector('.cursor');
+    const lead = document.getElementById('lead');
+    let i=0,j=0;
+    function typeName(){ if(i<nameText.length){ elName.textContent += nameText.charAt(i++); setTimeout(typeName,speed); } else { setTimeout(typeRole,250);} }
+    function typeRole(){ if(j<roleText.length){ elRole.textContent += roleText.charAt(j++); setTimeout(typeRole,speed); } else { cursor?.remove(); lead?.classList.add('show'); } }
+    setTimeout(typeName,300);
+  })();
+
+  /* ========= Datos del NAV ========= */
+  const twelve = base => Array.from({length:12}, (_,i)=>({label:`${base} · Artículo ${i+1}`, href:"#"}));
+
+  const NAV_TREE = [
+    { label:"Teoría y Casos Curiosos", children:[
+      { label:"Ciberseguridad", href:"#", children:[
+        { label:"Análisis Forense", href:"#", children: twelve("Teoría · Forense") },
+        { label:"Respuesta a Incidentes", href:"#", children: twelve("Teoría · Incidentes") }
+      ]},
+      { label:"Sistemas", href:"#", children:[
+        { label:"Redes", href:"#", children: twelve("Teoría · Redes") },
+        { label:"Conceptos", href:"#", children: twelve("Teoría · Conceptos") }
+      ]}
+    ]},
+
+    { label:"Portafolio", sticky:true, children:[
+      { label:"Ciberseguridad", href:"/portafolio/Ciberseguridad/", children:[
+        { label:"Análisis Forense", href:"#", children: twelve("Análisis Forense") },
+        { label:"DevSecOps", href:"#", children: twelve("DevSecOps") },
+        { label:"Documentación e informes", href:"#", children: twelve("Docs e informes") },
+        { label:"Puesta en producción segura", href:"#", children: twelve("Producción segura") },
+        { label:"Respuesta a Incidentes", href:"#", children: twelve("Respuesta a Incidentes") },
+        { label:"Seguridad en redes", href:"#", children: twelve("Seguridad en redes") },
+        { label:"Seguridad de sistemas", href:"#", children: twelve("Seguridad de sistemas") }
+      ]},
+      { label:"Sistemas", href:"/portafolio/sistemas/", children:[
+        { label:"Linux", href:"#", children: twelve("Linux") },
+        { label:"Windows", href:"#", children: twelve("Windows") },
+        { label:"Automatización", href:"#", children: twelve("Automatización") }
+      ]}
+    ]},
+
+    { label:"Laboratorio", href:"/Laboratorio/", children:[
+      { label:"TryHackMe", href:"#", children: twelve("THM") },
+      { label:"HackTheBox", href:"#", children: twelve("HTB") }
+    ]},
+
+    { label:"Contacto", href:"/contacto/" }
+  ];
+
+  /* ========= Utilidades NAV (panel lateral nivel 3 con paginación) ========= */
+  function chunkArray(arr, size){ const out=[]; for(let i=0;i<arr.length;i+=size) out.push(arr.slice(i,i+size)); return out; }
+
+  function renderSidePage(sideEl, state){
+    const listEl = sideEl.querySelector('.side-list');
+    listEl.innerHTML = '';
+
+    const current = state.pages[state.page] || [];
+    current.forEach(a => {
+      const li = document.createElement('li');
+      li.appendChild(a.cloneNode(true));
+      listEl.appendChild(li);
+    });
+
+    const info = sideEl.querySelector('.pager-info');
+    if (info) info.textContent = `Página ${state.page + 1} de ${state.pages.length}`;
+
+    const prev = sideEl.querySelector('.pager-btn.prev');
+    const next = sideEl.querySelector('.pager-btn.next');
+    if (prev) prev.disabled = state.page === 0;
+    if (next) next.disabled = state.page >= state.pages.length - 1;
+  }
+
+  function buildSidePanel(listAnchorEls){
+    const side = document.createElement('div');
+    side.className = 'side';
+    side.innerHTML = `
+      <div class="side-title">Artículos</div>
+      <ul class="side-list"></ul>
+      <div class="pager">
+        <button type="button" class="pager-btn prev" aria-label="Anterior"></button>
+        <span class="pager-info"></span>
+        <button type="button" class="pager-btn next" aria-label="Siguiente"></button>
+      </div>
+    `;
+
+    // Estado de paginación
+    const pages = chunkArray(listAnchorEls, 8);
+    const state = { page: 0, pages };
+
+    const prev = side.querySelector('.pager-btn.prev');
+    const next = side.querySelector('.pager-btn.next');
+
+    prev?.addEventListener('click', () => {
+      if (state.page > 0) { state.page--; renderSidePage(side, state); }
+    });
+    next?.addEventListener('click', () => {
+      if (state.page < state.pages.length - 1) { state.page++; renderSidePage(side, state); }
+    });
+
+    renderSidePage(side, state);
+    return side;
+  }
+
+  function buildNav(){
+    const navLeft = document.getElementById('nav');
+    if(!navLeft) return;
+
+    NAV_TREE.forEach(node => {
+      if (node.children && node.children.length){
+        const folder = document.createElement('div');
+        folder.className = 'nav-folder';
+        folder.setAttribute('aria-open','false');
+        if (node.sticky) folder.dataset.sticky = 'true';
+
+        folder.innerHTML = `
+          <button class="nav-btn" type="button" aria-haspopup="true" aria-expanded="false">
+            <span class="ico-folder" aria-hidden="true"></span>
+            <span>${node.label}</span>
+            <span class="caret" aria-hidden="true"></span>
+          </button>
+          <div class="sub">
+            <ul></ul>
+          </div>
+        `;
+        const ul = folder.querySelector('.sub > ul');
+
+        // Nivel 1
+        node.children.forEach(l1 => {
+          const li1 = document.createElement('li');
+
+          const a1 = document.createElement('a');
+          a1.href = l1.href || '#';
+          a1.textContent = l1.label;
+
+          li1.appendChild(a1);
+
+          // Nivel 2 (vertical)
+          if (l1.children && l1.children.length){
+            const nested = document.createElement('ul');
+            nested.className = 'nested';
+            l1.children.forEach(l2 => {
+              const li2 = document.createElement('li');
+
+              const a2 = document.createElement('a');
+              a2.href = l2.href || '#';
+              a2.textContent = l2.label;
+
+              li2.appendChild(a2);
+              nested.appendChild(li2);
+
+              // Panel lateral Nivel 3 (paginado)
+              if (l2.children && l2.children.length && node.sticky){
+                // Crear anchors de lvl3:
+                const lvl3Anchors = l2.children.map(x=>{
+                  const a = document.createElement('a');
+                  a.href = x.href || '#';
+                  a.textContent = x.label;
+                  return a;
+                });
+
+                const side = buildSidePanel(lvl3Anchors);
+                folder.querySelector('.sub')?.appendChild(side);
+
+                // Al pasar por cada L2 mostramos panel y su contenido
+                a2.addEventListener('mouseenter', ()=>{
+                  folder.dataset.panel = 'show';
+                  // Transición suave entre paneles
+                  side.classList.add('swap-in');
+                  side.classList.remove('swap-out');
+                });
+                a2.addEventListener('focus', ()=> a2.dispatchEvent(new Event('mouseenter')));
+
+                // Marcar elemento activo (visual)
+                a2.addEventListener('mouseenter', ()=>{
+                  nested.querySelectorAll('li').forEach(li=>li.classList.remove('focus2'));
+                  li2.classList.add('focus2');
+                });
+              }
+            });
+            li1.appendChild(nested);
+
+            // Abrir/cerrar L2
+            a1.addEventListener('click', (e)=>{
+              e.preventDefault();
+              const open = li1.classList.toggle('open');
+              if (open) {
+                // Cerrar hermanos
+                Array.from(ul.children).forEach(li=>{
+                  if (li!==li1) li.classList.remove('open');
+                });
+              }
+            });
+          }
+
+          ul.appendChild(li1);
+        });
+
+        // Abrir/cerrar popover principal
+        const btn = folder.querySelector('.nav-btn');
+        btn?.addEventListener('click', ()=>{
+          const open = folder.getAttribute('aria-open') === 'true';
+          folder.setAttribute('aria-open', String(!open));
+          btn.setAttribute('aria-expanded', String(!open));
+          if (!open && folder.dataset.sticky === 'true'){
+            folder.dataset.panel = 'show';
+          } else {
+            folder.dataset.panel = 'hide';
+          }
+        });
+
+        // Cerrar al salir con el ratón (solo desktop)
+        folder.addEventListener('mouseleave', ()=>{
+          if (window.matchMedia('(max-width:860px)').matches) return;
+          folder.setAttribute('aria-open','false');
+          folder.dataset.panel = 'hide';
+          folder.querySelectorAll('li.open').forEach(li=>li.classList.remove('open'));
+        });
+
+        navLeft.appendChild(folder);
+      } else {
+        // Elemento simple
+        const a = document.createElement('a');
+        a.className = 'nav-btn-link';
+        a.href = node.href || '#';
+        a.textContent = node.label;
+        navLeft.appendChild(a);
+      }
+    });
+  }
+  buildNav();
+
+  /* ========= Carrusel de cubos (placeholder) ========= */
+  (function(){
+    const track = document.getElementById('cubeTrack');
+    if(!track) return;
+
+    const items = [
+      {title:'Zero Trust: primeros pasos', meta:'Ciberseguridad · Guía', img:'assets/cube1.jpg', href:'#'},
+      {title:'Hardening Linux rápido', meta:'Sistemas · Tips', img:'assets/cube2.jpg', href:'#'},
+      {title:'IaC segura con Terraform', meta:'DevSecOps · Tutorial', img:'assets/cube3.jpg', href:'#'},
+      {title:'Alerting efectivo en Grafana', meta:'Observabilidad · Cómo', img:'assets/cube4.jpg', href:'#'},
+      {title:'Backups verificados (DR)', meta:'Resiliencia · Playbook', img:'assets/cube5.jpg', href:'#'},
+      {title:'Segmentación de redes', meta:'Networking · Conceptos', img:'assets/cube6.jpg', href:'#'},
+      {title:'Secretos en Kubernetes', meta:'K8s · Seguridad', img:'assets/cube7.jpg', href:'#'},
+      {title:'Playbooks de IR', meta:'Incidentes · Acciones', img:'assets/cube8.jpg', href:'#'},
+      {title:'Windows: GPO de hardening', meta:'AD · Seguridad', img:'assets/cube9.jpg', href:'#'},
+      {title:'Logs que importan', meta:'SIEM · Prioridades', img:'assets/cube10.jpg', href:'#'}
+    ];
+
+    const root = track.closest('.cube-carousel');
+    const autoplay = root?.dataset.autoplay === 'true';
+    const interval = parseInt(root?.dataset.interval || '3200',10);
+    const shuffle = root?.dataset.shuffle === 'true';
+
+    function shuffleArr(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+    const data = shuffle ? shuffleArr(items.slice()) : items.slice();
+
+    // Render
+    data.forEach((it,idx)=>{
+      const el = document.createElement('article');
+      el.className = 'cube';
+      el.setAttribute('role','listitem');
+      el.innerHTML = `
+        <div class="cube-media">${it.img ? `<img src="${it.img}" alt="${it.title}">` : ''}</div>
+        <div class="cube-body">
+          <h4 class="cube-title">${it.title}</h4>
+          <div class="cube-meta">${it.meta}</div>
+          <a class="cube-link" href="${it.href}">Leer</a>
+        </div>
+      `;
+      track.appendChild(el);
+    });
+
+    const prev = document.getElementById('cubePrev');
+    const next = document.getElementById('cubeNext');
+    const dots = document.getElementById('cubeDots');
+
+    const numVisible = ()=>{
+      const w = root.clientWidth;
+      if (w <= 520) return 1;
+      if (w <= 720) return 2;
+      if (w <= 1020) return 3;
+      return 5;
+    };
+
+    let index = 0, vis = numVisible(), timer = null;
+
+    function updateDots(){
+      dots.innerHTML = '';
+      const pages = Math.max(1, Math.ceil(data.length / vis));
+      for (let i=0;i<pages;i++){
+        const d = document.createElement('div');
+        d.className = 'cube-dot' + (i===Math.floor(index/vis) ? ' is-active':'');
+        d.addEventListener('click', ()=>{ index = i*vis; apply(); });
+        dots.appendChild(d);
+      }
+    }
+
+    function apply(){
+      vis = numVisible();
+      const totalWidth = track.children.length * (track.children[0]?.getBoundingClientRect().width || 0 + 14);
+      const cardW = track.children[0]?.getBoundingClientRect().width || 0;
+      const gap = 14;
+      const x = -(index * (cardW + gap));
+      track.style.transform = `translate3d(${x}px,0,0)`;
+      updateDots();
+      // límites
+      const maxIndex = Math.max(0, data.length - vis);
+      if (index > maxIndex) index = maxIndex;
+      prev.disabled = index <= 0;
+      next.disabled = index >= maxIndex;
+    }
+
+    function go(delta){
+      const maxIndex = Math.max(0, data.length - vis);
+      index = Math.min(maxIndex, Math.max(0, index + delta));
+      apply();
+    }
+
+    prev?.addEventListener('click', ()=>go(-1));
+    next?.addEventListener('click', ()=>go(+1));
+    window.addEventListener('resize', ()=>{ apply(); });
+
+    function start(){
+      if (!autoplay) return;
+      stop();
+      timer = setInterval(()=>{
+        const maxIndex = Math.max(0, data.length - vis);
+        index = (index >= maxIndex) ? 0 : index + 1;
+        apply();
+      }, Math.max(1800, interval));
+    }
+    function stop(){ if (timer) { clearInterval(timer); timer = null; } }
+
+    root.addEventListener('mouseenter', stop);
+    root.addEventListener('mouseleave', start);
+
+    apply();
+    start();
+  })();
+
+  /* ========= Sitemap (sección fija) ========= */
+  (function(){
+    const l0 = document.getElementById('smL0');
+    const l1 = document.getElementById('smL1');
+    const l2 = document.getElementById('smL2');
+    const l3 = document.getElementById('smL3');
+    const wrap1 = document.getElementById('wrapL1');
+    const wrap2 = document.getElementById('wrapL2');
+    const wrap3 = document.getElementById('wrapL3');
+
+    function clear(el){ if (el) el.innerHTML = ''; }
+    function openCol(wrap, open){
+      if (!wrap) return;
+      wrap.classList.toggle('is-open', !!open);
+    }
+
+    // Nivel 0
+    NAV_TREE.forEach((n0, idx0)=>{
+      const li = document.createElement('li');
+      const btn = document.createElement('button');
+      btn.className = 'item';
+      btn.innerHTML = `<span>${n0.label}</span><span class="chev">›</span>`;
+      btn.addEventListener('click', ()=>{
+        // activar visualmente
+        l0.querySelectorAll('.item').forEach(i=>i.classList.remove('is-active'));
+        btn.classList.add('is-active');
+
+        // Cargar nivel 1
+        clear(l1); clear(l2); clear(l3);
+        openCol(wrap1, true); openCol(wrap2, false); openCol(wrap3, false);
+
+        (n0.children||[]).forEach((n1, idx1)=>{
+          const li1 = document.createElement('li');
+          const b1 = document.createElement('button');
+          b1.className = 'item';
+          b1.innerHTML = `<span>${n1.label}</span><span class="chev">›</span>`;
+          b1.addEventListener('click', ()=>{
+            l1.querySelectorAll('.item').forEach(i=>i.classList.remove('is-active'));
+            b1.classList.add('is-active');
+
+            // Cargar nivel 2
+            clear(l2); clear(l3);
+            openCol(wrap2, true); openCol(wrap3, false);
+
+            (n1.children||[]).forEach((n2, idx2)=>{
+              const li2 = document.createElement('li');
+              const b2 = document.createElement('button');
+              b2.className = 'item';
+              b2.innerHTML = `<span>${n2.label}</span><span class="chev">›</span>`;
+              b2.addEventListener('click', ()=>{
+                l2.querySelectorAll('.item').forEach(i=>i.classList.remove('is-active'));
+                b2.classList.add('is-active');
+
+                // Cargar nivel 3 (artículos)
+                clear(l3);
+                openCol(wrap3, true);
+
+                (n2.children||[]).forEach(n3=>{
+                  const a = document.createElement('a');
+                  a.className = 'article';
+                  a.href = n3.href || '#';
+                  a.innerHTML = `<span>${n3.label}</span><span class="chev">↗</span>`;
+                  const li3 = document.createElement('li');
+                  li3.appendChild(a);
+                  l3.appendChild(li3);
+                });
+              });
+              li2.appendChild(b2);
+              l2.appendChild(li2);
+            });
+          });
+          li1.appendChild(b1);
+          l1.appendChild(li1);
+        });
+      });
+      li.appendChild(btn);
+      l0.appendChild(li);
+    });
+
+    // Abre el primero por defecto
+    l0.querySelector('.item')?.click();
+  })();
+</script>
 </body>
 </html>
