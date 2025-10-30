@@ -1,0 +1,67 @@
+/* ===== ÁRBOL VISUAL (SVG) ===== */
+.graph .card{
+  border-radius: var(--radius);
+  border:1px solid rgba(255,255,255,.06);
+  background:linear-gradient(180deg,color-mix(in oklab,var(--panel) 92%,#0f1422 8%),var(--panel));
+  padding:14px;
+}
+.graph-head{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:10px; }
+.graph-head h2{ margin:0 }
+
+/* escenario para “jugar” */
+.graph-stage{
+  position:relative; border:1px solid rgba(255,255,255,.06); border-radius:12px;
+  background:#0c1323; overflow:hidden; height:680px;
+}
+
+/* El SVG ocupa toda el área de juego */
+#graphSvg{ width:100%; height:100%; display:block; }
+
+/* leyenda */
+.graph-legend{
+  display:flex; gap:14px; align-items:center; justify-content:flex-end; margin-top:10px;
+  color:var(--muted); font-size:13px;
+}
+.graph-legend .dot{ width:10px; height:10px; border-radius:999px; display:inline-block; box-shadow:0 0 10px rgba(0,0,0,.25) }
+.graph-legend .lvl0{ background:var(--accent) }
+.graph-legend .lvl1{ background:#ffd79a }
+.graph-legend .lvl2{ background:#8fd6ff }
+.graph-legend .lvl3{ background:#9be2b0 }
+
+/* nodos */
+.node{ cursor:pointer; }
+.node rect{ rx:10; ry:10; fill:#0e1730; stroke:rgba(255,255,255,.10); stroke-width:1.2; }
+.node[data-lvl="0"] rect{ fill:rgba(255,159,26,.18); stroke:rgba(255,159,26,.55) }
+.node[data-lvl="1"] rect{ fill:rgba(255,215,154,.12); stroke:rgba(255,215,154,.5) }
+.node[data-lvl="2"] rect{ fill:rgba(143,214,255,.10); stroke:rgba(143,214,255,.45) }
+.node[data-lvl="3"] rect{ fill:rgba(155,226,176,.10); stroke:rgba(155,226,176,.4) }
+.node .title{ fill:#e9eef6; font-weight:800; font-size:14px; }
+.node .sub{ fill:#a8b2c2; font-size:12.5px; }
+
+/* animaciones de aparición (solo fade para no pisar el transform SVG) */
+.node{ opacity:0; transition:opacity .35s ease; }
+.node.is-in{ opacity:1; }
+
+/* enlaces + animación de trazo */
+.link{ fill:none; stroke:rgba(255,159,26,.35); stroke-width:2; filter: drop-shadow(0 0 3px rgba(255,159,26,.12)); }
+.link.l1{ stroke:rgba(255,215,154,.35) }
+.link.l2{ stroke:rgba(143,214,255,.35) }
+.link.l3{ stroke:rgba(155,226,176,.35) }
+.link.draw{
+  stroke-dasharray: 600;
+  stroke-dashoffset: 600;
+  animation: draw .6s ease forwards;
+}
+@keyframes draw{ to{ stroke-dashoffset:0 } }
+
+/* cursores para pan/zoom */
+.graph-stage.is-panning{ cursor:grabbing; }
+.graph-stage .svgroot{ cursor:grab; }
+
+/* deslizamiento suave al aparecer (solo grupo interno) */
+.node .node-in{ transform:translateX(22px); transition:transform .35s ease; }
+.node.is-in .node-in{ transform:none; }
+
+/* Glow suave en hover de nodos */
+.node rect{ transition:filter .2s ease, stroke-width .18s ease; }
+.node.hovered rect{ filter:drop-shadow(0 0 14px rgba(255,159,26,.18)); stroke-width:1.6; }
