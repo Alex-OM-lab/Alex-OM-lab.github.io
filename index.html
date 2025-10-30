@@ -29,7 +29,7 @@
       background:rgba(9,14,26,.74);border-bottom:1px solid rgba(255,255,255,.06);
       animation:topbarDrop .5s ease both;}
     .topbar::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;
-      background:linear-gradient(90deg, rgba(255,159,26,.0) 0%, rgba(255,159,26,.85) 22%, rgba(255,215,154,.9) 50%, rgba(255,159,26,.85) 78%, rgba(255,159,26,.0) 100%);
+      background:linear-gradient(90deg, rgba(255,159,26,0) 0%, rgba(255,159,26,.85) 22%, rgba(255,215,154,.9) 50%, rgba(255,159,26,.85) 78%, rgba(255,159,26,0) 100%);
       box-shadow:0 0 10px rgba(255,159,26,.35), 0 0 20px rgba(255,159,26,.22);pointer-events:none;}
     @keyframes topbarDrop{from{transform:translateY(-8px);opacity:0}to{transform:none;opacity:1}}
     .topwrap{width:min(1100px,92%);margin:0 auto;display:flex;align-items:center;justify-content:space-between;
@@ -73,15 +73,53 @@
     @media (max-width:980px){.grid{grid-template-columns:1fr 1fr}.contact-box{grid-template-columns:1fr}}
     @media (max-width:620px){.grid{grid-template-columns:1fr}}
 
-    /* ===== Carrusel de cubos ===== */
+    /* ===== POP-OVER NAV (como en la versión buena) ===== */
+    .nav-folder{position:relative}
+    .nav-btn{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;border:1px solid transparent;background:transparent;color:var(--text);font-weight:800;font-size:var(--nav-font);cursor:pointer;transition:transform .12s,background .2s,border-color .2s}
+    .nav-btn:hover{transform:translateY(-1px);background:rgba(255,159,26,.12);border-color:rgba(255,159,26,.35)}
+    .nav-btn-link{color:var(--text);text-decoration:none;font-weight:800;transition:color .2s ease}
+    .nav-btn-link:hover{color:var(--accent-soft)}
+    .ico-folder{width:14px;height:12px;position:relative;display:inline-block}
+    .ico-folder::before{content:"";position:absolute;inset:0;border-radius:3px;background:rgba(255,159,26,.15);border:1px solid rgba(255,159,26,.35)}
+    .ico-folder::after{content:"";position:absolute;width:8px;height:3px;left:2px;top:-3px;border-radius:2px 2px 0 0;background:rgba(255,159,26,.35)}
+    .caret{width:10px;height:10px;border-right:2px solid var(--accent);border-bottom:2px solid var(--accent);transform:rotate(-45deg) translateY(-1px);transition:transform .2s ease}
+
+    .sub{position:absolute;top:100%;left:0;min-width:360px;padding-top:0}
+    .sub::before{content:"";position:absolute;top:-10px;left:0;right:0;height:12px}
+    .sub::after{content:""; position:absolute; top:0; left:100%; width:20px; height:100%; background:transparent; pointer-events:auto;}
+    .sub>ul{list-style:none;margin:0;padding:8px;background:rgba(17,26,45,.98);border:1px solid rgba(255,255,255,.06);border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.35);transform-origin:top left;transform:scaleY(.92);opacity:0;max-height:0;overflow:hidden;transition:transform .2s ease,opacity .2s ease,max-height .32s ease;}
+    .sub a{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border-radius:8px;text-decoration:none;color:var(--text);border:1px solid transparent}
+    .sub a:hover{background:rgba(255,159,26,.10);border-color:rgba(255,159,26,.25)}
+    .nav-folder[aria-open="true"] > .sub > ul{pointer-events:auto;transform:scaleY(1);opacity:1;max-height:80vh;overflow:auto}
+    .nav-folder[aria-open="true"] > .nav-btn .caret{transform:rotate(45deg)}
+
+    .nested{max-height:0;opacity:0;transform:translateY(-4px);overflow:hidden;margin-top:6px;padding-left:10px;border-left:2px dashed rgba(255,159,26,.25);transition:max-height .28s ease, opacity .22s ease, transform .22s ease;}
+    .sub li.open > .nested{max-height:1200px;opacity:1;transform:none}
+
+    /* ===== Paginación del panel lateral (lvl3) ===== */
+    .sub .side{position:absolute;top:0;left:calc(100% + 12px);width:340px;background:rgba(17,26,45,.98);border:1px solid rgba(255,255,255,.06);border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.35);padding:8px;opacity:0;transform:translateX(-6px) scale(0.98);pointer-events:none;transition:opacity .12s ease-out, transform .12s cubic-bezier(.18,.89,.32,1.28);display:flex;flex-direction:column}
+    .nav-folder[data-sticky="true"][data-panel="show"][aria-open="true"] .side{opacity:1;transform:translateX(0) scale(1);pointer-events:auto}
+    .side-title{margin:6px 10px 8px;font-weight:800;color:#f3f5f8}
+    .side-list{list-style:none;margin:0;padding:0;flex:1;overflow:auto}
+    .side-list a{display:block;padding:10px 12px;border-radius:8px;color:var(--text);text-decoration:none}
+    .side-list a:hover{background:rgba(255,159,26,.1);border:1px solid rgba(255,159,26,.25)}
+    .side .pager{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:10px 6px 4px;padding-top:6px;border-top:1px dashed rgba(255,255,255,.08)}
+    .pager-info{font-size:12px;opacity:.7;user-select:none}
+    .pager-btn{position:relative;width:38px;height:32px;border-radius:10px;background:rgba(255,159,26,.10);border:1px solid rgba(255,159,26,.35);cursor:pointer;font-weight:800;display:inline-flex;align-items:center;justify-content:center;transition:transform .12s ease, background .18s ease, border-color .18s ease, opacity .18s ease;color:#ffd8a6}
+    .pager-btn:hover{transform:translateY(-1px);background:rgba(255,159,26,.18);border-color:rgba(255,159,26,.6)}
+    .pager-btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+    .pager-btn.prev::before,.pager-btn.next::before{content:"›";font-size:18px;line-height:1}
+    .pager-btn.prev::before{transform:rotate(180deg)}
+    .pager-btn::after{content:attr(data-page);position:absolute;right:-6px;top:-8px;font-size:12px;line-height:1;padding:2px 6px;border-radius:999px;background:var(--accent);color:#111;box-shadow:0 4px 14px rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.25)}
+
+    /* ================== CARRUSEL DE CUBOS =================== */
     .cube-carousel{position:relative;overflow:hidden;border-radius:var(--radius);
       background:linear-gradient(180deg,color-mix(in oklab,var(--panel) 92%,#0f1422 8%),var(--panel));
       border:1px solid rgba(255,255,255,.06);padding:14px}
     .cube-head{display:flex;align-items:baseline;justify-content:center;gap:12px;margin-bottom:10px;text-align:center}
     .cube-head h3{margin:0;font-size:clamp(20px,2.2vw,26px)}
     .cube-track{display:flex;gap:14px;will-change:transform;transition:transform .6s cubic-bezier(.22,.61,.36,1)}
-    .cube{flex:0 0 calc((100% - 14px*4)/5);background:#0c1323;border:1px solid rgba(255,255,255,.08);
-      border-radius:12px;overflow:hidden;box-shadow:0 6px 18px rgba(0,0,0,.22);display:flex;flex-direction:column}
+    .cube{flex:0 0 calc((100% - 14px*4)/5);background:#0c1323;border:1px solid rgba(255,255,255,.08);border-radius:12px;overflow:hidden;box-shadow:0 6px 18px rgba(0,0,0,.22);display:flex;flex-direction:column}
     .cube:hover{border-color:rgba(255,159,26,.35);box-shadow:0 10px 28px rgba(255,159,26,.12);transform:translateY(-1px);transition:transform .12s}
     .cube-media{width:100%;aspect-ratio:16/10;background:#0a1020;position:relative;border-bottom:1px solid rgba(255,255,255,.06)}
     .cube-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
@@ -93,8 +131,8 @@
     .cube-link:hover{background:rgba(255,159,26,.18);border-color:rgba(255,159,26,.6);transform:translateY(-1px)}
     .cube-nav{position:absolute;inset:0;pointer-events:none}
     .cube-btn{position:absolute;top:50%;translate:0 -50%;width:42px;height:42px;border-radius:999px;background:rgba(17,26,45,.75);
-      border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-weight:900;color:#ffd79a;
-      cursor:pointer;opacity:0;pointer-events:none;transition:opacity .18s, transform .12s, background .18s, border-color .18s;box-shadow:0 4px 16px rgba(0,0,0,.35)}
+      border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-weight:900;color:#ffd79a;cursor:pointer;opacity:0;pointer-events:none;
+      transition:opacity .18s, transform .12s, background .18s, border-color .18s;box-shadow:0 4px 16px rgba(0,0,0,.35)}
     .cube-btn:hover{transform:translateY(-1px);background:rgba(17,26,45,.9);border-color:rgba(255,159,26,.35)}
     .cube-btn.prev{left:6px} .cube-btn.next{right:6px}
     .cube-carousel:hover .cube-btn,.cube-carousel:has(.cube-btn:focus-visible){opacity:1;pointer-events:auto}
@@ -121,8 +159,7 @@
     .sitemap .item{ display:flex; align-items:center; justify-content:space-between; gap:8px; padding:9px 10px; border-radius:10px; border:1px solid transparent;
       color:var(--text); background:transparent; width:100%; cursor:pointer; text-align:left; font-weight:700; }
     .sitemap .item:hover{ background:rgba(255,159,26,.10); border-color:rgba(255,159,26,.25) }
-    .sitemap .item.is-active{ background:linear-gradient(90deg, rgba(255,159,26,.18), rgba(255,159,26,.08) 70%);
-      border-color:rgba(255,159,26,.55); color:#ffe1a6; }
+    .sitemap .item.is-active{ background:linear-gradient(90deg, rgba(255,159,26,.18), rgba(255,159,26,.08) 70%); border-color:rgba(255,159,26,.55); color:#ffe1a6; }
     .sitemap .chev{ opacity:.6 }
     .sitemap .article{ display:flex; align-items:center; justify-content:space-between; gap:8px; padding:8px 10px; border-radius:8px; border:1px solid rgba(255,255,255,.06);
       background:#0a1020; text-decoration:none; color:var(--text); }
@@ -153,6 +190,19 @@
   </div>
 
   <main class="container">
+    <!-- ===== BLOQUES DE CONTENIDO ===== -->
+    <section id="ciber" aria-labelledby="ciber-title">
+      <h2 id="ciber-title" class="section-title">Ciberseguridad</h2>
+      <p class="kicker">Security-by-design, hardening y respuesta a incidentes.</p>
+      <div class="card">Playbooks de respuesta, aplicación de guías CIS, inventario de activos y SIEM; priorización de riesgos y monitoreo proactivo.</div>
+    </section>
+
+    <section id="adm" aria-labelledby="adm-title">
+      <h2 id="adm-title" class="section-title">Administración de Sistemas</h2>
+      <p class="kicker">Infraestructura reproducible y observable.</p>
+      <div class="card">Linux/Windows, IaC (Terraform/Ansible), contenedores (Docker/K8s), redes y servidores (Nginx/Apache), CI/CD y observabilidad.</div>
+    </section>
+
     <!-- ========================= CARRUSEL ========================== -->
     <section id="news-cubes" aria-labelledby="news-cubes-title">
       <h2 id="news-cubes-title" class="section-title">Lecturas y artículos</h2>
@@ -200,6 +250,7 @@
       </div>
     </section>
 
+    <!-- (Nota) Se ha eliminado la sección del “árbol visual” (SVG) a propósito -->
     <!-- ========================= CONTACTO ========================== -->
     <section id="contact" aria-labelledby="contact-title">
       <h2 id="contact-title" class="section-title">Contacto</h2>
@@ -224,10 +275,10 @@
   <footer>© <span id="y"></span> Alejandro Orcajada Meseguer — Administrador de Sistemas y Ciberseguridad</footer>
 
   <script>
-    // Año en footer
+    /* ========= Año en footer ========= */
     document.getElementById('y').textContent = new Date().getFullYear();
 
-    // Typing en héroe
+    /* ========= Doble typing del héroe ========= */
     (function(){
       const nameText="Alejandro Orcajada Meseguer", roleText="Administrador de Sistemas y Ciberseguridad", speed=44;
       const elName=document.getElementById('typeName'), elRole=document.getElementById('typeRole');
@@ -237,7 +288,7 @@
       setTimeout(typeName,300);
     })();
 
-    // NAV datos (se queda igual que tenías)
+    /* ========= Datos para NAV ========= */
     const twelve = base => Array.from({length:12}, (_,i)=>({label:`${base} · Artículo ${i+1}`, href:"#"}));
     const NAV_TREE = [
       { label:"Teoría y Casos Curiosos", children:[
@@ -264,6 +315,7 @@
       { label:"Contacto", href:"/contacto/" }
     ];
 
+    /* ========= NAV: construcción/acciones ========= */
     function chunkArray(arr, size){ const out=[]; for(let i=0;i<arr.length;i+=size) out.push(arr.slice(i,i+size)); return out; }
     function renderSidePage(sideEl, state){
       const listEl = sideEl.querySelector('.side-list'); listEl.innerHTML='';
@@ -300,43 +352,64 @@
       const wrap=document.createElement('div'); wrap.className='nav-folder'; wrap.setAttribute('aria-open','false'); if(node.label==="Portafolio") wrap.dataset.sticky="true";
       const btn=document.createElement('button'); btn.className='nav-btn'; btn.setAttribute('aria-expanded','false'); btn.setAttribute('aria-haspopup','true');
       const labelHTML = node.href ? `<a href="${node.href}" class="nav-btn-link">${node.label}</a>` : `<span>${node.label}</span>`;
-      btn.innerHTML=`<span class="ico-folder"></span>${labelHTML}<span class="caret"></span>`; wrap.appendChild(btn);
-      const sub=document.createElement('div'); sub.className='sub'; const ul=document.createElement('ul'); sub.appendChild(ul);
-      let side=null; if(wrap.dataset.sticky==="true"){ side=document.createElement('div'); side.className='side'; side.innerHTML=`<div class="side-title">Selecciona una subcarpeta…</div><ul class="side-list"></ul>`; sub.appendChild(side); }
-      node.children.forEach(childLvl1=>{
-        const liLvl1=document.createElement('li');
-        const link1=document.createElement('a'); link1.href=childLvl1.href||'#'; link1.innerHTML=`<span>${childLvl1.label}</span><span style="opacity:.6">›</span>`; liLvl1.appendChild(link1);
-        const ulLvl2=document.createElement('ul'); ulLvl2.className='nested';
-        childLvl1.children?.forEach(childLvl2=>{
-          const liLvl2=document.createElement('li'); const link2=document.createElement('a');
-          link2.href=childLvl2.href||'#'; link2.innerHTML=`<span>${childLvl2.label}</span><span style="opacity:.6">›</span>`; liLvl2.appendChild(link2);
-          const hiddenLvl3=document.createElement('ul'); hiddenLvl3.style.display='none';
-          childLvl2.children?.forEach(a3=>{ const li3=document.createElement('li'); const a=document.createElement('a'); a.href=a3.href||'#'; a.textContent=a3.label; li3.appendChild(a); hiddenLvl3.appendChild(li3); });
-          liLvl2.appendChild(hiddenLvl3);
-          if(wrap.dataset.sticky==="true"){
-            link2.addEventListener('mouseenter', ()=>{
-              const linksLvl3 = Array.from(hiddenLvl3.querySelectorAll('a')); const newTitle=`${childLvl1.label} / ${childLvl2.label}`;
-              positionSideAligned(side, link2, sub); swapSideContent(side, newTitle, linksLvl3); wrap.setAttribute('data-panel','show'); setTimeout(()=>positionSideAligned(side, link2, sub),0);
-            });
-            link2.addEventListener('mouseenter', ()=>{ liLvl2.classList.add('focus2'); liLvl2.parentElement.querySelectorAll(':scope > li.focus2').forEach(sib=>{ if(sib!==liLvl2) sib.classList.remove('focus2'); }); });
-            liLvl2.addEventListener('mouseleave', ()=> liLvl2.classList.remove('focus2'));
-            link2.addEventListener('focus', ()=> liLvl2.classList.add('focus2'));
-            link2.addEventListener('blur' , ()=> liLvl2.classList.remove('focus2'));
-          }
-          ulLvl2.appendChild(liLvl2);
-        });
-        liLvl1.appendChild(ulLvl2); ul.appendChild(liLvl1);
-        link1.addEventListener('mouseenter', ()=>{ liLvl1.classList.add('open'); });
+      btn.innerHTML = `<span class="ico-folder" aria-hidden="true"></span>${labelHTML}<span class="caret" aria-hidden="true"></span>`;
+      wrap.appendChild(btn);
+
+      const sub=document.createElement('div'); sub.className='sub';
+      const ul=document.createElement('ul'); sub.appendChild(ul);
+
+      const side=document.createElement('div'); side.className='side'; side.innerHTML=`<div class="side-title"></div><ul class="side-list"></ul>`; sub.appendChild(side);
+
+      node.children.forEach(child=>{
+        const li=document.createElement('li');
+        const a=document.createElement('a'); a.href=child.href||'#'; a.textContent=child.label;
+        li.appendChild(a);
+        if(child.children){
+          const nested=document.createElement('ul'); nested.className='nested';
+          child.children.forEach(grand=>{
+            const li2=document.createElement('li'); const a2=document.createElement('a'); a2.href=grand.href||'#'; a2.textContent=grand.label; li2.appendChild(a2); nested.appendChild(li2);
+          });
+          li.appendChild(nested);
+          a.addEventListener('mouseenter', ()=> li.classList.add('open'));
+          a.addEventListener('mouseleave', ()=> li.classList.remove('open'));
+          a.addEventListener('focus', ()=> li.classList.add('open'));
+        }
+        ul.appendChild(li);
       });
+
+      btn.addEventListener('mouseenter', ()=> setOpen(wrap,true));
+      btn.addEventListener('mouseleave', ()=> setOpen(wrap,false,true));
       btn.addEventListener('click', e=>{ e.preventDefault(); const open=wrap.getAttribute('aria-open')==='true'; setOpen(wrap,!open); });
       btn.addEventListener('keydown', e=>{ if(e.key==='Escape') setOpen(wrap,false,true); if(e.key==='ArrowDown'){ setOpen(wrap,true); ul.querySelector('a')?.focus(); } });
-      wrap.appendChild(sub); return wrap;
+
+      // Interacciones para “panel lateral” del Portafolio
+      if(wrap.dataset.sticky==="true"){
+        wrap.addEventListener('mouseenter', ()=> wrap.dataset.panel="show");
+        wrap.addEventListener('mouseleave', ()=> wrap.removeAttribute('data-panel'));
+        ul.addEventListener('mouseover', e=>{
+          const a=e.target.closest('a'); if(!a) return;
+          const li=a.parentElement;
+          if(li && li.querySelector('.nested')){
+            li.classList.add('open');
+            const links=Array.from(li.querySelectorAll('.nested a'));
+            swapSideContent(side, a.textContent, links);
+            positionSideAligned(side, a, sub);
+          }
+        });
+      }
+
+      wrap.appendChild(sub);
+      return wrap;
     }
     function setOpen(folder, open, resetInternos=false){
       folder.setAttribute('aria-open', open?'true':'false');
       folder.querySelector('.nav-btn').setAttribute('aria-expanded', open?'true':'false');
-      if(open){ document.querySelectorAll('.nav-folder').forEach(f=>{ if(f!==folder){ f.setAttribute('aria-open','false'); f.querySelector('.nav-btn').setAttribute('aria-expanded','false'); f.removeAttribute('data-panel'); } }); }
-      else if(resetInternos){ folder.removeAttribute('data-panel'); folder.querySelectorAll(':scope .sub > ul > li').forEach(li=>li.classList.remove('open')); }
+      if(open){
+        document.querySelectorAll('.nav-folder').forEach(f=>{ if(f!==folder){ f.setAttribute('aria-open','false'); f.querySelector('.nav-btn').setAttribute('aria-expanded','false'); f.removeAttribute('data-panel'); } });
+      } else if(resetInternos){
+        folder.removeAttribute('data-panel');
+        folder.querySelectorAll(':scope .sub > ul > li').forEach(li=>li.classList.remove('open'));
+      }
     }
     function renderNav(tree){
       const nav=document.getElementById('nav'); tree.forEach(node=>nav.appendChild(createNode(node)));
@@ -350,43 +423,80 @@
     }
     renderNav(NAV_TREE);
 
-    // Carrusel de cubos (igual que tenías)
+    /* ========= Carrusel de cubos ========= */
     (function initCubeCarousel(){
       const root=document.querySelector('.cube-carousel'); if(!root) return;
       const prefersReduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const autoplay=root.dataset.autoplay==='true' && !prefersReduced;
       const intervalMs=parseInt(root.dataset.interval||'3200',10);
       const shuffle=root.dataset.shuffle==='true';
-      const track=document.getElementById('cubeTrack'), dotsEl=document.getElementById('cubeDots');
-      const btnPrev=document.getElementById('cubePrev'), btnNext=document.getElementById('cubeNext');
-      const ITEMS=Array.from({length:12}).map((_,i)=>({ id:i+1, titulo:`Artículo ${i+1}: Placeholder`, resumen:`Resumen breve del contenido ${i+1}. Texto ficticio para probar el layout.`, img:`assets/placeholder_${(i%6)+1}.jpg`, href:"#"}));
+
+      const track=document.getElementById('cubeTrack');
+      const dotsEl=document.getElementById('cubeDots');
+      const btnPrev=document.getElementById('cubePrev');
+      const btnNext=document.getElementById('cubeNext');
+
+      const ITEMS=Array.from({length:12}).map((_,i)=>({ id:i+1, titulo:`Artículo ${i+1}: Placeholder`,
+        resumen:`Resumen breve del contenido ${i+1}. Texto ficticio para probar el layout.`,
+        img:`assets/placeholder_${(i%6)+1}.jpg`, href:"#"}));
+
       if(shuffle) ITEMS.sort(()=>Math.random()-.5);
+
       const makeCube = (item)=>{ const li=document.createElement('article'); li.className='cube'; li.setAttribute('role','listitem');
         li.innerHTML=`<div class="cube-media"><img src="${item.img}" alt="Imagen del ${item.titulo}" loading="lazy"></div>
         <div class="cube-body"><h4 class="cube-title">${item.titulo}</h4><div class="cube-meta">${item.resumen}</div><a class="cube-link" href="${item.href}">Ver más</a></div>`; return li; };
-      const baseNodes=ITEMS.map(makeCube), cloneNodes=ITEMS.map(makeCube); baseNodes.forEach(n=>track.appendChild(n)); cloneNodes.forEach(n=>track.appendChild(n));
-      track.setAttribute('role','list'); ITEMS.forEach((_,idx)=>{ const d=document.createElement('span'); d.className='cube-dot'+(idx===0?' is-active':''); dotsEl.appendChild(d); });
-      let index=0, timer=null; let itemWidth=()=> (track.querySelector('.cube')?.getBoundingClientRect().width || 0) + 14; let max=ITEMS.length;
+
+      const baseNodes=ITEMS.map(makeCube), cloneNodes=ITEMS.map(makeCube);
+      baseNodes.forEach(n=>track.appendChild(n)); cloneNodes.forEach(n=>track.appendChild(n));
+      track.setAttribute('role','list');
+
+      ITEMS.forEach((_,idx)=>{ const d=document.createElement('span'); d.className='cube-dot'+(idx===0?' is-active':''); dotsEl.appendChild(d); });
+
+      let index=0, timer=null;
+      let itemWidth=()=> (track.querySelector('.cube')?.getBoundingClientRect().width || 0) + 14;
+      let max=ITEMS.length;
+
       const setActiveDot=(i)=>{ Array.from(dotsEl.children).forEach((el,ix)=> el.classList.toggle('is-active', ix === (i % max))); };
-      const jumpIfNeeded=()=>{ if(index>=max){ index=index%max; track.style.transition='none'; track.style.transform=`translateX(${-index*itemWidth()}px)`; void track.offsetWidth; track.style.transition=''; }
-                               else if(index<0){ index=(index+max)%max+max; track.style.transition='none'; track.style.transform=`translateX(${-index*itemWidth()}px)`; void track.offsetWidth; track.style.transition=''; } };
+
+      const jumpIfNeeded=()=>{
+        if(index>=max){
+          index=index%max;
+          track.style.transition='none';
+          track.style.transform=`translateX(${-index*itemWidth()}px)`;
+          void track.offsetWidth; track.style.transition='';
+        } else if(index<0){
+          index=(index+max)%max+max;
+          track.style.transition='none';
+          track.style.transform=`translateX(${-index*itemWidth()}px)`;
+          void track.offsetWidth; track.style.transition='';
+        }
+      };
+
       const goTo=(i)=>{ index=i; track.style.transform=`translateX(${-index*itemWidth()}px)`; setActiveDot(index); };
-      const next=()=>{ goTo(index+1); }, prev=()=>{ goTo(index-1); };
+      const next=()=>{ goTo(index+1); };
+      const prev=()=>{ goTo(index-1); };
       const start=()=>{ if(timer || !autoplay) return; timer=setInterval(()=>{ next(); jumpIfNeeded(); }, intervalMs); };
       const stop =()=>{ clearInterval(timer); timer=null; };
-      root.addEventListener('mouseenter', stop); root.addEventListener('mouseleave', start);
-      root.addEventListener('focusin', stop); root.addEventListener('focusout', start);
+
+      root.addEventListener('mouseenter', stop);
+      root.addEventListener('mouseleave', start);
+      root.addEventListener('focusin', stop);
+      root.addEventListener('focusout', start);
+
       btnNext.addEventListener('click', ()=>{ stop(); next(); jumpIfNeeded(); });
       btnPrev.addEventListener('click', ()=>{ stop(); prev(); jumpIfNeeded(); });
+
       let touchX=null, deltaX=0, swiping=false;
       root.addEventListener('touchstart', (e)=>{ touchX=e.touches[0].clientX; deltaX=0; swiping=true; stop(); }, {passive:true});
       root.addEventListener('touchmove', (e)=>{ if(!swiping) return; deltaX=e.touches[0].clientX - touchX; track.style.transition='none'; track.style.transform=`translateX(${-(index*itemWidth()) + deltaX}px)`; }, {passive:true});
       root.addEventListener('touchend', ()=>{ track.style.transition=''; if(Math.abs(deltaX)>itemWidth()*0.25){ (deltaX<0)?next():prev(); jumpIfNeeded(); } else { goTo(index); } swiping=false; start(); });
+
       window.addEventListener('resize', ()=>{ goTo(index); });
+
       goTo(0); if(autoplay) start();
     })();
 
-    // MAPA DEL SITIO — SECCIÓN FIJA (columnas)
+    /* ========= MAPA DEL SITIO — SECCIÓN FIJA ========= */
     (function(){
       const SITE_TREE = [
         { raiz:"Teoría y datos curiosos", areas:[
@@ -402,20 +512,16 @@
       const wrapL1=document.getElementById('wrapL1'), wrapL2=document.getElementById('wrapL2'), wrapL3=document.getElementById('wrapL3');
       if(!smL0||!smL1||!smL2||!smL3) return;
       let sel0=null, sel1=null, sel2=null;
+
       const btn=(txt,active,onclick)=>{ const li=document.createElement('li'); const b=document.createElement('button'); b.type='button'; b.className='item'+(active?' is-active':''); b.innerHTML=`<span>${txt}</span><span class="chev">›</span>`; b.addEventListener('click',onclick); li.appendChild(b); return li; };
-      const article=(txt,href='#')=>{ const li=document.createElement('li'); const a=document.createElement('a'); a.href=href; a.className='article'; a.innerHTML=`<span>${txt}</span><span>↗</span>`; li.appendChild(a); return li; };
-      const makeSix=name=>Array.from({length:6},(_,i)=>`Artículo ${i+1} — ${name}`);
-      function renderL0(){ smL0.innerHTML=''; smL1.innerHTML=''; smL2.innerHTML=''; smL3.innerHTML=''; wrapL1.classList.remove('is-open'); wrapL2.classList.remove('is-open'); wrapL3.classList.remove('is-open');
-        SITE_TREE.forEach((n,ix)=> smL0.appendChild(btn(n.raiz, sel0===ix, ()=>{ sel0=ix; sel1=null; sel2=null; renderL1(); }))); }
-      function renderL1(){ smL1.innerHTML=''; smL2.innerHTML=''; smL3.innerHTML=''; wrapL1.classList.add('is-open'); wrapL2.classList.remove('is-open'); wrapL3.classList.remove('is-open');
-        if(sel0===null) return; SITE_TREE[sel0].areas.forEach((area,ix)=> smL1.appendChild(btn(area.nombre, sel1===ix, ()=>{ sel1=ix; sel2=null; renderL2(); }))); }
-      function renderL2(){ smL2.innerHTML=''; smL3.innerHTML=''; wrapL2.classList.add('is-open'); wrapL3.classList.remove('is-open');
-        if(sel0===null||sel1===null) return; const area=SITE_TREE[sel0].areas[sel1];
-        area.subcarpetas.forEach((sub,ix)=> smL2.appendChild(btn(sub, sel2===ix, ()=>{ sel2=ix; renderL3(); }))); }
-      function renderL3(){ smL3.innerHTML=''; wrapL3.classList.add('is-open');
-        if(sel0===null||sel1===null||sel2===null) return; const sub=SITE_TREE[sel0].areas[sel1].subcarpetas[sel2];
-        makeSix(sub).forEach(t=> smL3.appendChild(article(t))); }
-      renderL0();
+      const article=(txt,href='#')=>{ const li=document.createElement('li'); const a=document.createElement('a'); a.href=href; a.className='article'; a.innerHTML=`<span>${txt}</span><span class="chev">↗</span>`; li.appendChild(a); return li; };
+
+      const renderL0=()=>{ smL0.innerHTML=''; SITE_TREE.forEach((r,i)=> smL0.appendChild(btn(r.raiz, i===0, ()=>{ sel0=i; renderL0(); renderL1(); renderL2(true); renderL3(true); }))); sel0 ??= 0; };
+      const renderL1=()=>{ wrapL1.classList.add('is-open'); smL1.innerHTML=''; SITE_TREE[sel0].areas.forEach((a,i)=> smL1.appendChild(btn(a.nombre, i===0, ()=>{ sel1=i; renderL1(); renderL2(true); renderL3(true); }))); sel1 ??= 0; };
+      const renderL2=(reset=false)=>{ wrapL2.classList.add('is-open'); smL2.innerHTML=''; const subs=SITE_TREE[sel0].areas[sel1].subcarpetas; subs.forEach((s,i)=> smL2.appendChild(btn(s, i===0, ()=>{ sel2=i; renderL2(); renderL3(true); }))); if(reset) sel2=0; };
+      const renderL3=()=>{ wrapL3.classList.add('is-open'); smL3.innerHTML=''; const base=`${SITE_TREE[sel0].areas[sel1].subcarpetas[sel2]}`; for(let i=1;i<=6;i++) smL3.appendChild(article(`${base} — Artículo ${i}`)); };
+
+      renderL0(); renderL1(); renderL2(true); renderL3(true);
     })();
   </script>
 </body>
