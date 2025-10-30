@@ -15,21 +15,19 @@
       --nav-font:15.5px; --nav-pad-y:12px; --nav-gap:12px;
       --hero-offset:12vh;
 
-      /* ==== Control del glitch ==== */
-      --pulse-small-dur:140ms;
-      --pulse-strong-dur:230ms;
-      --loop-interval:2400ms;      /* cada cuánto hacer micro-pulsos */
-      --rgb-shift:1.1px;           /* aber. cromática temporal */
-      --slice-gap:3px;             /* altura de líneas (bandas) */
-      --slice-opacity:.75;         /* visibilidad de bandas */
-      --shift-small:4px;           /* desplazamiento lateral de bandas (micro) */
-      --shift-strong:12px;         /* desplazamiento lateral de bandas (fuerte) */
-      --block-shift-small:.8px;    /* pequeño “tirón” del bloque */
-      --block-shift-strong:1.6px;  /* tirón fuerte del bloque */
+      /* ===== CONTROL GLITCH REAL POR BANDAS ===== */
+      --slices: 18;                /* nº de rebanadas (12–24 recomendado) */
+      --strong-dur: 180ms;         /* duración del pulso fuerte */
+      --small-dur: 120ms;          /* duración del micro-pulso */
+      --loop-interval: 2400ms;     /* ritmo de micro-pulsos */
+      --strong-every: 6;           /* cada 6º, un pulso fuerte */
+      --shift-strong: 18px;        /* desplazamiento lateral máx pulso fuerte */
+      --shift-small: 6px;          /* desplazamiento lateral máx micro-pulso */
+      --skew-strong: 6deg;         /* deformación en X pulso fuerte */
+      --skew-small: 2.5deg;        /* deformación en X micro-pulso */
     }
 
-    *{box-sizing:border-box}
-    html,body{margin:0}
+    *{box-sizing:border-box} html,body{margin:0}
     body{
       font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,Inter,"Helvetica Neue",Arial;
       background:
@@ -44,79 +42,47 @@
       padding:0 14px 0; margin-top:var(--hero-offset);
     }
 
-    /* ===== TÍTULO ===== */
+    /* ===== TÍTULO BASE ===== */
     #heroTitle{
       position:relative;
-      display:inline-block;
-      font-size:clamp(34px,4vw,54px);
+      font-size:clamp(36px,4.4vw,56px);
+      line-height:1;
       font-weight:900;
       color:var(--accent);
-      margin:0 0 6px;
+      margin:0 0 10px;
       text-shadow:0 0 18px rgba(255,159,26,.7),0 0 36px rgba(255,159,26,.25);
-      will-change:transform,filter;
     }
+    #heroTitle .txt{ position:relative; z-index:1; display:inline-block; }
 
-    /* Aberración cromática durante el pulso */
-    #heroTitle::before{
-      content:attr(data-text);
+    /* ===== CONTENEDOR DE SLICES ===== */
+    .glitch-slices{
       position:absolute; inset:0;
-      color:transparent;
-      text-shadow: calc(var(--rgb-shift)*-1) 0 #00e6f6, var(--rgb-shift) 0 #ff2a6d;
-      opacity:0; pointer-events:none;
-      transition:opacity 60ms;
+      pointer-events:none;
+      display:block;
+      /* oculto hasta que se pulse */
+      opacity:0;
+    }
+    /* Cada slice vuelve a dibujar el texto en su sitio y lo recorta */
+    .glitch-slice{
+      position:absolute; left:0; right:0;
+      overflow:hidden;
+      will-change:transform;
+    }
+    .glitch-slice > .copy{
+      display:inline-block;
+      color:var(--accent);
+      text-shadow:
+        -1px 0 rgba(0,230,246,.85),
+         1px 0 rgba(255,42,109,.85),
+         0 0 14px rgba(255,159,26,.45); /* leve RGB solo durante glitch */
+      transform-origin:left center;
     }
 
-    /* Bandas (scanlines que “cortan” como en la imagen) */
-    #heroTitle::after{
-      content:"";
-      position:absolute; inset:-4px -8px;
-      background:
-        repeating-linear-gradient(
-          to bottom,
-          rgba(255,255,255,var(--slice-opacity)) 0,
-          rgba(255,255,255,var(--slice-opacity)) 1px,
-          transparent 1px,
-          transparent var(--slice-gap)
-        );
-      mix-blend-mode:screen;
-      opacity:0; pointer-events:none;
-      border-radius:6px;
-      transform:translateX(0);
-    }
+    /* animaciones rápidas, sin “tembleque” perpetuo */
+    @keyframes sliceKickL { 0%{transform:none} 40%{transform:translateX(-1)} 100%{transform:none} }
+    @keyframes sliceKickR { 0%{transform:none} 40%{transform:translateX(1)} 100%{transform:none} }
 
-    /* Tirón del bloque (micro y fuerte) */
-    #heroTitle.pulse-small{ animation:blockShiftSmall var(--pulse-small-dur) ease-out; }
-    #heroTitle.pulse-strong{ animation:blockShiftStrong var(--pulse-strong-dur) ease-out; }
-    @keyframes blockShiftSmall{
-      0%{transform:none} 35%{transform:translateX(calc(var(--block-shift-small)*-1))} 100%{transform:none}
-    }
-    @keyframes blockShiftStrong{
-      0%{transform:none} 35%{transform:translateX(calc(var(--block-shift-strong)*-1))} 100%{transform:none}
-    }
-
-    /* Activación de aberración y bandas por tipo de pulso */
-    #heroTitle.pulse-small::before,
-    #heroTitle.pulse-small::after{ opacity:.85; }
-    #heroTitle.pulse-strong::before,
-    #heroTitle.pulse-strong::after{ opacity:1; }
-
-    /* Desplazamiento de bandas izquierda↔derecha (imitando cortes) */
-    #heroTitle.pulse-small::after{ animation:sliceShiftSmall var(--pulse-small-dur) steps(3,end); }
-    #heroTitle.pulse-strong::after{ animation:sliceShiftStrong var(--pulse-strong-dur) steps(4,end); }
-
-    @keyframes sliceShiftSmall{
-      0%{ transform:translateX(0) }
-      40%{ transform:translateX(calc(var(--shift-small)*-1)) }
-      70%{ transform:translateX(var(--shift-small)) }
-      100%{ transform:translateX(0) }
-    }
-    @keyframes sliceShiftStrong{
-      0%{ transform:translateX(0) }
-      35%{ transform:translateX(calc(var(--shift-strong)*-1)) }
-      65%{ transform:translateX(var(--shift-strong)) }
-      100%{ transform:translateX(0) }
-    }
-
+    /* ===== TITLES RESTO ===== */
     .hero h2{font-size:clamp(24px,3.2vw,40px);font-weight:800;margin:4px 0 8px;color:var(--accent-soft);
       text-shadow:0 0 14px rgba(255,159,26,.45)}
     .cursor{display:inline-block;width:.6ch;margin-left:2px;color:var(--accent);filter:drop-shadow(0 0 6px var(--accent));animation:blink .95s steps(1,end) infinite}
@@ -128,8 +94,6 @@
     section{padding:26px 0}
     .section-title{font-size:clamp(24px,3vw,34px);margin:0 0 10px}
     .kicker{color:var(--muted);margin:0 0 20px}
-    .chips{display:flex;flex-wrap:wrap;gap:10px}
-    .chip{padding:8px 12px;border-radius:999px;background:rgba(255,159,26,.12);border:1px solid rgba(255,159,26,.35);color:#ffe2b0;font-weight:600;font-size:14px}
     .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
     .card{background:linear-gradient(180deg,color-mix(in oklab,var(--panel) 92%,#0f1422 8%),var(--panel));border:1px solid rgba(255,255,255,.06);border-radius:var(--radius);padding:16px}
     .project img{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:10px;border:1px solid rgba(255,255,255,.06)}
@@ -142,29 +106,18 @@
     @media (max-width:620px){.grid{grid-template-columns:1fr}}
 
     @media (prefers-reduced-motion:reduce){
-      #heroTitle::before,#heroTitle::after{display:none!important}
-      #heroTitle{animation:none!important}
+      .glitch-slices{display:none}
     }
   </style>
 
-  <!-- ==== 2 filtros SVG: pequeño y fuerte (warp real) ==== -->
+  <!-- ==== Warp real (muy breve) para romper bordes durante el pulso ==== -->
   <svg aria-hidden="true" focusable="false" width="0" height="0" style="position:absolute">
-    <!-- Pequeño -->
-    <filter id="cp-warp-small" x="-20%" y="-20%" width="140%" height="140%">
-      <feTurbulence type="fractalNoise" baseFrequency="0" numOctaves="2" seed="11" result="noise">
-        <animate id="anim-small-freq" attributeName="baseFrequency" values="0;0.95;0" dur="140ms" begin="indefinite" fill="freeze"/>
+    <filter id="warpStrong" x="-20%" y="-20%" width="140%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency="0" numOctaves="3" seed="9" result="n">
+        <animate id="wFreq" attributeName="baseFrequency" values="0;1.2;0" dur="180ms" begin="indefinite" fill="freeze"/>
       </feTurbulence>
-      <feDisplacementMap in="SourceGraphic" in2="noise" scale="0" xChannelSelector="R" yChannelSelector="G">
-        <animate attributeName="scale" values="0;14;0" dur="140ms" begin="anim-small-freq.begin" fill="freeze"/>
-      </feDisplacementMap>
-    </filter>
-    <!-- Fuerte -->
-    <filter id="cp-warp-strong" x="-20%" y="-20%" width="140%" height="140%">
-      <feTurbulence type="fractalNoise" baseFrequency="0" numOctaves="3" seed="7" result="noise">
-        <animate id="anim-strong-freq" attributeName="baseFrequency" values="0;1.35;0" dur="230ms" begin="indefinite" fill="freeze"/>
-      </feTurbulence>
-      <feDisplacementMap in="SourceGraphic" in2="noise" scale="0" xChannelSelector="R" yChannelSelector="G">
-        <animate attributeName="scale" values="0;32;0" dur="230ms" begin="anim-strong-freq.begin" fill="freeze"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="0" xChannelSelector="R" yChannelSelector="G">
+        <animate attributeName="scale" values="0;26;0" dur="180ms" begin="wFreq.begin" fill="freeze"/>
       </feDisplacementMap>
     </filter>
   </svg>
@@ -182,55 +135,27 @@
   <!-- ========================= HERO ========================== -->
   <div id="home" class="hero-wrap">
     <div class="hero">
-      <h1 id="heroTitle" data-text=""><span id="typeName"></span></h1>
+      <!-- Título con texto “vivo” y overlay de slices -->
+      <h1 id="heroTitle">
+        <span class="txt" id="typeName"></span>
+        <span class="glitch-slices" aria-hidden="true"></span>
+      </h1>
       <h2><span id="typeRole"></span><span class="cursor">|</span></h2>
       <p id="lead" class="lead">Me especializo en diseñar, securizar y operar infraestructuras robustas. Automatizo despliegues, fortalezco defensas y mejoro la fiabilidad de servicios con prácticas DevOps/SecOps.</p>
     </div>
   </div>
 
-  <!-- ========================= CONTENIDO ========================== -->
+  <!-- ========================= CONTENIDO (recortado) ========================== -->
   <main class="container">
     <section id="ciber" aria-labelledby="ciber-title">
       <h2 id="ciber-title" class="section-title">Ciberseguridad</h2>
       <p class="kicker">Security-by-design, hardening y respuesta a incidentes.</p>
       <div class="card">Playbooks de respuesta, aplicación de guías CIS, inventario de activos y SIEM; priorización de riesgos y monitoreo proactivo.</div>
     </section>
-
     <section id="adm" aria-labelledby="adm-title">
       <h2 id="adm-title" class="section-title">Administración de Sistemas</h2>
       <p class="kicker">Infraestructura reproducible y observable.</p>
       <div class="card">Linux/Windows, IaC (Terraform/Ansible), contenedores (Docker/K8s), redes y servidores (Nginx/Apache), CI/CD y observabilidad.</div>
-    </section>
-
-    <section id="skills" aria-labelledby="skills-title">
-      <h2 id="skills-title" class="section-title">Skills principales</h2>
-      <div class="chips">
-        <span class="chip">Linux</span><span class="chip">Windows Server</span><span class="chip">Networking</span>
-        <span class="chip">Docker</span><span class="chip">Kubernetes</span><span class="chip">Ansible</span>
-        <span class="chip">Terraform</span><span class="chip">Bash / PowerShell</span><span class="chip">CI/CD</span>
-        <span class="chip">Nginx / Apache</span><span class="chip">SIEM</span><span class="chip">Hardening</span><span class="chip">Cloud (AWS/Azure)</span>
-      </div>
-    </section>
-
-    <section id="projects" aria-labelledby="projects-title">
-      <h2 id="projects-title" class="section-title">Proyectos destacados</h2>
-      <div class="grid">
-        <article class="card project">
-          <img src="assets/proyecto1.jpg" alt="Miniatura del Proyecto 1" loading="lazy" />
-          <h4>Infraestructura reproducible con IaC</h4>
-          <p>Terraform + Ansible para levantar entornos seguros y auditables en AWS. Módulos reutilizables y pipelines CI.</p>
-        </article>
-        <article class="card project">
-          <img src="assets/proyecto2.jpg" alt="Miniatura del Proyecto 2" loading="lazy" />
-          <h4>Plataforma de observabilidad</h4>
-          <p>Stack Prometheus + Loki + Grafana con alertas y SLOs para microservicios en Kubernetes.</p>
-        </article>
-        <article class="card project">
-          <img src="assets/proyecto3.jpg" alt="Miniatura del Proyecto 3" loading="lazy" />
-          <h4>Hardening y respuesta a incidentes</h4>
-          <p>Guías CIS aplicadas, inventario de activos y playbooks de respuesta con herramientas open-source.</p>
-        </article>
-      </div>
     </section>
   </main>
 
@@ -240,47 +165,98 @@
   /* ========= Año en footer ========= */
   document.getElementById('y').textContent = new Date().getFullYear();
 
-  /* ========= Pulsos ========= */
-  function pulse(type){ // 'small' | 'strong'
+  /* ========= Construcción de SLICES (una vez) ========= */
+  function buildSlices(){
     const h1 = document.getElementById('heroTitle');
-    if(!h1) return;
-    h1.setAttribute('data-text', document.getElementById('typeName')?.textContent.trim() || h1.textContent.trim());
+    const overlay = h1.querySelector('.glitch-slices');
+    overlay.innerHTML = '';
+    const slices = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--slices'));
+    const text = document.getElementById('typeName').textContent || ' ';
+    for(let i=0;i<slices;i++){
+      const s = document.createElement('span');
+      s.className = 'glitch-slice';
+      // altura y posición de cada banda
+      const top = (i / slices) * 100;
+      const next = ((i+1) / slices) * 100;
+      s.style.top = top + '%';
+      s.style.height = (next - top) + '%';
 
-    // CSS overlay (bandas + aberración)
-    h1.classList.remove('pulse-small','pulse-strong');
-    void h1.offsetWidth; // reset
-    h1.classList.add(type === 'strong' ? 'pulse-strong' : 'pulse-small');
-
-    // Warp real (SVG)
-    const filterId = type === 'strong' ? 'cp-warp-strong' : 'cp-warp-small';
-    h1.style.filter = `url(#${filterId})`;
-    const anim = document.getElementById(type === 'strong' ? 'anim-strong-freq' : 'anim-small-freq');
-    anim?.beginElement();
-
-    // Limpieza cuando termina
-    const dur = type === 'strong' ? 230 : 140;
-    setTimeout(()=>{ h1.style.filter = 'none'; }, dur + 40);
+      // copia del texto (misma fuente/estilo del H1)
+      const c = document.createElement('span');
+      c.className = 'copy';
+      c.textContent = text;
+      s.appendChild(c);
+      overlay.appendChild(s);
+    }
   }
 
-  // Bucle: pequeños cada ~2.4s, cada 6º → fuerte
+  /* ========= Pulsos ========= */
   let pulseCount = 0, loopTimer = null;
+
+  function pulse(kind){ // 'strong' | 'small'
+    const h1 = document.getElementById('heroTitle');
+    const overlay = h1.querySelector('.glitch-slices');
+    const slices = [...overlay.children];
+    if(slices.length === 0) return;
+
+    // Asegura que el texto esté actualizado
+    const t = document.getElementById('typeName').textContent;
+    slices.forEach(s => { s.firstChild.textContent = t; });
+
+    // Mostrar overlay
+    overlay.style.opacity = 1;
+
+    // Parámetros según tipo
+    const isStrong = kind === 'strong';
+    const dur = parseInt(getComputedStyle(document.documentElement).getPropertyValue(isStrong?'--strong-dur':'--small-dur'));
+    const maxShift = parseInt(getComputedStyle(document.documentElement).getPropertyValue(isStrong?'--shift-strong':'--shift-small'));
+    const maxSkew = parseFloat(getComputedStyle(document.documentElement).getPropertyValue(isStrong?'--skew-strong':'--skew-small'));
+
+    // Desplaza cada slice en dirección alterna y con jitter,
+    // creando la “forma mordida” que ves en la referencia.
+    slices.forEach((s, idx) => {
+      const copy = s.firstChild;
+      const dir = (idx % 2 === 0) ? -1 : 1;                          // alterna L/R
+      const noise = (Math.random()*0.6 + 0.4);                       // 0.4–1.0
+      const shift = Math.round(maxShift * noise) * dir;
+      const skew = (maxSkew * (Math.random()*0.7 + 0.3)) * dir;
+      copy.style.transform = `translateX(${shift}px) skewX(${skew})`;
+      // animación corta con easing para que no “tiemble”
+      copy.style.transition = `transform ${dur}ms cubic-bezier(.2,.7,.2,1)`;
+    });
+
+    // Warp real (rompe borde durante el fuerte)
+    if(isStrong){
+      h1.style.filter = 'url(#warpStrong)';
+      document.getElementById('wFreq').beginElement();
+      setTimeout(()=>{ h1.style.filter = 'none'; }, dur+20);
+    }
+
+    // Reset al final
+    setTimeout(()=>{
+      overlay.style.opacity = 0;
+      slices.forEach(s => { s.firstChild.style.transform='none'; s.firstChild.style.transition=''; });
+    }, dur);
+  }
+
   function startPulseLoop(){
     stopPulseLoop();
+    const interval = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--loop-interval'));
+    const strongEvery = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--strong-every'));
     loopTimer = setInterval(()=>{
       pulseCount++;
-      if(pulseCount % 6 === 1){ pulse('strong'); } // fuerte cada 6
-      else{ pulse('small'); }
-    }, parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--loop-interval')));
+      (pulseCount % strongEvery === 1) ? pulse('strong') : pulse('small');
+    }, interval);
   }
   function stopPulseLoop(){ if(loopTimer){ clearInterval(loopTimer); loopTimer = null; } }
 
-  // Hover para testear manualmente (no interfiere con el loop)
+  // Hover para probar manualmente sin romper el loop
   document.addEventListener('DOMContentLoaded', ()=>{
     const h1 = document.getElementById('heroTitle');
-    h1?.addEventListener('mouseenter', ()=>pulse('small'));
+    h1.addEventListener('mouseenter', ()=>pulse('small'));
   });
 
-  /* ========= Doble typing ========= */
+  /* ========= Typing (tu código, con buildSlices + arranque) ========= */
   (function(){
     const nameText = "Alejandro Orcajada Meseguer";
     const roleText = "Administrador de Sistemas y Ciberseguridad";
@@ -293,11 +269,13 @@
 
     function typeName(){ if(i<nameText.length){ elName.textContent += nameText.charAt(i++); setTimeout(typeName,speed); } else { setTimeout(typeRole,250);} }
     function typeRole(){ if(j<roleText.length){ elRole.textContent += roleText.charAt(j++); setTimeout(typeRole,speed); } else {
-        cursor?.remove(); lead?.classList.add('show');
-        // Pulso fuerte inicial + arranque del loop de micro-pulsos
-        pulse('strong');
-        setTimeout(startPulseLoop, 800);
-      } }
+      cursor?.remove(); lead?.classList.add('show');
+      // Construye slices con el texto final y lanza pulso fuerte + loop
+      buildSlices();
+      pulse('strong');
+      setTimeout(startPulseLoop, 1000);
+    } }
+
     setTimeout(typeName,300);
   })();
 </script>
@@ -309,4 +287,3 @@
 <script src="assets/js/cubes.js"></script>
 </body>
 </html>
-
