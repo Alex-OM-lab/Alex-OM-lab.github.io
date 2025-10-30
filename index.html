@@ -6,6 +6,7 @@
   <title>Alejandro Orcajada Meseguer | Administrador de Sistemas y Ciberseguridad</title>
   <meta name="description" content="Portafolio profesional de Alejandro Orcajada Meseguer, Administrador de Sistemas y Ciberseguridad." />
   <link rel="stylesheet" href="assets/css/graph.css">
+  <link rel="stylesheet" href="assets/css/cubes.css">
 </head>
   <style>
     /* ===== PALETA OSCURA CÁLIDA (azul profundo + naranjas) ===== */
@@ -254,102 +255,6 @@
       background:var(--accent); color:#111; box-shadow:0 4px 14px rgba(0,0,0,.35);
       border:1px solid rgba(255,255,255,.25);
     }
-
-    /* ============================================================
-       ========  CARRUSEL DE CUBOS (placeholder)  =================
-       Mantiene la estética y variables. 5 visibles en desktop.
-       ============================================================ */
-    .cube-carousel{
-      position:relative;
-      overflow:hidden;
-      border-radius:var(--radius);
-      background:linear-gradient(180deg,color-mix(in oklab,var(--panel) 92%,#0f1422 8%),var(--panel));
-      border:1px solid rgba(255,255,255,.06);
-      padding:14px;
-    }
-    .cube-head{
-      display:flex; align-items:baseline; justify-content:center; gap:12px; /* centrado */
-      margin-bottom:10px;
-      text-align:center;
-    }
-    .cube-head h3{margin:0; font-size:clamp(20px,2.2vw,26px)}
-    .cube-track{
-      display:flex;
-      gap:14px;
-      will-change: transform;
-      transition: transform .6s cubic-bezier(.22,.61,.36,1);
-    }
-    .cube{
-      flex:0 0 calc((100% - 14px*4)/5); /* 5 visibles con 4 gaps */
-      background:#0c1323;
-      border:1px solid rgba(255,255,255,.08);
-      border-radius:12px;
-      overflow:hidden;
-      box-shadow:0 6px 18px rgba(0,0,0,.22);
-      display:flex; flex-direction:column;
-    }
-    .cube:hover{ border-color:rgba(255,159,26,.35); box-shadow:0 10px 28px rgba(255,159,26,.12); transform:translateY(-1px); transition:transform .12s ease }
-    .cube-media{
-      width:100%; aspect-ratio:16/10; background:#0a1020; position:relative;
-      border-bottom:1px solid rgba(255,255,255,.06);
-    }
-    .cube-media img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover}
-    .cube-body{padding:10px 12px 12px; display:flex; flex-direction:column; gap:8px}
-    .cube-title{margin:0; font-weight:800; font-size:15.5px; color:var(--text)}
-    .cube-meta{font-size:12.5px; color:var(--muted)}
-    .cube-link{
-      margin-top:auto;
-      align-self:flex-start;
-      text-decoration:none; font-weight:700; font-size:13.5px;
-      color:#ffe2b0; padding:6px 10px; border-radius:999px;
-      background:rgba(255,159,26,.12); border:1px solid rgba(255,159,26,.35);
-      transition:background .18s,border-color .18s,transform .12s;
-    }
-    .cube-link:hover{ background:rgba(255,159,26,.18); border-color:rgba(255,159,26,.6); transform:translateY(-1px) }
-
-    /* Flechas */
-    .cube-nav{
-      position:absolute; inset:0; pointer-events:none;
-    }
-    .cube-btn{
-      position:absolute; top:50%; translate:0 -50%;
-      width:42px; height:42px; border-radius:999px;
-      background:rgba(17,26,45,.75);
-      border:1px solid rgba(255,255,255,.08);
-      display:flex; align-items:center; justify-content:center;
-      font-weight:900; color:#ffd79a; cursor:pointer;
-      opacity:0; pointer-events:none;
-      transition:opacity .18s ease, transform .12s ease, background .18s ease, border-color .18s ease;
-      box-shadow:0 4px 16px rgba(0,0,0,.35);
-    }
-    .cube-btn:hover{ transform:translateY(-1px); background:rgba(17,26,45,.9); border-color:rgba(255,159,26,.35) }
-    .cube-btn.prev{ left:6px }
-    .cube-btn.next{ right:6px }
-    .cube-carousel:hover .cube-btn,
-    .cube-carousel:has(.cube-btn:focus-visible){ opacity:1; pointer-events:auto }
-
-    /* Indicadores */
-    .cube-dots{ display:flex; gap:6px; justify-content:center; margin-top:12px }
-    .cube-dot{
-      width:7px; height:7px; border-radius:999px;
-      background:rgba(255,255,255,.22);
-      transition:transform .12s, background .18s, box-shadow .18s;
-    }
-    .cube-dot.is-active{
-      background:var(--accent);
-      box-shadow:0 0 10px rgba(255,159,26,.6);
-      transform:scale(1.25);
-    }
-    /* Responsive: 3 y 2/1 visibles */
-    @media (max-width:1020px){ .cube{ flex-basis:calc((100% - 14px*2)/3) } }
-    @media (max-width:720px) { .cube{ flex-basis:calc((100% - 14px)/2) } }
-    @media (max-width:520px) { .cube{ flex-basis:100% } }
-
-    /* Reduce motion: desactivar autoplay */
-    @media (prefers-reduced-motion: reduce){
-      .cube-track{ transition:none }
-    }
-
     /* ====== MAPA DEL SITIO (cajón deslizante) ====== */
 .site-drawer {
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 80;
@@ -980,120 +885,6 @@
   }
 
   renderNav(NAV_TREE);
-
-  /* ========= Carrusel de cubos ========= */
-  (function initCubeCarousel(){
-    const root = document.querySelector('.cube-carousel');
-    if(!root) return;
-
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const autoplay = root.dataset.autoplay === 'true' && !prefersReduced;
-    const intervalMs = parseInt(root.dataset.interval || '3200', 10);
-    const shuffle = root.dataset.shuffle === 'true';
-
-    const track = document.getElementById('cubeTrack');
-    const dotsEl = document.getElementById('cubeDots');
-    const btnPrev = document.getElementById('cubePrev');
-    const btnNext = document.getElementById('cubeNext');
-
-    const ITEMS = Array.from({length:12}).map((_,i)=>({
-      id: i+1,
-      titulo: `Artículo ${i+1}: Placeholder`,
-      resumen: `Resumen breve del contenido ${i+1}. Texto ficticio para probar el layout.`,
-      img: `assets/placeholder_${(i%6)+1}.jpg`,
-      href: "#"
-    }));
-
-    if(shuffle) ITEMS.sort(()=>Math.random()-.5);
-
-    const makeCube = (item) => {
-      const li = document.createElement('article');
-      li.className = 'cube';
-      li.setAttribute('role','listitem');
-      li.innerHTML = `
-        <div class="cube-media"><img src="${item.img}" alt="Imagen del ${item.titulo}" loading="lazy"></div>
-        <div class="cube-body">
-          <h4 class="cube-title">${item.titulo}</h4>
-          <div class="cube-meta">${item.resumen}</div>
-          <a class="cube-link" href="${item.href}">Ver más</a>
-        </div>`;
-      return li;
-    };
-
-    const baseNodes = ITEMS.map(makeCube);
-    const cloneNodes = ITEMS.map(makeCube);
-    baseNodes.forEach(n=>track.appendChild(n));
-    cloneNodes.forEach(n=>track.appendChild(n));
-
-    track.setAttribute('role','list');
-
-    ITEMS.forEach((_,idx)=>{
-      const d = document.createElement('span');
-      d.className = 'cube-dot' + (idx===0?' is-active':'');
-      dotsEl.appendChild(d);
-    });
-
-    let index = 0;
-    let timer = null;
-    let itemWidth = () => (track.querySelector('.cube')?.getBoundingClientRect().width || 0) + 14;
-    let max = ITEMS.length;
-
-    const setActiveDot = (i)=>{
-      const dots = Array.from(dotsEl.children);
-      dots.forEach((el,ix)=> el.classList.toggle('is-active', ix === (i % max)));
-    };
-
-    const jumpIfNeeded = ()=>{
-      if(index >= max){
-        index = index % max;
-        track.style.transition = 'none';
-        track.style.transform = `translateX(${-index*itemWidth()}px)`;
-        void track.offsetWidth;
-        track.style.transition = '';
-      } else if(index < 0){
-        index = (index + max) % max + max;
-        track.style.transition = 'none';
-        track.style.transform = `translateX(${-index*itemWidth()}px)`;
-        void track.offsetWidth;
-        track.style.transition = '';
-      }
-    };
-
-    const goTo = (i)=>{ index = i; track.style.transform = `translateX(${-index*itemWidth()}px)`; setActiveDot(index); };
-    const next = ()=>{ goTo(index+1); };
-    const prev = ()=>{ goTo(index-1); };
-
-    const start = ()=>{ if(timer || !autoplay) return; timer = setInterval(()=>{ next(); jumpIfNeeded(); }, intervalMs); };
-    const stop  = ()=>{ clearInterval(timer); timer = null; };
-
-    root.addEventListener('mouseenter', ()=>{ stop(); });
-    root.addEventListener('mouseleave', ()=>{ start(); });
-    root.addEventListener('focusin', ()=>{ stop(); });
-    root.addEventListener('focusout', ()=>{ start(); });
-
-    btnNext.addEventListener('click', ()=>{ stop(); next(); jumpIfNeeded(); });
-    btnPrev.addEventListener('click', ()=>{ stop(); prev(); jumpIfNeeded(); });
-
-    let touchX = null, deltaX = 0, swiping = false;
-    root.addEventListener('touchstart', (e)=>{ touchX = e.touches[0].clientX; deltaX = 0; swiping = true; stop(); }, {passive:true});
-    root.addEventListener('touchmove', (e)=>{
-      if(!swiping) return;
-      deltaX = e.touches[0].clientX - touchX;
-      track.style.transition = 'none';
-      track.style.transform = `translateX(${-(index*itemWidth()) + deltaX}px)`;
-    }, {passive:true});
-    root.addEventListener('touchend', ()=>{
-      track.style.transition = '';
-      if(Math.abs(deltaX) > itemWidth()*0.25){ (deltaX < 0) ? next() : prev(); jumpIfNeeded(); } else { goTo(index); }
-      swiping = false; start();
-    });
-
-    window.addEventListener('resize', ()=>{ goTo(index); });
-
-    goTo(0);
-    if(autoplay) start();
-  })();
-
   /* ========= MAPA DEL SITIO — SECCIÓN FIJA =========
      2 raíces (Nivel 0): "Teoría y datos curiosos" y "Portafolio"
      → 2 áreas (Nivel 1): "Ciberseguridad" y "Sistemas"
@@ -1195,5 +986,6 @@
 </script>
 <script src="assets/js/graph-data.js"></script>
 <script src="assets/js/graph.js"></script>
+<script src="assets/js/cubes.js"></script>
 </body>
 </html>
