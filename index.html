@@ -431,7 +431,6 @@
   .site-panel{ transition:none }
   .site-handle{ transition:none }
 }
-
     /* ===== MAPA DEL SITIO — sección fija ===== */
 .sitemap { margin-top: 30px; }
 .sitemap .card {
@@ -480,8 +479,7 @@
 
 @media (max-width:980px){ .sitemap .sm-cols{ grid-template-columns: 1fr 1fr } }
 @media (max-width:640px){ .sitemap .sm-cols{ grid-template-columns: 1fr } }
-
-/* ===== ÁRBOL VISUAL (SVG) ===== (estilos conservados, sin HTML/JS del mapa) */
+/* ===== ÁRBOL VISUAL (SVG) ===== */
 .graph .card{
   border-radius: var(--radius);
   border:1px solid rgba(255,255,255,.06);
@@ -490,12 +488,25 @@
 }
 .graph-head{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:10px; }
 .graph-head h2{ margin:0 }
+
+/* escenario más grande para “jugar” */
 .graph-stage{
   position:relative; border:1px solid rgba(255,255,255,.06); border-radius:12px;
-  background:#0c1323; overflow:hidden; height:680px;
+  background:#0c1323; overflow:hidden; height:680px;  /* ↑ más alto */
 }
-#graphSvg{ width:100%; height:100%; display:block; }
-.node .badge{ fill:#111; font-weight:900; font-size:11px; }
+/* SVG a tamaño del stage */
+#graphSvg{
+  width:100%;
+  height:100%;
+  display:block; /* elimina el gap inline */
+}
+/* Mejora de contraste del número de nivel */
+.node .badge{
+  fill:#111;
+  font-weight:900;
+  font-size:11px;
+}
+/* leyenda */
 .graph-legend{
   display:flex; gap:14px; align-items:center; justify-content:flex-end; margin-top:10px;
   color:var(--muted); font-size:13px;
@@ -505,6 +516,8 @@
 .graph-legend .lvl1{ background:#ffd79a }
 .graph-legend .lvl2{ background:#8fd6ff }
 .graph-legend .lvl3{ background:#9be2b0 }
+
+/* nodos */
 .node{ cursor:pointer; }
 .node rect{ rx:10; ry:10; fill:#0e1730; stroke:rgba(255,255,255,.10); stroke-width:1.2; }
 .node[data-lvl="0"] rect{ fill:rgba(255,159,26,.18); stroke:rgba(255,159,26,.55) }
@@ -513,8 +526,13 @@
 .node[data-lvl="3"] rect{ fill:rgba(155,226,176,.10); stroke:rgba(155,226,176,.4) }
 .node .title{ fill:#e9eef6; font-weight:800; font-size:14px; }
 .node .sub{ fill:#a8b2c2; font-size:12.5px; }
+
+
+/* animaciones de aparición (solo fade para no pisar el transform SVG) */
 .node{ opacity:0; transition:opacity .35s ease; }
 .node.is-in{ opacity:1; }
+
+/* enlaces + animación de trazo */
 .link{ fill:none; stroke:rgba(255,159,26,.35); stroke-width:2; filter: drop-shadow(0 0 3px rgba(255,159,26,.12)); }
 .link.l1{ stroke:rgba(255,215,154,.35) }
 .link.l2{ stroke:rgba(143,214,255,.35) }
@@ -525,8 +543,12 @@
   animation: draw .6s ease forwards;
 }
 @keyframes draw{ to{ stroke-dashoffset:0 } }
+
+/* cursores para pan/zoom */
 .graph-stage.is-panning{ cursor:grabbing; }
 .graph-stage .svgroot{ cursor:grab; }
+    
+/* deslizamiento suave al aparecer (solo afecta al grupo interno) */
 .node .node-in{ transform:translateX(22px); transition:transform .35s ease; }
 .node.is-in .node-in{ transform:none; }
   </style>
@@ -537,7 +559,7 @@
     <div class="topwrap">
       <a class="brand" href="./"><span class="brand-dot"></span><span>AO · Portafolio</span></a>
 
-      <!-- Menú izquierda -->
+      <!-- Menú izquierda (nuevo orden) -->
       <nav class="menu-left" id="nav" aria-label="Navegación principal"></nav>
 
       <!-- Menú derecha: Inicio -->
@@ -625,37 +647,59 @@
         <div class="cube-dots" id="cubeDots" aria-hidden="true"></div>
       </div>
     </section>
-
     <!-- ========================= MAPA DEL SITIO ========================== -->
-    <section id="sitemap" class="sitemap" aria-labelledby="sitemap-title">
-      <div class="card">
-        <div class="sm-head">
-          <h2 id="sitemap-title" class="section-title">Mapa del sitio</h2>
-          <p class="kicker">Explora el contenido por niveles: raíz → áreas → subcarpetas → artículos.</p>
-        </div>
+<section id="sitemap" class="sitemap" aria-labelledby="sitemap-title">
+  <div class="card">
+    <div class="sm-head">
+      <h2 id="sitemap-title" class="section-title">Mapa del sitio</h2>
+      <p class="kicker">Explora el contenido por niveles: raíz → áreas → subcarpetas → artículos.</p>
+    </div>
 
-        <div class="sm-cols">
-          <div class="sm-col is-open">
-            <h4>Nivel 0</h4>
-            <ul class="sm-list" id="smL0"></ul>
-          </div>
-          <div class="sm-col" id="wrapL1">
-            <h4>Nivel 1</h4>
-            <ul class="sm-list" id="smL1"></ul>
-          </div>
-          <div class="sm-col" id="wrapL2">
-            <h4>Nivel 2</h4>
-            <ul class="sm-list" id="smL2"></ul>
-          </div>
-          <div class="sm-col" id="wrapL3">
-            <h4>Nivel 3 (Artículos)</h4>
-            <ul class="sm-list" id="smL3"></ul>
-          </div>
-        </div>
+    <div class="sm-cols">
+      <div class="sm-col is-open">
+        <h4>Nivel 0</h4>
+        <ul class="sm-list" id="smL0"></ul>
       </div>
-    </section>
+      <div class="sm-col" id="wrapL1">
+        <h4>Nivel 1</h4>
+        <ul class="sm-list" id="smL1"></ul>
+      </div>
+      <div class="sm-col" id="wrapL2">
+        <h4>Nivel 2</h4>
+        <ul class="sm-list" id="smL2"></ul>
+      </div>
+      <div class="sm-col" id="wrapL3">
+        <h4>Nivel 3 (Artículos)</h4>
+        <ul class="sm-list" id="smL3"></ul>
+      </div>
+    </div>
+  </div>
+</section>
+    <!-- ========================= ÁRBOL VISUAL (SVG) ========================== -->
+<section id="site-graph" aria-labelledby="site-graph-title" class="graph">
+  <div class="card">
+    <div class="graph-head">
+      <h2 id="site-graph-title" class="section-title">Mapa visual</h2>
+      <p class="kicker">Esquema interactivo — haz clic para desplegar niveles.</p>
+    </div>
 
-    <!-- *** OJO: Se ha eliminado aquí la sección del ÁRBOL VISUAL (SVG) *** -->
+<div class="graph-stage" id="graphStage">
+  <svg id="graphSvg" class="svgroot" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid meet" role="img"
+       aria-label="Esquema del contenido por niveles">
+    <!-- Contenedor que trasladamos/escalamos -->
+    <g id="graphRoot"></g>
+  </svg>
+</div>
+
+    <div class="graph-legend">
+      <span class="dot lvl0"></span> Nivel 0
+      <span class="dot lvl1"></span> Nivel 1
+      <span class="dot lvl2"></span> Nivel 2
+      <span class="dot lvl3"></span> Nivel 3
+    </div>
+  </div>
+</section>
+    <!-- /CARRUSEL -->
 
     <section id="contact" aria-labelledby="contact-title">
       <h2 id="contact-title" class="section-title">Contacto</h2>
@@ -752,366 +796,708 @@
       listEl.appendChild(li);
     });
 
-    const info = sideEl.querySelector('.pager-info');
-    if (info) info.textContent = `Página ${state.page + 1} de ${state.pages.length}`;
+    let pager = sideEl.querySelector('.pager');
+    if (!pager) { pager = document.createElement('div'); pager.className = 'pager'; sideEl.appendChild(pager); }
+    pager.innerHTML = '';
 
-    const prev = sideEl.querySelector('.pager-btn.prev');
-    const next = sideEl.querySelector('.pager-btn.next');
-    if (prev) prev.disabled = state.page === 0;
-    if (next) next.disabled = state.page >= state.pages.length - 1;
-  }
+    const prev = document.createElement('button');
+    prev.className = 'pager-btn prev'; prev.title = 'Página anterior';
+    prev.disabled = state.page === 0; prev.dataset.page = state.page > 0 ? (state.page) : '';
 
-  function buildSidePanel(listAnchorEls){
-    const side = document.createElement('div');
-    side.className = 'side';
-    side.innerHTML = `
-      <div class="side-title">Artículos</div>
-      <ul class="side-list"></ul>
-      <div class="pager">
-        <button type="button" class="pager-btn prev" aria-label="Anterior"></button>
-        <span class="pager-info"></span>
-        <button type="button" class="pager-btn next" aria-label="Siguiente"></button>
-      </div>
-    `;
+    const next = document.createElement('button');
+    next.className = 'pager-btn next'; next.title = 'Página siguiente';
+    next.disabled = state.page >= state.pages.length - 1; next.dataset.page = state.page < state.pages.length - 1 ? (state.page + 2) : '';
 
-    // Estado de paginación
-    const pages = chunkArray(listAnchorEls, 8);
-    const state = { page: 0, pages };
+    const info = document.createElement('span');
+    info.className = 'pager-info';
+    info.textContent = `Página ${state.page + 1} de ${state.pages.length}`;
 
-    const prev = side.querySelector('.pager-btn.prev');
-    const next = side.querySelector('.pager-btn.next');
-
-    prev?.addEventListener('click', () => {
-      if (state.page > 0) { state.page--; renderSidePage(side, state); }
-    });
-    next?.addEventListener('click', () => {
-      if (state.page < state.pages.length - 1) { state.page++; renderSidePage(side, state); }
+    [prev, next].forEach(b=>{
+      b.addEventListener('mousedown', e => e.preventDefault());
+      b.addEventListener('click', () => {
+        const folder = b.closest('.nav-folder');
+        if (folder) setOpen(folder, true);
+      });
     });
 
-    renderSidePage(side, state);
-    return side;
+    prev.addEventListener('click', () => { if (state.page > 0) { state.page--; renderSidePage(sideEl, state); }});
+    next.addEventListener('click', () => { if (state.page < state.pages.length - 1) { state.page++; renderSidePage(sideEl, state); }});
+
+    pager.append(info, prev, next);
   }
 
-  function buildNav(){
-    const navLeft = document.getElementById('nav');
-    if(!navLeft) return;
+  function swapSideContent(sideEl, newTitle, newLinksArray) {
+    const titleEl = sideEl.querySelector('.side-title');
+    sideEl._pagesByKey = sideEl._pagesByKey || new Map();
 
-    NAV_TREE.forEach(node => {
-      if (node.children && node.children.length){
-        const folder = document.createElement('div');
-        folder.className = 'nav-folder';
-        folder.setAttribute('aria-open','false');
-        if (node.sticky) folder.dataset.sticky = 'true';
+    const perPage = 6;
+    const pages = chunkArray(newLinksArray, perPage);
 
-        folder.innerHTML = `
-          <button class="nav-btn" type="button" aria-haspopup="true" aria-expanded="false">
-            <span class="ico-folder" aria-hidden="true"></span>
-            <span>${node.label}</span>
-            <span class="caret" aria-hidden="true"></span>
-          </button>
-          <div class="sub">
-            <ul></ul>
-          </div>
-        `;
-        const ul = folder.querySelector('.sub > ul');
+    const key = newTitle;
+    const prevState = sideEl._pagesByKey.get(key) || { page: 0, pages: [] };
+    const state = { page: Math.min(prevState.page, Math.max(pages.length - 1, 0)), pages };
+    sideEl._pagesByKey.set(key, state);
 
-        // Nivel 1
-        node.children.forEach(l1 => {
-          const li1 = document.createElement('li');
+    if (sideEl.dataset.key !== newTitle) {
+      sideEl.classList.remove('swap-in'); sideEl.classList.add('swap-out');
+      clearTimeout(sideEl._swapTimer);
+      sideEl._swapTimer = setTimeout(() => {
+        sideEl.dataset.key = newTitle;
+        titleEl.textContent = newTitle;
+        renderSidePage(sideEl, state);
+        void sideEl.offsetWidth;
+        sideEl.classList.remove('swap-out'); sideEl.classList.add('swap-in');
+      }, 120);
+    } else {
+      renderSidePage(sideEl, state);
+    }
+  }
 
-          const a1 = document.createElement('a');
-          a1.href = l1.href || '#';
-          a1.textContent = l1.label;
+  function positionSideAligned(sideEl, anchorEl, subEl){
+    const listEl   = subEl.querySelector(':scope > ul');
+    const subRect  = subEl.getBoundingClientRect();
+    const listRect = listEl.getBoundingClientRect();
+    const aRect    = anchorEl.getBoundingClientRect();
+    const sideH    = sideEl.getBoundingClientRect().height;
 
-          li1.appendChild(a1);
+    const desiredTop = aRect.top - subRect.top;
+    const minTop     = listRect.top - subRect.top;
+    const maxTop     = (listRect.bottom - subRect.top) - sideH;
 
-          // Nivel 2 (vertical)
-          if (l1.children && l1.children.length){
-            const nested = document.createElement('ul');
-            nested.className = 'nested';
-            l1.children.forEach(l2 => {
-              const li2 = document.createElement('li');
+    let top;
+    if (maxTop < minTop) top = minTop; else top = Math.min(Math.max(desiredTop, minTop), maxTop);
+    sideEl.style.top = `${top}px`;
+  }
 
-              const a2 = document.createElement('a');
-              a2.href = l2.href || '#';
-              a2.textContent = l2.label;
+  /* ========= Render del NAV ========= */
+  function createNode(node){
+    if(!node.children){
+      const a=document.createElement('a');
+      a.className='nav-link'; a.href=node.href||'#'; a.textContent=node.label;
+      return a;
+    }
 
-              li2.appendChild(a2);
-              nested.appendChild(li2);
+    const wrap=document.createElement('div');
+    wrap.className='nav-folder'; wrap.setAttribute('aria-open','false');
+    if (node.label === "Portafolio") wrap.dataset.sticky = "true";
 
-              // Panel lateral Nivel 3 (paginado)
-              if (l2.children && l2.children.length && node.sticky){
-                // Crear anchors de lvl3:
-                const lvl3Anchors = l2.children.map(x=>{
-                  const a = document.createElement('a');
-                  a.href = x.href || '#';
-                  a.textContent = x.label;
-                  return a;
-                });
+    const btn=document.createElement('button');
+    btn.className='nav-btn'; btn.setAttribute('aria-expanded','false'); btn.setAttribute('aria-haspopup','true');
+    const labelHTML = node.href ? `<a href="${node.href}" class="nav-btn-link">${node.label}</a>` : `<span>${node.label}</span>`;
+    btn.innerHTML=`<span class="ico-folder"></span>${labelHTML}<span class="caret"></span>`;
+    wrap.appendChild(btn);
 
-                const side = buildSidePanel(lvl3Anchors);
-                folder.querySelector('.sub')?.appendChild(side);
+    const sub=document.createElement('div'); sub.className='sub';
+    const ul=document.createElement('ul'); sub.appendChild(ul);
 
-                // Al pasar por cada L2 mostramos panel y su contenido
-                a2.addEventListener('mouseenter', ()=>{
-                  folder.dataset.panel = 'show';
-                  // Transición suave entre paneles
-                  side.classList.add('swap-in');
-                  side.classList.remove('swap-out');
-                });
-                a2.addEventListener('focus', ()=> a2.dispatchEvent(new Event('mouseenter')));
+    let side = null;
+    if (wrap.dataset.sticky === "true") {
+      side = document.createElement('div');
+      side.className = 'side';
+      side.innerHTML = `<div class="side-title">Selecciona una subcarpeta…</div><ul class="side-list"></ul>`;
+      sub.appendChild(side);
+    }
 
-                // Marcar elemento activo (visual)
-                a2.addEventListener('mouseenter', ()=>{
-                  nested.querySelectorAll('li').forEach(li=>li.classList.remove('focus2'));
-                  li2.classList.add('focus2');
-                });
-              }
-            });
-            li1.appendChild(nested);
+    node.children.forEach(childLvl1=>{
+      const liLvl1=document.createElement('li');
 
-            // Abrir/cerrar L2
-            a1.addEventListener('click', (e)=>{
-              e.preventDefault();
-              const open = li1.classList.toggle('open');
-              if (open) {
-                // Cerrar hermanos
-                Array.from(ul.children).forEach(li=>{
-                  if (li!==li1) li.classList.remove('open');
-                });
-              }
-            });
-          }
+      const link1=document.createElement('a');
+      link1.href=childLvl1.href||'#';
+      link1.innerHTML=`<span>${childLvl1.label}</span><span style="opacity:.6">›</span>`;
+      liLvl1.appendChild(link1);
 
-          ul.appendChild(li1);
+      const ulLvl2=document.createElement('ul'); ulLvl2.className='nested';
+
+      childLvl1.children?.forEach(childLvl2=>{
+        const liLvl2=document.createElement('li');
+        const link2=document.createElement('a');
+        link2.href=childLvl2.href||'#';
+        link2.innerHTML=`<span>${childLvl2.label}</span><span style="opacity:.6">›</span>`;
+        liLvl2.appendChild(link2);
+
+        const hiddenLvl3=document.createElement('ul'); hiddenLvl3.style.display='none';
+        childLvl2.children?.forEach(a3=>{
+          const li3=document.createElement('li');
+          const a=document.createElement('a');
+          a.href=a3.href||'#'; a.textContent=a3.label;
+          li3.appendChild(a); hiddenLvl3.appendChild(li3);
         });
+        liLvl2.appendChild(hiddenLvl3);
 
-        // Abrir/cerrar popover principal
-        const btn = folder.querySelector('.nav-btn');
-        btn?.addEventListener('click', ()=>{
-          const open = folder.getAttribute('aria-open') === 'true';
-          folder.setAttribute('aria-open', String(!open));
-          btn.setAttribute('aria-expanded', String(!open));
-          if (!open && folder.dataset.sticky === 'true'){
-            folder.dataset.panel = 'show';
-          } else {
-            folder.dataset.panel = 'hide';
-          }
-        });
+        if (wrap.dataset.sticky === "true") {
+          link2.addEventListener('mouseenter', ()=>{
+            const linksLvl3 = Array.from(hiddenLvl3.querySelectorAll('a'));
+            const newTitle  = `${childLvl1.label} / ${childLvl2.label}`;
 
-        // Cerrar al salir con el ratón (solo desktop)
-        folder.addEventListener('mouseleave', ()=>{
-          if (window.matchMedia('(max-width:860px)').matches) return;
-          folder.setAttribute('aria-open','false');
-          folder.dataset.panel = 'hide';
-          folder.querySelectorAll('li.open').forEach(li=>li.classList.remove('open'));
-        });
+            positionSideAligned(side, link2, sub);
+            swapSideContent(side, newTitle, linksLvl3);
+            wrap.setAttribute('data-panel','show');
+            setTimeout(()=> positionSideAligned(side, link2, sub), 0);
+          });
 
-        navLeft.appendChild(folder);
-      } else {
-        // Elemento simple
-        const a = document.createElement('a');
-        a.className = 'nav-btn-link';
-        a.href = node.href || '#';
-        a.textContent = node.label;
-        navLeft.appendChild(a);
-      }
+          link2.addEventListener('mouseenter', ()=>{
+            liLvl2.classList.add('focus2');
+            liLvl2.parentElement.querySelectorAll(':scope > li.focus2')
+              .forEach(sib => { if (sib !== liLvl2) sib.classList.remove('focus2'); });
+          });
+          liLvl2.addEventListener('mouseleave', ()=> liLvl2.classList.remove('focus2'));
+          link2.addEventListener('focus', ()=> liLvl2.classList.add('focus2'));
+          link2.addEventListener('blur' , ()=> liLvl2.classList.remove('focus2'));
+        }
+
+        ulLvl2.appendChild(liLvl2);
+      });
+
+      liLvl1.appendChild(ulLvl2);
+      ul.appendChild(liLvl1);
+
+      link1.addEventListener('mouseenter', ()=>{ liLvl1.classList.add('open'); });
+    });
+
+    btn.addEventListener('click', e=>{
+      e.preventDefault();
+      const open = wrap.getAttribute('aria-open')==='true';
+      setOpen(wrap, !open);
+    });
+
+    btn.addEventListener('keydown', e=>{
+      if(e.key==='Escape') setOpen(wrap,false,true);
+      if(e.key==='ArrowDown'){ setOpen(wrap,true); ul.querySelector('a')?.focus(); }
+    });
+
+    wrap.appendChild(sub);
+    return wrap;
+  }
+
+  function setOpen(folder, open, resetInternos=false){
+    folder.setAttribute('aria-open', open?'true':'false');
+    folder.querySelector('.nav-btn').setAttribute('aria-expanded', open?'true':'false');
+
+    if(open){
+      document.querySelectorAll('.nav-folder').forEach(f=>{
+        if(f!==folder){
+          f.setAttribute('aria-open','false');
+          f.querySelector('.nav-btn').setAttribute('aria-expanded','false');
+          f.removeAttribute('data-panel');
+        }
+      });
+    } else if (resetInternos){
+      folder.removeAttribute('data-panel');
+      folder.querySelectorAll(':scope .sub > ul > li').forEach(li=>li.classList.remove('open'));
+    }
+  }
+
+  function renderNav(tree){
+    const nav = document.getElementById('nav');
+    tree.forEach(node => nav.appendChild(createNode(node)));
+
+    const timers = new WeakMap();
+    document.querySelectorAll('.nav-folder').forEach(folder=>{
+      folder.addEventListener('mouseenter', ()=>{
+        const t = timers.get(folder); if(t) clearTimeout(t);
+        setOpen(folder, true);
+      });
+      folder.addEventListener('mouseleave', ()=>{
+        const t = setTimeout(()=> setOpen(folder,false,true), 220);
+        timers.set(folder,t);
+      });
+    });
+
+    document.addEventListener('click', (e)=>{
+      if (e.target.closest('.pager-btn')) return;
+      const anyOpen = document.querySelector('.nav-folder[aria-open="true"]');
+      if(anyOpen && !anyOpen.contains(e.target)) setOpen(anyOpen,false,true);
+    });
+
+    document.addEventListener('click', (e)=>{
+      const btn = e.target.closest('.pager-btn');
+      if (!btn) return;
+      const folder = btn.closest('.nav-folder');
+      if (folder) setOpen(folder, true);
     });
   }
-  buildNav();
 
-  /* ========= Carrusel de cubos (placeholder) ========= */
-  (function(){
+  renderNav(NAV_TREE);
+
+  /* ========= Carrusel de cubos ========= */
+  (function initCubeCarousel(){
+    const root = document.querySelector('.cube-carousel');
+    if(!root) return;
+
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const autoplay = root.dataset.autoplay === 'true' && !prefersReduced;
+    const intervalMs = parseInt(root.dataset.interval || '3200', 10);
+    const shuffle = root.dataset.shuffle === 'true';
+
     const track = document.getElementById('cubeTrack');
-    if(!track) return;
+    const dotsEl = document.getElementById('cubeDots');
+    const btnPrev = document.getElementById('cubePrev');
+    const btnNext = document.getElementById('cubeNext');
 
-    const items = [
-      {title:'Zero Trust: primeros pasos', meta:'Ciberseguridad · Guía', img:'assets/cube1.jpg', href:'#'},
-      {title:'Hardening Linux rápido', meta:'Sistemas · Tips', img:'assets/cube2.jpg', href:'#'},
-      {title:'IaC segura con Terraform', meta:'DevSecOps · Tutorial', img:'assets/cube3.jpg', href:'#'},
-      {title:'Alerting efectivo en Grafana', meta:'Observabilidad · Cómo', img:'assets/cube4.jpg', href:'#'},
-      {title:'Backups verificados (DR)', meta:'Resiliencia · Playbook', img:'assets/cube5.jpg', href:'#'},
-      {title:'Segmentación de redes', meta:'Networking · Conceptos', img:'assets/cube6.jpg', href:'#'},
-      {title:'Secretos en Kubernetes', meta:'K8s · Seguridad', img:'assets/cube7.jpg', href:'#'},
-      {title:'Playbooks de IR', meta:'Incidentes · Acciones', img:'assets/cube8.jpg', href:'#'},
-      {title:'Windows: GPO de hardening', meta:'AD · Seguridad', img:'assets/cube9.jpg', href:'#'},
-      {title:'Logs que importan', meta:'SIEM · Prioridades', img:'assets/cube10.jpg', href:'#'}
-    ];
+    const ITEMS = Array.from({length:12}).map((_,i)=>({
+      id: i+1,
+      titulo: `Artículo ${i+1}: Placeholder`,
+      resumen: `Resumen breve del contenido ${i+1}. Texto ficticio para probar el layout.`,
+      img: `assets/placeholder_${(i%6)+1}.jpg`,
+      href: "#"
+    }));
 
-    const root = track.closest('.cube-carousel');
-    const autoplay = root?.dataset.autoplay === 'true';
-    const interval = parseInt(root?.dataset.interval || '3200',10);
-    const shuffle = root?.dataset.shuffle === 'true';
+    if(shuffle) ITEMS.sort(()=>Math.random()-.5);
 
-    function shuffleArr(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
-    const data = shuffle ? shuffleArr(items.slice()) : items.slice();
-
-    // Render
-    data.forEach((it,idx)=>{
-      const el = document.createElement('article');
-      el.className = 'cube';
-      el.setAttribute('role','listitem');
-      el.innerHTML = `
-        <div class="cube-media">${it.img ? `<img src="${it.img}" alt="${it.title}">` : ''}</div>
+    const makeCube = (item) => {
+      const li = document.createElement('article');
+      li.className = 'cube';
+      li.setAttribute('role','listitem');
+      li.innerHTML = `
+        <div class="cube-media"><img src="${item.img}" alt="Imagen del ${item.titulo}" loading="lazy"></div>
         <div class="cube-body">
-          <h4 class="cube-title">${it.title}</h4>
-          <div class="cube-meta">${it.meta}</div>
-          <a class="cube-link" href="${it.href}">Leer</a>
-        </div>
-      `;
-      track.appendChild(el);
-    });
-
-    const prev = document.getElementById('cubePrev');
-    const next = document.getElementById('cubeNext');
-    const dots = document.getElementById('cubeDots');
-
-    const numVisible = ()=>{
-      const w = root.clientWidth;
-      if (w <= 520) return 1;
-      if (w <= 720) return 2;
-      if (w <= 1020) return 3;
-      return 5;
+          <h4 class="cube-title">${item.titulo}</h4>
+          <div class="cube-meta">${item.resumen}</div>
+          <a class="cube-link" href="${item.href}">Ver más</a>
+        </div>`;
+      return li;
     };
 
-    let index = 0, vis = numVisible(), timer = null;
+    const baseNodes = ITEMS.map(makeCube);
+    const cloneNodes = ITEMS.map(makeCube);
+    baseNodes.forEach(n=>track.appendChild(n));
+    cloneNodes.forEach(n=>track.appendChild(n));
 
-    function updateDots(){
-      dots.innerHTML = '';
-      const pages = Math.max(1, Math.ceil(data.length / vis));
-      for (let i=0;i<pages;i++){
-        const d = document.createElement('div');
-        d.className = 'cube-dot' + (i===Math.floor(index/vis) ? ' is-active':'');
-        d.addEventListener('click', ()=>{ index = i*vis; apply(); });
-        dots.appendChild(d);
-      }
-    }
+    track.setAttribute('role','list');
 
-    function apply(){
-      vis = numVisible();
-      const totalWidth = track.children.length * (track.children[0]?.getBoundingClientRect().width || 0 + 14);
-      const cardW = track.children[0]?.getBoundingClientRect().width || 0;
-      const gap = 14;
-      const x = -(index * (cardW + gap));
-      track.style.transform = `translate3d(${x}px,0,0)`;
-      updateDots();
-      // límites
-      const maxIndex = Math.max(0, data.length - vis);
-      if (index > maxIndex) index = maxIndex;
-      prev.disabled = index <= 0;
-      next.disabled = index >= maxIndex;
-    }
-
-    function go(delta){
-      const maxIndex = Math.max(0, data.length - vis);
-      index = Math.min(maxIndex, Math.max(0, index + delta));
-      apply();
-    }
-
-    prev?.addEventListener('click', ()=>go(-1));
-    next?.addEventListener('click', ()=>go(+1));
-    window.addEventListener('resize', ()=>{ apply(); });
-
-    function start(){
-      if (!autoplay) return;
-      stop();
-      timer = setInterval(()=>{
-        const maxIndex = Math.max(0, data.length - vis);
-        index = (index >= maxIndex) ? 0 : index + 1;
-        apply();
-      }, Math.max(1800, interval));
-    }
-    function stop(){ if (timer) { clearInterval(timer); timer = null; } }
-
-    root.addEventListener('mouseenter', stop);
-    root.addEventListener('mouseleave', start);
-
-    apply();
-    start();
-  })();
-
-  /* ========= Sitemap (sección fija) ========= */
-  (function(){
-    const l0 = document.getElementById('smL0');
-    const l1 = document.getElementById('smL1');
-    const l2 = document.getElementById('smL2');
-    const l3 = document.getElementById('smL3');
-    const wrap1 = document.getElementById('wrapL1');
-    const wrap2 = document.getElementById('wrapL2');
-    const wrap3 = document.getElementById('wrapL3');
-
-    function clear(el){ if (el) el.innerHTML = ''; }
-    function openCol(wrap, open){
-      if (!wrap) return;
-      wrap.classList.toggle('is-open', !!open);
-    }
-
-    // Nivel 0
-    NAV_TREE.forEach((n0, idx0)=>{
-      const li = document.createElement('li');
-      const btn = document.createElement('button');
-      btn.className = 'item';
-      btn.innerHTML = `<span>${n0.label}</span><span class="chev">›</span>`;
-      btn.addEventListener('click', ()=>{
-        // activar visualmente
-        l0.querySelectorAll('.item').forEach(i=>i.classList.remove('is-active'));
-        btn.classList.add('is-active');
-
-        // Cargar nivel 1
-        clear(l1); clear(l2); clear(l3);
-        openCol(wrap1, true); openCol(wrap2, false); openCol(wrap3, false);
-
-        (n0.children||[]).forEach((n1, idx1)=>{
-          const li1 = document.createElement('li');
-          const b1 = document.createElement('button');
-          b1.className = 'item';
-          b1.innerHTML = `<span>${n1.label}</span><span class="chev">›</span>`;
-          b1.addEventListener('click', ()=>{
-            l1.querySelectorAll('.item').forEach(i=>i.classList.remove('is-active'));
-            b1.classList.add('is-active');
-
-            // Cargar nivel 2
-            clear(l2); clear(l3);
-            openCol(wrap2, true); openCol(wrap3, false);
-
-            (n1.children||[]).forEach((n2, idx2)=>{
-              const li2 = document.createElement('li');
-              const b2 = document.createElement('button');
-              b2.className = 'item';
-              b2.innerHTML = `<span>${n2.label}</span><span class="chev">›</span>`;
-              b2.addEventListener('click', ()=>{
-                l2.querySelectorAll('.item').forEach(i=>i.classList.remove('is-active'));
-                b2.classList.add('is-active');
-
-                // Cargar nivel 3 (artículos)
-                clear(l3);
-                openCol(wrap3, true);
-
-                (n2.children||[]).forEach(n3=>{
-                  const a = document.createElement('a');
-                  a.className = 'article';
-                  a.href = n3.href || '#';
-                  a.innerHTML = `<span>${n3.label}</span><span class="chev">↗</span>`;
-                  const li3 = document.createElement('li');
-                  li3.appendChild(a);
-                  l3.appendChild(li3);
-                });
-              });
-              li2.appendChild(b2);
-              l2.appendChild(li2);
-            });
-          });
-          li1.appendChild(b1);
-          l1.appendChild(li1);
-        });
-      });
-      li.appendChild(btn);
-      l0.appendChild(li);
+    ITEMS.forEach((_,idx)=>{
+      const d = document.createElement('span');
+      d.className = 'cube-dot' + (idx===0?' is-active':'');
+      dotsEl.appendChild(d);
     });
 
-    // Abre el primero por defecto
-    l0.querySelector('.item')?.click();
+    let index = 0;
+    let timer = null;
+    let itemWidth = () => (track.querySelector('.cube')?.getBoundingClientRect().width || 0) + 14;
+    let max = ITEMS.length;
+
+    const setActiveDot = (i)=>{
+      const dots = Array.from(dotsEl.children);
+      dots.forEach((el,ix)=> el.classList.toggle('is-active', ix === (i % max)));
+    };
+
+    const jumpIfNeeded = ()=>{
+      if(index >= max){
+        index = index % max;
+        track.style.transition = 'none';
+        track.style.transform = `translateX(${-index*itemWidth()}px)`;
+        void track.offsetWidth;
+        track.style.transition = '';
+      } else if(index < 0){
+        index = (index + max) % max + max;
+        track.style.transition = 'none';
+        track.style.transform = `translateX(${-index*itemWidth()}px)`;
+        void track.offsetWidth;
+        track.style.transition = '';
+      }
+    };
+
+    const goTo = (i)=>{ index = i; track.style.transform = `translateX(${-index*itemWidth()}px)`; setActiveDot(index); };
+    const next = ()=>{ goTo(index+1); };
+    const prev = ()=>{ goTo(index-1); };
+
+    const start = ()=>{ if(timer || !autoplay) return; timer = setInterval(()=>{ next(); jumpIfNeeded(); }, intervalMs); };
+    const stop  = ()=>{ clearInterval(timer); timer = null; };
+
+    root.addEventListener('mouseenter', ()=>{ stop(); });
+    root.addEventListener('mouseleave', ()=>{ start(); });
+    root.addEventListener('focusin', ()=>{ stop(); });
+    root.addEventListener('focusout', ()=>{ start(); });
+
+    btnNext.addEventListener('click', ()=>{ stop(); next(); jumpIfNeeded(); });
+    btnPrev.addEventListener('click', ()=>{ stop(); prev(); jumpIfNeeded(); });
+
+    let touchX = null, deltaX = 0, swiping = false;
+    root.addEventListener('touchstart', (e)=>{ touchX = e.touches[0].clientX; deltaX = 0; swiping = true; stop(); }, {passive:true});
+    root.addEventListener('touchmove', (e)=>{
+      if(!swiping) return;
+      deltaX = e.touches[0].clientX - touchX;
+      track.style.transition = 'none';
+      track.style.transform = `translateX(${-(index*itemWidth()) + deltaX}px)`;
+    }, {passive:true});
+    root.addEventListener('touchend', ()=>{
+      track.style.transition = '';
+      if(Math.abs(deltaX) > itemWidth()*0.25){ (deltaX < 0) ? next() : prev(); jumpIfNeeded(); } else { goTo(index); }
+      swiping = false; start();
+    });
+
+    window.addEventListener('resize', ()=>{ goTo(index); });
+
+    goTo(0);
+    if(autoplay) start();
   })();
+
+  /* ========= MAPA DEL SITIO — SECCIÓN FIJA =========
+     2 raíces (Nivel 0): "Teoría y datos curiosos" y "Portafolio"
+     → 2 áreas (Nivel 1): "Ciberseguridad" y "Sistemas"
+     → subcarpetas (Nivel 2) con 6 artículos placeholder (Nivel 3) */
+  (function(){
+    const SITE_TREE = [
+      { raiz: "Teoría y datos curiosos",
+        areas: [
+          { nombre: "Ciberseguridad", subcarpetas: [
+            "Análisis Forense","DevSecOps","Documentación e informes",
+            "Puesta en producción segura","Respuesta a incidentes",
+            "Seguridad en redes","Seguridad de sistemas"
+          ]},
+          { nombre: "Sistemas", subcarpetas: [
+            "Administración de redes","Backups y recuperación","Bases de datos",
+            "Gestión de sistemas","Seguridad en sistemas","Virtualización y conectividad"
+          ]}
+        ]
+      },
+      { raiz: "Portafolio",
+        areas: [
+          { nombre: "Ciberseguridad", subcarpetas: [
+            "Análisis Forense","DevSecOps","Documentación e informes",
+            "Puesta en producción segura","Respuesta a incidentes",
+            "Seguridad en redes","Seguridad de sistemas"
+          ]},
+          { nombre: "Sistemas", subcarpetas: [
+            "Administración de redes","Backups y recuperación","Bases de datos",
+            "Gestión de sistemas","Seguridad en sistemas","Virtualización y conectividad"
+          ]}
+        ]
+      }
+    ];
+
+    const smL0 = document.getElementById('smL0');
+    const smL1 = document.getElementById('smL1');
+    const smL2 = document.getElementById('smL2');
+    const smL3 = document.getElementById('smL3');
+
+    const wrapL1 = document.getElementById('wrapL1');
+    const wrapL2 = document.getElementById('wrapL2');
+    const wrapL3 = document.getElementById('wrapL3');
+
+    if (!smL0 || !smL1 || !smL2 || !smL3) return; // por si la sección no está en esta página
+
+    let sel0 = null, sel1 = null, sel2 = null;
+
+    const btn = (txt, active, onclick) => {
+      const li = document.createElement('li');
+      const b  = document.createElement('button');
+      b.type='button'; b.className='item' + (active?' is-active':'');
+      b.innerHTML = `<span>${txt}</span><span class="chev">›</span>`;
+      b.addEventListener('click', onclick);
+      li.appendChild(b); return li;
+    };
+    const article = (txt, href='#') => {
+      const li = document.createElement('li');
+      const a  = document.createElement('a');
+      a.href=href; a.className='article';
+      a.innerHTML = `<span>${txt}</span><span>↗</span>`;
+      li.appendChild(a); return li;
+    };
+    const makeSix = name => Array.from({length:6},(_,i)=>`Artículo ${i+1} — ${name}`);
+
+    function renderL0(){
+      smL0.innerHTML=''; smL1.innerHTML=''; smL2.innerHTML=''; smL3.innerHTML='';
+      wrapL1.classList.remove('is-open'); wrapL2.classList.remove('is-open'); wrapL3.classList.remove('is-open');
+      SITE_TREE.forEach((n,ix)=>{
+        smL0.appendChild(btn(n.raiz, sel0===ix, ()=>{ sel0=ix; sel1=null; sel2=null; renderL1(); }));
+      });
+    }
+    function renderL1(){
+      smL1.innerHTML=''; smL2.innerHTML=''; smL3.innerHTML='';
+      wrapL1.classList.add('is-open'); wrapL2.classList.remove('is-open'); wrapL3.classList.remove('is-open');
+      if(sel0===null) return;
+      SITE_TREE[sel0].areas.forEach((area,ix)=>{
+        smL1.appendChild(btn(area.nombre, sel1===ix, ()=>{ sel1=ix; sel2=null; renderL2(); }));
+      });
+    }
+    function renderL2(){
+      smL2.innerHTML=''; smL3.innerHTML='';
+      wrapL2.classList.add('is-open'); wrapL3.classList.remove('is-open');
+      if(sel0===null || sel1===null) return;
+      const area = SITE_TREE[sel0].areas[sel1];
+      area.subcarpetas.forEach((sub,ix)=>{
+        smL2.appendChild(btn(sub, sel2===ix, ()=>{ sel2=ix; renderL3(); }));
+      });
+    }
+    function renderL3(){
+      smL3.innerHTML='';
+      wrapL3.classList.add('is-open');
+      if(sel0===null || sel1===null || sel2===null) return;
+      const sub = SITE_TREE[sel0].areas[sel1].subcarpetas[sel2];
+      makeSix(sub).forEach(t => smL3.appendChild(article(t)));
+    }
+
+    // Estado inicial: mostrar sólo Nivel 0 (las dos tarjetas)
+    renderL0();
+  })();
+/* ======== Datos para el árbol visual ======== */
+const GRAPH_TREE = [
+  { raiz: "Teoría y datos curiosos",
+    areas: [
+      { nombre: "Ciberseguridad", subcarpetas: [
+        "Análisis Forense","DevSecOps","Documentación e informes",
+        "Puesta en producción segura","Respuesta a incidentes",
+        "Seguridad en redes","Seguridad de sistemas"
+      ]},
+      { nombre: "Sistemas", subcarpetas: [
+        "Administración de redes","Backups y recuperación","Bases de datos",
+        "Gestión de sistemas","Seguridad en sistemas","Virtualización y conectividad"
+      ]}
+    ]
+  },
+  { raiz: "Portafolio",
+    areas: [
+      { nombre: "Ciberseguridad", subcarpetas: [
+        "Análisis Forense","DevSecOps","Documentación e informes",
+        "Puesta en producción segura","Respuesta a incidentes",
+        "Seguridad en redes","Seguridad de sistemas"
+      ]},
+      { nombre: "Sistemas", subcarpetas: [
+        "Administración de redes","Backups y recuperación","Bases de datos",
+        "Gestión de sistemas","Seguridad en sistemas","Virtualización y conectividad"
+      ]}
+    ]
+  }
+];
+
+/* ======== Config y estado ======== */
+const G = {
+  svg: document.getElementById('graphSvg'),
+  root: document.getElementById('graphRoot'),
+  stage: document.getElementById('graphStage'),
+  state: { sel0:null, sel1:null, sel2:null },
+
+  // layout base
+  colX: [120, 460, 940, 1300],
+  nodeW: [220, 240, 280, 260],
+  nodeH: 56,
+  vGap : 22,
+
+  // pan/zoom
+  tx: 0, ty: 0, scale: 1,
+  minScale: 0.6,
+  maxScale: 2.2,
+};
+
+/* ======== Util ======== */
+function makeSix(name){ return Array.from({length:6}, (_,i)=>`Artículo ${i+1} — ${name}`); }
+function clearRoot(){ while(G.root.firstChild) G.root.removeChild(G.root.firstChild); }
+function applyTransform(){
+  G.root.setAttribute('transform', `translate(${G.tx},${G.ty}) scale(${G.scale})`);
+}
+function screenToSvgPoint(clientX, clientY){
+  const pt = G.svg.createSVGPoint();
+  pt.x = clientX; pt.y = clientY;
+  const ctm = G.svg.getScreenCTM();
+  return pt.matrixTransform(ctm.inverse());
+}
+
+/* ======== Dibujo ======== */
+function drawNode({x,y,w,h,lvl,title,sub,onClick,delay=0}){
+  const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+  g.classList.add('node');
+  g.dataset.lvl = String(lvl);
+  g.setAttribute('transform', `translate(${x},${y})`);
+  if(onClick) g.addEventListener('click', onClick);
+
+  // Grupo interno para animación (no pisa el transform del layout)
+  const inner = document.createElementNS('http://www.w3.org/2000/svg','g');
+  inner.classList.add('node-in');
+  g.appendChild(inner);
+
+  // Caja
+  const r = document.createElementNS('http://www.w3.org/2000/svg','rect');
+  r.setAttribute('width', w);
+  r.setAttribute('height', h);
+  inner.appendChild(r);
+
+  // Títulos
+  const t = document.createElementNS('http://www.w3.org/2000/svg','text');
+  t.setAttribute('x', 14);
+  t.setAttribute('y', 22);
+  t.setAttribute('class','title');
+  t.textContent = title;
+  inner.appendChild(t);
+
+  if(sub){
+    const s = document.createElementNS('http://www.w3.org/2000/svg','text');
+    s.setAttribute('x', 14);
+    s.setAttribute('y', 40);
+    s.setAttribute('class','sub');
+    s.textContent = sub;
+    inner.appendChild(s);
+  }
+
+  // Badge de nivel
+  const bkg = document.createElementNS('http://www.w3.org/2000/svg','rect');
+  bkg.setAttribute('x', w-34);
+  bkg.setAttribute('y', 8);
+  bkg.setAttribute('width', 22);
+  bkg.setAttribute('height', 16);
+  bkg.setAttribute('rx','6');
+  bkg.setAttribute('fill', lvl===0?'var(--accent)':'#ffd79a');
+  inner.appendChild(bkg);
+
+  const bt = document.createElementNS('http://www.w3.org/2000/svg','text');
+  bt.setAttribute('x', w-23);
+  bt.setAttribute('y', 20);
+  bt.setAttribute('class','badge');
+  bt.textContent = lvl;
+  inner.appendChild(bt);
+
+  // Inserta y lanza animación (stagger por delay)
+  G.root.appendChild(g);
+  requestAnimationFrame(()=>{ setTimeout(()=> g.classList.add('is-in'), delay); });
+
+  return {x,y,w,h, el:g};
+}
+
+function drawLink(from, to, lvl, delay=0){
+  const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+  const x1 = from.x + from.w, y1 = from.y + from.h/2;
+  const x2 = to.x,           y2 = to.y + to.h/2;
+  const dx = Math.max(40, (x2 - x1)/2);
+  path.setAttribute('d', `M ${x1} ${y1} C ${x1+dx} ${y1}, ${x2-dx} ${y2}, ${x2} ${y2}`);
+  path.setAttribute('class', `link l${lvl}`);
+  G.root.appendChild(path);
+  setTimeout(()=> path.classList.add('draw'), delay);
+}
+
+/* ======== Render según estado (con animaciones) ======== */
+function renderGraph(){
+  clearRoot();
+
+  const H = 900; // altura virtual del viewBox
+  const { sel0, sel1, sel2 } = G.state;
+  const nodeH = G.nodeH, vGap = G.vGap;
+
+  // Nivel 0 (raíces)
+  const roots = GRAPH_TREE.map(r=>r.raiz);
+  const totalH0 = roots.length*nodeH + (roots.length-1)*vGap;
+  let y0 = (H - totalH0)/2;
+  const nodes0 = roots.map((txt,ix)=>{
+    return drawNode({
+      x:G.colX[0],
+      y:y0 + ix*(nodeH+vGap),
+      w:G.nodeW[0], h:nodeH, lvl:0,
+      title:txt,
+      onClick:()=>{ G.state.sel0 = ix; G.state.sel1=null; G.state.sel2=null; renderGraph(); },
+      delay: 50 + ix*40
+    });
+  });
+
+  // Nivel 1 (áreas)
+  if(sel0!=null){
+    const areas = GRAPH_TREE[sel0].areas.map(a=>a.nombre);
+    const totalH1 = areas.length*nodeH + (areas.length-1)*vGap;
+    let y1 = (H - totalH1)/2;
+    const nodes1 = areas.map((txt,ix)=>{
+      const box = drawNode({
+        x:G.colX[1], y:y1 + ix*(nodeH+vGap),
+        w:G.nodeW[1], h:nodeH, lvl:1,
+        title:txt,
+        onClick:()=>{ G.state.sel1 = ix; G.state.sel2=null; renderGraph(); },
+        delay: 100 + ix*40
+      });
+      drawLink(nodes0[sel0], box, 1, 80 + ix*40);
+      return box;
+    });
+
+    // Nivel 2 (subcarpetas)
+    if(sel1!=null){
+      const subs = GRAPH_TREE[sel0].areas[sel1].subcarpetas;
+      const totalH2 = subs.length*nodeH + (subs.length-1)*vGap;
+      let y2 = (H - totalH2)/2;
+      const nodes2 = subs.map((txt,ix)=>{
+        const box = drawNode({
+          x:G.colX[2], y:y2 + ix*(nodeH+vGap),
+          w:G.nodeW[2], h:nodeH, lvl:2,
+          title:txt,
+          onClick:()=>{ G.state.sel2 = ix; renderGraph(); },
+          delay: 140 + ix*35
+        });
+        drawLink(nodes1[sel1], box, 2, 120 + ix*35);
+        return box;
+      });
+
+      // Nivel 3 (items)
+      if(sel2!=null){
+        const items = makeSix(subs[sel2]);
+        const totalH3 = items.length*nodeH + (items.length-1)*vGap;
+        let y3 = (H - totalH3)/2;
+
+        items.forEach((txt,ix)=>{
+          const box = drawNode({
+            x:G.colX[3], y:y3 + ix*(nodeH+vGap),
+            w:G.nodeW[3], h:nodeH, lvl:3,
+            title:txt, sub:"↗",
+            onClick:()=>{/* navegación futura */},
+            delay: 160 + ix*30
+          });
+          drawLink(nodes2[sel2], box, 3, 150 + ix*30);
+        });
+      }
+    }
+  }
+
+  applyTransform();
+}
+
+/* ======== Pan con arrastre ======== */
+(function enablePan(){
+  let dragging = false, start, startTx, startTy;
+
+  G.svg.addEventListener('mousedown', (e)=>{
+    dragging = true;
+    G.stage.classList.add('is-panning');
+    start = screenToSvgPoint(e.clientX, e.clientY);
+    startTx = G.tx; startTy = G.ty;
+    e.preventDefault();
+  });
+
+  window.addEventListener('mousemove', (e)=>{
+    if(!dragging) return;
+    const pt = screenToSvgPoint(e.clientX, e.clientY);
+    G.tx = startTx + (pt.x - start.x);
+    G.ty = startTy + (pt.y - start.y);
+    applyTransform();
+  });
+
+  window.addEventListener('mouseup', ()=>{
+    dragging = false;
+    G.stage.classList.remove('is-panning');
+  });
+})();
+
+/* ======== Zoom con rueda (centrado en puntero) ======== */
+(function enableWheelZoom(){
+  G.stage.addEventListener('wheel', (e)=>{
+    e.preventDefault();
+    const delta = -e.deltaY;
+    const zoomFactor = (e.ctrlKey ? 1.08 : 1.04);
+    const scaleTarget = delta > 0 ? G.scale * zoomFactor : G.scale / zoomFactor;
+    const newScale = Math.max(G.minScale, Math.min(G.maxScale, scaleTarget));
+    if(newScale === G.scale) return;
+
+    // Mantener el punto bajo el cursor
+    const p1 = screenToSvgPoint(e.clientX, e.clientY);
+    const k  = newScale / G.scale;
+    G.tx = p1.x - k*(p1.x - G.tx);
+    G.ty = p1.y - k*(p1.y - G.ty);
+    G.scale = newScale;
+    applyTransform();
+  }, { passive:false });
+})();
+
+/* ======== Doble clic para centrar/reset ======== */
+G.stage.addEventListener('dblclick', ()=>{
+  G.scale = 1; G.tx = 0; G.ty = 0; applyTransform();
+});
+
+/* ======== Inicial ======== */
+renderGraph();
+window.addEventListener('resize', renderGraph);
 </script>
 </body>
 </html>
