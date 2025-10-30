@@ -89,7 +89,7 @@
     #glitchCanvas{
       position:absolute; inset:0;
       display:none;
-      image-rendering: pixelated;
+      image-rendering: pixelated; /* dientes gordos intencionales */
       pointer-events:none;
     }
 
@@ -174,26 +174,21 @@
     </section>
 
     <!-- =======================================================
-         CARRUSEL (placeholder, sin cambios)
+         NUEVA SECCIÓN: Carrusel de cubos (placeholder)
          ======================================================= -->
     <section id="news-cubes" aria-labelledby="news-cubes-title">
       <h2 id="news-cubes-title" class="section-title">Lecturas y artículos</h2>
       <p class="kicker">Novedades seleccionadas — desplazamiento suave y continuo.</p>
 
       <div class="cube-carousel" data-autoplay="true" data-interval="3200" data-shuffle="true" aria-roledescription="carrusel">
-        <div class="cube-head">
-          <h3>Artículos interesantes</h3>
-        </div>
-
+        <div class="cube-head"><h3>Artículos interesantes</h3></div>
         <div class="cube-viewport" role="region" aria-label="Carrusel de artículos" style="overflow:hidden">
           <div class="cube-track" id="cubeTrack" role="list"></div>
         </div>
-
         <div class="cube-nav" aria-hidden="false">
           <button class="cube-btn prev" type="button" id="cubePrev" aria-label="Artículo anterior">‹</button>
           <button class="cube-btn next" type="button" id="cubeNext" aria-label="Artículo siguiente">›</button>
         </div>
-
         <div class="cube-dots" id="cubeDots" aria-hidden="true"></div>
       </div>
     </section>
@@ -248,7 +243,7 @@
   /* ========= Año en footer ========= */
   document.getElementById('y').textContent = new Date().getFullYear();
 
-  /* ========= TYPING DOBLE (igual que tenías) ========= */
+  /* ========= TYPING DOBLE ========= */
   (function(){
     const nameText = "Alejandro Orcajada Meseguer";
     const roleText = "Administrador de Sistemas y Ciberseguridad";
@@ -259,27 +254,49 @@
     const lead = document.getElementById('lead');
     let i=0,j=0;
 
-    function typeName(){ if(i<nameText.length){ elName.textContent += nameText.charAt(i++); setTimeout(typeName,speed); } else { setTimeout(typeRole,250);} }
-    function typeRole(){ if(j<roleText.length){ elRole.textContent += roleText.charAt(j++); setTimeout(typeRole,speed); } else {
-      cursor?.remove(); lead?.classList.add('show');
-      // 🔹 Arrancar el glitch cuando termina de escribir
-      startCyberTitleGlitch();
-    } }
+    function typeName(){
+      if(i<nameText.length){ elName.textContent += nameText.charAt(i++); setTimeout(typeName,speed); }
+      else { setTimeout(typeRole,250); }
+    }
+    function typeRole(){
+      if(j<roleText.length){ elRole.textContent += roleText.charAt(j++); setTimeout(typeRole,speed); }
+      else {
+        cursor?.remove(); lead?.classList.add('show');
+        // 🔹 Arranca el glitch cuando termina de escribir
+        startCyberTitleGlitch();
+      }
+    }
     setTimeout(typeName,300);
   })();
 
-  /* ========= GLITCH CYBERPUNK: Canvas por bandas ========= */
+  /* ========= GLITCH “CRÉDITOS CP2077” – Canvas por bandas ========= */
   const GLITCH_CFG = {
-    bandH: 3,             // alto de cada banda en px (2-4 da borde “mordido”)
-    small:  { dur: 120, amp: 8,  skew: 2 },
-    strong: { dur: 200, amp: 26, skew: 6 },
-    gapProb: 0.15,        // prob. de “hueco” en banda
-    loopMs: 2400,         // intervalo entre micro-pulsos
-    strongEvery: 6,       // cada 6º pulso -> fuerte
-    chromaShift: 1        // aberración cromática sutil en snapshot
+    bandMin: 2, bandMax: 10,     // altura variable -> mordidas irregulares
+    small:  { dur: 120, amp: 10, skew: 2.0 },
+    strong: { dur: 200, amp: 28, skew: 6.0 },
+    gapProb: 0.12,               // huecos normales
+    bigTearProb: 0.22,           // cortes grandes ocasionales
+    bigTearAmp: 46,              // desplazamiento de esos cortes
+    pxDownscale: 0.72,           // pixelación intencional (0.6–0.85)
+    chromaShift: 0.8,            // leve aberración cromática
+    loopMs: 2400, strongEvery: 6 // bucle: cada 6º pulso es fuerte
   };
 
-  let _glitchTimer = null, _pulseCount = 0;
+  // Asegura el canvas sobre el H1
+  document.addEventListener('DOMContentLoaded', ()=>{
+    const h1 = document.getElementById('heroTitle');
+    if(!h1) return;
+    if(!h1.parentElement.classList.contains('glitch-wrap')){
+      const wrap = document.createElement('span');
+      wrap.className = 'glitch-wrap';
+      h1.replaceWith(wrap); wrap.appendChild(h1);
+      const c = document.createElement('canvas'); c.id='glitchCanvas'; wrap.appendChild(c);
+    }
+    // Hover para test manual (micro-pulso)
+    h1.addEventListener('mouseenter', ()=>pulse('small'));
+  });
+
+  let _glTimer=null, _count=0;
 
   function pulse(kind='small'){
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -288,101 +305,99 @@
     const canvas = document.getElementById('glitchCanvas');
     if(!h1 || !canvas) return;
 
-    // Medidas al vuelo
-    const rect = h1.getBoundingClientRect();
-    const w = Math.ceil(rect.width), h = Math.ceil(rect.height);
-    canvas.width = w; canvas.height = h;
+    const r = h1.getBoundingClientRect();
+    const W = Math.max(1, Math.ceil(r.width));
+    const H = Math.max(1, Math.ceil(r.height));
+    canvas.width=W; canvas.height=H;
 
     const ctx = canvas.getContext('2d');
-    const off = document.createElement('canvas');
-    off.width = w; off.height = h;
+
+    // Snapshot nítido en offscreen
+    const off = document.createElement('canvas'); off.width=W; off.height=H;
     const octx = off.getContext('2d');
+    const cs = getComputedStyle(h1);
+    octx.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+    octx.textBaseline='top'; octx.textAlign='left';
+    const txt = h1.textContent.trim() || ' ';
+    octx.fillStyle='#00e6f6'; octx.fillText(txt, -GLITCH_CFG.chromaShift, 0);
+    octx.fillStyle='#ff2a6d'; octx.fillText(txt,  GLITCH_CFG.chromaShift, 0);
+    octx.fillStyle=cs.color || '#ff9f1a'; octx.fillText(txt, 0, 0);
 
-    // Estilos del H1
-    const style = getComputedStyle(h1);
-    const font = `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
-    octx.font = font;
-    octx.textBaseline = 'top';
+    // Versión pixelada (downsample NN)
+    const scale = Math.max(0.4, Math.min(1, GLITCH_CFG.pxDownscale));
+    const lowW = Math.max(1, Math.round(W*scale));
+    const lowH = Math.max(1, Math.round(H*scale));
+    const low = document.createElement('canvas'); low.width=lowW; low.height=lowH;
+    const lctx = low.getContext('2d'); lctx.imageSmoothingEnabled=false;
+    lctx.drawImage(off, 0,0, lowW,lowH);
 
-    const text = h1.textContent.trim() || ' ';
-    // Snapshot con leve aberración cromática (no blur)
-    octx.fillStyle = '#00e6f6'; octx.fillText(text, -GLITCH_CFG.chromaShift, 0);
-    octx.fillStyle = '#ff2a6d'; octx.fillText(text,  GLITCH_CFG.chromaShift, 0);
-    octx.fillStyle = style.color || '#ff9f1a'; octx.fillText(text, 0, 0);
-
-    // Mostrar canvas encima y ocultar el h1 por el instante del glitch
-    canvas.style.display = 'block';
-    h1.style.visibility = 'hidden';
+    canvas.style.display='block';
+    h1.style.visibility='hidden';
 
     const cfg = (kind==='strong') ? GLITCH_CFG.strong : GLITCH_CFG.small;
     const t0 = performance.now();
-    const bandH = GLITCH_CFG.bandH;
-    const bands = Math.ceil(h / bandH);
 
     function frame(t){
-      const k = Math.min(1, (t - t0) / cfg.dur); // progreso 0..1
-      ctx.clearRect(0,0,w,h);
+      const k = Math.min(1, (t-t0)/cfg.dur); // progreso
+      ctx.clearRect(0,0,W,H);
+      ctx.imageSmoothingEnabled=false;
 
-      const ampNow  = cfg.amp * (1 - k);
-      const skewNow = cfg.skew * (1 - k);
+      let y=0, bandIndex=0;
+      while(y < H){
+        const bh = Math.min(H-y, randInt(GLITCH_CFG.bandMin, GLITCH_CFG.bandMax));
+        const dir = (bandIndex++ % 2 === 0) ? -1 : 1;
 
-      for(let i=0;i<bands;i++){
-        const y = i * bandH;
-        const bh = Math.min(bandH, h - y);
-
-        const dir = (i % 2 === 0) ? -1 : 1;
-        const jitter = (Math.random()*0.6 + 0.4);
-        const dx = Math.round(ampNow * jitter) * dir;
-
-        // a veces “rompe” una banda (mordisco)
-        if(Math.random() < GLITCH_CFG.gapProb * (kind==='strong'?1.3:1)){
-          continue;
+        // hueco (“mordida”)
+        if(Math.random() < GLITCH_CFG.gapProb * (kind==='strong'?1.4:1)){
+          y += bh; continue;
         }
 
-        const dy = Math.tan(skewNow * Math.PI/180) * dir;
+        const baseAmp = cfg.amp * (1-k);
+        let dx = Math.round(baseAmp * (0.4 + Math.random()*0.8)) * dir;
 
-        ctx.drawImage(
-          off,
-          0, y, w, bh,           // src
-          dx, Math.round(y + dy), w, bh  // dst desplazado
-        );
+        // corte grande estilo créditos CP
+        if(Math.random() < GLITCH_CFG.bigTearProb * (kind==='strong'?1.2:0.8)){
+          dx += Math.round(GLITCH_CFG.bigTearAmp * (0.6 + Math.random()*0.6)) * dir;
+        }
+
+        const dy = Math.tan((cfg.skew*(1-k)) * Math.PI/180) * dir;
+
+        // sección desde la imagen pixelada y pegar a escala completa
+        const sy = Math.round((y/H)*lowH);
+        const sh = Math.max(1, Math.round((bh/H)*lowH));
+
+        ctx.drawImage(low, 0,sy, lowW,sh,  dx, Math.round(y+dy),  W,bh);
+
+        y += bh;
       }
 
-      if (k < 1) requestAnimationFrame(frame);
-      else {
-        canvas.style.display = 'none';
-        h1.style.visibility  = 'visible';
-      }
+      if(k<1) requestAnimationFrame(frame);
+      else { canvas.style.display='none'; h1.style.visibility='visible'; }
     }
     requestAnimationFrame(frame);
   }
 
-  function startGlitchLoop(){
-    stopGlitchLoop();
-    _glitchTimer = setInterval(()=>{
-      _pulseCount++;
-      (_pulseCount % GLITCH_CFG.strongEvery === 1) ? pulse('strong') : pulse('small');
+  function startLoop(){ stopLoop();
+    _glTimer = setInterval(()=>{
+      _count++;
+      (_count % GLITCH_CFG.strongEvery === 1) ? pulse('strong') : pulse('small');
     }, GLITCH_CFG.loopMs);
   }
-  function stopGlitchLoop(){
-    if(_glitchTimer){ clearInterval(_glitchTimer); _glitchTimer = null; }
-  }
+  function stopLoop(){ if(_glTimer){ clearInterval(_glTimer); _glTimer=null; } }
 
-  // Arranque y ahorro cuando pestaña no visible
+  // Arranque público (lo llama el typing al terminar)
   function startCyberTitleGlitch(){
-    pulse('strong');
-    setTimeout(startGlitchLoop, 900);
+    pulse('strong');             // golpe inicial
+    setTimeout(startLoop, 900);  // arranca micro-pulsos
   }
+
+  // Pausa si la pestaña no está visible
   document.addEventListener('visibilitychange', ()=>{
-    if(document.hidden) stopGlitchLoop();
-    else startGlitchLoop();
+    if(document.hidden) stopLoop(); else startLoop();
   });
 
-  // (opcional) test con hover
-  document.addEventListener('DOMContentLoaded', ()=>{
-    const h1 = document.getElementById('heroTitle');
-    h1?.addEventListener('mouseenter', ()=>pulse('small'));
-  });
+  // Utilidad
+  function randInt(min,max){ return min + Math.floor(Math.random()*(max-min+1)); }
 </script>
 
 <script src="assets/js/nav-data.js" defer></script>
@@ -392,3 +407,4 @@
 <script src="assets/js/cubes.js"></script>
 </body>
 </html>
+
