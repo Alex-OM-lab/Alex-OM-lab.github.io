@@ -30,19 +30,22 @@ const SiteGraph = (() => {
   };
 
   /* ======== Utils ======== */
-  function makeSix(name){ return Array.from({length:6}, (_,i)=>`Artículo ${i+1} — ${name}`); }
+  const makeSix = (typeof window !== "undefined" && window.GRAPH_MAKE_SIX)
+    ? window.GRAPH_MAKE_SIX
+    : (name)=> Array.from({length:6}, (_,i)=>`Artículo ${i+1} — ${name}`);
+
   function clearGroup(g){ while(g.firstChild) g.removeChild(g.firstChild); }
   function applyTransform(){ G.root.setAttribute('transform', `translate(${G.tx},${G.ty}) scale(${G.scale})`); }
 
   function screenToSvgPoint(clientX, clientY){
     const pt = G.svg.createSVGPoint(); pt.x = clientX; pt.y = clientY;
     const ctm = G.svg.getScreenCTM();
-    return pt.matrixTransform(ctm.inverse());
+    return ctm ? pt.matrixTransform(ctm.inverse()) : { x: clientX, y: clientY };
   }
   function screenToRootPoint(clientX, clientY){
     const pt = G.svg.createSVGPoint(); pt.x = clientX; pt.y = clientY;
     const ctm = G.root.getScreenCTM();
-    return pt.matrixTransform(ctm.inverse());
+    return ctm ? pt.matrixTransform(ctm.inverse()) : { x: clientX, y: clientY };
   }
 
   /* ======== Capas ======== */
@@ -136,6 +139,10 @@ const SiteGraph = (() => {
 
   function renderL0(){
     clearFrom(0);
+    if (!G.TREE || !Array.isArray(G.TREE) || !G.TREE.length){
+      console.warn('[SiteGraph] No hay datos en TREE. Define window.GRAPH_TREE o pasa {tree} en init().');
+      return;
+    }
     const roots = G.TREE.map(r=>r.raiz);
     const yAt = layoutY(roots.length);
     G.colsNodes[0] = roots.map((txt,ix)=>{
@@ -150,7 +157,7 @@ const SiteGraph = (() => {
   function renderL1(){
     clearFrom(1);
     if (G.state.sel0==null) return;
-    const areas = G.TREE[G.state.sel0].areas.map(a=>a.nombre);
+    const areas = (G.TREE[G.state.sel0].areas || []).map(a=>a.nombre);
     const yAt = layoutY(areas.length);
     const left = G.colsNodes[0][G.state.sel0];
     G.colsNodes[1] = areas.map((txt,ix)=>{
@@ -167,7 +174,7 @@ const SiteGraph = (() => {
   function renderL2(){
     clearFrom(2);
     if (G.state.sel0==null || G.state.sel1==null) return;
-    const subs = G.TREE[G.state.sel0].areas[G.state.sel1].subcarpetas;
+    const subs = (G.TREE[G.state.sel0].areas[G.state.sel1].subcarpetas || []);
     const yAt = layoutY(subs.length);
     const left = G.colsNodes[1][G.state.sel1];
     G.colsNodes[2] = subs.map((txt,ix)=>{
@@ -184,7 +191,7 @@ const SiteGraph = (() => {
   function renderL3(){
     clearFrom(3);
     if (G.state.sel0==null || G.state.sel1==null || G.state.sel2==null) return;
-    const subs = G.TREE[G.state.sel0].areas[G.state.sel1].subcarpetas;
+    const subs = (G.TREE[G.state.sel0].areas[G.state.sel1].subcarpetas || []);
     const items = makeSix(subs[G.state.sel2]);
     const yAt = layoutY(items.length);
     const left = G.colsNodes[2][G.state.sel2];
@@ -292,19 +299,43 @@ const SiteGraph = (() => {
   }
 
   /* ======== API ======== */
-  function init({ tree, stageId, svgId, rootId }){
-    G.TREE = tree;
-    G.stage = document.getElementById(stageId);
-    G.svg   = document.getElementById(svgId);
-    G.root  = document.getElementById(rootId);
+  function init({ tree, stageId, svgId, rootId } = {}){
+    // datos
+    G.TREE = tree || (typeof window !== "undefined" ? window.GRAPH_TREE : null);
+    if (!G.TREE || !Array.isArray(G.TREE) || !G.TREE.length){
+      console.warn('[SiteGraph] Falta GRAPH_TREE. Incluye assets/js/graph-data.js antes de graph.js o pasa {tree} en init().');
+    }
+
+    // ids por defecto
+    const _stageId = stageId || 'graphStage';
+    const _svgId   = svgId   || 'graphSvg';
+    const _rootId  = rootId  || 'graphRoot';
+
+    G.stage = document.getElementById(_stageId);
+    G.svg   = document.getElementById(_svgId);
+    G.root  = document.getElementById(_rootId);
+
+    if (!G.stage || !G.svg || !G.root){
+      console.warn('[SiteGraph] No se encontraron los elementos SVG requeridos (graphStage/graphSvg/graphRoot).');
+      return;
+    }
+
     renderInit();
     enablePanZoom();
 
-    // Si cambias el tamaño del contenedor y quieres re-centrar, rehaz layout base:
     window.addEventListener('resize', () => {
-      // Mantén incremental: no borres todo; re-render desde el nivel seleccionado.
-      // Si quieres “full recalculado” usa renderInit();
+      // Re-aplicar transform para mantener centrado. (El layout incremental ya se gestiona por clics).
       applyTransform();
+    });
+  }
+
+  // Auto-init si existen los elementos y window.GRAPH_TREE
+  if (typeof window !== "undefined") {
+    window.addEventListener('DOMContentLoaded', () => {
+      const hasIds = document.getElementById('graphStage') && document.getElementById('graphSvg') && document.getElementById('graphRoot');
+      if (hasIds && window.GRAPH_TREE) {
+        try { init(); } catch(e){ console.error('[SiteGraph] Error en auto-init:', e); }
+      }
     });
   }
 
