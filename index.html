@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Alejandro Orcajada Meseguer | Administrador de Sistemas y Ciberseguridad</title>
   <meta name="description" content="Portafolio profesional de Alejandro Orcajada Meseguer, Administrador de Sistemas y Ciberseguridad." />
+  <link rel="stylesheet" href="assets/css/graph.css">
 </head>
   <style>
     /* ===== PALETA OSCURA CÁLIDA (azul profundo + naranjas) ===== */
@@ -609,6 +610,29 @@
         <div class="cube-dots" id="cubeDots" aria-hidden="true"></div>
       </div>
     </section>
+    <!-- ========================= MAPA VISUAL (INTERACTIVO) ========================== -->
+<section id="site-graph" class="graph" aria-labelledby="site-graph-title">
+  <div class="card">
+    <div class="graph-head">
+      <h2 id="site-graph-title" class="section-title">Mapa visual</h2>
+      <p class="kicker">Esquema interactivo — haz clic para desplegar niveles.</p>
+    </div>
+
+    <div class="graph-stage" id="graphStage">
+      <svg id="graphSvg" class="svgroot" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid meet" role="img"
+           aria-label="Esquema del contenido por niveles">
+        <g id="graphRoot"></g>
+      </svg>
+    </div>
+
+    <div class="graph-legend">
+      <span class="dot lvl0"></span> Nivel 0
+      <span class="dot lvl1"></span> Nivel 1
+      <span class="dot lvl2"></span> Nivel 2
+      <span class="dot lvl3"></span> Nivel 3
+    </div>
+  </div>
+</section>
     <!-- ========================= MAPA DEL SITIO ========================== -->
 <section id="sitemap" class="sitemap" aria-labelledby="sitemap-title">
   <div class="card">
@@ -1165,10 +1189,10 @@
       const sub = SITE_TREE[sel0].areas[sel1].subcarpetas[sel2];
       makeSix(sub).forEach(t => smL3.appendChild(article(t)));
     }
-
     // Estado inicial: mostrar sólo Nivel 0 (las dos tarjetas)
     renderL0();
   })();
 </script>
+  <script src="assets/js/graph.js"></script>
 </body>
 </html>
