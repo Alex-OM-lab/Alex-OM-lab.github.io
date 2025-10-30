@@ -1,0 +1,118 @@
+/* la animacion cyberpunk del titulo, que se gilchea un poco y luego en bucle*/
+/* =========================================================
+   Cyberpunk 2077-like Glitch para el título del héroe
+   Fase 1: "Fuerte" (estallido inicial)
+   Fase 2: "Suave" (bucle cada 6s)
+   ========================================================= */
+
+#heroTitle{
+  position: relative;
+  display: inline-block;
+  will-change: filter, transform;
+  /* un pelín más de punch siempre */
+  filter: saturate(110%) contrast(105%);
+}
+
+/* Capas fantasma RGB para “chromatic aberration” */
+#heroTitle::before,
+#heroTitle::after{
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: 0;
+  filter: blur(.45px);
+}
+#heroTitle::before{ color:#00f5ff; } /* cian */
+#heroTitle::after { color:#ff4d4d; } /* rojo */
+
+/* Scanlines muy sutiles que solo aparecen durante el glitch */
+#heroTitle::marker, /* nada, solo evita warnings en algunos linters */
+#heroTitle::before,
+#heroTitle::after{
+  -webkit-mask-image: none;
+          mask-image: none;
+}
+@supports (mask-image: repeating-linear-gradient(transparent 0 2px, black 2px 4px)){
+  #heroTitle.is-glitch-strong,
+  #heroTitle.is-glitch-soft{
+    -webkit-mask-image: repeating-linear-gradient(transparent 0 2px, black 2px 4px);
+            mask-image: repeating-linear-gradient(transparent 0 2px, black 2px 4px);
+    -webkit-mask-size: 100% 100%;
+            mask-size: 100% 100%;
+  }
+}
+
+/* ====== KEYFRAMES ====== */
+
+/* Estallido fuerte: más desplazamiento, cortes más agresivos */
+@keyframes cp-glitch-strong-title {
+  0%   { transform:none; filter:none; }
+  5%   { transform:skewX(.7deg) translateX(1.2px); }
+  12%  { transform:skewX(-.8deg) translateX(-1.4px); filter:contrast(112%) }
+  20%  { transform:skewY(.6deg) translateY(.8px); }
+  28%  { transform:none; }
+  36%  { transform:translateX(.8px) }
+  44%  { transform:none; }
+  100% { transform:none; }
+}
+@keyframes cp-glitch-strong-slice {
+  /* cambiamos clip para simular “saltos” horizontales */
+  0%   { clip-path: inset(0 0 82% 0); opacity:1; transform:translate(.8px,-.6px) }
+  16%  { clip-path: inset(64% 0 20% 0); transform:translate(-1.2px,.6px) }
+  32%  { clip-path: inset(18% 0 58% 0); transform:translate(1px,0) }
+  48%  { clip-path: inset(40% 0 38% 0); transform:translate(-.8px,0) }
+  64%  { clip-path: inset(72% 0 6% 0);  transform:translate(.6px,.4px) }
+  80%  { clip-path: inset(8% 0 70% 0);  transform:translate(-.6px,-.4px) }
+  100% { clip-path: inset(0 0 0 0); opacity:0; transform:none }
+}
+
+/* Glitch suave: pequeños shifts y cortes finos en el borde */
+@keyframes cp-glitch-soft-title {
+  0%   { transform:none; filter:none; }
+  10%  { transform:skewX(.25deg) translateX(.5px); filter:contrast(108%) }
+  20%  { transform:translateX(-.4px); }
+  30%  { transform:skewY(.2deg) translateY(.3px); }
+  40%  { transform:none; }
+  100% { transform:none; }
+}
+@keyframes cp-glitch-soft-slice {
+  0%   { clip-path: inset(0 0 90% 0); opacity:.9; transform:translate(.35px,-.25px) }
+  25%  { clip-path: inset(70% 0 18% 0); transform:translate(-.35px,.25px) }
+  50%  { clip-path: inset(14% 0 76% 0); transform:translate(.3px,0) }
+  75%  { clip-path: inset(46% 0 44% 0); transform:translate(-.3px,0) }
+  100% { clip-path: inset(0 0 0 0); opacity:0; transform:none }
+}
+
+/* ====== ESTADOS ====== */
+
+/* FASE 1 – Estallido inicial, ~0.6s */
+#heroTitle.is-glitch-strong{
+  animation: cp-glitch-strong-title .6s ease-out both;
+}
+#heroTitle.is-glitch-strong::before,
+#heroTitle.is-glitch-strong::after{
+  opacity: 1;
+  animation: cp-glitch-strong-slice .6s steps(4,end) both;
+}
+
+/* FASE 2 – Glitch suave en bucle, ~0.38s */
+#heroTitle.is-glitch-soft{
+  animation: cp-glitch-soft-title .38s ease-out both;
+}
+#heroTitle.is-glitch-soft::before,
+#heroTitle.is-glitch-soft::after{
+  opacity: .95;
+  animation: cp-glitch-soft-slice .38s steps(3,end) both;
+}
+
+/* Accesibilidad */
+@media (prefers-reduced-motion: reduce){
+  #heroTitle,
+  #heroTitle::before,
+  #heroTitle::after{
+    animation: none !important;
+    transition: none !important;
+  }
+}
