@@ -16,7 +16,8 @@
       --hero-offset:12vh;
     }
 
-    *{box-sizing:border-box} html,body{margin:0}
+    *{box-sizing:border-box}
+    html,body{margin:0}
     body{
       font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,Inter,"Helvetica Neue",Arial;
       background:
@@ -30,6 +31,7 @@
       min-height:52vh; display:flex; align-items:center; justify-content:center; text-align:center;
       padding:0 14px 0; margin-top:var(--hero-offset);
     }
+
     #heroTitle{
       position:relative; display:inline-block;
       font-size:clamp(34px,4vw,54px); font-weight:900; color:var(--accent); margin:0 0 6px;
@@ -159,29 +161,26 @@
     function typeName(){ if(i<nameText.length){ elName.textContent += nameText.charAt(i++); setTimeout(typeName,speed); } else { setTimeout(typeRole,250);} }
     function typeRole(){ if(j<roleText.length){ elRole.textContent += roleText.charAt(j++); setTimeout(typeRole,speed); } else {
       cursor?.remove(); lead?.classList.add('show');
-      startCyberTitleGlitch(); // empieza el ciclo de pulsos
+      startCyberTitleGlitch(); // empieza ciclo
     } }
     setTimeout(typeName,300);
   })();
 
   /* ========= GLITCH “CRÉDITOS CP2077” – Canvas por bandas ========= */
 
-  // Config base (fuerte). Los suaves heredan y se atenúan al 55%.
+  // ⚙️ Configuración: FUERTE hacia ARRIBA; SUAVES hacia la DERECHA (55% intensidad)
   const GLITCH_CFG = {
-    bandMin: 2, bandMax: 10,          // altura variable → “mordidas”
-    strong: { dur: 200, amp: 28, skew: 6.0, baseDX: 8,  baseDY: 0 },   // → derecha
-    small:  { dur: 140, amp: 14, skew: 3.0, baseDX: 0,  baseDY: -3 },  // → arriba (sutil)
-    smallAttenuation: 0.55,           // 55% intensidad (50–60% +/−)
-    gapProb: 0.12,                    // huecos
-    bigTearProb: 0.22,                // cortes grandes
-    bigTearAmp: 46,                   // desplazamiento de cortes grandes
-    pxDownscale: 0.72,                // pixelación intencional
-    chromaShift: 0.8,                 // aberración cromática sutil
-    loopMs: 8000,                     // 8s entre pulsos (como pediste)
-    cycleLength: 6                    // 1 fuerte, 2–5 suaves, 6 fuerte
+    bandMin: 2, bandMax: 10,
+    strong: { dur: 200, amp: 28, skew: 6.0, baseDX: 0,  baseDY: -4 }, // ↑
+    small:  { dur: 140, amp: 14, skew: 3.0, baseDX: 10, baseDY: 0  }, // →
+    smallAttenuation: 0.55,
+    gapProb: 0.12, bigTearProb: 0.22, bigTearAmp: 46,
+    pxDownscale: 0.72, chromaShift: 0.8,
+    loopMs: 8000,               // 8s entre pulsos
+    cycleLength: 6              // 1 fuerte, 2–5 suaves, 6 fuerte
   };
 
-  // Montaje básico
+  // Montaje del canvas
   document.addEventListener('DOMContentLoaded', ()=>{
     const h1 = document.getElementById('heroTitle');
     if(!h1) return;
@@ -206,9 +205,10 @@
     const W = Math.max(1, Math.ceil(r.width));
     const H = Math.max(1, Math.ceil(r.height));
     canvas.width=W; canvas.height=H;
+
     const ctx = canvas.getContext('2d');
 
-    // Snapshot nítido
+    // Snapshot en offscreen
     const off = document.createElement('canvas'); off.width=W; off.height=H;
     const octx = off.getContext('2d');
     const cs = getComputedStyle(h1);
@@ -219,7 +219,7 @@
     octx.fillStyle='#ff2a6d'; octx.fillText(txt,  GLITCH_CFG.chromaShift, 0);
     octx.fillStyle=cs.color || '#ff9f1a'; octx.fillText(txt, 0, 0);
 
-    // Low-res para dientes
+    // Versión pixelada (nearest neighbor)
     const scale = Math.max(0.4, Math.min(1, GLITCH_CFG.pxDownscale));
     const lowW = Math.max(1, Math.round(W*scale));
     const lowH = Math.max(1, Math.round(H*scale));
@@ -230,15 +230,15 @@
     canvas.style.display='block';
     h1.style.visibility='hidden';
 
-    // Parámetros según tipo
+    // Params por tipo (+ atenuación para “small”)
     const base = GLITCH_CFG[kind];
     const att  = (kind==='small') ? GLITCH_CFG.smallAttenuation : 1;
     const cfg = {
       dur:  base.dur,
       amp:  base.amp  * att,
       skew: base.skew * att,
-      baseDX: base.baseDX,           // desplazamiento global X
-      baseDY: base.baseDY            // desplazamiento global Y
+      baseDX: base.baseDX,
+      baseDY: base.baseDY
     };
 
     const t0 = performance.now();
@@ -253,13 +253,11 @@
         const bh = Math.min(H-y, randInt(GLITCH_CFG.bandMin, GLITCH_CFG.bandMax));
         const dir = (band++ % 2 === 0) ? -1 : 1;
 
-        // Hueco
-        if(Math.random() < GLITCH_CFG.gapProb * (kind==='strong'?1.4:1)) { y+=bh; continue; }
+        if(Math.random() < GLITCH_CFG.gapProb * (kind==='strong'?1.4:1)){ y+=bh; continue; }
 
         const baseAmp = cfg.amp * (1-k);
         let dx = Math.round(baseAmp * (0.4 + Math.random()*0.8)) * dir;
 
-        // Corte grande ocasional
         if(Math.random() < GLITCH_CFG.bigTearProb * (kind==='strong'?1.2:0.8)){
           dx += Math.round(GLITCH_CFG.bigTearAmp * (0.6 + Math.random()*0.6)) * dir;
         }
@@ -290,22 +288,20 @@
     _timer = setInterval(()=>{
       _count++;
       const step = (_count % GLITCH_CFG.cycleLength) || GLITCH_CFG.cycleLength;
-      if(step === 1 || step === GLITCH_CFG.cycleLength){        // 1 y 6 → fuerte
+      if(step === 1 || step === GLITCH_CFG.cycleLength){ // 1 y 6 → fuerte (↑)
         pulse('strong');
-      }else{                                                    // 2..5 → suaves
+      }else{                                             // 2..5 → suaves (→)
         pulse('small');
       }
-    }, GLITCH_CFG.loopMs); // 8 s entre cada pulso
+    }, GLITCH_CFG.loopMs);
   }
   function stopLoop(){ if(_timer){ clearInterval(_timer); _timer=null; } }
 
-  // Arranca: pulso fuerte inmediato y luego bucle 8s
   function startCyberTitleGlitch(){
-    pulse('strong');
-    setTimeout(startLoop, 8000); // primera espera de 8 s tras el golpe inicial
+    pulse('strong');              // golpe inicial (↑)
+    setTimeout(startLoop, 8000);  // luego cada 8 s
   }
 
-  // Ahorro en segundo plano (mantiene la secuencia al volver)
   document.addEventListener('visibilitychange', ()=>{
     if(document.hidden) stopLoop(); else startLoop();
   });
