@@ -1,8 +1,7 @@
 /* =========================================================
    NAV / TOPBAR (archivo: assets/css/nav.css)
-   Depende de variables CSS definidas en :root del HTML:
-   --bg, --panel, --text, --muted, --accent, --accent-soft,
-   --nav-font, --nav-pad-y, --nav-gap
+   Sin efecto neón en la barra. Línea inferior nace del centro
+   y se expande con animación lenta (4.8s).
    ========================================================= */
 
 /* ====== TOPBAR ====== */
@@ -18,12 +17,12 @@
   to  { transform:none; opacity:1 }
 }
 
-/* --- Línea inferior: nace en el centro y se expande (sin neón) --- */
+/* --- Línea inferior: nace en el centro y se expande (SIN neón) --- */
 .topbar::after{
   content:"";
   position:absolute; left:0; right:0; bottom:0; height:4px;
 
-  /* Centro protagonista, bordes atenuados */
+  /* Centro protagonista, bordes atenuados (sin glow) */
   background:linear-gradient(90deg,
     rgba(255,159,26,0)     0%,
     rgba(255,159,26,.20)  8%,
@@ -38,14 +37,14 @@
   transform:scaleX(0);
   opacity:0;
 
-  /* Más lenta y con “presencia”: ease-out con overshoot suave */
-  animation:beamGrow 1600ms cubic-bezier(.16,.84,.26,1.02) .18s forwards;
+  /* 3× más lenta: 4800ms, con overshoot sutil */
+  animation:beamGrow 4800ms cubic-bezier(.16,.84,.26,1.02) .18s forwards;
 }
 
-/* Animación: expansión desde centro + leve overshoot */
+/* Animación expansión con leve overshoot */
 @keyframes beamGrow{
   0%   { transform:scaleX(0);   opacity:0 }
-  70%  { transform:scaleX(1.06); opacity:.98 } /* overshoot sutil */
+  70%  { transform:scaleX(1.06); opacity:.98 }
   100% { transform:scaleX(1);    opacity:1 }
 }
 
@@ -128,7 +127,7 @@
 }
 .sub li.open > .nested{ max-height:1200px; opacity:1; transform:none }
 
-/* ====== PANEL LATERAL NIVEL 3 (para Portafolio sticky) ====== */
+/* ====== PANEL LATERAL NIVEL 3 (Portafolio sticky) ====== */
 .sub .side{
   position:absolute; top:0; left:calc(100% + 12px); width:340px;
   background:rgba(17,26,45,.98); border:1px solid rgba(255,255,255,.06);
