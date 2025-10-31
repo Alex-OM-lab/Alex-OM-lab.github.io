@@ -6,22 +6,13 @@
   <title>Alejandro Orcajada Meseguer | Administrador de Sistemas y Ciberseguridad</title>
   <meta name="description" content="Portafolio profesional de Alejandro Orcajada Meseguer, Administrador de Sistemas y Ciberseguridad." />
 
-  <!-- 🔤 Fuente futurista elegida: Tomorrow -->
-  <link href="https://fonts.googleapis.com/css2?family=Tomorrow:wght@400;600;700;900&display=swap" rel="stylesheet">
-
-  <link rel="stylesheet" href="assets/css/graph.css">
-  <link rel="stylesheet" href="assets/css/cubes.css">
-  <link rel="stylesheet" href="assets/css/nav.css">
+  <!-- Tomorrow (variable) -->
+  <link href="https://fonts.googleapis.com/css2?family=Tomorrow:wdth,wght@100..125,400..900&display=swap" rel="stylesheet">
 
   <style>
     :root{
-      --bg:#0b1220;
-      --panel:#111a2d;
-      --text:#e9eef6;
-      --muted:#a8b2c2;
-      --accent:#ff9f1a;
-      --accent-soft:#ffd79a;
-      --radius:14px;
+      --bg:#0b1220; --panel:#111a2d; --text:#e9eef6; --muted:#a8b2c2;
+      --accent:#ff9f1a; --accent-soft:#ffd79a; --radius:14px;
       --hero-offset:12vh;
     }
 
@@ -29,6 +20,7 @@
     html,body{margin:0}
     body{
       font-family:'Tomorrow', system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial;
+      -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
       background:
         radial-gradient(1400px 800px at 80% -100px, rgba(255,159,26,.06), transparent 60%),
         radial-gradient(1200px 700px at -200px 20%, rgba(255,215,154,.05), transparent 60%),
@@ -37,90 +29,60 @@
     }
 
     .hero-wrap{
-      min-height:52vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      text-align:center;
-      padding:0 14px 0;
-      margin-top:var(--hero-offset);
+      min-height:52vh; display:flex; align-items:center; justify-content:center; text-align:center;
+      padding:0 14px 0; margin-top:var(--hero-offset);
     }
 
-    /* ===== TÍTULO FUTURISTA (Tomorrow) ===== */
+    /* ===== TÍTULO estilo Tomorrow (preview-like) ===== */
     #heroTitle{
-      position:relative;
-      display:inline-block;
-      font-family:'Tomorrow', sans-serif;
-      font-weight:900;
-      font-size:clamp(38px,4vw,60px);
-      letter-spacing:1px;
+      position:relative; display:inline-block;
+      font-weight:600;               /* ← clave: no tan pesado */
+      font-size:clamp(36px,4vw,56px);
+      letter-spacing:.02em;          /* tracking sutil, más “UI” */
+      word-spacing:.03em;
       color:var(--accent);
       margin:0 0 6px;
-      text-transform:uppercase;
+      text-transform:none;           /* ← SIN versales */
+      /* Neón muy sutil (respira cada 3s) */
       text-shadow:
-        0 0 1px color-mix(in oklab, var(--accent) 90%, #fff 10%),
-        0 0 3px color-mix(in oklab, var(--accent) 85%, #fff 15%),
-        0 0 5px color-mix(in oklab, var(--accent) 80%, #fff 20%);
+        0 0 .6px color-mix(in oklab, var(--accent) 88%, #fff 12%),
+        0 0 2px  color-mix(in oklab, var(--accent) 80%, #fff 20%),
+        0 0 3px  color-mix(in oklab, var(--accent) 75%, #fff 25%);
       animation: neonPulse 3s ease-in-out infinite alternate;
     }
-
     @keyframes neonPulse{
       0%{
         opacity:1;
         text-shadow:
-          0 0 1px color-mix(in oklab, var(--accent) 90%, #fff 10%),
-          0 0 3px color-mix(in oklab, var(--accent) 85%, #fff 15%),
-          0 0 5px color-mix(in oklab, var(--accent) 80%, #fff 20%);
+          0 0 .7px color-mix(in oklab, var(--accent) 90%, #fff 10%),
+          0 0 2.2px color-mix(in oklab, var(--accent) 82%, #fff 18%),
+          0 0 3.2px color-mix(in oklab, var(--accent) 78%, #fff 22%);
       }
       100%{
-        opacity:.92;
+        opacity:.94;
         text-shadow:
-          0 0 0.5px color-mix(in oklab, var(--accent) 70%, #fff 30%),
-          0 0 2px   color-mix(in oklab, var(--accent) 65%, #fff 35%),
-          0 0 3px   color-mix(in oklab, var(--accent) 60%, #fff 40%);
+          0 0 .4px color-mix(in oklab, var(--accent) 72%, #fff 28%),
+          0 0 1.4px color-mix(in oklab, var(--accent) 68%, #fff 32%),
+          0 0 2.2px color-mix(in oklab, var(--accent) 64%, #fff 36%);
       }
     }
 
     .hero h2{
-      font-family:'Tomorrow', sans-serif;
-      font-weight:700;
+      font-weight:600;
       font-size:clamp(24px,3vw,40px);
-      color:var(--accent-soft);
       margin:4px 0 8px;
-      letter-spacing:0.5px;
-      text-shadow:0 0 6px rgba(255,159,26,.3);
+      color:var(--accent-soft);
+      letter-spacing:.01em;
+      text-shadow:0 0 4px rgba(255,159,26,.25);
     }
 
-    .cursor{
-      display:inline-block;
-      width:.6ch;
-      margin-left:2px;
-      color:var(--accent);
-      filter:drop-shadow(0 0 4px var(--accent));
-      animation:blink .95s steps(1,end) infinite;
-    }
+    .cursor{display:inline-block;width:.6ch;margin-left:2px;color:var(--accent);filter:drop-shadow(0 0 3px var(--accent));animation:blink .95s steps(1,end) infinite}
     @keyframes blink{50%{opacity:0}}
-
-    .lead{
-      max-width:900px;
-      margin:6px auto 0;
-      font-size:clamp(19px,1.5vw,22px);
-      line-height:1.7;
-      color:var(--text);
-      opacity:0;
-      transform:translateY(10px);
-      transition:opacity .8s ease,transform .8s ease;
-    }
+    .lead{max-width:900px;margin:6px auto 0;font-size:clamp(19px,1.5vw,22px);line-height:1.7;color:var(--text);opacity:0;transform:translateY(10px);transition:opacity .8s ease,transform .8s ease}
     .lead.show{opacity:1;transform:none}
 
     .glitch-wrap{ position:relative; display:inline-block; }
-    #glitchCanvas{
-      position:absolute;
-      inset:0;
-      display:none;
-      pointer-events:none;
-      image-rendering:pixelated;
-    }
+    #glitchCanvas{ position:absolute; inset:0; display:none; pointer-events:none; image-rendering:pixelated; }
 
     @media (prefers-reduced-motion: reduce){
       #glitchCanvas{ display:none !important; }
@@ -146,7 +108,7 @@
 <script>
   document.getElementById('y').textContent = new Date().getFullYear();
 
-  /* ========= Efecto de escritura ========= */
+  /* ========= Typing (nombre + rol) ========= */
   (function(){
     const nameText = "Alejandro Orcajada Meseguer";
     const roleText = "Administrador de Sistemas y Ciberseguridad";
@@ -157,52 +119,24 @@
     const lead = document.getElementById('lead');
     let i=0,j=0;
 
-    function typeName(){ 
-      if(i<nameText.length){ 
-        elName.textContent += nameText.charAt(i++); 
-        setTimeout(typeName,speed); 
-      } else { 
-        setTimeout(typeRole,250);
-      } 
-    }
-    function typeRole(){ 
-      if(j<roleText.length){ 
-        elRole.textContent += roleText.charAt(j++); 
-        setTimeout(typeRole,speed); 
-      } else {
-        cursor?.remove(); 
-        lead?.classList.add('show');
-        setTimeout(()=>{ startCyberTitleGlitch(); }, 1000);
-      } 
-    }
+    function typeName(){ if(i<nameText.length){ elName.textContent += nameText.charAt(i++); setTimeout(typeName,speed); } else { setTimeout(typeRole,250);} }
+    function typeRole(){ if(j<roleText.length){ elRole.textContent += roleText.charAt(j++); setTimeout(typeRole,speed); } else {
+      cursor?.remove(); lead?.classList.add('show');
+      setTimeout(()=>{ startCyberTitleGlitch(); }, 1000); // 1s después de escribir → primer glitch
+    } }
     setTimeout(typeName,300);
   })();
 
-  /* ========= Efecto glitch ========= */
+  /* ========= GLITCH (créditos CP) ========= */
   const GLITCH_CFG = {
     bandMin: 2, bandMax: 10,
-    strong: { dur: 200, amp: 26, skew: 5.5, baseDX: 0,  baseDY: -4 },
-    small:  { dur: 120, amp: 8,  skew: 1.6, baseDX: 6,  baseDY: 0  },
+    strong: { dur: 200, amp: 26, skew: 5.5, baseDX: 0,  baseDY: -4 }, // fuerte: ↑
+    small:  { dur: 120, amp: 8,  skew: 1.6, baseDX: 6,  baseDY: 0  }, // suaves: →
     smallAttenuation: 0.3,
-    gapProb: 0.08,
-    bigTearProb: 0.14,
-    bigTearAmp: 32,
-    pxDownscale: 0.75,
-    chromaShift: 0.7,
-    loopMs: 5000,
-    cycleLength: 6
+    gapProb: 0.08, bigTearProb: 0.14, bigTearAmp: 32,
+    pxDownscale: 0.75, chromaShift: 0.7,
+    loopMs: 5000, cycleLength: 6
   };
-
-  document.addEventListener('DOMContentLoaded', ()=>{
-    const h1 = document.getElementById('heroTitle');
-    if(!h1) return;
-    if(!h1.parentElement.classList.contains('glitch-wrap')){
-      const wrap = document.createElement('span');
-      wrap.className = 'glitch-wrap';
-      h1.replaceWith(wrap); wrap.appendChild(h1);
-      const c = document.createElement('canvas'); c.id='glitchCanvas'; wrap.appendChild(c);
-    }
-  });
 
   let _timer=null, _count=0;
 
@@ -212,11 +146,11 @@
     if(!h1 || !canvas) return;
 
     const r = h1.getBoundingClientRect();
-    const W = Math.ceil(r.width);
-    const H = Math.ceil(r.height);
+    const W = Math.ceil(r.width), H = Math.ceil(r.height);
     canvas.width=W; canvas.height=H;
     const ctx = canvas.getContext('2d');
 
+    // snapshot del título con leve aberración
     const off = document.createElement('canvas'); off.width=W; off.height=H;
     const octx = off.getContext('2d');
     const cs = getComputedStyle(h1);
@@ -227,9 +161,9 @@
     octx.fillStyle='#ff2a6d'; octx.fillText(txt,  GLITCH_CFG.chromaShift, 0);
     octx.fillStyle=cs.color || '#ff9f1a'; octx.fillText(txt, 0, 0);
 
+    // versión pixelada (nearest neighbor)
     const scale = GLITCH_CFG.pxDownscale;
-    const lowW = Math.round(W*scale);
-    const lowH = Math.round(H*scale);
+    const lowW = Math.round(W*scale), lowH = Math.round(H*scale);
     const low = document.createElement('canvas'); low.width=lowW; low.height=lowH;
     const lctx = low.getContext('2d'); lctx.imageSmoothingEnabled=false;
     lctx.drawImage(off, 0,0, lowW,lowH);
@@ -238,31 +172,30 @@
 
     const base = GLITCH_CFG[kind];
     const att  = (kind==='small') ? GLITCH_CFG.smallAttenuation : 1;
-    const cfg = {
-      dur:  base.dur,
-      amp:  base.amp  * att,
-      skew: base.skew * att,
-      baseDX: base.baseDX,
-      baseDY: base.baseDY
-    };
+    const cfg = { dur:base.dur, amp:base.amp*att, skew:base.skew*att, baseDX:base.baseDX, baseDY:base.baseDY };
 
     const t0 = performance.now();
     function frame(t){
       const k = Math.min(1, (t - t0) / cfg.dur);
-      ctx.clearRect(0,0,W,H);
-      ctx.imageSmoothingEnabled=false;
+      ctx.clearRect(0,0,W,H); ctx.imageSmoothingEnabled=false;
+
       let y=0, band=0;
       while(y<H){
         const bh = Math.min(H-y, randInt(GLITCH_CFG.bandMin, GLITCH_CFG.bandMax));
         const dir = (band++ % 2 === 0) ? -1 : 1;
         if(Math.random() < GLITCH_CFG.gapProb){ y+=bh; continue; }
+
         const baseAmp = cfg.amp * (1-k);
         let dx = Math.round(baseAmp * (0.3 + Math.random()*0.6)) * dir;
-        if(Math.random() < GLITCH_CFG.bigTearProb){ dx += Math.round(GLITCH_CFG.bigTearAmp * (0.5 + Math.random()*0.5)) * dir; }
+        if(Math.random() < GLITCH_CFG.bigTearProb){
+          dx += Math.round(GLITCH_CFG.bigTearAmp * (0.5 + Math.random()*0.5)) * dir;
+        }
         const dy = Math.tan((cfg.skew*(1-k)) * Math.PI/180) * dir;
+
         const sy = Math.round((y/H)*lowH);
-        const sh = Math.round((bh/H)*lowH);
-        ctx.drawImage(low,0,sy,lowW,sh,cfg.baseDX+dx,Math.round(cfg.baseDY+y+dy),W,bh);
+        const sh = Math.max(1, Math.round((bh/H)*lowH));
+        ctx.drawImage(low, 0,sy,lowW,sh,  cfg.baseDX+dx, Math.round(cfg.baseDY+y+dy),  W,bh);
+
         y += bh;
       }
       if(k<1) requestAnimationFrame(frame);
@@ -272,19 +205,18 @@
   }
 
   function startLoop(){
-    stopLoop();
-    _count = 0;
+    stopLoop(); _count = 0;
     _timer = setInterval(()=>{
       _count++;
       const step = (_count % GLITCH_CFG.cycleLength) || GLITCH_CFG.cycleLength;
-      if(step === 1 || step === GLITCH_CFG.cycleLength) pulse('strong');
-      else pulse('small');
+      if(step === 1 || step === GLITCH_CFG.cycleLength) pulse('strong'); // 1 y 6
+      else pulse('small'); // 2..5
     }, GLITCH_CFG.loopMs);
   }
   function stopLoop(){ if(_timer){ clearInterval(_timer); _timer=null; } }
 
   function startCyberTitleGlitch(){
-    pulse('strong');
+    pulse('strong');                   // golpe inicial a los 1s post-typing
     setTimeout(startLoop, GLITCH_CFG.loopMs);
   }
 
