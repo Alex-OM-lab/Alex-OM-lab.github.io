@@ -9,27 +9,14 @@
   <link rel="stylesheet" href="assets/css/cubes.css">
   <link rel="stylesheet" href="assets/css/nav.css">
   <style>
-    /* ===== PALETA OSCURA CÁLIDA (azul profundo + naranjas) ===== */
     :root{
-      --bg:#0b1220;
-      --panel:#111a2d;
-      --text:#e9eef6;
-      --muted:#a8b2c2;
-      --accent:#ff9f1a;
-      --accent-soft:#ffd79a;
-      --radius:14px;
-
-      /* tamaños menú */
-      --nav-font:15.5px;
-      --nav-pad-y:12px;
-      --nav-gap:12px;
-
-      /* hero offset */
+      --bg:#0b1220; --panel:#111a2d; --text:#e9eef6; --muted:#a8b2c2;
+      --accent:#ff9f1a; --accent-soft:#ffd79a; --radius:14px;
+      --nav-font:15.5px; --nav-pad-y:12px; --nav-gap:12px;
       --hero-offset:12vh;
     }
 
-    *{box-sizing:border-box}
-    html,body{margin:0}
+    *{box-sizing:border-box} html,body{margin:0}
     body{
       font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,Inter,"Helvetica Neue",Arial;
       background:
@@ -39,13 +26,16 @@
       color:var(--text)
     }
 
-    /* ====== HERO / CONTENIDO ====== */
     .hero-wrap{
-      min-height:52vh;
-      display:flex;align-items:center;justify-content:center;text-align:center;
-      padding:0 14px 0;
-      margin-top:var(--hero-offset);
+      min-height:52vh; display:flex; align-items:center; justify-content:center; text-align:center;
+      padding:0 14px 0; margin-top:var(--hero-offset);
     }
+    #heroTitle{
+      position:relative; display:inline-block;
+      font-size:clamp(34px,4vw,54px); font-weight:900; color:var(--accent); margin:0 0 6px;
+      text-shadow:0 0 18px rgba(255,159,26,.7),0 0 36px rgba(255,159,26,.25);
+    }
+
     .hero h2{font-size:clamp(24px,3.2vw,40px);font-weight:800;margin:4px 0 8px;color:var(--accent-soft);
       text-shadow:0 0 14px rgba(255,159,26,.45)}
     .cursor{display:inline-block;width:.6ch;margin-left:2px;color:var(--accent);filter:drop-shadow(0 0 6px var(--accent));animation:blink .95s steps(1,end) infinite}
@@ -62,35 +52,17 @@
     .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
     .card{background:linear-gradient(180deg,color-mix(in oklab,var(--panel) 92%,#0f1422 8%),var(--panel));border:1px solid rgba(255,255,255,.06);border-radius:var(--radius);padding:16px}
     .project img{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:10px;border:1px solid rgba(255,255,255,.06)}
-    .project h4{margin:10px 0 6px}
-    .project p{margin:0;color:var(--muted)}
+    .project h4{margin:10px 0 6px}.project p{margin:0;color:var(--muted)}
     .contact-box{display:grid;grid-template-columns:1.1fr .9fr;gap:22px}
-    form{display:grid;gap:12px}
-    input,textarea{background:#0c1323;color:var(--text);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:12px 14px;font-size:16px}
+    form{display:grid;gap:12px} input,textarea{background:#0c1323;color:var(--text);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:12px 14px;font-size:16px}
     textarea{min-height:140px;resize:vertical}
     footer{padding:40px 0;color:#a9b1bd;text-align:center;border-top:1px solid rgba(255,255,255,.06);margin-top:10px}
 
-    @media (max-width:980px){.grid{grid-template-columns:1fr 1fr}.contact-box{grid-template-columns:1fr}}
-    @media (max-width:620px){.grid{grid-template-columns:1fr}}
-
-    /* =========================
-       GLITCH “CRÉDITOS CYBERPUNK” (Canvas por bandas)
-       ========================= */
-    #heroTitle{
-      position:relative;
-      font-size:clamp(34px,4vw,54px);
-      font-weight:900;
-      color:var(--accent);
-      margin:0 0 6px;
-      text-shadow:0 0 18px rgba(255,159,26,.7),0 0 36px rgba(255,159,26,.25);
-      display:inline-block;
-    }
+    /* Canvas del glitch encima del título */
     .glitch-wrap{ position:relative; display:inline-block; }
     #glitchCanvas{
-      position:absolute; inset:0;
-      display:none;
-      image-rendering: pixelated; /* dientes gordos intencionales */
-      pointer-events:none;
+      position:absolute; inset:0; display:none; pointer-events:none;
+      image-rendering: pixelated;
     }
 
     @media (prefers-reduced-motion: reduce){
@@ -103,21 +75,14 @@
   <header class="topbar">
     <div class="topwrap">
       <a class="brand" href="./"><span class="brand-dot"></span><span>AO · Portafolio</span></a>
-
-      <!-- Menú izquierda (nuevo orden) -->
       <nav class="menu-left" id="nav" aria-label="Navegación principal"></nav>
-
-      <!-- Menú derecha: Inicio -->
-      <nav class="menu-right">
-        <a class="nav-link" href="./">Inicio</a>
-      </nav>
+      <nav class="menu-right"><a class="nav-link" href="./">Inicio</a></nav>
     </div>
   </header>
 
   <!-- ========================= HERO ========================== -->
   <div id="home" class="hero-wrap">
     <div class="hero">
-      <!-- ENVOLTURA PARA EL CANVAS DEL GLITCH -->
       <span class="glitch-wrap">
         <h1 id="heroTitle"><span id="typeName"></span></h1>
         <canvas id="glitchCanvas" width="0" height="0" aria-hidden="true"></canvas>
@@ -172,69 +137,6 @@
         </article>
       </div>
     </section>
-
-    <!-- =======================================================
-         NUEVA SECCIÓN: Carrusel de cubos (placeholder)
-         ======================================================= -->
-    <section id="news-cubes" aria-labelledby="news-cubes-title">
-      <h2 id="news-cubes-title" class="section-title">Lecturas y artículos</h2>
-      <p class="kicker">Novedades seleccionadas — desplazamiento suave y continuo.</p>
-
-      <div class="cube-carousel" data-autoplay="true" data-interval="3200" data-shuffle="true" aria-roledescription="carrusel">
-        <div class="cube-head"><h3>Artículos interesantes</h3></div>
-        <div class="cube-viewport" role="region" aria-label="Carrusel de artículos" style="overflow:hidden">
-          <div class="cube-track" id="cubeTrack" role="list"></div>
-        </div>
-        <div class="cube-nav" aria-hidden="false">
-          <button class="cube-btn prev" type="button" id="cubePrev" aria-label="Artículo anterior">‹</button>
-          <button class="cube-btn next" type="button" id="cubeNext" aria-label="Artículo siguiente">›</button>
-        </div>
-        <div class="cube-dots" id="cubeDots" aria-hidden="true"></div>
-      </div>
-    </section>
-
-    <!-- ========================= MAPA VISUAL (INTERACTIVO) ========================== -->
-    <section id="site-graph" class="graph" aria-labelledby="site-graph-title">
-      <div class="card">
-        <div class="graph-head">
-          <h2 id="site-graph-title" class="section-title">Mapa visual</h2>
-          <p class="kicker">Esquema interactivo — haz clic para desplegar niveles.</p>
-        </div>
-
-        <div class="graph-stage" id="graphStage">
-          <svg id="graphSvg" class="svgroot" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid meet" role="img"
-               aria-label="Esquema del contenido por niveles">
-            <g id="graphRoot"></g>
-          </svg>
-        </div>
-
-        <div class="graph-legend">
-          <span class="dot lvl0"></span> Nivel 0
-          <span class="dot lvl1"></span> Nivel 1
-          <span class="dot lvl2"></span> Nivel 2
-          <span class="dot lvl3"></span> Nivel 3
-        </div>
-      </div>
-    </section>
-
-    <section id="contact" aria-labelledby="contact-title">
-      <h2 id="contact-title" class="section-title">Contacto</h2>
-      <div class="contact-box">
-        <div class="card">
-          <p>¿Tienes un proyecto o una consulta técnica? Escríbeme y te respondo.</p>
-          <p><strong>Email:</strong> <a href="mailto:alex@tu-dominio.com">alex@tu-dominio.com</a></p>
-          <p><strong>LinkedIn:</strong> <a href="https://www.linkedin.com/in/tuusuario" target="_blank" rel="noopener">linkedin.com/in/tuusuario</a></p>
-        </div>
-        <div class="card">
-          <form action="mailto:alex@tu-dominio.com" method="post" enctype="text/plain">
-            <label>Nombre<br><input name="nombre" required /></label>
-            <label>Email<br><input name="email" type="email" required /></label>
-            <label>Mensaje<br><textarea name="mensaje" required></textarea></label>
-            <button type="submit" style="background:var(--accent);color:#111;padding:10px 16px;border-radius:10px;border:0;font-weight:700">Enviar</button>
-          </form>
-        </div>
-      </div>
-    </section>
   </main>
 
   <footer>© <span id="y"></span> Alejandro Orcajada Meseguer — Administrador de Sistemas y Ciberseguridad</footer>
@@ -243,7 +145,7 @@
   /* ========= Año en footer ========= */
   document.getElementById('y').textContent = new Date().getFullYear();
 
-  /* ========= TYPING DOBLE ========= */
+  /* ========= TYPING ========= */
   (function(){
     const nameText = "Alejandro Orcajada Meseguer";
     const roleText = "Administrador de Sistemas y Ciberseguridad";
@@ -254,35 +156,32 @@
     const lead = document.getElementById('lead');
     let i=0,j=0;
 
-    function typeName(){
-      if(i<nameText.length){ elName.textContent += nameText.charAt(i++); setTimeout(typeName,speed); }
-      else { setTimeout(typeRole,250); }
-    }
-    function typeRole(){
-      if(j<roleText.length){ elRole.textContent += roleText.charAt(j++); setTimeout(typeRole,speed); }
-      else {
-        cursor?.remove(); lead?.classList.add('show');
-        // 🔹 Arranca el glitch cuando termina de escribir
-        startCyberTitleGlitch();
-      }
-    }
+    function typeName(){ if(i<nameText.length){ elName.textContent += nameText.charAt(i++); setTimeout(typeName,speed); } else { setTimeout(typeRole,250);} }
+    function typeRole(){ if(j<roleText.length){ elRole.textContent += roleText.charAt(j++); setTimeout(typeRole,speed); } else {
+      cursor?.remove(); lead?.classList.add('show');
+      startCyberTitleGlitch(); // empieza el ciclo de pulsos
+    } }
     setTimeout(typeName,300);
   })();
 
   /* ========= GLITCH “CRÉDITOS CP2077” – Canvas por bandas ========= */
+
+  // Config base (fuerte). Los suaves heredan y se atenúan al 55%.
   const GLITCH_CFG = {
-    bandMin: 2, bandMax: 10,     // altura variable -> mordidas irregulares
-    small:  { dur: 120, amp: 10, skew: 2.0 },
-    strong: { dur: 200, amp: 28, skew: 6.0 },
-    gapProb: 0.12,               // huecos normales
-    bigTearProb: 0.22,           // cortes grandes ocasionales
-    bigTearAmp: 46,              // desplazamiento de esos cortes
-    pxDownscale: 0.72,           // pixelación intencional (0.6–0.85)
-    chromaShift: 0.8,            // leve aberración cromática
-    loopMs: 2400, strongEvery: 6 // bucle: cada 6º pulso es fuerte
+    bandMin: 2, bandMax: 10,          // altura variable → “mordidas”
+    strong: { dur: 200, amp: 28, skew: 6.0, baseDX: 8,  baseDY: 0 },   // → derecha
+    small:  { dur: 140, amp: 14, skew: 3.0, baseDX: 0,  baseDY: -3 },  // → arriba (sutil)
+    smallAttenuation: 0.55,           // 55% intensidad (50–60% +/−)
+    gapProb: 0.12,                    // huecos
+    bigTearProb: 0.22,                // cortes grandes
+    bigTearAmp: 46,                   // desplazamiento de cortes grandes
+    pxDownscale: 0.72,                // pixelación intencional
+    chromaShift: 0.8,                 // aberración cromática sutil
+    loopMs: 8000,                     // 8s entre pulsos (como pediste)
+    cycleLength: 6                    // 1 fuerte, 2–5 suaves, 6 fuerte
   };
 
-  // Asegura el canvas sobre el H1
+  // Montaje básico
   document.addEventListener('DOMContentLoaded', ()=>{
     const h1 = document.getElementById('heroTitle');
     if(!h1) return;
@@ -292,13 +191,11 @@
       h1.replaceWith(wrap); wrap.appendChild(h1);
       const c = document.createElement('canvas'); c.id='glitchCanvas'; wrap.appendChild(c);
     }
-    // Hover para test manual (micro-pulso)
-    h1.addEventListener('mouseenter', ()=>pulse('small'));
   });
 
-  let _glTimer=null, _count=0;
+  let _timer=null, _count=0;
 
-  function pulse(kind='small'){
+  function pulse(kind='strong'){
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     const h1 = document.getElementById('heroTitle');
@@ -309,10 +206,9 @@
     const W = Math.max(1, Math.ceil(r.width));
     const H = Math.max(1, Math.ceil(r.height));
     canvas.width=W; canvas.height=H;
-
     const ctx = canvas.getContext('2d');
 
-    // Snapshot nítido en offscreen
+    // Snapshot nítido
     const off = document.createElement('canvas'); off.width=W; off.height=H;
     const octx = off.getContext('2d');
     const cs = getComputedStyle(h1);
@@ -323,7 +219,7 @@
     octx.fillStyle='#ff2a6d'; octx.fillText(txt,  GLITCH_CFG.chromaShift, 0);
     octx.fillStyle=cs.color || '#ff9f1a'; octx.fillText(txt, 0, 0);
 
-    // Versión pixelada (downsample NN)
+    // Low-res para dientes
     const scale = Math.max(0.4, Math.min(1, GLITCH_CFG.pxDownscale));
     const lowW = Math.max(1, Math.round(W*scale));
     const lowH = Math.max(1, Math.round(H*scale));
@@ -334,39 +230,51 @@
     canvas.style.display='block';
     h1.style.visibility='hidden';
 
-    const cfg = (kind==='strong') ? GLITCH_CFG.strong : GLITCH_CFG.small;
+    // Parámetros según tipo
+    const base = GLITCH_CFG[kind];
+    const att  = (kind==='small') ? GLITCH_CFG.smallAttenuation : 1;
+    const cfg = {
+      dur:  base.dur,
+      amp:  base.amp  * att,
+      skew: base.skew * att,
+      baseDX: base.baseDX,           // desplazamiento global X
+      baseDY: base.baseDY            // desplazamiento global Y
+    };
+
     const t0 = performance.now();
 
     function frame(t){
-      const k = Math.min(1, (t-t0)/cfg.dur); // progreso
+      const k = Math.min(1, (t - t0) / cfg.dur);
       ctx.clearRect(0,0,W,H);
       ctx.imageSmoothingEnabled=false;
 
-      let y=0, bandIndex=0;
-      while(y < H){
+      let y=0, band=0;
+      while(y<H){
         const bh = Math.min(H-y, randInt(GLITCH_CFG.bandMin, GLITCH_CFG.bandMax));
-        const dir = (bandIndex++ % 2 === 0) ? -1 : 1;
+        const dir = (band++ % 2 === 0) ? -1 : 1;
 
-        // hueco (“mordida”)
-        if(Math.random() < GLITCH_CFG.gapProb * (kind==='strong'?1.4:1)){
-          y += bh; continue;
-        }
+        // Hueco
+        if(Math.random() < GLITCH_CFG.gapProb * (kind==='strong'?1.4:1)) { y+=bh; continue; }
 
         const baseAmp = cfg.amp * (1-k);
         let dx = Math.round(baseAmp * (0.4 + Math.random()*0.8)) * dir;
 
-        // corte grande estilo créditos CP
+        // Corte grande ocasional
         if(Math.random() < GLITCH_CFG.bigTearProb * (kind==='strong'?1.2:0.8)){
           dx += Math.round(GLITCH_CFG.bigTearAmp * (0.6 + Math.random()*0.6)) * dir;
         }
 
         const dy = Math.tan((cfg.skew*(1-k)) * Math.PI/180) * dir;
 
-        // sección desde la imagen pixelada y pegar a escala completa
         const sy = Math.round((y/H)*lowH);
         const sh = Math.max(1, Math.round((bh/H)*lowH));
 
-        ctx.drawImage(low, 0,sy, lowW,sh,  dx, Math.round(y+dy),  W,bh);
+        ctx.drawImage(
+          low,
+          0, sy, lowW, sh,
+          cfg.baseDX + dx, Math.round(cfg.baseDY + y + dy),
+          W, bh
+        );
 
         y += bh;
       }
@@ -377,26 +285,31 @@
     requestAnimationFrame(frame);
   }
 
-  function startLoop(){ stopLoop();
-    _glTimer = setInterval(()=>{
+  function startLoop(){
+    stopLoop();
+    _timer = setInterval(()=>{
       _count++;
-      (_count % GLITCH_CFG.strongEvery === 1) ? pulse('strong') : pulse('small');
-    }, GLITCH_CFG.loopMs);
+      const step = (_count % GLITCH_CFG.cycleLength) || GLITCH_CFG.cycleLength;
+      if(step === 1 || step === GLITCH_CFG.cycleLength){        // 1 y 6 → fuerte
+        pulse('strong');
+      }else{                                                    // 2..5 → suaves
+        pulse('small');
+      }
+    }, GLITCH_CFG.loopMs); // 8 s entre cada pulso
   }
-  function stopLoop(){ if(_glTimer){ clearInterval(_glTimer); _glTimer=null; } }
+  function stopLoop(){ if(_timer){ clearInterval(_timer); _timer=null; } }
 
-  // Arranque público (lo llama el typing al terminar)
+  // Arranca: pulso fuerte inmediato y luego bucle 8s
   function startCyberTitleGlitch(){
-    pulse('strong');             // golpe inicial
-    setTimeout(startLoop, 900);  // arranca micro-pulsos
+    pulse('strong');
+    setTimeout(startLoop, 8000); // primera espera de 8 s tras el golpe inicial
   }
 
-  // Pausa si la pestaña no está visible
+  // Ahorro en segundo plano (mantiene la secuencia al volver)
   document.addEventListener('visibilitychange', ()=>{
     if(document.hidden) stopLoop(); else startLoop();
   });
 
-  // Utilidad
   function randInt(min,max){ return min + Math.floor(Math.random()*(max-min+1)); }
 </script>
 
@@ -407,4 +320,5 @@
 <script src="assets/js/cubes.js"></script>
 </body>
 </html>
+
 
