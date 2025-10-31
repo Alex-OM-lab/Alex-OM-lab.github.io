@@ -34,7 +34,7 @@
       padding:0 14px; margin-top:var(--hero-offset);
     }
 
-    /* ======= TÍTULO Tomorrow con efecto neón real y sutil ======= */
+    /* ===== Título Tomorrow + NEÓN muy sutil ===== */
     #heroTitle{
       position:relative; display:inline-block;
       font-weight:600;
@@ -44,45 +44,42 @@
       font-size:clamp(36px,4vw,56px);
       color:var(--accent); margin:0 0 6px;
 
-      /* Neón sutil visible */
+      /* Neón sutil visible + respiración */
       text-shadow:
-        0 0 2px rgba(255,159,26,0.5),
+        0 0 2px rgba(255,159,26,0.50),
         0 0 6px rgba(255,159,26,0.35),
         0 0 12px rgba(255,159,26,0.25);
       animation: neonGlow 2.6s ease-in-out infinite alternate;
     }
-
     @keyframes neonGlow{
-      0%{
-        text-shadow:
-          0 0 1.5px rgba(255,159,26,0.45),
-          0 0 5px rgba(255,159,26,0.32),
-          0 0 10px rgba(255,159,26,0.20);
-        filter:brightness(1);
-      }
-      100%{
-        text-shadow:
-          0 0 3px rgba(255,159,26,0.6),
-          0 0 8px rgba(255,159,26,0.4),
-          0 0 14px rgba(255,159,26,0.3);
-        filter:brightness(1.05);
-      }
+      0%  { filter:brightness(1);    text-shadow:0 0 1.5px rgba(255,159,26,.45), 0 0 5px rgba(255,159,26,.32), 0 0 10px rgba(255,159,26,.20) }
+      100%{ filter:brightness(1.05); text-shadow:0 0 3px   rgba(255,159,26,.60), 0 0 8px rgba(255,159,26,.40), 0 0 14px rgba(255,159,26,.30) }
     }
 
     /* Subtítulo */
     .hero h2{
-      font-weight:500;
-      font-variation-settings:"wght" 500, "wdth" 100;
+      font-weight:500; font-variation-settings:"wght" 500, "wdth" 100;
       font-size:clamp(24px,3vw,40px);
       margin:4px 0 8px; color:var(--accent-soft);
       letter-spacing:.005em; text-transform:none;
       text-shadow:0 0 3px rgba(255,159,26,.22);
     }
 
-    .cursor{display:inline-block;width:.6ch;margin-left:4px;color:var(--accent);filter:drop-shadow(0 0 3px var(--accent));animation:blink .95s steps(1,end) infinite}
-    @keyframes blink{50%{opacity:0}}
+    /* Cursores independientes (arriba y abajo) */
+    .cursor{
+      display:inline-block; width:.6ch; margin-left:4px;
+      color:var(--accent);
+      filter:drop-shadow(0 0 3px var(--accent));
+      animation:blink .95s steps(1,end) infinite;
+    }
+    .cursor.off{ visibility:hidden; } /* para ocultar/mostrar desde JS */
+    @keyframes blink{ 50% { opacity:0 } }
 
-    .lead{max-width:900px;margin:10px auto 0;font-size:clamp(18px,1.5vw,22px);line-height:1.7;color:var(--text);opacity:0;transform:translateY(10px);transition:opacity .8s ease,transform .8s ease}
+    .lead{
+      max-width:900px;margin:10px auto 0;font-size:clamp(18px,1.5vw,22px);
+      line-height:1.7;color:var(--text);opacity:0;transform:translateY(10px);
+      transition:opacity .8s ease,transform .8s ease
+    }
     .lead.show{opacity:1;transform:none}
 
     .glitch-wrap{ position:relative; display:inline-block; }
@@ -93,6 +90,7 @@
     @media (prefers-reduced-motion: reduce){
       #glitchCanvas{ display:none !important; }
       #heroTitle{ animation:none !important; }
+      .cursor{ animation:none !important; }
     }
   </style>
 </head>
@@ -101,10 +99,16 @@
   <div id="home" class="hero-wrap">
     <div class="hero">
       <span class="glitch-wrap">
-        <h1 id="heroTitle"><span id="typeName"></span></h1>
+        <h1 id="heroTitle">
+          <span id="typeName"></span><span id="cursorName" class="cursor">|</span>
+        </h1>
         <canvas id="glitchCanvas" width="0" height="0" aria-hidden="true"></canvas>
       </span>
-      <h2><span id="typeRole"></span><span class="cursor">|</span></h2>
+
+      <h2>
+        <span id="typeRole"></span><span id="cursorRole" class="cursor off">|</span>
+      </h2>
+
       <p id="lead" class="lead">
         Me especializo en diseñar, securizar y operar infraestructuras robustas. Automatizo despliegues, fortalezco defensas y mejoro la fiabilidad de servicios con prácticas DevOps/SecOps.
       </p>
@@ -116,45 +120,59 @@
 <script>
   document.getElementById('y').textContent = new Date().getFullYear();
 
-  /* ===== Typing con timings ===== */
+  /* ===== Typing con cursores separados ===== */
   (function(){
     const nameText = "Alejandro Orcajada Meseguer";
     const roleText = "Administrador de Sistemas y Ciberseguridad";
     const speed = 44;
-    const elName = document.getElementById('typeName');
-    const elRole = document.getElementById('typeRole');
-    const cursor = document.querySelector('.cursor');
-    const lead = document.getElementById('lead');
-    let i=0,j=0;
+
+    const elName   = document.getElementById('typeName');
+    const elRole   = document.getElementById('typeRole');
+    const curName  = document.getElementById('cursorName');
+    const curRole  = document.getElementById('cursorRole');
+    const lead     = document.getElementById('lead');
+
+    let i=0, j=0;
+
+    // 1) Deja parpadear el cursor de ARRIBA 2–3 veces antes de escribir
+    const delayBeforeName = 1600; // ~2 parpadeos (blink .95s)
+    setTimeout(typeName, delayBeforeName);
 
     function typeName(){
-      if(i<nameText.length){
+      if(i < nameText.length){
         elName.textContent += nameText.charAt(i++);
-        setTimeout(typeName,speed);
-      } else {
-        setTimeout(typeRole,250);
+        setTimeout(typeName, speed);
+      }else{
+        // Espera 0.5s y empieza el subtítulo; mueve el cursor a la línea de abajo
+        setTimeout(()=>{
+          curName.classList.add('off');     // oculta cursor de arriba (queda el texto)
+          curRole.classList.remove('off');  // muestra cursor abajo
+          typeRole();
+        }, 500); // 0,5s solicitado
       }
     }
+
     function typeRole(){
-      if(j<roleText.length){
+      if(j < roleText.length){
         elRole.textContent += roleText.charAt(j++);
-        setTimeout(typeRole,speed);
-      } else {
-        cursor?.remove();
-        lead?.classList.add('show');
-        // 1s tras escribir → primer pulso fuerte y arranca secuencia
+        setTimeout(typeRole, speed);
+      }else{
+        curRole.classList.add('off');       // oculta cursor abajo al terminar
+        lead.classList.add('show');
+        // 1 segundo después del subtítulo → empieza el glitch
         setTimeout(()=>{ startCyberTitleGlitch(); }, 1000);
       }
     }
-    setTimeout(typeName,300);
   })();
 
 
   /* ===== Glitch con tiempos personalizados ===== */
   const GLITCH_CFG = {
     bandMin: 2, bandMax: 10,
-    strong: { dur: 200, amp: 26, skew: 5.5, baseDX: 0,  baseDY: -4 }, // fuerte: ↑
-    small:  { dur: 120, amp: 7,  skew: 1.2, baseDX: 6,  baseDY: 0  }, // suaves: →
+    // fuerte: hacia ARRIBA
+    strong: { dur: 200, amp: 26, skew: 5.5, baseDX: 0,  baseDY: -4 },
+    // suaves MUY sutiles: hacia la DERECHA
+    small:  { dur: 120, amp: 7,  skew: 1.2, baseDX: 6,  baseDY: 0  },
     smallAttenuation: 0.25,
     gapProb: 0.08, bigTearProb: 0.14, bigTearAmp: 32,
     pxDownscale: 0.75, chromaShift: 0.7
@@ -171,7 +189,7 @@
     canvas.width=W; canvas.height=H;
     const ctx = canvas.getContext('2d');
 
-    // Snapshot RGB glitch
+    // Snapshot con leve aberración RGB
     const off = document.createElement('canvas'); off.width=W; off.height=H;
     const octx = off.getContext('2d');
     const cs = getComputedStyle(h1);
@@ -182,6 +200,7 @@
     octx.fillStyle='#ff2a6d'; octx.fillText(txt,  GLITCH_CFG.chromaShift, 0);
     octx.fillStyle=cs.color || '#ff9f1a'; octx.fillText(txt, 0, 0);
 
+    // Versión pixelada para mordidas
     const scale = GLITCH_CFG.pxDownscale;
     const lowW = Math.max(1, Math.round(W*scale));
     const lowH = Math.max(1, Math.round(H*scale));
@@ -206,6 +225,7 @@
       while(y<H){
         const bh = Math.min(H-y, randInt(GLITCH_CFG.bandMin, GLITCH_CFG.bandMax));
         const dir = (band++ % 2 === 0) ? -1 : 1;
+
         if(Math.random() < GLITCH_CFG.gapProb){ y+=bh; continue; }
 
         const baseAmp = cfg.amp * (1-k);
@@ -218,6 +238,7 @@
         const sy = Math.round((y/H)*lowH);
         const sh = Math.max(1, Math.round((bh/H)*lowH));
         ctx.drawImage(low, 0,sy,lowW,sh,  cfg.baseDX+dx, Math.round(cfg.baseDY+y+dy),  W,bh);
+
         y += bh;
       }
       if(k<1) requestAnimationFrame(frame);
@@ -226,7 +247,7 @@
     requestAnimationFrame(frame);
   }
 
-  /* ===== Secuencia personalizada de tiempos ===== */
+  /* ===== Secuencia: fuerte → pequeños (4s,6s,5s,6s,5s) → pausa 3s → repetir ===== */
   async function startCyberTitleGlitch(){
     while(true){
       pulse('strong');                        // 1️⃣ fuerte
