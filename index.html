@@ -6,20 +6,37 @@
   <title>Alejandro Orcajada Meseguer | Administrador de Sistemas y Ciberseguridad</title>
   <meta name="description" content="Portafolio profesional de Alejandro Orcajada Meseguer, Administrador de Sistemas y Ciberseguridad." />
 
-  <!-- Fuente Tomorrow (variable) -->
+  <!-- Fuentes para el hero (Tomorrow) -->
   <link href="https://fonts.googleapis.com/css2?family=Tomorrow:wdth,wght@100..125,400..900&display=swap" rel="stylesheet">
 
+  <!-- CSS de componentes -->
+  <link rel="stylesheet" href="assets/css/graph.css">
+  <link rel="stylesheet" href="assets/css/cubes.css">
+  <link rel="stylesheet" href="assets/css/nav.css">
+  <link rel="stylesheet" href="assets/css/hero-glitch.css"><!-- nuevo -->
+
   <style>
+    /* ===== Variables base (global) ===== */
     :root{
-      --bg:#0b1220; --text:#e9eef6; --muted:#a8b2c2;
-      --accent:#ff9f1a; --accent-soft:#ffd79a;
+      --bg:#0b1220;
+      --panel:#111a2d;
+      --text:#e9eef6;
+      --muted:#a8b2c2;
+      --accent:#ff9f1a;
+      --accent-soft:#ffd79a;
+      --radius:14px;
+
+      --nav-font:15.5px;
+      --nav-pad-y:12px;
+      --nav-gap:12px;
+
       --hero-offset:12vh;
     }
 
     *{box-sizing:border-box}
     html,body{margin:0}
     body{
-      font-family:"Tomorrow", system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial;
+      font-family: Poppins, system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial;
       -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
       background:
         radial-gradient(1400px 800px at 80% -100px, rgba(255,159,26,.06), transparent 60%),
@@ -28,74 +45,49 @@
       color:var(--text);
     }
 
-    /* ===== HERO ===== */
-    .hero-wrap{
-      min-height:52vh; display:flex; align-items:center; justify-content:center; text-align:center;
-      padding:0 14px; margin-top:var(--hero-offset);
-    }
+    /* ===== Layout de contenido (no hero, no nav) ===== */
+    .container{width:min(1100px,92%);margin:0 auto}
+    section{padding:26px 0}
+    .section-title{font-size:clamp(24px,3vw,34px);margin:0 0 10px}
+    .kicker{color:var(--muted);margin:0 0 20px}
 
-    /* ===== Título Tomorrow + NEÓN muy sutil ===== */
-    #heroTitle{
-      position:relative; display:inline-block;
-      font-weight:600;
-      font-variation-settings:"wght" 600, "wdth" 100;
-      text-transform:none;
-      letter-spacing:.01em; word-spacing:.02em;
-      font-size:clamp(36px,4vw,56px);
-      color:var(--accent); margin:0 0 6px;
+    .chips{display:flex;flex-wrap:wrap;gap:10px}
+    .chip{padding:8px 12px;border-radius:999px;background:rgba(255,159,26,.12);border:1px solid rgba(255,159,26,.35);color:#ffe2b0;font-weight:600;font-size:14px}
 
-      /* Neón sutil visible + respiración */
-      text-shadow:
-        0 0 2px rgba(255,159,26,0.50),
-        0 0 6px rgba(255,159,26,0.35),
-        0 0 12px rgba(255,159,26,0.25);
-      animation: neonGlow 2.6s ease-in-out infinite alternate;
-    }
-    @keyframes neonGlow{
-      0%  { filter:brightness(1);    text-shadow:0 0 1.5px rgba(255,159,26,.45), 0 0 5px rgba(255,159,26,.32), 0 0 10px rgba(255,159,26,.20) }
-      100%{ filter:brightness(1.05); text-shadow:0 0 3px   rgba(255,159,26,.60), 0 0 8px rgba(255,159,26,.40), 0 0 14px rgba(255,159,26,.30) }
-    }
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .card{background:linear-gradient(180deg,color-mix(in oklab,var(--panel) 92%,#0f1422 8%),var(--panel));border:1px solid rgba(255,255,255,.06);border-radius:var(--radius);padding:16px}
+    .project img{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:10px;border:1px solid rgba(255,255,255,.06)}
+    .project h4{margin:10px 0 6px}
+    .project p{margin:0;color:var(--muted)}
+    .contact-box{display:grid;grid-template-columns:1.1fr .9fr;gap:22px}
+    form{display:grid;gap:12px}
+    input,textarea{background:#0c1323;color:var(--text);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:12px 14px;font-size:16px}
+    textarea{min-height:140px;resize:vertical}
 
-    /* Subtítulo */
-    .hero h2{
-      font-weight:500; font-variation-settings:"wght" 500, "wdth" 100;
-      font-size:clamp(24px,3vw,40px);
-      margin:4px 0 8px; color:var(--accent-soft);
-      letter-spacing:.005em; text-transform:none;
-      text-shadow:0 0 3px rgba(255,159,26,.22);
-    }
+    footer{padding:40px 0;color:#a9b1bd;text-align:center;border-top:1px solid rgba(255,255,255,.06);margin-top:10px}
 
-    /* Cursores independientes (arriba y abajo) */
-    .cursor{
-      display:inline-block; width:.6ch; margin-left:4px;
-      color:var(--accent);
-      filter:drop-shadow(0 0 3px var(--accent));
-      animation:blink .95s steps(1,end) infinite;
-    }
-    .cursor.off{ visibility:hidden; } /* para ocultar/mostrar desde JS */
-    @keyframes blink{ 50% { opacity:0 } }
-
-    .lead{
-      max-width:900px;margin:10px auto 0;font-size:clamp(18px,1.5vw,22px);
-      line-height:1.7;color:var(--text);opacity:0;transform:translateY(10px);
-      transition:opacity .8s ease,transform .8s ease
-    }
-    .lead.show{opacity:1;transform:none}
-
-    .glitch-wrap{ position:relative; display:inline-block; }
-    #glitchCanvas{ position:absolute; inset:0; display:none; pointer-events:none; image-rendering:pixelated; }
-
-    footer{padding:40px 0;color:#a9b1bd;text-align:center;border-top:1px solid rgba(255,255,255,.06);margin-top:20px}
-
-    @media (prefers-reduced-motion: reduce){
-      #glitchCanvas{ display:none !important; }
-      #heroTitle{ animation:none !important; }
-      .cursor{ animation:none !important; }
-    }
+    @media (max-width:980px){.grid{grid-template-columns:1fr 1fr}.contact-box{grid-template-columns:1fr}}
+    @media (max-width:620px){.grid{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
-  <!-- ===== HERO ===== -->
+
+  <!-- ========================= NAV ========================== -->
+  <header class="topbar">
+    <div class="topwrap">
+      <a class="brand" href="./"><span class="brand-dot"></span><span>AO · Portafolio</span></a>
+
+      <!-- Menú izquierda -->
+      <nav class="menu-left" id="nav" aria-label="Navegación principal"></nav>
+
+      <!-- Menú derecha -->
+      <nav class="menu-right">
+        <a class="nav-link" href="./">Inicio</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ========================= HERO ========================== -->
   <div id="home" class="hero-wrap">
     <div class="hero">
       <span class="glitch-wrap">
@@ -115,153 +107,111 @@
     </div>
   </div>
 
+  <!-- ========================= CONTENIDO ========================== -->
+  <main class="container">
+    <section id="ciber" aria-labelledby="ciber-title">
+      <h2 id="ciber-title" class="section-title">Ciberseguridad</h2>
+      <p class="kicker">Security-by-design, hardening y respuesta a incidentes.</p>
+      <div class="card">Playbooks de respuesta, aplicación de guías CIS, inventario de activos y SIEM; priorización de riesgos y monitoreo proactivo.</div>
+    </section>
+
+    <section id="adm" aria-labelledby="adm-title">
+      <h2 id="adm-title" class="section-title">Administración de Sistemas</h2>
+      <p class="kicker">Infraestructura reproducible y observable.</p>
+      <div class="card">Linux/Windows, IaC (Terraform/Ansible), contenedores (Docker/K8s), redes y servidores (Nginx/Apache), CI/CD y observabilidad.</div>
+    </section>
+
+    <section id="skills" aria-labelledby="skills-title">
+      <h2 id="skills-title" class="section-title">Skills principales</h2>
+      <div class="chips">
+        <span class="chip">Linux</span><span class="chip">Windows Server</span><span class="chip">Networking</span>
+        <span class="chip">Docker</span><span class="chip">Kubernetes</span><span class="chip">Ansible</span>
+        <span class="chip">Terraform</span><span class="chip">Bash / PowerShell</span><span class="chip">CI/CD</span>
+        <span class="chip">Nginx / Apache</span><span class="chip">SIEM</span><span class="chip">Hardening</span><span class="chip">Cloud (AWS/Azure)</span>
+      </div>
+    </section>
+
+    <!-- ===================== CARRUSEL DE CUBOS ===================== -->
+    <section id="news-cubes" aria-labelledby="news-cubes-title">
+      <h2 id="news-cubes-title" class="section-title">Lecturas y artículos</h2>
+      <p class="kicker">Novedades seleccionadas — desplazamiento suave y continuo.</p>
+
+      <div class="cube-carousel" data-autoplay="true" data-interval="3200" data-shuffle="true" aria-roledescription="carrusel">
+        <div class="cube-head"><h3>Artículos interesantes</h3></div>
+
+        <div class="cube-viewport" role="region" aria-label="Carrusel de artículos" style="overflow:hidden">
+          <div class="cube-track" id="cubeTrack" role="list"></div>
+        </div>
+
+        <div class="cube-nav" aria-hidden="false">
+          <button class="cube-btn prev" type="button" id="cubePrev" aria-label="Artículo anterior">‹</button>
+          <button class="cube-btn next" type="button" id="cubeNext" aria-label="Artículo siguiente">›</button>
+        </div>
+
+        <div class="cube-dots" id="cubeDots" aria-hidden="true"></div>
+      </div>
+    </section>
+
+    <!-- ====================== MAPA VISUAL (GRAPH) ================== -->
+    <section id="site-graph" class="graph" aria-labelledby="site-graph-title">
+      <div class="card">
+        <div class="graph-head">
+          <h2 id="site-graph-title" class="section-title">Mapa visual</h2>
+          <p class="kicker">Esquema interactivo — haz clic para desplegar niveles.</p>
+        </div>
+
+        <div class="graph-stage" id="graphStage">
+          <svg id="graphSvg" class="svgroot" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid meet" role="img"
+               aria-label="Esquema del contenido por niveles">
+            <g id="graphRoot"></g>
+          </svg>
+        </div>
+
+        <div class="graph-legend">
+          <span class="dot lvl0"></span> Nivel 0
+          <span class="dot lvl1"></span> Nivel 1
+          <span class="dot lvl2"></span> Nivel 2
+          <span class="dot lvl3"></span> Nivel 3
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================== CONTACTO ======================== -->
+    <section id="contact" aria-labelledby="contact-title">
+      <h2 id="contact-title" class="section-title">Contacto</h2>
+      <div class="contact-box">
+        <div class="card">
+          <p>¿Tienes un proyecto o una consulta técnica? Escríbeme y te respondo.</p>
+          <p><strong>Email:</strong> <a href="mailto:alex@tu-dominio.com">alex@tu-dominio.com</a></p>
+          <p><strong>LinkedIn:</strong> <a href="https://www.linkedin.com/in/tuusuario" target="_blank" rel="noopener">linkedin.com/in/tuusuario</a></p>
+        </div>
+        <div class="card">
+          <form action="mailto:alex@tu-dominio.com" method="post" enctype="text/plain">
+            <label>Nombre<br><input name="nombre" required /></label>
+            <label>Email<br><input name="email" type="email" required /></label>
+            <label>Mensaje<br><textarea name="mensaje" required></textarea></label>
+            <button type="submit" style="background:var(--accent);color:#111;padding:10px 16px;border-radius:10px;border:0;font-weight:700">Enviar</button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
   <footer>© <span id="y"></span> Alejandro Orcajada Meseguer — Administrador de Sistemas y Ciberseguridad</footer>
 
-<script>
-  document.getElementById('y').textContent = new Date().getFullYear();
+  <!-- ========================= JS ========================== -->
+  <!-- Hero: typing + glitch -->
+  <script src="assets/js/hero-glitch.js" defer></script>
 
-  /* ===== Typing con cursores separados ===== */
-  (function(){
-    const nameText = "Alejandro Orcajada Meseguer";
-    const roleText = "Administrador de Sistemas y Ciberseguridad";
-    const speed = 44;
+  <!-- NAV -->
+  <script src="assets/js/nav-data.js" defer></script>
+  <script src="assets/js/nav.js" defer></script>
 
-    const elName   = document.getElementById('typeName');
-    const elRole   = document.getElementById('typeRole');
-    const curName  = document.getElementById('cursorName');
-    const curRole  = document.getElementById('cursorRole');
-    const lead     = document.getElementById('lead');
+  <!-- Graph -->
+  <script src="assets/js/graph-data.js"></script>
+  <script src="assets/js/graph.js"></script>
 
-    let i=0, j=0;
-
-    // 1) Deja parpadear el cursor de ARRIBA 2–3 veces antes de escribir
-    const delayBeforeName = 1600; // ~2 parpadeos (blink .95s)
-    setTimeout(typeName, delayBeforeName);
-
-    function typeName(){
-      if(i < nameText.length){
-        elName.textContent += nameText.charAt(i++);
-        setTimeout(typeName, speed);
-      }else{
-        // Espera 0.5s y empieza el subtítulo; mueve el cursor a la línea de abajo
-        setTimeout(()=>{
-          curName.classList.add('off');     // oculta cursor de arriba (queda el texto)
-          curRole.classList.remove('off');  // muestra cursor abajo
-          typeRole();
-        }, 500); // 0,5s solicitado
-      }
-    }
-
-    function typeRole(){
-      if(j < roleText.length){
-        elRole.textContent += roleText.charAt(j++);
-        setTimeout(typeRole, speed);
-      }else{
-        curRole.classList.add('off');       // oculta cursor abajo al terminar
-        lead.classList.add('show');
-        // 1 segundo después del subtítulo → empieza el glitch
-        setTimeout(()=>{ startCyberTitleGlitch(); }, 1000);
-      }
-    }
-  })();
-
-
-  /* ===== Glitch con tiempos personalizados ===== */
-  const GLITCH_CFG = {
-    bandMin: 2, bandMax: 10,
-    // fuerte: hacia ARRIBA
-    strong: { dur: 200, amp: 26, skew: 5.5, baseDX: 0,  baseDY: -4 },
-    // suaves MUY sutiles: hacia la DERECHA
-    small:  { dur: 120, amp: 7,  skew: 1.2, baseDX: 6,  baseDY: 0  },
-    smallAttenuation: 0.25,
-    gapProb: 0.08, bigTearProb: 0.14, bigTearAmp: 32,
-    pxDownscale: 0.75, chromaShift: 0.7
-  };
-
-  function pulse(kind='strong'){
-    const h1 = document.getElementById('heroTitle');
-    const canvas = document.getElementById('glitchCanvas');
-    if(!h1 || !canvas) return;
-
-    const r = h1.getBoundingClientRect();
-    const W = Math.max(1, Math.ceil(r.width));
-    const H = Math.max(1, Math.ceil(r.height));
-    canvas.width=W; canvas.height=H;
-    const ctx = canvas.getContext('2d');
-
-    // Snapshot con leve aberración RGB
-    const off = document.createElement('canvas'); off.width=W; off.height=H;
-    const octx = off.getContext('2d');
-    const cs = getComputedStyle(h1);
-    octx.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
-    octx.textBaseline='top'; octx.textAlign='left';
-    const txt = h1.textContent.trim() || ' ';
-    octx.fillStyle='#00e6f6'; octx.fillText(txt, -GLITCH_CFG.chromaShift, 0);
-    octx.fillStyle='#ff2a6d'; octx.fillText(txt,  GLITCH_CFG.chromaShift, 0);
-    octx.fillStyle=cs.color || '#ff9f1a'; octx.fillText(txt, 0, 0);
-
-    // Versión pixelada para mordidas
-    const scale = GLITCH_CFG.pxDownscale;
-    const lowW = Math.max(1, Math.round(W*scale));
-    const lowH = Math.max(1, Math.round(H*scale));
-    const low = document.createElement('canvas'); low.width=lowW; low.height=lowH;
-    const lctx = low.getContext('2d'); lctx.imageSmoothingEnabled=false;
-    lctx.drawImage(off, 0,0, lowW,lowH);
-
-    canvas.style.display='block';
-    h1.style.visibility='hidden';
-
-    const base = GLITCH_CFG[kind];
-    const att  = (kind==='small') ? GLITCH_CFG.smallAttenuation : 1;
-    const cfg = { dur:base.dur, amp:base.amp*att, skew:base.skew*att, baseDX:base.baseDX, baseDY:base.baseDY };
-
-    const t0 = performance.now();
-    function frame(t){
-      const k = Math.min(1, (t - t0) / cfg.dur);
-      ctx.clearRect(0,0,W,H);
-      ctx.imageSmoothingEnabled=false;
-
-      let y=0, band=0;
-      while(y<H){
-        const bh = Math.min(H-y, randInt(GLITCH_CFG.bandMin, GLITCH_CFG.bandMax));
-        const dir = (band++ % 2 === 0) ? -1 : 1;
-
-        if(Math.random() < GLITCH_CFG.gapProb){ y+=bh; continue; }
-
-        const baseAmp = cfg.amp * (1-k);
-        let dx = Math.round(baseAmp * (0.3 + Math.random()*0.6)) * dir;
-        if(Math.random() < GLITCH_CFG.bigTearProb){
-          dx += Math.round(GLITCH_CFG.bigTearAmp * (0.5 + Math.random()*0.5)) * dir;
-        }
-        const dy = Math.tan((cfg.skew*(1-k)) * Math.PI/180) * dir;
-
-        const sy = Math.round((y/H)*lowH);
-        const sh = Math.max(1, Math.round((bh/H)*lowH));
-        ctx.drawImage(low, 0,sy,lowW,sh,  cfg.baseDX+dx, Math.round(cfg.baseDY+y+dy),  W,bh);
-
-        y += bh;
-      }
-      if(k<1) requestAnimationFrame(frame);
-      else { canvas.style.display='none'; h1.style.visibility='visible'; }
-    }
-    requestAnimationFrame(frame);
-  }
-
-  /* ===== Secuencia: fuerte → pequeños (4s,6s,5s,6s,5s) → pausa 3s → repetir ===== */
-  async function startCyberTitleGlitch(){
-    while(true){
-      pulse('strong');                        // 1️⃣ fuerte
-      await wait(4000); pulse('small');       // 2️⃣ pequeño (4s)
-      await wait(6000); pulse('small');       // 3️⃣ pequeño (6s)
-      await wait(5000); pulse('small');       // 4️⃣ pequeño (5s)
-      await wait(6000); pulse('small');       // 5️⃣ pequeño (6s)
-      await wait(5000); pulse('small');       // 6️⃣ pequeño (5s)
-      await wait(3000);                       // pausa 3s
-    }
-  }
-
-  function wait(ms){ return new Promise(r=>setTimeout(r,ms)); }
-  function randInt(min,max){ return min + Math.floor(Math.random()*(max-min+1)); }
-</script>
+  <!-- Cubes -->
+  <script src="assets/js/cubes.js"></script>
 </body>
 </html>
