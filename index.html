@@ -11,8 +11,8 @@
 
   <style>
     :root{
-      --bg:#0b1220; --panel:#111a2d; --text:#e9eef6; --muted:#a8b2c2;
-      --accent:#ff9f1a; --accent-soft:#ffd79a; --radius:14px;
+      --bg:#0b1220; --text:#e9eef6; --muted:#a8b2c2;
+      --accent:#ff9f1a; --accent-soft:#ffd79a;
       --hero-offset:12vh;
     }
 
@@ -34,38 +34,28 @@
       padding:0 14px; margin-top:var(--hero-offset);
     }
 
-    /* Título Tomorrow (look del preview) */
+    /* Título Tomorrow (look preview) + NEÓN MUY SUTIL */
     #heroTitle{
       position:relative; display:inline-block;
-      font-weight:600;                                 /* clave: no 700/900 */
-      font-variation-settings:"wght" 600, "wdth" 100; /* ancho normal */
-      text-transform:none;                             /* sin versales */
+      font-weight:600;                                 /* evita grosor “GTA” */
+      font-variation-settings:"wght" 600, "wdth" 100;  /* ancho normal */
+      text-transform:none;                             
       letter-spacing:.01em; word-spacing:.02em;
       font-size:clamp(36px,4vw,56px);
       color:var(--accent); margin:0 0 6px;
 
-      /* Neón ultrafino (respira cada 3s) */
+      /* Neón sutil: sombras pequeñas y bajas opacidades (fallback sin color-mix) */
       text-shadow:
-        0 0 .6px color-mix(in oklab, var(--accent) 88%, #fff 12%),
-        0 0 1.6px color-mix(in oklab, var(--accent) 82%, #fff 18%),
-        0 0 2.6px color-mix(in oklab, var(--accent) 76%, #fff 24%);
-      animation: neonPulse 3s ease-in-out infinite alternate;
+        0 0 1px rgba(255,159,26,.55),
+        0 0 3px rgba(255,159,26,.30),
+        0 0 5px rgba(255,159,26,.18);
+      /* Pulso de intensidad MUY leve (no “flicker”) */
+      animation: neonSoft 3s ease-in-out infinite alternate;
+      will-change: filter;
     }
-    @keyframes neonPulse{
-      0%{
-        opacity:1;
-        text-shadow:
-          0 0 .7px color-mix(in oklab, var(--accent) 90%, #fff 10%),
-          0 0 1.8px color-mix(in oklab, var(--accent) 84%, #fff 16%),
-          0 0 2.8px color-mix(in oklab, var(--accent) 78%, #fff 22%);
-      }
-      100%{
-        opacity:.94;
-        text-shadow:
-          0 0 .4px color-mix(in oklab, var(--accent) 72%, #fff 28%),
-          0 0 1.2px color-mix(in oklab, var(--accent) 68%, #fff 32%),
-          0 0 2px   color-mix(in oklab, var(--accent) 64%, #fff 36%);
-      }
+    @keyframes neonSoft{
+      0%   { filter: brightness(1);    }
+      100% { filter: brightness(0.96); }
     }
 
     /* Subtítulo Tomorrow más fino */
@@ -116,9 +106,9 @@
   // Año
   document.getElementById('y').textContent = new Date().getFullYear();
 
-  /* ===== Typing con timings pedidos ===== */
+  /* ===== Typing con timings ===== */
   (function(){
-    const nameText = "Alejandro Orcajada Meseguer";   // sin uppercase
+    const nameText = "Alejandro Orcajada Meseguer";
     const roleText = "Administrador de Sistemas y Ciberseguridad";
     const speed = 44;
     const elName = document.getElementById('typeName');
@@ -157,7 +147,7 @@
     smallAttenuation: 0.3,     // MUY sutil
     gapProb: 0.08, bigTearProb: 0.14, bigTearAmp: 32,
     pxDownscale: 0.75, chromaShift: 0.7,
-    loopMs: 5000,              // cada 5s
+    loopMs: 3000,              // <-- Más frecuente: 3s entre pulsos
     cycleLength: 6             // 1 fuerte, 2–5 suaves, 6 fuerte
   };
 
@@ -245,7 +235,7 @@
   }
   function stopLoop(){ if(_timer){ clearInterval(_timer); _timer=null; } }
 
-  // Arranque: pulso fuerte 1s después del typing y luego cada 5s
+  // Arranque: pulso fuerte 1s después del typing y luego cada 3s
   function startCyberTitleGlitch(){
     pulse('strong');
     setTimeout(startLoop, GLITCH_CFG.loopMs);
@@ -255,3 +245,4 @@
 </script>
 </body>
 </html>
+
