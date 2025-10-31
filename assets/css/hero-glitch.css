@@ -1,0 +1,74 @@
+/* ===== HERO: Título + glitch Cyberpunk ===== */
+
+:root{
+  /* Solo si no las tienes ya definidas en tu CSS global */
+  --bg:#0b1220; --text:#e9eef6; --muted:#a8b2c2;
+  --accent:#ff9f1a; --accent-soft:#ffd79a;
+  --hero-offset:12vh;
+}
+
+.hero-wrap{
+  min-height:52vh;
+  display:flex;align-items:center;justify-content:center;text-align:center;
+  padding:0 14px; margin-top:var(--hero-offset);
+}
+
+/* Título con neón sutil */
+#heroTitle{
+  position:relative; display:inline-block;
+  font-weight:600;
+  text-transform:none;
+  letter-spacing:.01em; word-spacing:.02em;
+  font-size:clamp(36px,4vw,56px);
+  color:var(--accent); margin:0 0 6px;
+
+  text-shadow:
+    0 0 2px rgba(255,159,26,0.50),
+    0 0 6px rgba(255,159,26,0.35),
+    0 0 12px rgba(255,159,26,0.25);
+  animation: neonGlow 2.6s ease-in-out infinite alternate;
+}
+
+@keyframes neonGlow{
+  0%  { filter:brightness(1);
+        text-shadow:0 0 1.5px rgba(255,159,26,.45), 0 0 5px rgba(255,159,26,.32), 0 0 10px rgba(255,159,26,.20) }
+  100%{ filter:brightness(1.05);
+        text-shadow:0 0 3px   rgba(255,159,26,.60), 0 0 8px rgba(255,159,26,.40), 0 0 14px rgba(255,159,26,.30) }
+}
+
+/* Subtítulo */
+.hero h2{
+  font-weight:700;
+  font-size:clamp(24px,3vw,40px);
+  margin:4px 0 8px; color:var(--accent-soft);
+  letter-spacing:.005em; text-transform:none;
+  text-shadow:0 0 3px rgba(255,159,26,.22);
+}
+
+/* Cursores */
+.cursor{
+  display:inline-block; width:.6ch; margin-left:4px;
+  color:var(--accent);
+  filter:drop-shadow(0 0 3px var(--accent));
+  animation:blink .95s steps(1,end) infinite;
+}
+.cursor.off{ visibility:hidden; }
+@keyframes blink{ 50% { opacity:0 } }
+
+/* Lead */
+.lead{
+  max-width:900px;margin:10px auto 0;font-size:clamp(18px,1.5vw,22px);
+  line-height:1.7;color:var(--text);opacity:0;transform:translateY(10px);
+  transition:opacity .8s ease,transform .8s ease
+}
+.lead.show{opacity:1;transform:none}
+
+/* Canvas del glitch (encima del h1) */
+.glitch-wrap{ position:relative; display:inline-block; }
+#glitchCanvas{ position:absolute; inset:0; display:none; pointer-events:none; image-rendering:pixelated; }
+
+@media (prefers-reduced-motion: reduce){
+  #glitchCanvas{ display:none !important; }
+  #heroTitle{ animation:none !important; }
+  .cursor{ animation:none !important; }
+}
