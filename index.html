@@ -32,10 +32,37 @@
       padding:0 14px 0; margin-top:var(--hero-offset);
     }
 
+    /* ===== Título con neón ===== */
     #heroTitle{
       position:relative; display:inline-block;
       font-size:clamp(34px,4vw,54px); font-weight:900; color:var(--accent); margin:0 0 6px;
-      text-shadow:0 0 18px rgba(255,159,26,.7),0 0 36px rgba(255,159,26,.25);
+      /* Neón base (capas) */
+      text-shadow:
+        0 0 2px  color-mix(in oklab, var(--accent) 85%, #fff 15%),
+        0 0 8px  color-mix(in oklab, var(--accent) 90%, #fff 10%),
+        0 0 18px var(--accent),
+        0 0 36px color-mix(in oklab, var(--accent) 80%, #ffea9c 20%);
+      /* Pulso suave e independiente (cada 3s) */
+      animation: neonPulse 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes neonPulse{
+      0%{
+        opacity:1;
+        text-shadow:
+          0 0 3px  color-mix(in oklab, var(--accent) 90%, #fff 10%),
+          0 0 10px color-mix(in oklab, var(--accent) 95%, #fff 5%),
+          0 0 24px var(--accent),
+          0 0 52px color-mix(in oklab, var(--accent) 85%, #ffea9c 15%);
+      }
+      100%{
+        opacity:.88;
+        text-shadow:
+          0 0 1px  color-mix(in oklab, var(--accent) 80%, #fff 20%),
+          0 0 6px  color-mix(in oklab, var(--accent) 85%, #fff 15%),
+          0 0 16px var(--accent),
+          0 0 34px color-mix(in oklab, var(--accent) 75%, #ffea9c 25%);
+      }
     }
 
     .hero h2{font-size:clamp(24px,3.2vw,40px);font-weight:800;margin:4px 0 8px;color:var(--accent-soft);
@@ -69,6 +96,7 @@
 
     @media (prefers-reduced-motion: reduce){
       #glitchCanvas{ display:none !important; }
+      #heroTitle{ animation:none !important; }
     }
   </style>
 </head>
@@ -95,7 +123,7 @@
     </div>
   </div>
 
-  <!-- ========================= CONTENIDO ========================== -->
+  <!-- ========================= CONTENIDO (resumido) ========================== -->
   <main class="container">
     <section id="ciber" aria-labelledby="ciber-title">
       <h2 id="ciber-title" class="section-title">Ciberseguridad</h2>
@@ -108,37 +136,6 @@
       <p class="kicker">Infraestructura reproducible y observable.</p>
       <div class="card">Linux/Windows, IaC (Terraform/Ansible), contenedores (Docker/K8s), redes y servidores (Nginx/Apache), CI/CD y observabilidad.</div>
     </section>
-
-    <section id="skills" aria-labelledby="skills-title">
-      <h2 id="skills-title" class="section-title">Skills principales</h2>
-      <div class="chips">
-        <span class="chip">Linux</span><span class="chip">Windows Server</span><span class="chip">Networking</span>
-        <span class="chip">Docker</span><span class="chip">Kubernetes</span><span class="chip">Ansible</span>
-        <span class="chip">Terraform</span><span class="chip">Bash / PowerShell</span><span class="chip">CI/CD</span>
-        <span class="chip">Nginx / Apache</span><span class="chip">SIEM</span><span class="chip">Hardening</span><span class="chip">Cloud (AWS/Azure)</span>
-      </div>
-    </section>
-
-    <section id="projects" aria-labelledby="projects-title">
-      <h2 id="projects-title" class="section-title">Proyectos destacados</h2>
-      <div class="grid">
-        <article class="card project">
-          <img src="assets/proyecto1.jpg" alt="Miniatura del Proyecto 1" loading="lazy" />
-          <h4>Infraestructura reproducible con IaC</h4>
-          <p>Terraform + Ansible para levantar entornos seguros y auditables en AWS. Módulos reutilizables y pipelines CI.</p>
-        </article>
-        <article class="card project">
-          <img src="assets/proyecto2.jpg" alt="Miniatura del Proyecto 2" loading="lazy" />
-          <h4>Plataforma de observabilidad</h4>
-          <p>Stack Prometheus + Loki + Grafana con alertas y SLOs para microservicios en Kubernetes.</p>
-        </article>
-        <article class="card project">
-          <img src="assets/proyecto3.jpg" alt="Miniatura del Proyecto 3" loading="lazy" />
-          <h4>Hardening y respuesta a incidentes</h4>
-          <p>Guías CIS aplicadas, inventario de activos y playbooks de respuesta con herramientas open-source.</p>
-        </article>
-      </div>
-    </section>
   </main>
 
   <footer>© <span id="y"></span> Alejandro Orcajada Meseguer — Administrador de Sistemas y Ciberseguridad</footer>
@@ -147,7 +144,7 @@
   /* ========= Año en footer ========= */
   document.getElementById('y').textContent = new Date().getFullYear();
 
-  /* ========= TYPING ========= */
+  /* ========= TYPING + timings que pediste ========= */
   (function(){
     const nameText = "Alejandro Orcajada Meseguer";
     const roleText = "Administrador de Sistemas y Ciberseguridad";
@@ -161,23 +158,30 @@
     function typeName(){ if(i<nameText.length){ elName.textContent += nameText.charAt(i++); setTimeout(typeName,speed); } else { setTimeout(typeRole,250);} }
     function typeRole(){ if(j<roleText.length){ elRole.textContent += roleText.charAt(j++); setTimeout(typeRole,speed); } else {
       cursor?.remove(); lead?.classList.add('show');
-      startCyberTitleGlitch(); // empieza ciclo
+      // Espera EXACTAMENTE 1 segundo tras escribir el nombre y rol…
+      setTimeout(()=>{ startCyberTitleGlitch(); }, 1000);
     } }
     setTimeout(typeName,300);
   })();
 
   /* ========= GLITCH “CRÉDITOS CP2077” – Canvas por bandas ========= */
 
-  // ⚙️ Configuración: FUERTE hacia ARRIBA; SUAVES hacia la DERECHA (55% intensidad)
+  // ⚙️ Configuración:
+  // - Fuerte (1 y 6): hacia ARRIBA
+  // - Suaves (2..5): MUY sutiles hacia la DERECHA (≈ 30% de la fuerza)
+  // - Intervalo entre pulsos: 5s
   const GLITCH_CFG = {
     bandMin: 2, bandMax: 10,
-    strong: { dur: 200, amp: 28, skew: 6.0, baseDX: 0,  baseDY: -4 }, // ↑
-    small:  { dur: 140, amp: 14, skew: 3.0, baseDX: 10, baseDY: 0  }, // →
-    smallAttenuation: 0.55,
-    gapProb: 0.12, bigTearProb: 0.22, bigTearAmp: 46,
-    pxDownscale: 0.72, chromaShift: 0.8,
-    loopMs: 8000,               // 8s entre pulsos
-    cycleLength: 6              // 1 fuerte, 2–5 suaves, 6 fuerte
+    strong: { dur: 200, amp: 26, skew: 5.5, baseDX: 0,  baseDY: -4 }, // ↑
+    small:  { dur: 120, amp: 9,  skew: 2.0, baseDX: 8,  baseDY: 0  }, // →
+    smallAttenuation: 0.35,   // <<< MUY sutil (≈ 35% de intensidad)
+    gapProb: 0.10,            // menos huecos para que no “rompa” tanto en suaves
+    bigTearProb: 0.16,        // menos cortes grandes en suaves/fuerte
+    bigTearAmp: 36,
+    pxDownscale: 0.74,        // pixelación suave
+    chromaShift: 0.7,
+    loopMs: 5000,             // 5 s entre pulsos
+    cycleLength: 6            // 1 fuerte, 2–5 suaves, 6 fuerte
   };
 
   // Montaje del canvas
@@ -208,7 +212,7 @@
 
     const ctx = canvas.getContext('2d');
 
-    // Snapshot en offscreen
+    // Snapshot nítido en offscreen
     const off = document.createElement('canvas'); off.width=W; off.height=H;
     const octx = off.getContext('2d');
     const cs = getComputedStyle(h1);
@@ -220,7 +224,7 @@
     octx.fillStyle=cs.color || '#ff9f1a'; octx.fillText(txt, 0, 0);
 
     // Versión pixelada (nearest neighbor)
-    const scale = Math.max(0.4, Math.min(1, GLITCH_CFG.pxDownscale));
+    const scale = Math.max(0.5, Math.min(1, GLITCH_CFG.pxDownscale));
     const lowW = Math.max(1, Math.round(W*scale));
     const lowH = Math.max(1, Math.round(H*scale));
     const low = document.createElement('canvas'); low.width=lowW; low.height=lowH;
@@ -230,7 +234,7 @@
     canvas.style.display='block';
     h1.style.visibility='hidden';
 
-    // Params por tipo (+ atenuación para “small”)
+    // Parámetros según tipo
     const base = GLITCH_CFG[kind];
     const att  = (kind==='small') ? GLITCH_CFG.smallAttenuation : 1;
     const cfg = {
@@ -253,13 +257,14 @@
         const bh = Math.min(H-y, randInt(GLITCH_CFG.bandMin, GLITCH_CFG.bandMax));
         const dir = (band++ % 2 === 0) ? -1 : 1;
 
-        if(Math.random() < GLITCH_CFG.gapProb * (kind==='strong'?1.4:1)){ y+=bh; continue; }
+        // Menos huecos para suavidad general
+        if(Math.random() < GLITCH_CFG.gapProb * (kind==='strong'?1.2:1)){ y+=bh; continue; }
 
         const baseAmp = cfg.amp * (1-k);
-        let dx = Math.round(baseAmp * (0.4 + Math.random()*0.8)) * dir;
+        let dx = Math.round(baseAmp * (0.3 + Math.random()*0.6)) * dir;
 
-        if(Math.random() < GLITCH_CFG.bigTearProb * (kind==='strong'?1.2:0.8)){
-          dx += Math.round(GLITCH_CFG.bigTearAmp * (0.6 + Math.random()*0.6)) * dir;
+        if(Math.random() < GLITCH_CFG.bigTearProb * (kind==='strong'?1.1:0.5)){
+          dx += Math.round(GLITCH_CFG.bigTearAmp * (0.5 + Math.random()*0.5)) * dir;
         }
 
         const dy = Math.tan((cfg.skew*(1-k)) * Math.PI/180) * dir;
@@ -285,21 +290,23 @@
 
   function startLoop(){
     stopLoop();
+    _count = 0;
     _timer = setInterval(()=>{
       _count++;
       const step = (_count % GLITCH_CFG.cycleLength) || GLITCH_CFG.cycleLength;
       if(step === 1 || step === GLITCH_CFG.cycleLength){ // 1 y 6 → fuerte (↑)
         pulse('strong');
-      }else{                                             // 2..5 → suaves (→)
+      }else{                                             // 2..5 → suaves más sutiles (→)
         pulse('small');
       }
     }, GLITCH_CFG.loopMs);
   }
   function stopLoop(){ if(_timer){ clearInterval(_timer); _timer=null; } }
 
+  // Arranque: fuerte tras 1s desde fin del typing, luego bucle cada 5s
   function startCyberTitleGlitch(){
-    pulse('strong');              // golpe inicial (↑)
-    setTimeout(startLoop, 8000);  // luego cada 8 s
+    pulse('strong');
+    setTimeout(startLoop, GLITCH_CFG.loopMs);
   }
 
   document.addEventListener('visibilitychange', ()=>{
@@ -316,5 +323,3 @@
 <script src="assets/js/cubes.js"></script>
 </body>
 </html>
-
-
