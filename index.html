@@ -6,8 +6,8 @@
   <title>Alejandro Orcajada Meseguer | Administrador de Sistemas y Ciberseguridad</title>
   <meta name="description" content="Portafolio profesional de Alejandro Orcajada Meseguer, Administrador de Sistemas y Ciberseguridad." />
 
-  <!-- 🔤 Google Fonts futuristas -->
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <!-- 🔤 Fuente futurista elegida: Tomorrow -->
+  <link href="https://fonts.googleapis.com/css2?family=Tomorrow:wght@400;600;700;900&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="assets/css/graph.css">
   <link rel="stylesheet" href="assets/css/cubes.css">
@@ -15,15 +15,20 @@
 
   <style>
     :root{
-      --bg:#0b1220; --panel:#111a2d; --text:#e9eef6; --muted:#a8b2c2;
-      --accent:#ff9f1a; --accent-soft:#ffd79a; --radius:14px;
+      --bg:#0b1220;
+      --panel:#111a2d;
+      --text:#e9eef6;
+      --muted:#a8b2c2;
+      --accent:#ff9f1a;
+      --accent-soft:#ffd79a;
+      --radius:14px;
       --hero-offset:12vh;
     }
 
     *{box-sizing:border-box}
     html,body{margin:0}
     body{
-      font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,Inter,"Helvetica Neue",Arial;
+      font-family:'Tomorrow', system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial;
       background:
         radial-gradient(1400px 800px at 80% -100px, rgba(255,159,26,.06), transparent 60%),
         radial-gradient(1200px 700px at -200px 20%, rgba(255,215,154,.05), transparent 60%),
@@ -32,62 +37,89 @@
     }
 
     .hero-wrap{
-      min-height:52vh; display:flex; align-items:center; justify-content:center; text-align:center;
-      padding:0 14px 0; margin-top:var(--hero-offset);
+      min-height:52vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      padding:0 14px 0;
+      margin-top:var(--hero-offset);
     }
 
-    /* ===== Título futurista ===== */
+    /* ===== TÍTULO FUTURISTA (Tomorrow) ===== */
     #heroTitle{
-      position:relative; display:inline-block;
-      font-family:'Orbitron', sans-serif;
-      font-size:clamp(38px,4vw,58px);
-      font-weight:900; letter-spacing:1px;
-      color:var(--accent); margin:0 0 6px;
+      position:relative;
+      display:inline-block;
+      font-family:'Tomorrow', sans-serif;
+      font-weight:900;
+      font-size:clamp(38px,4vw,60px);
+      letter-spacing:1px;
+      color:var(--accent);
+      margin:0 0 6px;
+      text-transform:uppercase;
       text-shadow:
-        0 0 1.5px color-mix(in oklab, var(--accent) 90%, #fff 10%),
-        0 0 4px  color-mix(in oklab, var(--accent) 85%, #fff 15%),
-        0 0 6px  color-mix(in oklab, var(--accent) 80%, #fff 20%);
+        0 0 1px color-mix(in oklab, var(--accent) 90%, #fff 10%),
+        0 0 3px color-mix(in oklab, var(--accent) 85%, #fff 15%),
+        0 0 5px color-mix(in oklab, var(--accent) 80%, #fff 20%);
       animation: neonPulse 3s ease-in-out infinite alternate;
-      text-transform: uppercase;
     }
 
     @keyframes neonPulse{
       0%{
         opacity:1;
         text-shadow:
-          0 0 1.5px color-mix(in oklab, var(--accent) 90%, #fff 10%),
-          0 0 4px  color-mix(in oklab, var(--accent) 85%, #fff 15%),
-          0 0 6px  color-mix(in oklab, var(--accent) 80%, #fff 20%);
+          0 0 1px color-mix(in oklab, var(--accent) 90%, #fff 10%),
+          0 0 3px color-mix(in oklab, var(--accent) 85%, #fff 15%),
+          0 0 5px color-mix(in oklab, var(--accent) 80%, #fff 20%);
       }
       100%{
-        opacity:.93;
+        opacity:.92;
         text-shadow:
-          0 0 0.8px color-mix(in oklab, var(--accent) 75%, #fff 25%),
-          0 0 2px   color-mix(in oklab, var(--accent) 70%, #fff 30%),
-          0 0 3.5px color-mix(in oklab, var(--accent) 65%, #fff 35%);
+          0 0 0.5px color-mix(in oklab, var(--accent) 70%, #fff 30%),
+          0 0 2px   color-mix(in oklab, var(--accent) 65%, #fff 35%),
+          0 0 3px   color-mix(in oklab, var(--accent) 60%, #fff 40%);
       }
     }
 
-    /* ===== Subtítulo ===== */
     .hero h2{
-      font-family:'Rajdhani', sans-serif;
-      font-size:clamp(24px,3vw,40px);
+      font-family:'Tomorrow', sans-serif;
       font-weight:700;
-      margin:4px 0 8px;
+      font-size:clamp(24px,3vw,40px);
       color:var(--accent-soft);
-      text-shadow:0 0 6px rgba(255,159,26,.3);
+      margin:4px 0 8px;
       letter-spacing:0.5px;
+      text-shadow:0 0 6px rgba(255,159,26,.3);
     }
 
-    .cursor{display:inline-block;width:.6ch;margin-left:2px;color:var(--accent);filter:drop-shadow(0 0 4px var(--accent));animation:blink .95s steps(1,end) infinite}
+    .cursor{
+      display:inline-block;
+      width:.6ch;
+      margin-left:2px;
+      color:var(--accent);
+      filter:drop-shadow(0 0 4px var(--accent));
+      animation:blink .95s steps(1,end) infinite;
+    }
     @keyframes blink{50%{opacity:0}}
-    .lead{max-width:900px;margin:6px auto 0;font-size:clamp(19px,1.5vw,22px);line-height:1.7;color:var(--text);opacity:0;transform:translateY(10px);transition:opacity .8s ease,transform .8s ease}
+
+    .lead{
+      max-width:900px;
+      margin:6px auto 0;
+      font-size:clamp(19px,1.5vw,22px);
+      line-height:1.7;
+      color:var(--text);
+      opacity:0;
+      transform:translateY(10px);
+      transition:opacity .8s ease,transform .8s ease;
+    }
     .lead.show{opacity:1;transform:none}
 
     .glitch-wrap{ position:relative; display:inline-block; }
     #glitchCanvas{
-      position:absolute; inset:0; display:none; pointer-events:none;
-      image-rendering: pixelated;
+      position:absolute;
+      inset:0;
+      display:none;
+      pointer-events:none;
+      image-rendering:pixelated;
     }
 
     @media (prefers-reduced-motion: reduce){
@@ -114,7 +146,7 @@
 <script>
   document.getElementById('y').textContent = new Date().getFullYear();
 
-  /* ========= Typing ========= */
+  /* ========= Efecto de escritura ========= */
   (function(){
     const nameText = "Alejandro Orcajada Meseguer";
     const roleText = "Administrador de Sistemas y Ciberseguridad";
@@ -125,15 +157,28 @@
     const lead = document.getElementById('lead');
     let i=0,j=0;
 
-    function typeName(){ if(i<nameText.length){ elName.textContent += nameText.charAt(i++); setTimeout(typeName,speed); } else { setTimeout(typeRole,250);} }
-    function typeRole(){ if(j<roleText.length){ elRole.textContent += roleText.charAt(j++); setTimeout(typeRole,speed); } else {
-      cursor?.remove(); lead?.classList.add('show');
-      setTimeout(()=>{ startCyberTitleGlitch(); }, 1000);
-    } }
+    function typeName(){ 
+      if(i<nameText.length){ 
+        elName.textContent += nameText.charAt(i++); 
+        setTimeout(typeName,speed); 
+      } else { 
+        setTimeout(typeRole,250);
+      } 
+    }
+    function typeRole(){ 
+      if(j<roleText.length){ 
+        elRole.textContent += roleText.charAt(j++); 
+        setTimeout(typeRole,speed); 
+      } else {
+        cursor?.remove(); 
+        lead?.classList.add('show');
+        setTimeout(()=>{ startCyberTitleGlitch(); }, 1000);
+      } 
+    }
     setTimeout(typeName,300);
   })();
 
-  /* ========= Glitch ========= */
+  /* ========= Efecto glitch ========= */
   const GLITCH_CFG = {
     bandMin: 2, bandMax: 10,
     strong: { dur: 200, amp: 26, skew: 5.5, baseDX: 0,  baseDY: -4 },
@@ -247,4 +292,3 @@
 </script>
 </body>
 </html>
-
