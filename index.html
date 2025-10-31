@@ -34,33 +34,45 @@
       padding:0 14px; margin-top:var(--hero-offset);
     }
 
-    /* Título Tomorrow (look preview) + NEÓN MUY SUTIL */
+    /* ======= TÍTULO Tomorrow con efecto neón real y sutil ======= */
     #heroTitle{
       position:relative; display:inline-block;
-      font-weight:600;                                 /* evita grosor “GTA” */
-      font-variation-settings:"wght" 600, "wdth" 100;  /* ancho normal */
-      text-transform:none;                             
+      font-weight:600;
+      font-variation-settings:"wght" 600, "wdth" 100;
+      text-transform:none;
       letter-spacing:.01em; word-spacing:.02em;
       font-size:clamp(36px,4vw,56px);
       color:var(--accent); margin:0 0 6px;
 
-      /* Neón sutil: sombras pequeñas y bajas opacidades (fallback sin color-mix) */
+      /* Neón sutil visible */
       text-shadow:
-        0 0 1px rgba(255,159,26,.55),
-        0 0 3px rgba(255,159,26,.30),
-        0 0 5px rgba(255,159,26,.18);
-      /* Pulso de intensidad MUY leve (no “flicker”) */
-      animation: neonSoft 3s ease-in-out infinite alternate;
-      will-change: filter;
-    }
-    @keyframes neonSoft{
-      0%   { filter: brightness(1);    }
-      100% { filter: brightness(0.96); }
+        0 0 2px rgba(255,159,26,0.5),
+        0 0 6px rgba(255,159,26,0.35),
+        0 0 12px rgba(255,159,26,0.25);
+      animation: neonGlow 2.6s ease-in-out infinite alternate;
     }
 
-    /* Subtítulo Tomorrow más fino */
+    @keyframes neonGlow{
+      0%{
+        text-shadow:
+          0 0 1.5px rgba(255,159,26,0.45),
+          0 0 5px rgba(255,159,26,0.32),
+          0 0 10px rgba(255,159,26,0.20);
+        filter:brightness(1);
+      }
+      100%{
+        text-shadow:
+          0 0 3px rgba(255,159,26,0.6),
+          0 0 8px rgba(255,159,26,0.4),
+          0 0 14px rgba(255,159,26,0.3);
+        filter:brightness(1.05);
+      }
+    }
+
+    /* Subtítulo */
     .hero h2{
-      font-weight:500; font-variation-settings:"wght" 500, "wdth" 100;
+      font-weight:500;
+      font-variation-settings:"wght" 500, "wdth" 100;
       font-size:clamp(24px,3vw,40px);
       margin:4px 0 8px; color:var(--accent-soft);
       letter-spacing:.005em; text-transform:none;
@@ -73,7 +85,6 @@
     .lead{max-width:900px;margin:10px auto 0;font-size:clamp(18px,1.5vw,22px);line-height:1.7;color:var(--text);opacity:0;transform:translateY(10px);transition:opacity .8s ease,transform .8s ease}
     .lead.show{opacity:1;transform:none}
 
-    /* Canvas para glitch encima del título */
     .glitch-wrap{ position:relative; display:inline-block; }
     #glitchCanvas{ position:absolute; inset:0; display:none; pointer-events:none; image-rendering:pixelated; }
 
@@ -103,7 +114,6 @@
   <footer>© <span id="y"></span> Alejandro Orcajada Meseguer — Administrador de Sistemas y Ciberseguridad</footer>
 
 <script>
-  // Año
   document.getElementById('y').textContent = new Date().getFullYear();
 
   /* ===== Typing con timings ===== */
@@ -132,26 +142,23 @@
       } else {
         cursor?.remove();
         lead?.classList.add('show');
-        // 1s tras escribir → primer pulso fuerte y arranca bucle
+        // 1s tras escribir → primer pulso fuerte y arranca secuencia
         setTimeout(()=>{ startCyberTitleGlitch(); }, 1000);
       }
     }
     setTimeout(typeName,300);
   })();
 
-  /* ===== Glitch estilo “créditos CP2077” ===== */
+
+  /* ===== Glitch con tiempos personalizados ===== */
   const GLITCH_CFG = {
     bandMin: 2, bandMax: 10,
     strong: { dur: 200, amp: 26, skew: 5.5, baseDX: 0,  baseDY: -4 }, // fuerte: ↑
-    small:  { dur: 120, amp: 8,  skew: 1.6, baseDX: 6,  baseDY: 0  }, // suaves: →
-    smallAttenuation: 0.3,     // MUY sutil
+    small:  { dur: 120, amp: 7,  skew: 1.2, baseDX: 6,  baseDY: 0  }, // suaves: →
+    smallAttenuation: 0.25,
     gapProb: 0.08, bigTearProb: 0.14, bigTearAmp: 32,
-    pxDownscale: 0.75, chromaShift: 0.7,
-    loopMs: 3000,              // <-- Más frecuente: 3s entre pulsos
-    cycleLength: 6             // 1 fuerte, 2–5 suaves, 6 fuerte
+    pxDownscale: 0.75, chromaShift: 0.7
   };
-
-  let _timer=null, _count=0;
 
   function pulse(kind='strong'){
     const h1 = document.getElementById('heroTitle');
@@ -164,7 +171,7 @@
     canvas.width=W; canvas.height=H;
     const ctx = canvas.getContext('2d');
 
-    // Snapshot con leve aberración RGB
+    // Snapshot RGB glitch
     const off = document.createElement('canvas'); off.width=W; off.height=H;
     const octx = off.getContext('2d');
     const cs = getComputedStyle(h1);
@@ -175,7 +182,6 @@
     octx.fillStyle='#ff2a6d'; octx.fillText(txt,  GLITCH_CFG.chromaShift, 0);
     octx.fillStyle=cs.color || '#ff9f1a'; octx.fillText(txt, 0, 0);
 
-    // Versión pixelada para mordidas
     const scale = GLITCH_CFG.pxDownscale;
     const lowW = Math.max(1, Math.round(W*scale));
     const lowH = Math.max(1, Math.round(H*scale));
@@ -200,7 +206,6 @@
       while(y<H){
         const bh = Math.min(H-y, randInt(GLITCH_CFG.bandMin, GLITCH_CFG.bandMax));
         const dir = (band++ % 2 === 0) ? -1 : 1;
-
         if(Math.random() < GLITCH_CFG.gapProb){ y+=bh; continue; }
 
         const baseAmp = cfg.amp * (1-k);
@@ -212,37 +217,30 @@
 
         const sy = Math.round((y/H)*lowH);
         const sh = Math.max(1, Math.round((bh/H)*lowH));
-
         ctx.drawImage(low, 0,sy,lowW,sh,  cfg.baseDX+dx, Math.round(cfg.baseDY+y+dy),  W,bh);
-
         y += bh;
       }
-
       if(k<1) requestAnimationFrame(frame);
       else { canvas.style.display='none'; h1.style.visibility='visible'; }
     }
     requestAnimationFrame(frame);
   }
 
-  function startLoop(){
-    stopLoop(); _count = 0;
-    _timer = setInterval(()=>{
-      _count++;
-      const step = (_count % GLITCH_CFG.cycleLength) || GLITCH_CFG.cycleLength;
-      if(step === 1 || step === GLITCH_CFG.cycleLength) pulse('strong'); // 1 y 6
-      else pulse('small'); // 2..5
-    }, GLITCH_CFG.loopMs);
-  }
-  function stopLoop(){ if(_timer){ clearInterval(_timer); _timer=null; } }
-
-  // Arranque: pulso fuerte 1s después del typing y luego cada 3s
-  function startCyberTitleGlitch(){
-    pulse('strong');
-    setTimeout(startLoop, GLITCH_CFG.loopMs);
+  /* ===== Secuencia personalizada de tiempos ===== */
+  async function startCyberTitleGlitch(){
+    while(true){
+      pulse('strong');                        // 1️⃣ fuerte
+      await wait(4000); pulse('small');       // 2️⃣ pequeño (4s)
+      await wait(6000); pulse('small');       // 3️⃣ pequeño (6s)
+      await wait(5000); pulse('small');       // 4️⃣ pequeño (5s)
+      await wait(6000); pulse('small');       // 5️⃣ pequeño (6s)
+      await wait(5000); pulse('small');       // 6️⃣ pequeño (5s)
+      await wait(3000);                       // pausa 3s
+    }
   }
 
+  function wait(ms){ return new Promise(r=>setTimeout(r,ms)); }
   function randInt(min,max){ return min + Math.floor(Math.random()*(max-min+1)); }
 </script>
 </body>
 </html>
-
