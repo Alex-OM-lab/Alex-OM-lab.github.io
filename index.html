@@ -5,9 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Alejandro Orcajada Meseguer | Administrador de Sistemas y Ciberseguridad</title>
   <meta name="description" content="Portafolio profesional de Alejandro Orcajada Meseguer, Administrador de Sistemas y Ciberseguridad." />
+
+  <!-- 🔤 Google Fonts futuristas -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="assets/css/graph.css">
   <link rel="stylesheet" href="assets/css/cubes.css">
   <link rel="stylesheet" href="assets/css/nav.css">
+
   <style>
     :root{
       --bg:#0b1220; --panel:#111a2d; --text:#e9eef6; --muted:#a8b2c2;
@@ -31,16 +36,19 @@
       padding:0 14px 0; margin-top:var(--hero-offset);
     }
 
-    /* ===== Título con neón sutil ===== */
+    /* ===== Título futurista ===== */
     #heroTitle{
       position:relative; display:inline-block;
-      font-size:clamp(34px,4vw,54px);
-      font-weight:900; color:var(--accent); margin:0 0 6px;
+      font-family:'Orbitron', sans-serif;
+      font-size:clamp(38px,4vw,58px);
+      font-weight:900; letter-spacing:1px;
+      color:var(--accent); margin:0 0 6px;
       text-shadow:
         0 0 1.5px color-mix(in oklab, var(--accent) 90%, #fff 10%),
         0 0 4px  color-mix(in oklab, var(--accent) 85%, #fff 15%),
         0 0 6px  color-mix(in oklab, var(--accent) 80%, #fff 20%);
       animation: neonPulse 3s ease-in-out infinite alternate;
+      text-transform: uppercase;
     }
 
     @keyframes neonPulse{
@@ -60,8 +68,17 @@
       }
     }
 
-    .hero h2{font-size:clamp(24px,3.2vw,40px);font-weight:800;margin:4px 0 8px;color:var(--accent-soft);
-      text-shadow:0 0 8px rgba(255,159,26,.35)}
+    /* ===== Subtítulo ===== */
+    .hero h2{
+      font-family:'Rajdhani', sans-serif;
+      font-size:clamp(24px,3vw,40px);
+      font-weight:700;
+      margin:4px 0 8px;
+      color:var(--accent-soft);
+      text-shadow:0 0 6px rgba(255,159,26,.3);
+      letter-spacing:0.5px;
+    }
+
     .cursor{display:inline-block;width:.6ch;margin-left:2px;color:var(--accent);filter:drop-shadow(0 0 4px var(--accent));animation:blink .95s steps(1,end) infinite}
     @keyframes blink{50%{opacity:0}}
     .lead{max-width:900px;margin:6px auto 0;font-size:clamp(19px,1.5vw,22px);line-height:1.7;color:var(--text);opacity:0;transform:translateY(10px);transition:opacity .8s ease,transform .8s ease}
@@ -97,7 +114,7 @@
 <script>
   document.getElementById('y').textContent = new Date().getFullYear();
 
-  /* ========= TYPING ========= */
+  /* ========= Typing ========= */
   (function(){
     const nameText = "Alejandro Orcajada Meseguer";
     const roleText = "Administrador de Sistemas y Ciberseguridad";
@@ -116,7 +133,7 @@
     setTimeout(typeName,300);
   })();
 
-  /* ========= GLITCH ========= */
+  /* ========= Glitch ========= */
   const GLITCH_CFG = {
     bandMin: 2, bandMax: 10,
     strong: { dur: 200, amp: 26, skew: 5.5, baseDX: 0,  baseDY: -4 },
@@ -189,7 +206,6 @@
       const k = Math.min(1, (t - t0) / cfg.dur);
       ctx.clearRect(0,0,W,H);
       ctx.imageSmoothingEnabled=false;
-
       let y=0, band=0;
       while(y<H){
         const bh = Math.min(H-y, randInt(GLITCH_CFG.bandMin, GLITCH_CFG.bandMax));
@@ -199,7 +215,6 @@
         let dx = Math.round(baseAmp * (0.3 + Math.random()*0.6)) * dir;
         if(Math.random() < GLITCH_CFG.bigTearProb){ dx += Math.round(GLITCH_CFG.bigTearAmp * (0.5 + Math.random()*0.5)) * dir; }
         const dy = Math.tan((cfg.skew*(1-k)) * Math.PI/180) * dir;
-
         const sy = Math.round((y/H)*lowH);
         const sh = Math.round((bh/H)*lowH);
         ctx.drawImage(low,0,sy,lowW,sh,cfg.baseDX+dx,Math.round(cfg.baseDY+y+dy),W,bh);
@@ -232,3 +247,4 @@
 </script>
 </body>
 </html>
+
