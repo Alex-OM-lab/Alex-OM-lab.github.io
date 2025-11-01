@@ -4,7 +4,7 @@
 
 /* Variables de control */
 :root{
-  --beam-duration: 5s;      /* velocidad de la línea (más rápida) */
+  --beam-duration: 3s;      /* velocidad de la línea (más rápida) */
 }
 
 /* ——— Topbar sticky con entrada suave ——— */
