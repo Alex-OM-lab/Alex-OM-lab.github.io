@@ -1,1 +1,50 @@
-ss
+/* =====================================================
+   SECCIONES GENERALES — Alejandro Orcajada Meseguer
+   (Diseño coherente con el tema oscuro cálido)
+   ===================================================== */
+
+section.custom-section {
+  padding: 60px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+section.custom-section:nth-of-type(even) {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.custom-section .container {
+  width: min(1100px, 92%);
+  margin: 0 auto;
+}
+
+.custom-section h2.section-title {
+  font-size: clamp(26px, 3vw, 36px);
+  color: var(--accent);
+  margin-bottom: 12px;
+  text-shadow: 0 0 8px rgba(255, 159, 26, 0.3);
+}
+
+.custom-section p.kicker {
+  color: var(--muted);
+  margin-bottom: 18px;
+  font-size: 1rem;
+}
+
+.custom-section .content {
+  font-size: clamp(17px, 1.3vw, 20px);
+  line-height: 1.75;
+  color: var(--text);
+  max-width: 900px;
+  margin: 0 auto;
+  opacity: 0.95;
+}
+
+/* Sutil animación al hacer scroll (scroll reveal base) */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.custom-section.show {
+  animation: fadeUp 0.8s ease forwards;
+}
