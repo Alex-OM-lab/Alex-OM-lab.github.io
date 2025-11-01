@@ -2,10 +2,9 @@
    NAV / TOPBAR (COMPLETO)
    ========================= */
 
-/* Variables de timing para poder ajustar fácil */
+/* Variables de control */
 :root{
-  --beam-duration: 10s;     /* velocidad de la línea */
-  --beam-delay: .12s;        /* pequeño retardo tras montar la topbar */
+  --beam-duration: 3s;      /* velocidad de la línea (más rápida) */
 }
 
 /* ——— Topbar sticky con entrada suave ——— */
@@ -106,7 +105,6 @@
 /* Popover base */
 .sub{ position:absolute; top:100%; left:0; min-width:360px; padding-top:0 }
 .sub::before{ content:""; position:absolute; top:-10px; left:0; right:0; height:12px }
-/* puente para que el panel lateral no se cierre al pasar */
 .sub::after{
   content:""; position:absolute; top:0; left:100%; width:20px; height:100%;
   background:transparent; pointer-events:auto;
@@ -174,7 +172,7 @@
 .sub>ul::-webkit-scrollbar-thumb{ background:rgba(255,159,26,.2); border-radius:10px }
 .sub>ul::-webkit-scrollbar-track{ background:rgba(255,255,255,.04) }
 
-/* Responsive: en móvil, panel lateral se apila */
+/* Responsive */
 @media (max-width:860px){
   .sub{ position:static }
   .sub>ul, .sub .side{ box-shadow:none }
@@ -243,14 +241,12 @@
 
 /* ===============================
    LÍNEA INFERIOR DE LA TOPBAR
-   (fluida, un solo gesto)
+   (fluida, sin delay)
    =============================== */
 
-/* Nota: eliminamos halos/overshoot y dejamos una animación única y continua */
 .topbar::after{
   content:"";
   position:absolute; left:0; right:0; bottom:0; height:3px;
-  /* degradado con centro luminoso y bordes atenuados */
   background:
     radial-gradient(200px 6px at 50% 50%, rgba(255,215,154,.85), rgba(255,159,26,0) 70%),
     linear-gradient(90deg,
@@ -261,13 +257,11 @@
       rgba(255,159,26,0)    100%);
   box-shadow:0 0 12px rgba(255,159,26,.18);
   pointer-events:none;
-
   transform-origin:center center;
-  transform:scaleX(0.0001);       /* evita flashes */
+  transform:scaleX(0.0001);
   opacity:.95;
-
   will-change:transform;
-  animation:beamSingle var(--beam-duration) cubic-bezier(.22,.61,.36,1) var(--beam-delay) forwards;
+  animation:beamSingle var(--beam-duration) cubic-bezier(.22,.61,.36,1) forwards;
 }
 
 @keyframes beamSingle{
