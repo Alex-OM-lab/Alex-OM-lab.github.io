@@ -15,7 +15,7 @@
 
   let i=0, j=0;
 
-  const delayBeforeName = 1400; // deja parpadear 2 veces antes de escribir
+  const delayBeforeName = 1500; // deja parpadear 2 veces antes de escribir
   setTimeout(typeName, delayBeforeName);
 
   function typeName(){
