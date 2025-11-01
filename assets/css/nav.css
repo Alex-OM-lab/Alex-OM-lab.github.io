@@ -4,8 +4,8 @@
 
 /* Variables de timing para poder ajustar fácil */
 :root{
-  --beam-duration: 4.8s;     /* velocidad de la línea */
-  --beam-delay: .18s;        /* pequeño retardo tras montar la topbar */
+  --beam-duration: 2s;     /* velocidad de la línea */
+  --beam-delay: .10s;        /* pequeño retardo tras montar la topbar */
 }
 
 /* ——— Topbar sticky con entrada suave ——— */
