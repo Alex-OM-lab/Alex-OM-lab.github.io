@@ -1,224 +1,61 @@
-/* =========================================================
-   sections.css — estilos visuales de secciones y tarjetas
-   (no pisa nav.css ni hero-glitch.css)
-   ========================================================= */
+/* assets/css/sections.css */
 
-/* --------- Titulares y textos de sección --------- */
-section { padding: 60px 0; }
-
-.section-title{
-  position: relative;
-  font-size: clamp(26px, 3vw, 36px);
-  margin: 0 0 14px;
-  letter-spacing: .2px;
-}
-
-.section-title::after{
-  /* subrayado que nace del centro y se expande */
-  content: "";
-  position: absolute;
-  left: 50%;
-  bottom: -10px;
-  width: 0%;
-  height: 3px;
-  transform: translateX(-50%);
-  border-radius: 999px;
-  background:
-    radial-gradient(30px 6px at 50% 50%, var(--accent) 0%, transparent 65%),
-    linear-gradient(90deg,
-      rgba(255,159,26,.0) 0%,
-      rgba(255,159,26,.85) 22%,
-      rgba(255,215,154,.95) 50%,
-      rgba(255,159,26,.85) 78%,
-      rgba(255,159,26,.0) 100%);
-  filter: drop-shadow(0 0 10px rgba(255,159,26,.22));
-  transition: width .7s cubic-bezier(.2,.85,.2,1);
-}
-
-section:hover .section-title::after{
-  width: 82%;
-}
-
-.kicker{
-  margin: 16px 0 24px;
-  color: var(--muted);
-  line-height: 1.55;
-}
-
-/* --------- Tarjetas (cards) --------- */
-.card{
-  position: relative;
-  background: linear-gradient(
-      180deg,
-      color-mix(in oklab, var(--panel) 92%, #0f1422 8%),
-      var(--panel)
-    );
-  border-radius: var(--radius);
-  border: 1px solid rgba(255,255,255,.06);
-  box-shadow:
-    0 10px 24px rgba(0,0,0,.28),
-    inset 0 0 0 1px rgba(255,255,255,.02);
-  padding: 22px;
-  line-height: 1.65;
-  transition:
-    transform .35s cubic-bezier(.2,.85,.2,1),
-    box-shadow .35s ease,
-    background .35s ease;
-  overflow: clip; /* recorta el borde animado */
-}
-
-/* Borde animado sutil con máscara (no afecta contenido) */
-.card::before{
-  content:"";
-  position:absolute; inset:0;
-  border-radius: inherit;
-  padding: 1px; /* grosor del borde “luz” */
-  background:
-    linear-gradient(90deg,
-      rgba(255,159,26,.0) 0%,
-      rgba(255,159,26,.7) 22%,
-      rgba(255,215,154,.9) 50%,
-      rgba(255,159,26,.7) 78%,
-      rgba(255,159,26,.0) 100%);
-  -webkit-mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-          mask-composite: exclude;
+/* Estado inicial (oculto) */
+.reveal.is-hidden {
   opacity: 0;
-  transition: opacity .5s ease;
+  transform: translateY(14px) scale(0.995);
+  will-change: transform, opacity;
 }
 
-.card:hover{
-  transform: translateY(-3px);
-  box-shadow:
-    0 16px 36px rgba(0,0,0,.35),
-    inset 0 0 0 1px rgba(255,255,255,.03);
+/* Variante opcional por data-reveal="fade-in" (sin desplazamiento) */
+.reveal[data-reveal="fade-in"].is-hidden {
+  transform: none;
 }
 
-.card:hover::before{
-  opacity: .6; /* brillo sutil en hover */
+/* Variante por defecto: fade-up */
+.reveal[data-reveal="fade-up"].is-hidden {
+  transform: translateY(14px);
 }
 
-/* Punto de luz muy sutil al pasar por encima */
-.card::after{
-  content:"";
-  position:absolute;
-  inset:auto -30% -40% auto; /* fuera abajo-dcha. */
-  width: 240px; height: 240px;
-  background: radial-gradient(closest-side, rgba(255,215,154,.12), transparent 70%);
-  transform: translate3d(0,0,0);
-  pointer-events:none;
-  opacity: 0;
-  transition: opacity .35s ease;
-}
-.card:hover::after{ opacity: 1; }
-
-/* Tipografías dentro de la card */
-.card p{ margin: 0 0 12px; }
-.card ul{ margin: 8px 0 0 18px; padding: 0; }
-.card li{ margin: 6px 0; }
-
-/* --------- Listas en dos columnas (herramientas/conceptos) --------- */
-.two-cols{
-  list-style: none;
-  margin: 8px 0 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px 18px;
-}
-
-.two-cols li{
-  position: relative;
-  padding-left: 16px;
-}
-.two-cols li::before{
-  content:"";
-  position:absolute; left:0; top:.65em;
-  width:8px; height:8px; border-radius:2px;
-  background: linear-gradient(90deg, var(--accent), var(--accent-soft));
-  filter: drop-shadow(0 0 6px rgba(255,159,26,.35));
-}
-
-@media (max-width: 860px){
-  .two-cols{ grid-template-columns: 1fr; }
-}
-
-/* --------- Imágenes de proyectos por si los usas --------- */
-.project img{
-  width: 100%;
-  aspect-ratio: 16/10;
-  object-fit: cover;
-  border-radius: 10px;
-  border: 1px solid rgba(255,255,255,.06);
-}
-
-/* =========================================================
-   Scroll Reveal (CSS complementario a scroll-reveal.js)
-   Soporta dos variantes: .is-visible o [data-revealed="true"]
-   ========================================================= */
-.reveal{
-  opacity: 0;
-  transform: translateY(14px) scale(.985);
-  transition:
-    opacity .7s ease,
-    transform .7s cubic-bezier(.2,.85,.2,1),
-    filter .7s ease;
-  will-change: opacity, transform, filter;
-}
-
-.reveal.is-visible,
-.reveal[data-revealed="true"]{
+/* Estado revelado */
+.reveal.reveal-in {
   opacity: 1;
   transform: none;
-  filter: none;
+  transition:
+    opacity 320ms ease-out,
+    transform 420ms cubic-bezier(.18, .89, .32, 1.12);
 }
 
-/* Variantes por data-reveal */
-.reveal[data-reveal="fade-up"]{
-  transform: translateY(20px);
-}
-.reveal[data-reveal="fade-right"]{
-  transform: translateX(-26px);
-}
-.reveal[data-reveal="zoom-in"]{
-  transform: scale(.96);
+/* ====== STAGGER DE HIJOS ====== */
+.is-hidden-child {
+  opacity: 0;
+  transform: translateY(10px);
+  will-change: transform, opacity;
 }
 
-.reveal.is-visible[data-reveal="fade-up"],
-.reveal[data-revealed="true"][data-reveal="fade-up"]{
-  transform: translateY(0);
+.reveal-in-child {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 260ms ease-out,
+    transform 360ms cubic-bezier(.18, .89, .32, 1.12);
 }
 
-.reveal.is-visible[data-reveal="fade-right"],
-.reveal[data-revealed="true"][data-reveal="fade-right"]{
-  transform: translateX(0);
+/* Micro-detalle al pasar: respiración mínima */
+.reveal.reveal-in .card:hover {
+  transform: translateY(-1px);
+  transition: transform 160ms ease-out;
 }
 
-.reveal.is-visible[data-reveal="zoom-in"],
-.reveal[data-revealed="true"][data-reveal="zoom-in"]{
-  transform: scale(1);
-}
-
-/* --------- Accesibilidad: reducir movimiento --------- */
-@media (prefers-reduced-motion: reduce){
-  .reveal,
-  .reveal.is-visible,
-  .reveal[data-revealed="true"]{
+/* Reduce motion: sin animaciones */
+@media (prefers-reduced-motion: reduce) {
+  .reveal.is-hidden,
+  .is-hidden-child {
     opacity: 1 !important;
     transform: none !important;
-    transition: none !important;
   }
-  .card,
-  .card::before,
-  .card::after{
+  .reveal.reveal-in,
+  .reveal-in-child {
     transition: none !important;
   }
 }
-
-/* --------- Helpers de layout existentes --------- */
-.container{ width:min(1100px,92%); margin:0 auto; }
-
-/* Mejoras leves de legibilidad en párrafos largos */
-.card p + p{ margin-top: 8px; }
