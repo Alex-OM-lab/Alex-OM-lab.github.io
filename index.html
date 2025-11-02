@@ -7,21 +7,23 @@
   <meta name="description" content="Portafolio profesional de Alejandro Orcajada Meseguer, Administrador de Sistemas y Ciberseguridad." />
   <meta name="theme-color" content="#0b1220" />
 
-  <!-- Fuentes -->
+  <!-- ================== FUENTES ================== -->
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Tomorrow:wdth,wght@100..125,400..900&display=swap" rel="stylesheet">
 
-  <!-- CSS base + componentes -->
+  <!-- ================== CSS BASE ================== -->
   <link rel="stylesheet" href="assets/css/nav.css">
   <link rel="stylesheet" href="assets/css/hero-glitch.css">
   <link rel="stylesheet" href="assets/css/sections.css">
-  <!-- NUEVO: layout Darkfolio X -->
+
+  <!-- ================== LAYOUT DARKFOLIO X ================== -->
   <link rel="stylesheet" href="assets/css/layout-darkfolio.css">
-  <!-- Componentes -->
+
+  <!-- ================== COMPONENTES ================== -->
   <link rel="stylesheet" href="assets/css/graph.css">
   <link rel="stylesheet" href="assets/css/cubes.css">
 
-  <!-- Estilos globales mínimos (ya los tenías) -->
+  <!-- ================== ESTILOS GLOBALES ================== -->
   <style>
     :root{
       --bg:#0b1220; --panel:#111a2d; --text:#e9eef6; --muted:#a8b2c2;
@@ -75,23 +77,25 @@
     </div>
   </div>
 
-  <!-- ========================= CONTENIDO ========================== -->
+  <!-- ========================= CONTENIDO (LAYOUT DARKFOLIO X) ========================== -->
   <main class="container">
 
-    <!-- ===== Sobre mí ===== -->
-    <section id="sobre-mi" class="section-block reveal" data-reveal="fade-up" data-delay="60" aria-labelledby="sobre-mi-title">
+    <!-- ===== SOBRE MÍ ===== -->
+    <section id="sobre-mi" class="section-block reveal" data-reveal="fade-up">
       <div class="section-meta">
-        <h2 id="sobre-mi-title" class="section-title">Sobre mí</h2>
-        <p class="kicker">Administrador de Sistemas & Ciberseguridad.</p>
+        <h2 class="section-title">Sobre mí</h2>
+        <p class="kicker">Administrador de Sistemas & Ciberseguridad</p>
       </div>
       <div class="section-body">
         <div class="card">
           <p>
             Soy <strong>Alejandro Orcajada Meseguer</strong>, Técnico Superior en ASIR y Máster en Ciberseguridad. Me muevo entre
             <em>administración de sistemas</em> (Linux/Windows, redes, bases de datos) y <em>seguridad</em> (hardening, forense, IR).
+          </p>
+          <p>
             Busco incorporarme a un equipo donde pueda <strong>aprender al máximo</strong>, asumir responsabilidad y aportar desde el primer día.
           </p>
-          <p style="margin-top:10px">
+          <p>
             Objetivo en SOC: <strong>Tier 1 → Tier 2 → Tier 3</strong> y, a largo plazo, <strong>Threat Hunter</strong> o <strong>Incident Responder</strong>.
             En sistemas: de <strong>SysAdmin</strong> a <strong>SysOps/Platform Engineer</strong>.
           </p>
@@ -99,11 +103,11 @@
       </div>
     </section>
 
-    <!-- ===== Puesto ideal ===== -->
-    <section id="puesto-ideal" class="section-block reveal" data-reveal="fade-up" data-delay="80" aria-labelledby="puesto-ideal-title">
+    <!-- ===== PUESTO IDEAL ===== -->
+    <section id="puesto-ideal" class="section-block reveal" data-reveal="fade-up">
       <div class="section-meta">
-        <h2 id="puesto-ideal-title" class="section-title">Puesto ideal</h2>
-        <p class="kicker">Responsabilidad real y aprendizaje continuo.</p>
+        <h2 class="section-title">Puesto ideal</h2>
+        <p class="kicker">Responsabilidad real y aprendizaje continuo</p>
       </div>
       <div class="section-body">
         <div class="card">
@@ -116,11 +120,11 @@
       </div>
     </section>
 
-    <!-- ===== Cómo investigo ===== -->
-    <section id="investigacion" class="section-block reveal" data-reveal="fade-up" data-delay="100" aria-labelledby="investigacion-title">
+    <!-- ===== CÓMO INVESTIGO ===== -->
+    <section id="investigacion" class="section-block reveal" data-reveal="fade-up">
       <div class="section-meta">
-        <h2 id="investigacion-title" class="section-title">Cómo investigo</h2>
-        <p class="kicker">Comparar, verificar, documentar.</p>
+        <h2 class="section-title">Cómo investigo</h2>
+        <p class="kicker">Comparar, verificar, documentar</p>
       </div>
       <div class="section-body">
         <div class="card">
@@ -137,19 +141,17 @@
       </div>
     </section>
 
-    <!-- ===== Herramientas & conceptos ===== -->
-    <section id="herramientas" class="section-block reveal" data-reveal="fade-up" data-delay="120" data-stagger=".chip" data-stagger-step="60" aria-labelledby="herramientas-title">
+    <!-- ===== HERRAMIENTAS ===== -->
+    <section id="herramientas" class="section-block reveal" data-reveal="fade-up">
       <div class="section-meta">
-        <h2 id="herramientas-title" class="section-title">Herramientas & conceptos</h2>
-        <p class="kicker">Lo que uso y en lo que profundizo.</p>
+        <h2 class="section-title">Herramientas & conceptos</h2>
+        <p class="kicker">Lo que uso y en lo que profundizo</p>
       </div>
       <div class="section-body">
         <div class="chips">
           <span class="chip">Linux</span><span class="chip">Windows Server</span><span class="chip">AD / GPO</span>
           <span class="chip">Redes (VLAN/DHCP/DNS/VPN)</span><span class="chip">Nginx / Apache</span><span class="chip">Bash / PowerShell</span>
           <span class="chip">MySQL / MariaDB / PostgreSQL</span><span class="chip">Backups / DR</span><span class="chip">Zabbix / Nagios</span>
-        </div>
-        <div class="chips">
           <span class="chip">OWASP ZAP</span><span class="chip">Nmap / Metasploit</span><span class="chip">OpenVAS/Nessus</span>
           <span class="chip">Wazuh / ELK</span><span class="chip">Hardening (CIS)</span><span class="chip">Forense (Autopsy / Volatility)</span>
           <span class="chip">SonarQube (SAST)</span><span class="chip">Git / CI</span><span class="chip">Docker / K8s (nociones)</span>
@@ -157,17 +159,16 @@
       </div>
     </section>
 
-    <!-- ===== Mapa visual (antes del carrusel) ===== -->
-    <section id="site-graph" class="section-block reveal" data-reveal="fade-up" data-delay="140" aria-labelledby="site-graph-title">
+    <!-- ===== MAPA VISUAL ===== -->
+    <section id="site-graph" class="section-block reveal" data-reveal="fade-up">
       <div class="section-meta">
-        <h2 id="site-graph-title" class="section-title">Mapa visual</h2>
-        <p class="kicker">Esquema interactivo — haz clic para desplegar niveles.</p>
+        <h2 class="section-title">Mapa visual</h2>
+        <p class="kicker">Esquema interactivo — haz clic para desplegar niveles</p>
       </div>
-      <div class="section-body">
+      <div class="section-body full-bleed">
         <div class="graph card">
           <div class="graph-stage" id="graphStage">
-            <svg id="graphSvg" class="svgroot" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid meet" role="img"
-                 aria-label="Esquema del contenido por niveles">
+            <svg id="graphSvg" class="svgroot" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid meet">
               <g id="graphRoot"></g>
             </svg>
           </div>
@@ -181,31 +182,31 @@
       </div>
     </section>
 
-    <!-- ===== Lecturas y artículos (carrusel) ===== -->
-    <section id="news-cubes" class="section-block reveal" data-reveal="fade-up" data-delay="160" aria-labelledby="news-cubes-title">
+    <!-- ===== LECTURAS ===== -->
+    <section id="news-cubes" class="section-block reveal" data-reveal="fade-up">
       <div class="section-meta">
-        <h2 id="news-cubes-title" class="section-title">Lecturas y artículos</h2>
-        <p class="kicker">Novedades seleccionadas — desplazamiento suave y continuo.</p>
+        <h2 class="section-title">Lecturas y artículos</h2>
+        <p class="kicker">Novedades seleccionadas — desplazamiento suave y continuo</p>
       </div>
       <div class="section-body">
-        <div class="cube-carousel" data-autoplay="true" data-interval="3200" data-shuffle="true" aria-roledescription="carrusel">
+        <div class="cube-carousel" data-autoplay="true" data-interval="3200" data-shuffle="true">
           <div class="cube-head"><h3>Artículos interesantes</h3></div>
-          <div class="cube-viewport" role="region" aria-label="Carrusel de artículos" style="overflow:hidden">
+          <div class="cube-viewport" style="overflow:hidden">
             <div class="cube-track" id="cubeTrack" role="list"></div>
           </div>
-          <div class="cube-nav" aria-hidden="false">
-            <button class="cube-btn prev" type="button" id="cubePrev" aria-label="Artículo anterior">‹</button>
-            <button class="cube-btn next" type="button" id="cubeNext" aria-label="Artículo siguiente">›</button>
+          <div class="cube-nav">
+            <button class="cube-btn prev" type="button" id="cubePrev">‹</button>
+            <button class="cube-btn next" type="button" id="cubeNext">›</button>
           </div>
-          <div class="cube-dots" id="cubeDots" aria-hidden="true"></div>
+          <div class="cube-dots" id="cubeDots"></div>
         </div>
       </div>
     </section>
 
-    <!-- ===== Contacto ===== -->
-    <section id="contact" class="section-block reveal" data-reveal="fade-up" data-delay="180" aria-labelledby="contact-title">
+    <!-- ===== CONTACTO ===== -->
+    <section id="contact" class="section-block reveal" data-reveal="fade-up">
       <div class="section-meta">
-        <h2 id="contact-title" class="section-title">Contacto</h2>
+        <h2 class="section-title">Contacto</h2>
         <p class="kicker">¿Hablamos?</p>
       </div>
       <div class="section-body">
@@ -230,24 +231,13 @@
   <footer>© <span id="y"></span> Alejandro Orcajada Meseguer — Administrador de Sistemas y Ciberseguridad</footer>
 
   <!-- ========================= JS ========================== -->
-  <!-- Hero: typing + glitch -->
   <script src="assets/js/hero-glitch.js" defer></script>
-
-  <!-- NAV -->
   <script src="assets/js/nav-data.js" defer></script>
   <script src="assets/js/nav.js" defer></script>
-
-  <!-- Graph -->
   <script src="assets/js/graph-data.js" defer></script>
   <script src="assets/js/graph.js" defer></script>
-
-  <!-- Cubes -->
   <script src="assets/js/cubes.js" defer></script>
-
-  <!-- Año footer -->
   <script>document.getElementById('y').textContent = new Date().getFullYear();</script>
-
-  <!-- Scroll reveal -->
   <script src="assets/js/scroll-reveal.js" defer></script>
 </body>
 </html>
