@@ -3,9 +3,22 @@
    (Diseño coherente con el tema oscuro cálido)
    ===================================================== */
 
+/* Variables de color (usa las globales si existen; proveo fallback) */
+:root{
+  --bg: #0b1220;
+  --panel: #111a2d;
+  --text: #e9eef6;
+  --muted: #a8b2c2;
+  --accent: #ff9f1a;
+  --accent-soft: #ffd79a;
+  --radius: 14px;
+}
+
+/* ---------- Sección base ---------- */
 section.custom-section {
   padding: 60px 0;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
+  position: relative;
 }
 
 section.custom-section:nth-of-type(even) {
@@ -17,19 +30,21 @@ section.custom-section:nth-of-type(even) {
   margin: 0 auto;
 }
 
+/* Título + subtítulo (kicker) */
 .custom-section h2.section-title {
   font-size: clamp(26px, 3vw, 36px);
   color: var(--accent);
-  margin-bottom: 12px;
+  margin: 0 0 12px;
   text-shadow: 0 0 8px rgba(255, 159, 26, 0.3);
 }
 
 .custom-section p.kicker {
   color: var(--muted);
-  margin-bottom: 18px;
+  margin: 0 0 18px;
   font-size: 1rem;
 }
 
+/* Contenido principal de párrafos */
 .custom-section .content {
   font-size: clamp(17px, 1.3vw, 20px);
   line-height: 1.75;
@@ -39,12 +54,156 @@ section.custom-section:nth-of-type(even) {
   opacity: 0.95;
 }
 
-/* Sutil animación al hacer scroll (scroll reveal base) */
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+/* ---------- Card / panel ---------- */
+.card{
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--panel) 92%, #0f1422 8%),
+    var(--panel)
+  );
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: 0 10px 28px rgba(2,6,12,0.45);
+  color: var(--text);
 }
 
+/* ---------- Grilla 3 columnas (Especialidades) ---------- */
+.grid-3{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.specialty h3{
+  margin: 0 0 8px;
+  font-size: 18px;
+  color: var(--accent);
+  text-shadow: 0 0 8px rgba(255,159,26,.2);
+}
+
+/* ---------- Skills: 3 columnas de botones ---------- */
+.skills-grid{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-top: 8px;
+}
+.skills-col{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.skill-btn{
+  background: rgba(255,159,26,0.08);
+  border: 1px solid rgba(255,159,26,0.22);
+  color: #ffe9c8;
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-weight: 700;
+  text-align: left;
+  letter-spacing: .2px;
+  cursor: pointer;
+  transition:
+    transform .18s ease,
+    box-shadow .18s ease,
+    background .18s ease,
+    border-color .18s ease;
+}
+.skill-btn:hover{
+  transform: translateY(-5px);
+  box-shadow: 0 14px 30px rgba(0,0,0,.6);
+  background: rgba(255,159,26,0.12);
+  border-color: rgba(255,159,26,0.36);
+}
+.skill-btn:active{ transform: translateY(-2px); }
+
+/* ---------- Chips (por si los reutilizas) ---------- */
+.chips{ display:flex; flex-wrap:wrap; gap:10px }
+.chip{
+  padding:8px 12px;
+  border-radius:999px;
+  background:rgba(255,159,26,.12);
+  border:1px solid rgba(255,159,26,.35);
+  color:#ffe2b0;
+  font-weight:600;
+  font-size:14px;
+}
+
+/* ---------- Graph / mapa ---------- */
+.graph{
+  display: block;
+  padding: 8px;
+}
+.graph .graph-stage{
+  width: 100%;
+  min-height: 320px;
+}
+
+/* ---------- Contacto (2 columnas) ---------- */
+.contact-grid{
+  display: grid;
+  grid-template-columns: 1.1fr .9fr;
+  gap: 18px;
+}
+
+/* ---------- CTA genérica ---------- */
+.ctabtn{
+  background: var(--accent);
+  color: #07101a;
+  border: 0;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+/* =====================================================
+   Scroll-reveal sencillo (activar con .show)
+   Además incluyo clases compatibles por si luego usas IO
+   ===================================================== */
+
+/* Estado inicial (si quieres iniciar oculto y mostrar con .show) */
+.custom-section:not(.show).will-reveal { 
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+/* Animación base */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 .custom-section.show {
   animation: fadeUp 0.8s ease forwards;
+}
+
+/* Compatibilidad con scripts previos (.reveal / .reveal-in) */
+.reveal.is-hidden{ opacity:0; transform:translateY(12px); }
+.reveal.reveal-in{
+  opacity:1; transform:none;
+  transition: opacity .6s ease, transform .6s ease;
+}
+.is-hidden-child{ opacity:0; transform:translateY(8px); }
+.reveal-in-child{ opacity:1; transform:none; transition:opacity .45s ease, transform .45s ease; }
+
+/* Accesibilidad: menos movimiento */
+@media (prefers-reduced-motion: reduce){
+  .custom-section.show { animation: none; opacity: 1; transform: none; }
+  .reveal.reveal-in { transition: none; }
+}
+
+/* =====================================================
+   Responsive
+   ===================================================== */
+@media (max-width: 980px){
+  .grid-3{ grid-template-columns: 1fr; }
+  .skills-grid{ grid-template-columns: 1fr; }
+  .contact-grid{ grid-template-columns: 1fr; }
+}
+
+@media (max-width: 520px){
+  .skill-btn{ font-size: 14px; padding: 10px; }
+  .card{ padding: 12px; border-radius: 10px; }
+  .custom-section h2.section-title{ font-size: 22px; }
 }
