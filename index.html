@@ -11,14 +11,14 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Tomorrow:wdth,wght@100..125,400..900&display=swap" rel="stylesheet">
 
-  <!-- CSS (orden recomendado: base nav/hero/sections, luego componentes pesados) -->
+  <!-- CSS (base + componentes) -->
   <link rel="stylesheet" href="assets/css/nav.css">
   <link rel="stylesheet" href="assets/css/hero-glitch.css">
   <link rel="stylesheet" href="assets/css/sections.css">
   <link rel="stylesheet" href="assets/css/graph.css">
   <link rel="stylesheet" href="assets/css/cubes.css">
 
-  <!-- Estilos globales mínimos (colores/base que no están en sections.css) -->
+  <!-- Estilos globales mínimos -->
   <style>
     :root{
       --bg:#0b1220; --panel:#111a2d; --text:#e9eef6; --muted:#a8b2c2;
@@ -90,24 +90,96 @@
     </div>
   </div>
 
-  <!-- ========================= CONTENIDO ========================== -->
+  <!-- ========================= NUEVAS SECCIONES ========================== -->
   <main class="container">
-    <!-- Ciberseguridad -->
-    <section id="ciber" class="reveal" data-reveal="fade-up" data-delay="80" aria-labelledby="ciber-title">
+
+    <!-- Sobre mí -->
+    <section id="sobre-mi" class="reveal" data-reveal="fade-up" data-delay="60" aria-labelledby="sobre-mi-title">
+      <h2 id="sobre-mi-title" class="section-title">Sobre mí</h2>
+      <p class="kicker">Administrador de Sistemas & Ciberseguridad — aprender, construir y proteger.</p>
+      <div class="card">
+        <p>
+          Soy <strong>Alejandro Orcajada Meseguer</strong>, Técnico Superior en ASIR y Máster en Ciberseguridad. Me muevo bien entre
+          la <em>administración de sistemas</em> (Linux/Windows, redes, bases de datos) y la <em>seguridad</em> (hardening, forense, IR).
+          Busco incorporarme a un equipo donde pueda <strong>aprender al máximo</strong>, asumir responsabilidades progresivas y crecer hacia
+          roles técnicos de impacto.
+        </p>
+        <p style="margin-top:10px">
+          Objetivo a medio plazo en ciberseguridad (SOC): <strong>Tier 1 → Tier 2 → Tier 3</strong> y, a largo plazo,
+          <strong>Threat Hunter</strong> o <strong>Incident Responder</strong>. En sistemas: de <strong>SysAdmin</strong> a <strong>SysOps/Platform Engineer</strong>.
+        </p>
+      </div>
+    </section>
+
+    <!-- Cómo investigo -->
+    <section id="investigacion" class="reveal" data-reveal="fade-up" data-delay="80" aria-labelledby="investigacion-title">
+      <h2 id="investigacion-title" class="section-title">Cómo investigo</h2>
+      <p class="kicker">Metodología: comparar, verificar, documentar.</p>
+      <div class="card">
+        <p>
+          Trabajo con un enfoque <strong>riguroso y verificable</strong>: contrasto fuentes, comparo resultados y documento pasos y
+          herramientas. Prioridad a documentación oficial, papers y repos mantenidos; después blogs técnicos con pruebas y PoC.
+        </p>
+        <ul style="margin:12px 0 0 18px">
+          <li>Corroboro con varias fuentes y <em>test A/B</em> en laboratorio local o sandbox.</li>
+          <li>Registro de comandos, parámetros, hashes y versiones para reproducibilidad.</li>
+          <li>Cuando publico, enlazo fuentes y <em>artefactos</em> (scripts, capturas, PCAP, etc.).</li>
+        </ul>
+        <p style="margin-top:10px">
+          Ejemplo de lectura crítica y verificación: <a href="#news-cubes">ver artículos seleccionados</a>.
+        </p>
+      </div>
+    </section>
+
+    <!-- Puesto / trabajo ideal -->
+    <section id="puesto-ideal" class="reveal" data-reveal="fade-up" data-delay="100" aria-labelledby="puesto-ideal-title">
+      <h2 id="puesto-ideal-title" class="section-title">Puesto ideal</h2>
+      <p class="kicker">Responsabilidad real, servicio crítico y aprendizaje continuo.</p>
+      <div class="card">
+        <p>
+          Quiero estar cerca del “núcleo” de la operación: <strong>administrar plataformas</strong>, reforzar la seguridad y responder ante
+          incidentes. Me motivan entornos con SLAs, observabilidad y cultura de <em>postmortems</em>.
+        </p>
+        <ul style="margin:12px 0 0 18px">
+          <li><strong>SysAdmin / SysOps</strong> con foco en automatización, documentación y fiabilidad.</li>
+          <li><strong>SOC Analyst</strong> (Tier 1–2) evolucionando a <strong>Threat Hunter</strong> o <strong>IR</strong>.</li>
+          <li><strong>Security Engineer</strong> (hardening, pipelines de seguridad, AppSec/DevSecOps).</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Herramientas & conceptos -->
+    <section id="herramientas" class="reveal" data-reveal="fade-up" data-delay="120" data-stagger=".chip" data-stagger-step="60" aria-labelledby="herramientas-title">
+      <h2 id="herramientas-title" class="section-title">Herramientas & conceptos</h2>
+      <p class="kicker">Lo que uso y en lo que estoy profundizando.</p>
+
+      <div class="chips" style="margin-bottom:10px">
+        <span class="chip">Linux</span><span class="chip">Windows Server</span><span class="chip">AD / GPO</span>
+        <span class="chip">Redes (VLAN/DHCP/DNS/VPN)</span><span class="chip">Nginx / Apache</span><span class="chip">Bash / PowerShell</span>
+        <span class="chip">MySQL / MariaDB / PostgreSQL</span><span class="chip">Backups / DR</span><span class="chip">Zabbix / Nagios</span>
+      </div>
+      <div class="chips">
+        <span class="chip">OWASP ZAP</span><span class="chip">Nmap / Metasploit</span><span class="chip">OpenVAS/Nessus</span>
+        <span class="chip">Wazuh / ELK</span><span class="chip">Hardening (CIS)</span><span class="chip">Forense (Autopsy / Volatility)</span>
+        <span class="chip">SonarQube (SAST)</span><span class="chip">Git / CI</span><span class="chip">Docker / K8s (nociones)</span>
+      </div>
+    </section>
+
+    <!-- ====== SECCIONES EXISTENTES ====== -->
+
+    <section id="ciber" class="reveal" data-reveal="fade-up" data-delay="160" aria-labelledby="ciber-title">
       <h2 id="ciber-title" class="section-title">Ciberseguridad</h2>
       <p class="kicker">Security-by-design, hardening y respuesta a incidentes.</p>
       <div class="card">Playbooks de respuesta, aplicación de guías CIS, inventario de activos y SIEM; priorización de riesgos y monitoreo proactivo.</div>
     </section>
 
-    <!-- Administración de Sistemas -->
-    <section id="adm" class="reveal" data-reveal="fade-up" data-delay="140" aria-labelledby="adm-title">
+    <section id="adm" class="reveal" data-reveal="fade-up" data-delay="180" aria-labelledby="adm-title">
       <h2 id="adm-title" class="section-title">Administración de Sistemas</h2>
       <p class="kicker">Infraestructura reproducible y observable.</p>
       <div class="card">Linux/Windows, IaC (Terraform/Ansible), contenedores (Docker/K8s), redes y servidores (Nginx/Apache), CI/CD y observabilidad.</div>
     </section>
 
-    <!-- Skills principales con stagger -->
-    <section id="skills" class="reveal" data-reveal="fade-up" data-delay="180" data-stagger=".chip" data-stagger-step="70" aria-labelledby="skills-title">
+    <section id="skills" class="reveal" data-reveal="fade-up" data-delay="200" data-stagger=".chip" data-stagger-step="70" aria-labelledby="skills-title">
       <h2 id="skills-title" class="section-title">Skills principales</h2>
       <div class="chips">
         <span class="chip">Linux</span><span class="chip">Windows Server</span><span class="chip">Networking</span>
@@ -121,7 +193,6 @@
     <section id="news-cubes" class="reveal" data-reveal="fade-up" data-delay="220" aria-labelledby="news-cubes-title">
       <h2 id="news-cubes-title" class="section-title">Lecturas y artículos</h2>
       <p class="kicker">Novedades seleccionadas — desplazamiento suave y continuo.</p>
-
       <div class="cube-carousel" data-autoplay="true" data-interval="3200" data-shuffle="true" aria-roledescription="carrusel">
         <div class="cube-head"><h3>Artículos interesantes</h3></div>
         <div class="cube-viewport" role="region" aria-label="Carrusel de artículos" style="overflow:hidden">
@@ -135,8 +206,8 @@
       </div>
     </section>
 
-    <!-- Mapa visual (Graph) -->
-    <section id="site-graph" class="graph reveal" data-reveal="fade-up" data-delay="260" aria-labelledby="site-graph-title">
+    <!-- Mapa visual -->
+    <section id="site-graph" class="graph reveal" data-reveal="fade-up" data-delay="240" aria-labelledby="site-graph-title">
       <div class="card">
         <div class="graph-head">
           <h2 id="site-graph-title" class="section-title">Mapa visual</h2>
@@ -157,7 +228,7 @@
     </section>
 
     <!-- Contacto -->
-    <section id="contact" class="reveal" data-reveal="fade-up" data-delay="300" aria-labelledby="contact-title">
+    <section id="contact" class="reveal" data-reveal="fade-up" data-delay="260" aria-labelledby="contact-title">
       <h2 id="contact-title" class="section-title">Contacto</h2>
       <div class="contact-box">
         <div class="card">
@@ -175,6 +246,7 @@
         </div>
       </div>
     </section>
+
   </main>
 
   <footer>© <span id="y"></span> Alejandro Orcajada Meseguer — Administrador de Sistemas y Ciberseguridad</footer>
@@ -183,7 +255,7 @@
   <!-- Hero: typing + glitch -->
   <script src="assets/js/hero-glitch.js" defer></script>
 
-  <!-- NAV (datos + comportamiento) -->
+  <!-- NAV -->
   <script src="assets/js/nav-data.js" defer></script>
   <script src="assets/js/nav.js" defer></script>
 
@@ -194,12 +266,10 @@
   <!-- Cubes -->
   <script src="assets/js/cubes.js" defer></script>
 
-  <!-- Utilidades menores -->
-  <script>
-    document.getElementById('y').textContent = new Date().getFullYear();
-  </script>
+  <!-- Footer año -->
+  <script>document.getElementById('y').textContent = new Date().getFullYear();</script>
 
-  <!-- Scroll reveal (nuevo) -->
+  <!-- Scroll reveal -->
   <script src="assets/js/scroll-reveal.js" defer></script>
 </body>
 </html>
