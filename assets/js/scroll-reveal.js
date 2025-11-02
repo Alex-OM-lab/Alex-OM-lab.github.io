@@ -1,100 +1,124 @@
 /* =========================================================
-   Scroll Reveal (minimal-pro) — Alejandro OM
-   - Usa IntersectionObserver para revelar .reveal al entrar en viewport
-   - Respeta prefers-reduced-motion
-   - Soporta data attributes:
-       data-reveal="fade-up|fade-in|zoom-in|slide-left|slide-right"
-       data-reveal-delay="200"           (ms)
-       data-reveal-once="false"          (por defecto: true)
-     En contenedores:
-       data-stagger="100"                (ms, aplica a hijos .reveal)
-   - Añade la clase .is-visible cuando toca (tu CSS maneja la transición)
+   scroll-reveal.js — IntersectionObserver + delays + stagger
+   Requiere el CSS de sections.css (clases .reveal / .is-visible)
    ========================================================= */
 
-(function () {
-  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+(() => {
+  const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // Si el usuario prefiere menos movimiento → mostrar todo sin animar
-  if (prefersReduced) {
-    document.addEventListener('DOMContentLoaded', () => {
-      document.querySelectorAll('.reveal').forEach(el => {
-        el.classList.add('is-visible');
-        el.style.transition = 'none';
-        el.style.animation = 'none';
-      });
+  // Si el usuario prefiere menos movimiento: muestra todo y salimos.
+  if (REDUCED) {
+    document.querySelectorAll('.reveal').forEach(el => {
+      el.classList.add('is-visible');
+      el.setAttribute('data-revealed', 'true');
+      // Si hay stagger, marca los hijos también
+      const sel = el.dataset.stagger;
+      if (sel) {
+        el.querySelectorAll(sel).forEach(it => {
+          it.classList.add('reveal', 'is-visible');
+          it.setAttribute('data-revealed', 'true');
+          it.style.transitionDelay = '0ms';
+        });
+      }
     });
     return;
   }
 
-  // 1) Preproceso: aplicar "stagger" a grupos
-  //    Un contenedor con [data-stagger="120"] añade retrasos crecientes a sus hijos .reveal
-  function applyStagger() {
-    const groups = document.querySelectorAll('[data-stagger]');
-    groups.forEach(group => {
-      const step = parseInt(group.getAttribute('data-stagger'), 10) || 0;
-      if (!step) return;
-      const children = group.querySelectorAll('.reveal');
-      children.forEach((el, i) => {
-        const hasOwnDelay = el.hasAttribute('data-reveal-delay');
-        if (!hasOwnDelay) el.setAttribute('data-reveal-delay', String(i * step));
-      });
-    });
+  const OBS = new IntersectionObserver(onIntersect, {
+    root: null,
+    rootMargin: '0px 0px -10% 0px',
+    threshold: 0.15
+  });
+
+  document.querySelectorAll('.reveal').forEach(el => {
+    // Evita dobles observadores si re-ejecutas el script
+    if (!el.__observed) {
+      el.__observed = true;
+      OBS.observe(el);
+    }
+  });
+
+  function onIntersect(entries) {
+    for (const entry of entries) {
+      const el = entry.target;
+      const once = el.dataset.once !== 'false'; // por defecto true
+
+      if (entry.isIntersecting) {
+        revealElement(el);
+        if (once) OBS.unobserve(el);
+      } else if (!once) {
+        // Reversible: vuelve a estado inicial al salir
+        hideElement(el);
+      }
+    }
   }
 
-  // 2) Observador principal
-  function initObserver() {
-    const options = {
-      root: null,
-      rootMargin: '0px 0px -10% 0px', // Revela un poco antes del centro inferior
-      threshold: 0.15
-    };
+  function revealElement(el) {
+    // No reveles dos veces si ya está visible (y es "once")
+    if (el.getAttribute('data-revealed') === 'true' && el.dataset.once !== 'false') return;
 
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        const el = entry.target;
-        const revealOnce = el.getAttribute('data-reveal-once');
-        const once = revealOnce == null ? true : (revealOnce !== 'false'); // por defecto true
-        const delay = parseInt(el.getAttribute('data-reveal-delay') || '0', 10);
+    const delay = toMS(el.dataset.delay, 0);
+    const staggerSel = el.dataset.stagger || null;
+    const staggerStep = toMS(el.dataset.staggerStep, 60);
 
-        if (entry.isIntersecting) {
-          if (delay > 0) {
-            // Evita dobles timeouts en reentradas
-            if (el.__rvTo) clearTimeout(el.__rvTo);
-            el.__rvTo = setTimeout(() => {
-              el.classList.add('is-visible');
-              el.__rvTo = null;
-            }, delay);
-          } else {
-            el.classList.add('is-visible');
-          }
-          if (once) io.unobserve(el);
-        } else {
-          // Si once=false, permite ocultar al salir para reanimar en nueva entrada
-          if (!once) {
-            if (el.__rvTo) { clearTimeout(el.__rvTo); el.__rvTo = null; }
-            el.classList.remove('is-visible');
-          }
-        }
+    // Aplica delay al propio bloque
+    if (delay > 0) el.style.transitionDelay = `${delay}ms`;
+    schedule(() => {
+      el.classList.add('is-visible');
+      el.setAttribute('data-revealed', 'true');
+    }, delay);
+
+    // Stagger interno (si se pide)
+    if (staggerSel) {
+      const items = el.querySelectorAll(staggerSel);
+      items.forEach((it, i) => {
+        // Garantiza que tengan el estado inicial .reveal
+        if (!it.classList.contains('reveal')) it.classList.add('reveal');
+        const d = delay + i * staggerStep;
+        it.style.transitionDelay = `${d}ms`;
+        schedule(() => {
+          it.classList.add('is-visible');
+          it.setAttribute('data-revealed', 'true');
+        }, d);
       });
-    }, options);
+    }
+  }
 
-    // Observar todos los elementos .reveal
+  function hideElement(el) {
+    el.classList.remove('is-visible');
+    el.setAttribute('data-revealed', 'false');
+    el.style.transitionDelay = '';
+    const sel = el.dataset.stagger;
+    if (sel) {
+      el.querySelectorAll(sel).forEach(it => {
+        it.classList.remove('is-visible');
+        it.setAttribute('data-revealed', 'false');
+        it.style.transitionDelay = '';
+      });
+    }
+  }
+
+  function toMS(val, fallback) {
+    if (!val) return fallback;
+    const n = parseInt(val, 10);
+    return Number.isFinite(n) ? n : fallback;
+    }
+
+  function schedule(fn, ms) {
+    if (ms <= 16) {
+      // ~sin retraso: usa rAF para frame limpio
+      requestAnimationFrame(fn);
+    } else {
+      setTimeout(() => requestAnimationFrame(fn), ms);
+    }
+  }
+
+  // Revela lo que ya esté visible al cargar
+  window.addEventListener('load', () => {
     document.querySelectorAll('.reveal').forEach(el => {
-      // Marcar el tipo de animación como data-reveal (ya está en el HTML)
-      // El CSS decidirá el "from" según data-reveal + .reveal, y el "to" al añadir .is-visible
-      io.observe(el);
+      const rect = el.getBoundingClientRect();
+      const inView = rect.top < window.innerHeight * 0.9 && rect.bottom > 0;
+      if (inView) revealElement(el);
     });
-  }
-
-  // 3) Init en DOM listo
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-      applyStagger();
-      initObserver();
-    });
-  } else {
-    applyStagger();
-    initObserver();
-  }
-
+  });
 })();
