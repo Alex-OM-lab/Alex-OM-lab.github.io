@@ -1,0 +1,61 @@
+/* ===== Layout Darkfolio X (estructura + ritmo visual) ===== */
+
+:root{
+  /* espaciados de sección y ancho de columna lateral en desktop */
+  --section-gap: 68px;
+  --section-gap-sm: 42px;
+  --side-col: 320px; /* bloque de título/intro a la izquierda */
+}
+
+/* Apila secciones con más aire y ritmo */
+.section-block{
+  display: grid;
+  grid-template-columns: var(--side-col) 1fr;
+  gap: 26px;
+  align-items: start;
+  margin-block: var(--section-gap);
+}
+
+/* Columna izquierda (título + kicker) */
+.section-meta{
+  position: sticky;
+  top: calc(64px + 10px); /* bajo la topbar, si es sticky */
+  align-self: start;
+}
+
+.section-meta .section-title{
+  margin: 0 0 8px;
+}
+
+.section-meta .kicker{
+  margin: 0;
+}
+
+/* Columna derecha (contenido principal) */
+.section-body{
+  display: grid;
+  gap: 14px;
+}
+
+/* Afinado visual de cards/chips dentro del layout */
+.section-body > .card{
+  padding: 18px;
+}
+
+/* Mapa visual ocupa todo el ancho derecho y se realza un pelín */
+.section-body .graph.card{
+  padding: 0;
+  overflow: hidden;
+  border-radius: var(--radius);
+}
+
+/* Responsive */
+@media (max-width: 980px){
+  :root{ --section-gap: var(--section-gap-sm); }
+  .section-block{
+    grid-template-columns: 1fr;
+  }
+  .section-meta{
+    position: static;
+  }
+}
