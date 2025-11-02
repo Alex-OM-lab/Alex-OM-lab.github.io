@@ -139,11 +139,6 @@ footer {
   margin-top:20px;
 }
 
-/* ===== Responsivo: sube un pelín más en móviles ===== */
-@media (max-width:640px){
-  :root { --hero-offset:2vh; }
-}
-
 /* ===== Accesibilidad ===== */
 @media (prefers-reduced-motion: reduce) {
   #glitchCanvas { display:none !important; }
