@@ -1,4 +1,124 @@
-/* assets/css/sections.css */
+/* ==========================================================
+   assets/css/sections.css
+   Layout principal de secciones, tarjetas, grids, animaciones
+   ========================================================== */
+
+/* global variables asumidas desde hero-glitch.css vía :root */
+
+/* ----- Layout base ----- */
+.container {
+  width: min(1100px, 92%);
+  margin: 0 auto;
+  padding: 12px 0;
+}
+.section-block {
+  padding: 22px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+}
+.section-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.section-title {
+  font-size: clamp(22px, 3vw, 30px);
+  margin: 0;
+}
+.kicker {
+  color: var(--muted);
+  margin: 0;
+}
+
+/* ----- Tarjetas ----- */
+.card {
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--panel, #0f1422) 92%, #0f1422 8%),
+    var(--panel, #0f1422)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 12px;
+  padding: 14px;
+  box-shadow: 0 6px 22px rgba(2, 6, 12, 0.6);
+  color: var(--text);
+}
+
+/* ----- Grid de 3 columnas (especialidades, etc.) ----- */
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+.specialty h3 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+
+/* ----- Skills grid (3 columnas de botones) ----- */
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-top: 8px;
+}
+.skills-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.skill-btn {
+  background: rgba(255, 159, 26, 0.06);
+  border: 1px solid rgba(255, 159, 26, 0.18);
+  color: #fff;
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-weight: 700;
+  text-align: left;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+  cursor: pointer;
+}
+.skill-btn:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6);
+}
+.skill-btn:active {
+  transform: translateY(-2px);
+}
+
+/* ----- Graph + map card ----- */
+.graph {
+  display: block;
+  padding: 8px;
+}
+
+/* ----- Contact grid ----- */
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 18px;
+}
+
+/* ----- Layout / hero helper ----- */
+.container-hero {
+  width: min(1100px, 92%);
+  margin: 0 auto;
+}
+
+/* ----- Botón CTA ----- */
+.ctabtn {
+  background: var(--accent);
+  color: #07101a;
+  border: 0;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+/* ==========================================================
+   ANIMACIONES "REVEAL" + STAGGER (scroll reveal)
+   ========================================================== */
 
 /* Estado inicial (oculto) */
 .reveal.is-hidden {
@@ -57,5 +177,37 @@
   .reveal.reveal-in,
   .reveal-in-child {
     transition: none !important;
+  }
+}
+
+/* ==========================================================
+   RESPONSIVE
+   ========================================================== */
+@media (max-width: 980px) {
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
+  .skills-grid {
+    grid-template-columns: 1fr;
+  }
+  .contact-grid {
+    grid-template-columns: 1fr;
+  }
+  .topwrap {
+    padding: 0 10px;
+  }
+}
+
+@media (max-width: 520px) {
+  .skill-btn {
+    font-size: 14px;
+    padding: 10px;
+  }
+  .section-title {
+    font-size: 20px;
+  }
+  .card {
+    padding: 12px;
+    border-radius: 10px;
   }
 }
