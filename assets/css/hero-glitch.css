@@ -141,7 +141,7 @@ footer {
 
 /* ===== Responsivo: sube un pelín más en móviles ===== */
 @media (max-width:640px){
-  :root { --hero-offset:4vh; }
+  :root { --hero-offset:2vh; }
 }
 
 /* ===== Accesibilidad ===== */
