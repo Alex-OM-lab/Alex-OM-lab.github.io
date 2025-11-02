@@ -8,7 +8,8 @@
   --muted:#a8b2c2;
   --accent:#ff9f1a;
   --accent-soft:#ffd79a;
-  --hero-offset:12vh;
+  /* ↓ Subimos el héroe ~35–40% */
+  --hero-offset:7.5vh;
 }
 
 * { box-sizing:border-box }
@@ -138,7 +139,12 @@ footer {
   margin-top:20px;
 }
 
-/* ===== Modo accesible ===== */
+/* ===== Responsivo: sube un pelín más en móviles ===== */
+@media (max-width:640px){
+  :root { --hero-offset:6vh; }
+}
+
+/* ===== Accesibilidad ===== */
 @media (prefers-reduced-motion: reduce) {
   #glitchCanvas { display:none !important; }
   #heroTitle { animation:none !important; }
