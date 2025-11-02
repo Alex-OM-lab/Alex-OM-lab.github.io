@@ -1,61 +1,50 @@
-/* assets/css/sections.css */
+/* =====================================================
+   SECCIONES GENERALES — Alejandro Orcajada Meseguer
+   (Diseño coherente con el tema oscuro cálido)
+   ===================================================== */
 
-/* Estado inicial (oculto) */
-.reveal.is-hidden {
-  opacity: 0;
-  transform: translateY(14px) scale(0.995);
-  will-change: transform, opacity;
+section.custom-section {
+  padding: 60px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-/* Variante opcional por data-reveal="fade-in" (sin desplazamiento) */
-.reveal[data-reveal="fade-in"].is-hidden {
-  transform: none;
+section.custom-section:nth-of-type(even) {
+  background: rgba(255, 255, 255, 0.02);
 }
 
-/* Variante por defecto: fade-up */
-.reveal[data-reveal="fade-up"].is-hidden {
-  transform: translateY(14px);
+.custom-section .container {
+  width: min(1100px, 92%);
+  margin: 0 auto;
 }
 
-/* Estado revelado */
-.reveal.reveal-in {
-  opacity: 1;
-  transform: none;
-  transition:
-    opacity 320ms ease-out,
-    transform 420ms cubic-bezier(.18, .89, .32, 1.12);
+.custom-section h2.section-title {
+  font-size: clamp(26px, 3vw, 36px);
+  color: var(--accent);
+  margin-bottom: 12px;
+  text-shadow: 0 0 8px rgba(255, 159, 26, 0.3);
 }
 
-/* ====== STAGGER DE HIJOS ====== */
-.is-hidden-child {
-  opacity: 0;
-  transform: translateY(10px);
-  will-change: transform, opacity;
+.custom-section p.kicker {
+  color: var(--muted);
+  margin-bottom: 18px;
+  font-size: 1rem;
 }
 
-.reveal-in-child {
-  opacity: 1;
-  transform: none;
-  transition:
-    opacity 260ms ease-out,
-    transform 360ms cubic-bezier(.18, .89, .32, 1.12);
+.custom-section .content {
+  font-size: clamp(17px, 1.3vw, 20px);
+  line-height: 1.75;
+  color: var(--text);
+  max-width: 900px;
+  margin: 0 auto;
+  opacity: 0.95;
 }
 
-/* Micro-detalle al pasar: respiración mínima */
-.reveal.reveal-in .card:hover {
-  transform: translateY(-1px);
-  transition: transform 160ms ease-out;
+/* Sutil animación al hacer scroll (scroll reveal base) */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-/* Reduce motion: sin animaciones */
-@media (prefers-reduced-motion: reduce) {
-  .reveal.is-hidden,
-  .is-hidden-child {
-    opacity: 1 !important;
-    transform: none !important;
-  }
-  .reveal.reveal-in,
-  .reveal-in-child {
-    transition: none !important;
-  }
+.custom-section.show {
+  animation: fadeUp 0.8s ease forwards;
 }
