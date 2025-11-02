@@ -1,42 +1,39 @@
-/* ===========================
-   HERO con glitch estilo Cyberpunk
-   Control de offset SOLO con --hero-offset
-   =========================== */
+/* =========================================
+   HERO + typing + glitch (estilo Darkfolio)
+   Control único: --hero-offset
+   ========================================= */
 
-/* Ajusta aquí la separación del héroe respecto a la topbar */
-:root{
-  /* 1–2vh = muy pegado; 4–6vh = estándar; 0vh = prácticamente tocando */
+/* Ajusta aquí la separación entre la topbar y el héroe.
+   1–3vh = muy pegado • 4–7vh = cómodo • 8–10vh = holgado */
+:root {
   --hero-offset: 6vh;
 }
 
-/* ===== HERO layout ===== */
+/* ----- Layout del hero ----- */
 .hero-wrap{
   position: relative;
   display: flex;
-  align-items: flex-start;            /* subir: no centrar vertical */
+  align-items: flex-start;       /* sube el bloque: no centrar vertical */
   justify-content: center;
   text-align: center;
 
-  /* Control único del espacio superior */
+  /* separa sólo con padding-top para evitar conflictos de márgenes */
   padding: var(--hero-offset) 14px 0;
-
-  /* Evitar empujes de otras hojas */
   margin: 0 !important;
-  background: transparent;
 
-  /* Altura mínima más contenida (puedes bajar más si quieres aún más arriba) */
-  min-height: 32vh;
+  /* altura mínima contenida (ajusta si quieres aún más arriba) */
+  min-height: 34vh;
 }
 
-/* Contenedor interno del hero */
+/* contenedor interno */
 .hero{
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;                           /* espacio respiración entre título/subtítulo/lead */
+  gap: 8px; /* aire entre título / subtítulo */
 }
 
-/* ===== Título principal (neón sutil + listo para glitch) ===== */
+/* ----- Título principal (neón sutil, listo para glitch) ----- */
 #heroTitle{
   position: relative;
   display: inline-block;
@@ -44,17 +41,15 @@
 
   font-weight: 600;
   font-variation-settings: "wght" 600, "wdth" 100;
-  text-transform: none;
   letter-spacing: .01em;
   word-spacing: .02em;
   font-size: clamp(36px, 4vw, 56px);
   color: var(--accent);
 
-  /* Neón respirando muy sutil */
   text-shadow:
-    0 0 2px rgba(255,159,26,0.50),
-    0 0 6px rgba(255,159,26,0.35),
-    0 0 12px rgba(255,159,26,0.25);
+    0 0 2px rgba(255,159,26,.50),
+    0 0 6px rgba(255,159,26,.35),
+    0 0 12px rgba(255,159,26,.25);
   animation: neonGlow 2.6s ease-in-out infinite alternate;
 }
 
@@ -75,7 +70,7 @@
   }
 }
 
-/* ===== Subtítulo ===== */
+/* ----- Subtítulo (typing) ----- */
 .hero h2{
   margin: 0 0 8px;
   font-weight: 500;
@@ -83,11 +78,10 @@
   font-size: clamp(24px, 3vw, 40px);
   color: var(--accent-soft);
   letter-spacing: .005em;
-  text-transform: none;
   text-shadow: 0 0 3px rgba(255,159,26,.22);
 }
 
-/* ===== Cursores ===== */
+/* ----- Cursores ----- */
 .cursor{
   display: inline-block;
   width: .55ch;
@@ -108,38 +102,28 @@
 
 @keyframes blink{ 50%{ opacity: 0 } }
 
-/* ===== Lead (texto descriptivo) ===== */
-.lead{
-  max-width: 900px;
-  margin: 10px auto 0;
-  font-size: clamp(18px, 1.5vw, 22px);
-  line-height: 1.7;
-  color: var(--text);
+/* ----- (Importante) Ocultar el texto bajo el título ----- */
+.lead{ display: none !important; }
 
-  opacity: 0;
-  transform: translateY(10px);
-  transition: opacity .8s ease, transform .8s ease;
-}
-.lead.show{ opacity: 1; transform: none; }
-
-/* ===== Glitch: canvas superpuesto ===== */
+/* ----- Glitch canvas ----- */
 .glitch-wrap{ position: relative; display: inline-block; }
 #glitchCanvas{
   position: absolute;
   inset: 0;
-  display: none;                /* JS lo muestra/oculta durante el efecto */
+  display: none;                /* el JS lo activa durante el pulso */
   pointer-events: none;
   image-rendering: pixelated;
 }
 
-/* ===== Accesibilidad ===== */
+/* ----- Accesibilidad ----- */
 @media (prefers-reduced-motion: reduce){
   #glitchCanvas{ display: none !important; }
   #heroTitle{ animation: none !important; }
   .cursor{ animation: none !important; }
 }
 
-/* ===== Responsivo: móviles muy pequeños ===== */
+/* ----- Móvil pequeño ----- */
 @media (max-width: 420px){
-  .hero-wrap{ min-height: 38vh; }   /* dar un pelín más de aire en pantallas muy bajas */
+  .hero-wrap{ min-height: 38vh; }
+  #heroTitle{ font-size: clamp(28px, 9vw, 40px); }
 }
