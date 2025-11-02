@@ -1,95 +1,124 @@
-// assets/js/scroll-reveal.js
-// Revelado temprano + delay por sección + stagger opcional + fallbacks
+/* =========================================================
+   scroll-reveal.js — IntersectionObserver + delays + stagger
+   Requiere el CSS de sections.css (clases .reveal / .is-visible)
+   ========================================================= */
+
 (() => {
-  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // Inyecta estilos mínimos para que funcione con .visible y con is-hidden/reveal-in
-  (function injectStyles(){
-    const style = document.createElement('style');
-    style.setAttribute('data-scroll-reveal-styles','1');
-    style.textContent = `
-      .reveal.is-hidden { opacity:0; transform: translateY(10px); }
-      .reveal.reveal-in,
-      .reveal.visible { opacity:1; transform:none; transition: opacity .6s ease, transform .6s ease; }
-
-      .is-hidden-child { opacity:0; transform: translateY(8px); }
-      .reveal-in-child { opacity:1; transform:none; transition: opacity .45s cubic-bezier(.2,.9,.2,1), transform .45s cubic-bezier(.2,.9,.2,1); }
-    `;
-    document.head.appendChild(style);
-  })();
-
-  const targets = Array.from(document.querySelectorAll('.reveal'));
-  if (targets.length === 0) return;
-
-  // Si hay motion reducido, mostramos sin animar
-  if (prefersReduced) {
-    targets.forEach(el => el.classList.add('reveal-in','visible'));
+  // Si el usuario prefiere menos movimiento: muestra todo y salimos.
+  if (REDUCED) {
+    document.querySelectorAll('.reveal').forEach(el => {
+      el.classList.add('is-visible');
+      el.setAttribute('data-revealed', 'true');
+      // Si hay stagger, marca los hijos también
+      const sel = el.dataset.stagger;
+      if (sel) {
+        el.querySelectorAll(sel).forEach(it => {
+          it.classList.add('reveal', 'is-visible');
+          it.setAttribute('data-revealed', 'true');
+          it.style.transitionDelay = '0ms';
+        });
+      }
+    });
     return;
   }
 
-  // Fallback si no hay IO
-  if (!('IntersectionObserver' in window)) {
-    targets.forEach(el => el.classList.add('reveal-in','visible'));
-    return;
-  }
-
-  // Estado inicial: oculto y preparar hijos para stagger
-  targets.forEach(el => {
-    el.classList.add('is-hidden');
-    const sel = el.getAttribute('data-stagger');
-    if (sel) el.querySelectorAll(sel).forEach(k => k.classList.add('is-hidden-child'));
+  const OBS = new IntersectionObserver(onIntersect, {
+    root: null,
+    rootMargin: '0px 0px -10% 0px',
+    threshold: 0.15
   });
 
-  // Observador — dispara pronto (rootMargin bottom negativo)
-  const OBSERVER_OPTS = {
-    root: null,
-    rootMargin: '0px 0px -55%',   // cuanto más negativo, antes revela
-    threshold: 0.01
-  };
-  const io = new IntersectionObserver(onIntersect, OBSERVER_OPTS);
-  targets.forEach(el => io.observe(el));
-
-  // Primer barrido: si ya están cerca/visibles al cargar, revela sin esperar al IO
-  requestAnimationFrame(() => {
-    const vh = window.innerHeight || document.documentElement.clientHeight;
-    targets.forEach(el => {
-      const rect = el.getBoundingClientRect();
-      if (rect.top < vh * 0.9) revealElement(el); // 90% del viewport
-    });
+  document.querySelectorAll('.reveal').forEach(el => {
+    // Evita dobles observadores si re-ejecutas el script
+    if (!el.__observed) {
+      el.__observed = true;
+      OBS.observe(el);
+    }
   });
 
   function onIntersect(entries) {
     for (const entry of entries) {
+      const el = entry.target;
+      const once = el.dataset.once !== 'false'; // por defecto true
+
       if (entry.isIntersecting) {
-        revealElement(entry.target);
-        io.unobserve(entry.target);
+        revealElement(el);
+        if (once) OBS.unobserve(el);
+      } else if (!once) {
+        // Reversible: vuelve a estado inicial al salir
+        hideElement(el);
       }
     }
   }
 
   function revealElement(el) {
-    // ya revelado
-    if (el.classList.contains('reveal-in') || el.classList.contains('visible')) return;
+    // No reveles dos veces si ya está visible (y es "once")
+    if (el.getAttribute('data-revealed') === 'true' && el.dataset.once !== 'false') return;
 
-    const delay = parseInt(el.getAttribute('data-delay') || '0', 10) || 0;
-    const sel   = el.getAttribute('data-stagger');
-    const step  = parseInt(el.getAttribute('data-stagger-step') || '80', 10) || 80;
+    const delay = toMS(el.dataset.delay, 0);
+    const staggerSel = el.dataset.stagger || null;
+    const staggerStep = toMS(el.dataset.staggerStep, 60);
 
-    window.setTimeout(() => {
-      // Revelado principal (soporta ambos esquemas)
-      el.classList.add('reveal-in', 'visible');
-      el.classList.remove('is-hidden');
-
-      // Stagger interno
-      if (sel) {
-        const kids = Array.from(el.querySelectorAll(sel));
-        kids.forEach((k, i) => {
-          window.setTimeout(() => {
-            k.classList.add('reveal-in-child');
-            k.classList.remove('is-hidden-child');
-          }, i * step + 120); // pequeño offset para escalonar
-        });
-      }
+    // Aplica delay al propio bloque
+    if (delay > 0) el.style.transitionDelay = `${delay}ms`;
+    schedule(() => {
+      el.classList.add('is-visible');
+      el.setAttribute('data-revealed', 'true');
     }, delay);
+
+    // Stagger interno (si se pide)
+    if (staggerSel) {
+      const items = el.querySelectorAll(staggerSel);
+      items.forEach((it, i) => {
+        // Garantiza que tengan el estado inicial .reveal
+        if (!it.classList.contains('reveal')) it.classList.add('reveal');
+        const d = delay + i * staggerStep;
+        it.style.transitionDelay = `${d}ms`;
+        schedule(() => {
+          it.classList.add('is-visible');
+          it.setAttribute('data-revealed', 'true');
+        }, d);
+      });
+    }
   }
+
+  function hideElement(el) {
+    el.classList.remove('is-visible');
+    el.setAttribute('data-revealed', 'false');
+    el.style.transitionDelay = '';
+    const sel = el.dataset.stagger;
+    if (sel) {
+      el.querySelectorAll(sel).forEach(it => {
+        it.classList.remove('is-visible');
+        it.setAttribute('data-revealed', 'false');
+        it.style.transitionDelay = '';
+      });
+    }
+  }
+
+  function toMS(val, fallback) {
+    if (!val) return fallback;
+    const n = parseInt(val, 10);
+    return Number.isFinite(n) ? n : fallback;
+    }
+
+  function schedule(fn, ms) {
+    if (ms <= 16) {
+      // ~sin retraso: usa rAF para frame limpio
+      requestAnimationFrame(fn);
+    } else {
+      setTimeout(() => requestAnimationFrame(fn), ms);
+    }
+  }
+
+  // Revela lo que ya esté visible al cargar
+  window.addEventListener('load', () => {
+    document.querySelectorAll('.reveal').forEach(el => {
+      const rect = el.getBoundingClientRect();
+      const inView = rect.top < window.innerHeight * 0.9 && rect.bottom > 0;
+      if (inView) revealElement(el);
+    });
+  });
 })();
