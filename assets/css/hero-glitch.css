@@ -141,7 +141,7 @@ footer {
 
 /* ===== Responsivo: sube un pelín más en móviles ===== */
 @media (max-width:640px){
-  :root { --hero-offset:6vh; }
+  :root { --hero-offset:4vh; }
 }
 
 /* ===== Accesibilidad ===== */
@@ -150,3 +150,4 @@ footer {
   #heroTitle { animation:none !important; }
   .cursor { animation:none !important; }
 }
+
