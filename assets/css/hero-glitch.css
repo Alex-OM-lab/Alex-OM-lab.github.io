@@ -1,148 +1,145 @@
 /* ===========================
    HERO con glitch estilo Cyberpunk
+   Control de offset SOLO con --hero-offset
    =========================== */
 
-:root {
-  --bg:#0b1220;
-  --text:#e9eef6;
-  --muted:#a8b2c2;
-  --accent:#ff9f1a;
-  --accent-soft:#ffd79a;
-  /* ↓ Subimos el héroe ~35–40% */
-  --hero-offset:1vh;
+/* Ajusta aquí la separación del héroe respecto a la topbar */
+:root{
+  /* 1–2vh = muy pegado; 4–6vh = estándar; 0vh = prácticamente tocando */
+  --hero-offset: 1.5vh;
 }
 
-* { box-sizing:border-box }
-html,body { margin:0 }
+/* ===== HERO layout ===== */
+.hero-wrap{
+  position: relative;
+  display: flex;
+  align-items: flex-start;            /* subir: no centrar vertical */
+  justify-content: center;
+  text-align: center;
 
-body {
-  font-family:"Tomorrow", system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial;
-  -webkit-font-smoothing:antialiased;
-  -moz-osx-font-smoothing:grayscale;
-  background:
-    radial-gradient(1400px 800px at 80% -100px, rgba(255,159,26,.06), transparent 60%),
-    radial-gradient(1200px 700px at -200px 20%, rgba(255,215,154,.05), transparent 60%),
-    var(--bg);
-  color:var(--text);
+  /* Control único del espacio superior */
+  padding: var(--hero-offset) 14px 0;
+
+  /* Evitar empujes de otras hojas */
+  margin: 0 !important;
+  background: transparent;
+
+  /* Altura mínima más contenida (puedes bajar más si quieres aún más arriba) */
+  min-height: 32vh;
 }
 
-/* ===== HERO ===== */
-.hero-wrap {
-  min-height:52vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-  padding:0 14px;
-  margin-top:var(--hero-offset);
+/* Contenedor interno del hero */
+.hero{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;                           /* espacio respiración entre título/subtítulo/lead */
 }
 
-/* ===== Título principal (Neón sutil) ===== */
-#heroTitle {
-  position:relative;
-  display:inline-block;
-  font-weight:600;
-  font-variation-settings:"wght" 600, "wdth" 100;
-  text-transform:none;
-  letter-spacing:.01em;
-  word-spacing:.02em;
-  font-size:clamp(36px,4vw,56px);
-  color:var(--accent);
-  margin:0 0 6px;
+/* ===== Título principal (neón sutil + listo para glitch) ===== */
+#heroTitle{
+  position: relative;
+  display: inline-block;
+  margin: 0 0 4px;
 
+  font-weight: 600;
+  font-variation-settings: "wght" 600, "wdth" 100;
+  text-transform: none;
+  letter-spacing: .01em;
+  word-spacing: .02em;
+  font-size: clamp(36px, 4vw, 56px);
+  color: var(--accent);
+
+  /* Neón respirando muy sutil */
   text-shadow:
     0 0 2px rgba(255,159,26,0.50),
     0 0 6px rgba(255,159,26,0.35),
     0 0 12px rgba(255,159,26,0.25);
-  animation:neonGlow 2.6s ease-in-out infinite alternate;
+  animation: neonGlow 2.6s ease-in-out infinite alternate;
 }
 
-@keyframes neonGlow {
-  0%  { filter:brightness(1);
-        text-shadow:0 0 1.5px rgba(255,159,26,.45),
-                     0 0 5px rgba(255,159,26,.32),
-                     0 0 10px rgba(255,159,26,.20); }
-  100%{ filter:brightness(1.05);
-        text-shadow:0 0 3px rgba(255,159,26,.60),
-                     0 0 8px rgba(255,159,26,.40),
-                     0 0 14px rgba(255,159,26,.30); }
+@keyframes neonGlow{
+  0%{
+    filter: brightness(1);
+    text-shadow:
+      0 0 1.5px rgba(255,159,26,.45),
+      0 0 5px   rgba(255,159,26,.32),
+      0 0 10px  rgba(255,159,26,.20);
+  }
+  100%{
+    filter: brightness(1.05);
+    text-shadow:
+      0 0 3px  rgba(255,159,26,.60),
+      0 0 8px  rgba(255,159,26,.40),
+      0 0 14px rgba(255,159,26,.30);
+  }
 }
 
 /* ===== Subtítulo ===== */
-.hero h2 {
-  font-weight:500;
-  font-variation-settings:"wght" 500, "wdth" 100;
-  font-size:clamp(24px,3vw,40px);
-  margin:4px 0 8px;
-  color:var(--accent-soft);
-  letter-spacing:.005em;
-  text-transform:none;
-  text-shadow:0 0 3px rgba(255,159,26,.22);
+.hero h2{
+  margin: 0 0 8px;
+  font-weight: 500;
+  font-variation-settings: "wght" 500, "wdth" 100;
+  font-size: clamp(24px, 3vw, 40px);
+  color: var(--accent-soft);
+  letter-spacing: .005em;
+  text-transform: none;
+  text-shadow: 0 0 3px rgba(255,159,26,.22);
 }
 
 /* ===== Cursores ===== */
-.cursor {
-  display:inline-block;
-  width:0.55ch;
-  margin-left:3px;
-  animation:blink .95s steps(1,end) infinite;
-  vertical-align:-2px;
+.cursor{
+  display: inline-block;
+  width: .55ch;
+  margin-left: 3px;
+  vertical-align: -2px;
+  animation: blink .95s steps(1,end) infinite;
+}
+.cursor.off{ visibility: hidden; }
+
+#cursorName{
+  color: var(--accent);
+  filter: drop-shadow(0 0 3px var(--accent));
+}
+#cursorRole{
+  color: var(--accent-soft);
+  filter: drop-shadow(0 0 3px var(--accent-soft));
 }
 
-/* Cursor superior (nombre) */
-#cursorName {
-  color:var(--accent);
-  filter:drop-shadow(0 0 3px var(--accent));
+@keyframes blink{ 50%{ opacity: 0 } }
+
+/* ===== Lead (texto descriptivo) ===== */
+.lead{
+  max-width: 900px;
+  margin: 10px auto 0;
+  font-size: clamp(18px, 1.5vw, 22px);
+  line-height: 1.7;
+  color: var(--text);
+
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity .8s ease, transform .8s ease;
 }
+.lead.show{ opacity: 1; transform: none; }
 
-/* Cursor inferior (rol) */
-#cursorRole {
-  color:var(--accent-soft);
-  filter:drop-shadow(0 0 3px var(--accent-soft));
-}
-
-.cursor.off { visibility:hidden; }
-
-@keyframes blink {
-  50% { opacity:0; }
-}
-
-/* ===== Descripción ===== */
-.lead {
-  max-width:900px;
-  margin:10px auto 0;
-  font-size:clamp(18px,1.5vw,22px);
-  line-height:1.7;
-  color:var(--text);
-  opacity:0;
-  transform:translateY(10px);
-  transition:opacity .8s ease, transform .8s ease;
-}
-.lead.show { opacity:1; transform:none; }
-
-/* ===== Glitch canvas ===== */
-.glitch-wrap { position:relative; display:inline-block; }
-#glitchCanvas {
-  position:absolute;
-  inset:0;
-  display:none;
-  pointer-events:none;
-  image-rendering:pixelated;
-}
-
-/* ===== Footer ===== */
-footer {
-  padding:40px 0;
-  color:#a9b1bd;
-  text-align:center;
-  border-top:1px solid rgba(255,255,255,.06);
-  margin-top:20px;
+/* ===== Glitch: canvas superpuesto ===== */
+.glitch-wrap{ position: relative; display: inline-block; }
+#glitchCanvas{
+  position: absolute;
+  inset: 0;
+  display: none;                /* JS lo muestra/oculta durante el efecto */
+  pointer-events: none;
+  image-rendering: pixelated;
 }
 
 /* ===== Accesibilidad ===== */
-@media (prefers-reduced-motion: reduce) {
-  #glitchCanvas { display:none !important; }
-  #heroTitle { animation:none !important; }
-  .cursor { animation:none !important; }
+@media (prefers-reduced-motion: reduce){
+  #glitchCanvas{ display: none !important; }
+  #heroTitle{ animation: none !important; }
+  .cursor{ animation: none !important; }
 }
 
+/* ===== Responsivo: móviles muy pequeños ===== */
+@media (max-width: 420px){
+  .hero-wrap{ min-height: 38vh; }   /* dar un pelín más de aire en pantallas muy bajas */
+}
