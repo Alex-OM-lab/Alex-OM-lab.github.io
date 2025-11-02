@@ -6,7 +6,7 @@
 /* Ajusta aquí la separación del héroe respecto a la topbar */
 :root{
   /* 1–2vh = muy pegado; 4–6vh = estándar; 0vh = prácticamente tocando */
-  --hero-offset: 1.5vh;
+  --hero-offset: 3vh;
 }
 
 /* ===== HERO layout ===== */
