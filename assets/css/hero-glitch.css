@@ -9,7 +9,7 @@
   --accent:#ff9f1a;
   --accent-soft:#ffd79a;
   /* ↓ Subimos el héroe ~35–40% */
-  --hero-offset:2vh;
+  --hero-offset:1vh;
 }
 
 * { box-sizing:border-box }
