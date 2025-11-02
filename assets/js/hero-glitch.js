@@ -15,7 +15,7 @@
 
   let i=0, j=0;
 
-  const delayBeforeName = 700; // empieza antes (tú querías pronto)
+  const delayBeforeName = 1500; // deja parpadear 2 veces antes de escribir
   setTimeout(typeName, delayBeforeName);
 
   function typeName(){
@@ -24,43 +24,32 @@
       elName.textContent += nameText.charAt(i++);
       setTimeout(typeName, speed);
     }else{
-      // si NO hay rol en el HTML, arrancamos glitch y salimos
-      if(!elRole){
-        curName && curName.classList.add('off');
-        startCyberTitleGlitch();
-        return;
-      }
-
-      // si SÍ hay rol, procedemos como antes
       setTimeout(()=>{
         curName?.classList.add('off');
         curRole?.classList.remove('off');
         typeRole();
-      }, 300);
+      }, 500);
     }
   }
 
   function typeRole(){
-    if(!elRole){
-      startCyberTitleGlitch();
-      return;
-    }
+    if(!elRole) return;
     if(j < roleText.length){
       elRole.textContent += roleText.charAt(j++);
       setTimeout(typeRole, speed);
     }else{
       curRole?.classList.add('off');
       lead?.classList.add('show');
-      setTimeout(()=>{ startCyberTitleGlitch(); }, 700);
+      setTimeout(()=>{ startCyberTitleGlitch(); }, 1000);
     }
   }
 })();
 
-/* ===== Glitch (idéntico al que te pasé) ===== */
+/* ===== Glitch ===== */
 const GLITCH_CFG = {
   bandMin: 2, bandMax: 10,
-  strong: { dur: 200, amp: 26, skew: 5.5, baseDX: 0,  baseDY: -4 },
-  small:  { dur: 120, amp: 7,  skew: 1.2, baseDX: 6,  baseDY: 0  },
+  strong: { dur: 200, amp: 26, skew: 5.5, baseDX: 0,  baseDY: -4 },   // pulso fuerte (una vez al final)
+  small:  { dur: 120, amp: 7,  skew: 1.2, baseDX: 6,  baseDY: 0  },   // pulsos suaves
   smallAttenuation: 0.25,
   gapProb: 0.08, bigTearProb: 0.14, bigTearAmp: 32,
   pxDownscale: 0.75, chromaShift: 0.7
@@ -77,6 +66,7 @@ function pulse(kind='strong'){
   canvas.width=W; canvas.height=H;
   const ctx = canvas.getContext('2d');
 
+  // Snapshot con leve aberración RGB
   const off = document.createElement('canvas'); off.width=W; off.height=H;
   const octx = off.getContext('2d');
   const cs = getComputedStyle(h1);
@@ -87,6 +77,7 @@ function pulse(kind='strong'){
   octx.fillStyle='#ff2a6d'; octx.fillText(txt,  GLITCH_CFG.chromaShift, 0);
   octx.fillStyle=cs.color || '#ff9f1a'; octx.fillText(txt, 0, 0);
 
+  // Versión pixelada
   const scale = GLITCH_CFG.pxDownscale;
   const lowW = Math.max(1, Math.round(W*scale));
   const lowH = Math.max(1, Math.round(H*scale));
@@ -133,16 +124,19 @@ function pulse(kind='strong'){
   requestAnimationFrame(frame);
 }
 
+/* Secuencia: fuerte al comienzo → pequeños cada X segundos en bucle */
 async function startCyberTitleGlitch(){
   while(true){
-    pulse('strong');
-    await wait(4000); pulse('small');
-    await wait(6000); pulse('small');
-    await wait(5000); pulse('small');
-    await wait(6000); pulse('small');
-    await wait(5000); pulse('small');
-    await wait(3000);
+    pulse('strong');                        // 1) fuerte (solo al ciclo de inicio)
+    await wait(4000); pulse('small');       // 2) suave a los 4s
+    await wait(6000); pulse('small');       // 3) a los 6s
+    await wait(5000); pulse('small');       // 4) a los 5s
+    await wait(6000); pulse('small');       // 5) a los 6s
+    await wait(5000); pulse('small');       // 6) a los 5s
+    await wait(3000);                       // pausa 3s y repite
   }
 }
+
 function wait(ms){ return new Promise(r=>setTimeout(r,ms)); }
 function randInt(min,max){ return min + Math.floor(Math.random()*(max-min+1)); }
+
