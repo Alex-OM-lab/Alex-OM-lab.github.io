@@ -16,7 +16,7 @@
   <link rel="stylesheet" href="assets/css/hero-glitch.css">
   <link rel="stylesheet" href="assets/css/graph.css">
   <link rel="stylesheet" href="assets/css/cubes.css">
-  <!-- Estilos/animaciones de secciones -->
+  <!-- NUEVO: estilos/animaciones de secciones -->
   <link rel="stylesheet" href="assets/css/sections.css">
 
   <style>
@@ -49,8 +49,29 @@
       color:var(--text);
     }
 
-    /* container genérico (para hero) */
-    .container-hero{width:min(1100px,92%);margin:0 auto}
+    /* ===== Layout de contenido (no hero, no nav) ===== */
+    .container{width:min(1100px,92%);margin:0 auto}
+    section{padding:26px 0}
+    .section-title{font-size:clamp(24px,3vw,34px);margin:0 0 10px}
+    .kicker{color:var(--muted);margin:0 0 20px}
+
+    .chips{display:flex;flex-wrap:wrap;gap:10px}
+    .chip{padding:8px 12px;border-radius:999px;background:rgba(255,159,26,.12);border:1px solid rgba(255,159,26,.35);color:#ffe2b0;font-weight:600;font-size:14px}
+
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .card{background:linear-gradient(180deg,color-mix(in oklab,var(--panel) 92%,#0f1422 8%),var(--panel));border:1px solid rgba(255,255,255,.06);border-radius:var(--radius);padding:16px}
+    .project img{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:10px;border:1px solid rgba(255,255,255,.06)}
+    .project h4{margin:10px 0 6px}
+    .project p{margin:0;color:var(--muted)}
+    .contact-box{display:grid;grid-template-columns:1.1fr .9fr;gap:22px}
+    form{display:grid;gap:12px}
+    input,textarea{background:#0c1323;color:var(--text);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:12px 14px;font-size:16px}
+    textarea{min-height:140px;resize:vertical}
+
+    footer{padding:40px 0;color:#a9b1bd;text-align:center;border-top:1px solid rgba(255,255,255,.06);margin-top:10px}
+
+    @media (max-width:980px){.grid{grid-template-columns:1fr 1fr}.contact-box{grid-template-columns:1fr}}
+    @media (max-width:620px){.grid{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
@@ -60,25 +81,19 @@
     <div class="topwrap">
       <a class="brand" href="./"><span class="brand-dot"></span><span>AO · Portafolio</span></a>
 
-      <!-- Menú izquierda (lo rellena nav.js si lo usas) -->
+      <!-- Menú izquierda -->
       <nav class="menu-left" id="nav" aria-label="Navegación principal"></nav>
 
-      <!-- Menú derecha (estático de apoyo) -->
+      <!-- Menú derecha -->
       <nav class="menu-right">
-        <a class="nav-link" href="#sobre-mi">Sobre mí</a>
-        <a class="nav-link" href="#especialidades">Especialidades</a>
-        <a class="nav-link" href="#habilidades">Skills</a>
-        <a class="nav-link" href="#investigacion">Cómo trabajo</a>
-        <a class="nav-link" href="#site-graph">Mapa</a>
-        <a class="nav-link" href="#news-cubes">Artículos</a>
-        <a class="nav-link" href="#contact">Contacto</a>
+        <a class="nav-link" href="./">Inicio</a>
       </nav>
     </div>
   </header>
 
   <!-- ========================= HERO ========================== -->
   <div id="home" class="hero-wrap">
-    <div class="hero container-hero">
+    <div class="hero">
       <span class="glitch-wrap">
         <h1 id="heroTitle">
           <span id="typeName"></span><span id="cursorName" class="cursor">|</span>
@@ -97,192 +112,120 @@
   </div>
 
   <!-- ========================= CONTENIDO ========================== -->
+  <main class="container">
+    <section id="ciber" class="reveal" data-reveal="fade-up" aria-labelledby="ciber-title">
+      <h2 id="ciber-title" class="section-title">Ciberseguridad</h2>
+      <p class="kicker">Security-by-design, hardening y respuesta a incidentes.</p>
+      <div class="card">Playbooks de respuesta, aplicación de guías CIS, inventario de activos y SIEM; priorización de riesgos y monitoreo proactivo.</div>
+    </section>
 
-  <!-- 3. SOBRE MÍ -->
-  <section id="sobre-mi" class="custom-section reveal will-reveal" data-delay="60" aria-labelledby="sobre-mi-title">
-    <div class="container">
-      <h2 id="sobre-mi-title" class="section-title">Sobre mí</h2>
-      <p class="kicker">Perfil personal y objetivo profesional.</p>
-      <div class="card content">
-        <p><strong>Soy Alejandro Orcajada Meseguer</strong>, Técnico Superior en ASIR y Máster en Ciberseguridad.
-        Mi foco combina <em>administración de sistemas</em>, <em>hardening</em> y <em>respuesta a incidentes</em>.
-        Busco aprender, crecer y asumir responsabilidades técnicas con impacto.</p>
+    <section id="adm" class="reveal" data-reveal="fade-up" aria-labelledby="adm-title">
+      <h2 id="adm-title" class="section-title">Administración de Sistemas</h2>
+      <p class="kicker">Infraestructura reproducible y observable.</p>
+      <div class="card">Linux/Windows, IaC (Terraform/Ansible), contenedores (Docker/K8s), redes y servidores (Nginx/Apache), CI/CD y observabilidad.</div>
+    </section>
 
-        <p style="margin-top:10px">
-          <strong>Objetivo:</strong> incorporarme a un equipo donde pueda evolucionar hacia roles de mayor responsabilidad
-          (<strong>SysOps</strong> / <strong>Platform Engineer</strong> / <strong>Threat Hunter</strong> / <strong>Incident Responder</strong>)
-          y contribuir con soluciones seguras y operables.
-        </p>
+    <section id="skills" class="reveal" data-reveal="fade-up" aria-labelledby="skills-title">
+      <h2 id="skills-title" class="section-title">Skills principales</h2>
+      <div class="chips">
+        <span class="chip">Linux</span><span class="chip">Windows Server</span><span class="chip">Networking</span>
+        <span class="chip">Docker</span><span class="chip">Kubernetes</span><span class="chip">Ansible</span>
+        <span class="chip">Terraform</span><span class="chip">Bash / PowerShell</span><span class="chip">CI/CD</span>
+        <span class="chip">Nginx / Apache</span><span class="chip">SIEM</span><span class="chip">Hardening</span><span class="chip">Cloud (AWS/Azure)</span>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- 4. ESPECIALIDADES (3 columnas) -->
-  <section id="especialidades" class="custom-section reveal will-reveal" data-delay="80" aria-labelledby="esp-title">
-    <div class="container">
-      <h2 id="esp-title" class="section-title">Especialidades</h2>
-      <p class="kicker">Áreas con especialización práctica y enfoque profesional.</p>
+    <!-- ===================== CARRUSEL DE CUBOS ===================== -->
+    <section id="news-cubes" class="reveal" data-reveal="fade-up" aria-labelledby="news-cubes-title">
+      <h2 id="news-cubes-title" class="section-title">Lecturas y artículos</h2>
+      <p class="kicker">Novedades seleccionadas — desplazamiento suave y continuo.</p>
 
-      <div class="grid-3">
-        <div class="card specialty">
-          <h3>Administración & gestión de BBDD</h3>
-          <p>SQL, MariaDB, PostgreSQL (y otras relacionales). Hardening, backups, replicación y automatización de tareas críticas.</p>
+      <div class="cube-carousel" data-autoplay="true" data-interval="3200" data-shuffle="true" aria-roledescription="carrusel">
+        <div class="cube-head"><h3>Artículos interesantes</h3></div>
+
+        <div class="cube-viewport" role="region" aria-label="Carrusel de artículos" style="overflow:hidden">
+          <div class="cube-track" id="cubeTrack" role="list"></div>
         </div>
-        <div class="card specialty">
-          <h3>Red Team & Pentesting</h3>
-          <p>Nmap, Burp, Metasploit, OpenVAS. Pruebas sobre infra y aplicaciones con informes técnicos y PoC verificables.</p>
+
+        <div class="cube-nav" aria-hidden="false">
+          <button class="cube-btn prev" type="button" id="cubePrev" aria-label="Artículo anterior">‹</button>
+          <button class="cube-btn next" type="button" id="cubeNext" aria-label="Artículo siguiente">›</button>
         </div>
-        <div class="card specialty">
-          <h3>Automatización de procesos</h3>
-          <p>Backups, despliegues y mantenimiento: Bash / PowerShell / Python / Ansible. Pipelines reproducibles y seguras.</p>
-        </div>
+
+        <div class="cube-dots" id="cubeDots" aria-hidden="true"></div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- 5. HABILIDADES · HERRAMIENTAS · PROGRAMACIÓN -->
-  <section id="habilidades" class="custom-section reveal will-reveal" data-delay="100" data-stagger=".skill-btn" data-stagger-step="70" aria-labelledby="hab-title">
-    <div class="container">
-      <h2 id="hab-title" class="section-title">Habilidades · Herramientas · Programación</h2>
-      <p class="kicker">Listado táctil y escaneable de competencias.</p>
-
-      <div class="skills-grid">
-        <!-- Columna 1 -->
-        <div class="skills-col">
-          <button class="skill-btn">Linux</button>
-          <button class="skill-btn">Windows Server</button>
-          <button class="skill-btn">AD / GPO</button>
-          <button class="skill-btn">Nginx</button>
-          <button class="skill-btn">MySQL / MariaDB</button>
+    <!-- ====================== MAPA VISUAL (GRAPH) ================== -->
+    <section id="site-graph" class="graph reveal" data-reveal="fade-up" aria-labelledby="site-graph-title">
+      <div class="card">
+        <div class="graph-head">
+          <h2 id="site-graph-title" class="section-title">Mapa visual</h2>
+          <p class="kicker">Esquema interactivo — haz clic para desplegar niveles.</p>
         </div>
-        <!-- Columna 2 -->
-        <div class="skills-col">
-          <button class="skill-btn">Docker</button>
-          <button class="skill-btn">Kubernetes (nociones)</button>
-          <button class="skill-btn">Ansible</button>
-          <button class="skill-btn">Terraform</button>
-          <button class="skill-btn">Bash / PowerShell</button>
-        </div>
-        <!-- Columna 3 -->
-        <div class="skills-col">
-          <button class="skill-btn">Nmap / Metasploit</button>
-          <button class="skill-btn">OWASP ZAP / Burp</button>
-          <button class="skill-btn">Wazuh / ELK</button>
-          <button class="skill-btn">Autopsy / Volatility</button>
-          <button class="skill-btn">Python</button>
-        </div>
-      </div>
-    </div>
-  </section>
 
-  <!-- 6. CÓMO INVESTIGO Y TRABAJO -->
-  <section id="investigacion" class="custom-section reveal will-reveal" data-delay="120" aria-labelledby="inv-title">
-    <div class="container">
-      <h2 id="inv-title" class="section-title">Cómo investigo y trabajo</h2>
-      <p class="kicker">Metodología profesional y verificable.</p>
-      <div class="card content">
-        <p>Trabajo con metodologías replicables: priorizo documentación oficial, papers y repos mantenidos.
-        Verifico en laboratorio (sandbox), registro comandos, versiones y artefactos (PCAP, capturas)
-        y publico con referencias y pruebas reproducibles.</p>
-
-        <p style="margin-top:8px">Cuando publico artículos o notas enlazo todo el material de soporte y dejo un
-        resumen con conclusiones accionables.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- MAPA VISUAL -->
-  <section id="site-graph" class="custom-section reveal will-reveal" data-delay="140" aria-labelledby="graph-title">
-    <div class="container">
-      <h2 id="graph-title" class="section-title">Mapa visual</h2>
-      <p class="kicker">Esquema interactivo — haz clic para desplegar niveles.</p>
-
-      <div class="graph card">
         <div class="graph-stage" id="graphStage">
           <svg id="graphSvg" class="svgroot" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid meet" role="img"
                aria-label="Esquema del contenido por niveles">
             <g id="graphRoot"></g>
           </svg>
         </div>
-        <div class="graph-legend" style="padding:12px 16px;">
+
+        <div class="graph-legend">
           <span class="dot lvl0"></span> Nivel 0
           <span class="dot lvl1"></span> Nivel 1
           <span class="dot lvl2"></span> Nivel 2
           <span class="dot lvl3"></span> Nivel 3
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- LECTURAS / ARTÍCULOS (CARRUSEL) -->
-  <section id="news-cubes" class="custom-section reveal will-reveal" data-delay="160" aria-labelledby="news-title">
-    <div class="container">
-      <h2 id="news-title" class="section-title">Lecturas & Artículos</h2>
-      <p class="kicker">Selección curada con verificación y notas.</p>
-
-      <div class="cube-carousel card" aria-roledescription="carrusel">
-        <div class="cube-viewport">
-          <div class="cube-track" id="cubeTrack" role="list" style="min-height:120px;display:flex;gap:14px;align-items:center;overflow:hidden">
-            <!-- JS rellenará aquí -->
-          </div>
-        </div>
-        <div class="cube-nav" aria-hidden="false" style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px;padding:0 8px 8px;">
-          <button class="cube-btn prev" type="button" id="cubePrev" aria-label="Artículo anterior">‹</button>
-          <button class="cube-btn next" type="button" id="cubeNext" aria-label="Artículo siguiente">›</button>
-        </div>
-        <div class="cube-dots" id="cubeDots" aria-hidden="true"></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- CONTACTO -->
-  <section id="contact" class="custom-section reveal will-reveal" data-delay="180" aria-labelledby="contact-title">
-    <div class="container">
+    <!-- =========================== CONTACTO ======================== -->
+    <section id="contact" class="reveal" data-reveal="fade-up" aria-labelledby="contact-title">
       <h2 id="contact-title" class="section-title">Contacto</h2>
-      <p class="kicker">¿Propuesta? ¿Oferta? ¿Colaboración?</p>
-
-      <div class="contact-grid">
-        <div class="card content">
-          <p>¿Tienes un proyecto o una consulta técnica? Escríbeme y te respondo.</p>
-          <p><strong>Email:</strong> <a href="mailto:aorcajadameseguer@gmail.com">aorcajadameseguer@gmail.com</a><br>
-             <strong>LinkedIn:</strong> <a href="https://www.linkedin.com/in/tuusuario" target="_blank" rel="noopener">linkedin.com/in/tuusuario</a></p>
-        </div>
-
+      <div class="contact-box">
         <div class="card">
-          <form id="contactForm" action="mailto:aorcajadameseguer@gmail.com" method="post" enctype="text/plain">
+          <p>¿Tienes un proyecto o una consulta técnica? Escríbeme y te respondo.</p>
+          <p><strong>Email:</strong> <a href="mailto:alex@tu-dominio.com">alex@tu-dominio.com</a></p>
+          <p><strong>LinkedIn:</strong> <a href="https://www.linkedin.com/in/tuusuario" target="_blank" rel="noopener">linkedin.com/in/tuusuario</a></p>
+        </div>
+        <div class="card">
+          <form action="mailto:alex@tu-dominio.com" method="post" enctype="text/plain">
             <label>Nombre<br><input name="nombre" required /></label>
             <label>Email<br><input name="email" type="email" required /></label>
             <label>Mensaje<br><textarea name="mensaje" required></textarea></label>
-            <button type="submit" class="ctabtn">Enviar</button>
+            <button type="submit" style="background:var(--accent);color:#111;padding:10px 16px;border-radius:10px;border:0;font-weight:700">Enviar</button>
           </form>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
+  </main>
 
-  <footer style="text-align:center;padding:40px 0;color:#a9b1bd;border-top:1px solid rgba(255,255,255,.06);">
-    © <span id="y"></span> Alejandro Orcajada Meseguer — Administrador de Sistemas y Ciberseguridad
-  </footer>
+  <footer>© <span id="y"></span> Alejandro Orcajada Meseguer — Administrador de Sistemas y Ciberseguridad</footer>
 
   <!-- ========================= JS ========================== -->
   <!-- Hero: typing + glitch -->
   <script src="assets/js/hero-glitch.js" defer></script>
 
-  <!-- NAV (si lo usas para poblar el menú izquierdo) -->
+  <!-- NAV -->
   <script src="assets/js/nav-data.js" defer></script>
   <script src="assets/js/nav.js" defer></script>
 
-  <!-- Graph (si lo tienes implementado) -->
-  <script src="assets/js/graph-data.js" defer></script>
-  <script src="assets/js/graph.js" defer></script>
+  <!-- Graph -->
+  <script src="assets/js/graph-data.js"></script>
+  <script src="assets/js/graph.js"></script>
 
-  <!-- Carrusel -->
-  <script src="assets/js/cubes.js" defer></script>
+  <!-- Cubes -->
+  <script src="assets/js/cubes.js"></script>
 
-  <!-- Año en footer -->
-  <script>document.getElementById('y').textContent = new Date().getFullYear();</script>
-
-  <!-- Scroll reveal (si lo tienes) -->
+  <!-- Año en footer (pequeño utilitario) -->
+  <script>
+    document.getElementById('y').textContent = new Date().getFullYear();
+  </script>
   <script src="assets/js/scroll-reveal.js" defer></script>
+</body>
+</html>
+
+  <script src="assets/js/cubes.js"></script>
 </body>
 </html>
