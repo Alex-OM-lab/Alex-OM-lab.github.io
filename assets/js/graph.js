@@ -1,10 +1,10 @@
-// /assets/js/graph.js — Versión PRO (Fase 1+2 + L3 por camino + fix clics + flow)
-// - Layout responsive
+// /assets/js/graph.js — PRO (Fase 1+2 + L3 por camino + flow + fix clics)
+// - L0/L1/L2 render idéntico (columnas responsive)
 // - Breadcrumb opcional (#graphBc)
-// - Resaltado de ruta activa y atenuación
-// - Pan/zoom manual (sin cámara inteligente)
-// - Partículas ambientales SIN bloquear clics
-// - L3 consciente del camino (root > área > sub)
+// - Atenuación y resaltado de ruta activa
+// - Pan/zoom manual, sin cámara inteligente
+// - Partículas con pointer-events:none
+// - L3 usa GRAPH_GET_ITEMS(root, area, sub)
 
 const SiteGraph = (() => {
   const NS = 'http://www.w3.org/2000/svg';
@@ -22,6 +22,7 @@ const SiteGraph = (() => {
     _ambient:null,
   };
 
+  /* Utils */
   function clear(g){ while(g.firstChild) g.removeChild(g.firstChild); }
   function applyTransform(){ if (G.root) G.root.setAttribute('transform', `translate(${G.tx},${G.ty}) scale(${G.scale})`); }
   function ptSvg(x,y){ const p=G.svg.createSVGPoint(); p.x=x; p.y=y; return p; }
@@ -29,8 +30,7 @@ const SiteGraph = (() => {
 
   function relayoutColumns(){
     const bb = G.svg.getBoundingClientRect();
-    const L = 4;
-    const marginX = 100;
+    const L = 4, marginX = 100;
     const usable = Math.max(900, bb.width - marginX*2);
     const step = usable / (L-1);
     G.colX = Array.from({length:L}, (_,i)=> marginX + i*step);
@@ -54,6 +54,7 @@ const SiteGraph = (() => {
     if(level<=3) clear(G.layers.links[2]);
   }
 
+  /* Dibujo */
   function drawNode({level,x,y,w,h,title,sub,onClick,delay=0}){
     const g = document.createElementNS(NS,'g');
     g.classList.add('node'); g.dataset.lvl=String(level);
@@ -101,7 +102,7 @@ const SiteGraph = (() => {
     const dx = Math.max(60, (x2-x1)/2);
     path.setAttribute('d', `M ${x1} ${y1} C ${x1+dx} ${y1}, ${x2-dx} ${y2}, ${x2} ${y2}`);
     path.setAttribute('class', `link l${level}`);
-    path.classList.add('flow');         // guiones animados constantes
+    path.classList.add('flow');  // guiones animados constantes
     G.layers.links[level-1].appendChild(path);
     setTimeout(()=> path.classList.add('draw'), delay);
     return path;
@@ -114,6 +115,7 @@ const SiteGraph = (() => {
     return ix => y0 + ix*(G.nodeH+G.vGap);
   }
 
+  /* Render por niveles */
   function renderL0(){
     clearFrom(0);
     if(!G.TREE?.length) return;
@@ -171,7 +173,7 @@ const SiteGraph = (() => {
     const subs = (G.TREE[G.state.sel0].areas[G.state.sel1].subcarpetas||[]);
     const subName = subs[G.state.sel2];
 
-    // === CAMBIO CLAVE: items conscientes del camino ===
+    // Items por camino exacto
     let items = [];
     if (typeof window.GRAPH_GET_ITEMS === 'function') {
       items = window.GRAPH_GET_ITEMS(rootName, areaName, subName) || [];
@@ -187,7 +189,7 @@ const SiteGraph = (() => {
     G.colsNodes[3] = items.map((txt,i)=>{
       const box = drawNode({
         level:3, x:G.colX[3], y:yAt(i), w:G.nodeW[3], h:G.nodeH, title:txt, sub:"↗",
-        onClick:()=>{/* futuro: abrir enlace */},
+        onClick:()=>{/* hook futuro */},
         delay:80+i*30
       });
       box._link = drawLink(left, box, 3, 80+i*30);
@@ -213,6 +215,7 @@ const SiteGraph = (() => {
     updateBreadcrumb();
   }
 
+  /* Breadcrumb */
   function updateBreadcrumb(){
     if(!G.bcEl) return;
     const parts=[];
@@ -235,14 +238,12 @@ const SiteGraph = (() => {
     });
   }
 
+  /* Resaltado/Atenuación */
   function highlightActive(){
     G.root.querySelectorAll('.node.active,.node.focus').forEach(n=>{n.classList.remove('active','focus');});
     G.root.querySelectorAll('.link.active').forEach(n=>n.classList.remove('active'));
     G.root.querySelectorAll('.dim-node').forEach(n=>n.classList.remove('dim-node'));
     G.root.querySelectorAll('.dim-link').forEach(n=>n.classList.remove('dim-link'));
-
-    const anySel = (G.state.sel0!=null);
-    if (!anySel) return;
 
     const actives = [];
     if(G.state.sel0!=null){ const n0 = G.colsNodes[0][G.state.sel0]; n0?.el.classList.add('active','focus'); actives.push(n0?.el); }
@@ -253,6 +254,7 @@ const SiteGraph = (() => {
     G.root.querySelectorAll('.link').forEach(l=>{ if(!l.classList.contains('active')) l.classList.add('dim-link'); });
   }
 
+  /* Glow cursor */
   function setupGlow(){
     const defs = document.createElementNS(NS,'defs');
     const grad = document.createElementNS(NS,'radialGradient');
@@ -275,9 +277,9 @@ const SiteGraph = (() => {
     G.stage.addEventListener('mouseleave', ()=> c.setAttribute('opacity','0'));
   }
 
+  /* Partículas */
   function ensureAmbientParticles(){
     if (!G.stage || G._ambient) return;
-
     const cvs = document.createElement('canvas');
     cvs.className = 'ambient-canvas';
     cvs.style.pointerEvents = 'none';
@@ -324,6 +326,7 @@ const SiteGraph = (() => {
     G._ambient = { cvs, ctx, resize };
   }
 
+  /* Pan/Zoom manual */
   function enablePanZoom(){
     let dragging=false, start, startTx, startTy;
 
@@ -360,6 +363,7 @@ const SiteGraph = (() => {
     G.stage.addEventListener('dblclick', ()=>{ G.scale=1; G.tx=0; G.ty=0; applyTransform(); });
   }
 
+  /* API */
   function init({ tree, stageId, svgId, rootId } = {}){
     G.TREE = tree || window.GRAPH_TREE || [];
     const _stage = stageId || 'graphStage';
