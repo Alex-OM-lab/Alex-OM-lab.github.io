@@ -1,8 +1,9 @@
-// /assets/js/graph.js — Versión PRO (jerárquico)
-// - Layout de columnas auto en base a tamaño del contenedor
-// - Breadcrumb opcional (si existe .graph-bc#graphBc en el DOM)
+// /assets/js/graph.js — Versión PRO (jerárquico + ambient)
+// - Layout de columnas auto en base al ancho disponible
+// - Breadcrumb opcional (si existe #graphBc)
 // - Resalta ruta activa (links/nodos) al navegar
 // - Zoom/pan suave y reset con doble clic
+// - Partículas ambientales sobre el stage para “vida” sutil
 
 const SiteGraph = (() => {
   const NS = 'http://www.w3.org/2000/svg';
@@ -11,19 +12,26 @@ const SiteGraph = (() => {
     svg:null, root:null, stage:null,
     layers:null, colsNodes:[[],[],[],[]],
     state:{ sel0:null, sel1:null, sel2:null },
+
     // layout dinámico
     colX:[120, 460, 940, 1300],
     nodeW:[230, 250, 280, 260],
     nodeH:56, vGap:22,
+
     // pan/zoom
     tx:0, ty:0, scale:1, minScale:0.6, maxScale:2.0,
+
     // data
     TREE:null,
+
     // UI
     bcEl:null,
+
+    // ambient
+    _ambient:null
   };
 
-  /* ====== Utils ====== */
+  /* ================== Utils ================== */
   function clear(g){ while(g.firstChild) g.removeChild(g.firstChild); }
   function applyTransform(){ G.root.setAttribute('transform', `translate(${G.tx},${G.ty}) scale(${G.scale})`); }
   function ptSvg(x,y){ const p=G.svg.createSVGPoint(); p.x=x; p.y=y; return p; }
@@ -37,8 +45,8 @@ const SiteGraph = (() => {
     const usable = Math.max(900, bb.width - marginX*2);
     const step = usable / (L-1);
     G.colX = Array.from({length:L}, (_,i)=> marginX + i*step);
-    // Ancho de nodos por nivel: ligeramente creciente
-    G.nodeW = [230, 250, 280, 260].map(w=> Math.min(w, step*0.70));
+    // Ancho de nodos por nivel: ligeramente creciente pero limitado por step
+    G.nodeW = [230, 250, 280, 260].map(w=> Math.min(w, step*0.72));
   }
 
   function ensureLayers(){
@@ -58,7 +66,7 @@ const SiteGraph = (() => {
     if(level<=3) clear(G.layers.links[2]);
   }
 
-  /* ====== Dibujo ====== */
+  /* ================== Dibujo ================== */
   function drawNode({level,x,y,w,h,title,sub,onClick,delay=0}){
     const g = document.createElementNS(NS,'g');
     g.classList.add('node'); g.dataset.lvl=String(level);
@@ -123,7 +131,7 @@ const SiteGraph = (() => {
     return ix => y0 + ix*(G.nodeH+G.vGap);
   }
 
-  /* ====== Render por niveles ====== */
+  /* ================== Render por niveles ================== */
   function renderL0(){
     clearFrom(0);
     if(!G.TREE?.length) return;
@@ -204,10 +212,11 @@ const SiteGraph = (() => {
     renderL0();
     applyTransform();
     setupGlow();
+    ensureAmbientParticles();     // ← partículas ambientales (nuevo)
     updateBreadcrumb();
   }
 
-  /* ====== Breadcrumb (opcional) ====== */
+  /* ================== Breadcrumb (opcional) ================== */
   function updateBreadcrumb(){
     if(!G.bcEl) return;
     const parts=[];
@@ -230,7 +239,7 @@ const SiteGraph = (() => {
     });
   }
 
-  /* ====== Resaltado de ruta activa ====== */
+  /* ================== Resaltado de ruta activa ================== */
   function highlightActive(){
     // limpiar
     G.root.querySelectorAll('.node.active').forEach(n=>n.classList.remove('active'));
@@ -251,7 +260,7 @@ const SiteGraph = (() => {
     }
   }
 
-  /* ====== Glow cursor (sutil) ====== */
+  /* ================== Glow cursor (sutil) ================== */
   function setupGlow(){
     const defs = document.createElementNS(NS,'defs');
     const grad = document.createElementNS(NS,'radialGradient');
@@ -274,7 +283,83 @@ const SiteGraph = (() => {
     G.stage.addEventListener('mouseleave', ()=> c.setAttribute('opacity','0'));
   }
 
-  /* ====== Pan/Zoom ====== */
+  /* ================== Partículas ambientales (canvas) ================== */
+  function ensureAmbientParticles(){
+    if (!G.stage) return;
+    if (G._ambient) return;
+
+    const cvs = document.createElement('canvas');
+    cvs.className = 'ambient-canvas';
+    G.stage.prepend(cvs); // detrás del SVG visualmente, por z-order del DOM
+    const ctx = cvs.getContext('2d');
+
+    const P = {
+      w: 0, h: 0, dpr: Math.max(1, Math.min(2, window.devicePixelRatio || 1)),
+      pts: [],
+      tick: 0
+    };
+
+    function resize(){
+      const r = G.stage.getBoundingClientRect();
+      P.w = Math.floor(r.width);
+      P.h = Math.floor(r.height);
+      cvs.width = Math.floor(P.w * P.dpr);
+      cvs.height = Math.floor(P.h * P.dpr);
+      ctx.setTransform(P.dpr, 0, 0, P.dpr, 0, 0);
+      // regenerar partículas
+      const count = Math.round((P.w * P.h) / 24000); // densidad moderada
+      P.pts = Array.from({length: count}, ()=>spawn());
+    }
+
+    function spawn(){
+      return {
+        x: Math.random()*P.w,
+        y: Math.random()*P.h,
+        r: 0.6 + Math.random()*1.8,
+        a: 0.22 + Math.random()*0.38,
+        // pequeña deriva
+        vx: (-0.15 + Math.random()*0.3),
+        vy: (-0.15 + Math.random()*0.3),
+        // color tenue en gamut naranja–aqua
+        c: (Math.random()<0.5)
+          ? 'rgba(255,159,26,'
+          : 'rgba(143,214,255,'
+      };
+    }
+
+    function step(){
+      ctx.clearRect(0,0,P.w,P.h);
+      P.tick++;
+
+      for (const p of P.pts){
+        // leve variación sinusoidal para que “respire”
+        const wob = Math.sin((P.tick/120) + p.r) * 0.15;
+        p.x += p.vx * (0.6 + wob);
+        p.y += p.vy * (0.6 + wob);
+
+        // wrap suave
+        if (p.x < -8) p.x = P.w+8;
+        if (p.x > P.w+8) p.x = -8;
+        if (p.y < -8) p.y = P.h+8;
+        if (p.y > P.h+8) p.y = -8;
+
+        // draw
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+        ctx.fillStyle = p.c + p.a + ')';
+        ctx.fill();
+      }
+      requestAnimationFrame(step);
+    }
+
+    window.addEventListener('resize', resize);
+    resize();
+    step();
+
+    G._ambient = { cvs, ctx, resize };
+  }
+
+  /* ================== Pan/Zoom ================== */
   function enablePanZoom(){
     let dragging=false, start, startTx, startTy;
 
@@ -311,7 +396,7 @@ const SiteGraph = (() => {
     G.stage.addEventListener('dblclick', ()=>{ G.scale=1; G.tx=0; G.ty=0; applyTransform(); });
   }
 
-  /* ====== API ====== */
+  /* ================== API ================== */
   function init({ tree, stageId, svgId, rootId } = {}){
     G.TREE = tree || window.GRAPH_TREE || [];
     const _stage = stageId || 'graphStage';
@@ -338,4 +423,5 @@ const SiteGraph = (() => {
 
   return { init };
 })();
+
 
