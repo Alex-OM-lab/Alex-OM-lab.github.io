@@ -1,59 +1,36 @@
-/* ===== GRAPH (jerárquico) — Fase 1 Estética PRO ===== */
-
+//* ===== ÁRBOL VISUAL (SVG) ===== */
 .graph .card{
   border-radius: var(--radius);
   border:1px solid rgba(255,255,255,.06);
-  background:
-    linear-gradient(180deg, color-mix(in oklab, var(--panel) 92%, #0f1422 8%), var(--panel));
+  background:linear-gradient(180deg,color-mix(in oklab,var(--panel) 92%,#0f1422 8%),var(--panel));
   padding:14px;
-  box-shadow: 0 12px 30px rgba(2,6,12,.55);
 }
-
-/* cabecera con breadcrumb (opcional) */
-.graph-head{
-  display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin-bottom:10px;
-}
+.graph-head{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:10px; }
 .graph-head h2{ margin:0 }
-.graph-bc{
-  display:flex; gap:10px; align-items:center; font-size:13px; color:var(--muted);
-}
-.graph-bc .crumb{
-  display:inline-flex; align-items:center; gap:6px;
-  padding:6px 10px; border:1px solid rgba(255,255,255,.06);
-  background:rgba(255,255,255,.03); border-radius:999px;
-}
-.graph-bc .crumb:hover{ background:rgba(255,255,255,.06) }
-.graph-bc .sep{ opacity:.5 }
 
-/* escenario con fondo técnico + rejilla + viñeta */
+/* escenario */
 .graph-stage{
   position:relative;
   border:1px solid rgba(255,255,255,.06);
-  border-radius:14px;
-  background:
-    radial-gradient(1200px 700px at 80% -100px, rgba(255,159,26,.045), transparent 60%),
-    radial-gradient(900px 600px at -120px 20%, rgba(143,214,255,.035), transparent 55%),
-    #0b1220;
+  border-radius:12px;
+  background:#0c1323;
   overflow:hidden;
-  height:640px;
+  height:680px;
 }
 
-.graph-stage::before{
-  content:"";
-  position:absolute; inset:0;
-  background-image:
-    linear-gradient(transparent 31px, rgba(255,255,255,.04) 32px),
-    linear-gradient(90deg, transparent 31px, rgba(255,255,255,.04) 32px);
-  background-size:32px 32px, 32px 32px;
-  opacity:.06; pointer-events:none;
+/* breadcrumb (opcional) */
+.graph-bc{
+  position:absolute; left:12px; top:10px; z-index:2;
+  display:flex; gap:10px; align-items:center; padding:4px 8px;
+  border:1px solid rgba(255,255,255,.08);
+  background:rgba(8,14,25,.5); backdrop-filter: blur(3px);
+  border-radius:999px; color:var(--muted); font-size:13px;
 }
-.graph-stage::after{
-  content:"";
-  position:absolute; inset:0;
-  background:radial-gradient(120% 120% at 50% 10%, transparent 0%, transparent 55%, rgba(0,0,0,.28) 100%);
-  pointer-events:none;
-}
+.graph-bc .crumb{ cursor:pointer; font-weight:700; color:#cfe6ff; }
+.graph-bc .crumb:hover{ text-decoration:underline; }
+.graph-bc .sep{ opacity:.6 }
 
+/* SVG ocupa todo */
 #graphSvg{ width:100%; height:100%; display:block; }
 
 /* leyenda */
@@ -67,77 +44,77 @@
 .graph-legend .lvl2{ background:#8fd6ff }
 .graph-legend .lvl3{ background:#9be2b0 }
 
-/* partículas (canvas) */
-.graph-stage .ambient-canvas{
-  position:absolute; inset:0; width:100%; height:100%; display:block;
-  pointer-events:none;
-  mix-blend-mode: screen;
-  opacity:.55;
-}
+/* ===== Nodos ===== */
+.node{ cursor:pointer; opacity:0; }
+.node rect{ rx:10; ry:10; fill:#0e1730; stroke:rgba(255,255,255,.10); stroke-width:1.2; }
+.node[data-lvl="0"] rect{ fill:rgba(255,159,26,.18); stroke:rgba(255,159,26,.55) }
+.node[data-lvl="1"] rect{ fill:rgba(255,215,154,.12); stroke:rgba(255,215,154,.5) }
+.node[data-lvl="2"] rect{ fill:rgba(143,214,255,.10); stroke:rgba(143,214,255,.45) }
+.node[data-lvl="3"] rect{ fill:rgba(155,226,176,.10); stroke:rgba(155,226,176,.4) }
 
-/* nodos */
-.node{ cursor:pointer; }
-.node rect{
-  rx:12; ry:12;
-  fill:rgba(12,19,35,.92);
-  stroke:rgba(255,255,255,.12); stroke-width:1.2;
-  filter: drop-shadow(0 12px 22px rgba(0,0,0,.55));
-  transition: filter .2s ease, stroke-width .18s ease, transform .18s ease;
-}
-.node[data-lvl="0"] rect{ stroke: rgba(255,159,26,.55); box-shadow: 0 0 0 1px rgba(255,159,26,.18) inset; }
-.node[data-lvl="1"] rect{ stroke: rgba(255,215,154,.45); box-shadow: 0 0 0 1px rgba(255,215,154,.16) inset; }
-.node[data-lvl="2"] rect{ stroke: rgba(143,214,255,.45); box-shadow: 0 0 0 1px rgba(143,214,255,.16) inset; }
-.node[data-lvl="3"] rect{ stroke: rgba(155,226,176,.40); box-shadow: 0 0 0 1px rgba(155,226,176,.14) inset; }
-
-.node .title{ fill:#e9eef6; font-weight:800; font-size:14px; letter-spacing:.2px; }
+.node .title{ fill:#e9eef6; font-weight:800; font-size:14px; }
 .node .sub{ fill:#a8b2c2; font-size:12.5px; }
-
 .node .badge{
   fill:#07101a; font-weight:900; font-size:11px;
-  text-anchor:middle; dominant-baseline:middle; pointer-events:none;
+  text-anchor:middle; dominant-baseline:middle;
+  pointer-events:none;
 }
 
-/* hover + aparición */
-.node{ opacity:0; transition:opacity .32s ease; }
-.node.is-in{ opacity:1; }
-.node.hovered rect{
-  stroke-width:1.6;
-  filter:
-    drop-shadow(0 0 18px rgba(255,159,26,.14))
-    drop-shadow(0 12px 24px rgba(0,0,0,.6));
-  transform: translateY(-2px);
-}
-.node .node-in{ transform: translateX(22px) scale(.995); transition: transform .35s ease; }
-.node.is-in .node-in{ transform: none; }
+/* Aparición básica */
+.node.is-in{ opacity:1; transition:opacity .28s ease; }
+/* Micro-deslizamiento interno (ya existía) */
+.node .node-in{ transform:translateX(22px); transition:transform .35s ease; }
+.node.is-in .node-in{ transform:none; }
 
-/* conectores con “flujo” */
-.link{ fill:none; stroke:rgba(255,159,26,.35); stroke-width:2; }
+/* ===== Animación radial (nuevo) =====
+   - el grupo <g.node> animará su transform */
+.node.moving{
+  transition: transform .55s cubic-bezier(.2,.8,.2,1);
+}
+.node.focus .node-in{
+  transform:scale(1.03);
+  transition: transform .25s ease;
+}
+.node.focus rect{
+  stroke-width:1.8;
+  filter: drop-shadow(0 0 14px rgba(255,159,26,.18));
+}
+
+/* Hover sutil */
+.node rect{ transition:filter .2s ease, stroke-width .18s ease; }
+.node.hovered rect{ filter:drop-shadow(0 0 14px rgba(255,159,26,.18)); stroke-width:1.6; }
+
+/* Atenuación de contenido no activo */
+.dim-node{ opacity:.34; }
+.dim-link{ opacity:.28; }
+
+/* ===== Enlaces ===== */
+.link{ fill:none; stroke:rgba(255,159,26,.35); stroke-width:2; filter: drop-shadow(0 0 3px rgba(255,159,26,.12)); }
 .link.l1{ stroke:rgba(255,215,154,.35) }
 .link.l2{ stroke:rgba(143,214,255,.35) }
 .link.l3{ stroke:rgba(155,226,176,.35) }
 .link.draw{
-  stroke-dasharray: 6 10;
-  animation: flow 2.4s linear infinite;
-  opacity: .9;
+  stroke-dasharray: 600;
+  stroke-dashoffset: 600;
+  animation: draw .6s ease forwards;
 }
-@keyframes flow{
-  from{ stroke-dashoffset:0 }
-  to  { stroke-dashoffset:-64 }
-}
+@keyframes draw{ to{ stroke-dashoffset:0 } }
 
-/* cursores pan/zoom */
+/* Cursores para pan/zoom (pan manual existente) */
 .graph-stage.is-panning{ cursor:grabbing; }
 .graph-stage .svgroot{ cursor:grab; }
 
-/* responsive altura */
-@media (max-width: 960px){ .graph-stage{ height:560px; } }
-@media (max-width: 640px){ .graph-stage{ height:460px; } }
-
-/* reduce motion */
-@media (prefers-reduced-motion: reduce){
-  .link.draw{ animation:none }
-  .node, .node .node-in{ transition:none }
+/* Responsive */
+@media (max-width: 960px){
+  .graph-stage{ height:520px; }
+}
+@media (max-width: 640px){
+  .graph-stage{ height:420px; }
 }
 
-/* glow del cursor (definido por JS) */
-#cursorGlow{ mix-blend-mode: screen; }
+/* Reduce motion */
+@media (prefers-reduced-motion: reduce){
+  .link.draw{ animation:none; stroke-dasharray:0; stroke-dashoffset:0; }
+  .node, .node .node-in{ transition:none; }
+  .node.moving{ transition:none; }
+}
