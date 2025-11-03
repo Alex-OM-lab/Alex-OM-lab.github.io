@@ -86,21 +86,37 @@
 .node rect{ transition:filter .2s ease, stroke-width .18s ease; }
 .node.hovered rect{ filter:drop-shadow(0 0 14px rgba(255,159,26,.18)); stroke-width:1.6; }
 
-/* Atenuación de contenido no activo */
+/* Atenuación de contenido no activo (menos agresiva) */
 .dim-node{ opacity:.34; }
-.dim-link{ opacity:.28; }
+.dim-link{ opacity:.45; }
 
-/* ===== Enlaces ===== */
-.link{ fill:none; stroke:rgba(255,159,26,.35); stroke-width:2; filter: drop-shadow(0 0 3px rgba(255,159,26,.12)); }
-.link.l1{ stroke:rgba(255,215,154,.35) }
-.link.l2{ stroke:rgba(143,214,255,.35) }
-.link.l3{ stroke:rgba(155,226,176,.35) }
+/* ===== Enlaces + animación ===== */
+.link{
+  fill:none;
+  stroke:rgba(255,159,26,.55);   /* más visible */
+  stroke-width:2;
+  filter: drop-shadow(0 0 4px rgba(255,159,26,.16));
+}
+.link.l1{ stroke:rgba(255,215,154,.55) }
+.link.l2{ stroke:rgba(143,214,255,.55) }
+.link.l3{ stroke:rgba(155,226,176,.55) }
+
+/* aparición del trazo (una vez) */
 .link.draw{
   stroke-dasharray: 600;
   stroke-dashoffset: 600;
   animation: draw .6s ease forwards;
 }
 @keyframes draw{ to{ stroke-dashoffset:0 } }
+
+/* flujo continuo en guiones (constante) */
+.link.flow{
+  stroke-dasharray: 10 8;
+  animation: flow 2.4s linear infinite;
+}
+@keyframes flow{
+  to { stroke-dashoffset: -18; }
+}
 
 /* Cursores para pan/zoom */
 .graph-stage.is-panning{ cursor:grabbing; }
