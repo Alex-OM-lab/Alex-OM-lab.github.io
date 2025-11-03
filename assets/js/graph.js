@@ -36,10 +36,10 @@ const SiteGraph = (() => {
   function relayoutColumns(){
     const bb = G.svg.getBoundingClientRect();
     const L = 4;
-    const marginX = 100;
-    const usable = Math.max(900, bb.width - marginX*2);
+    theMargin = 100;
+    const usable = Math.max(900, bb.width - theMargin*2);
     const step = usable / (L-1);
-    G.colX = Array.from({length:L}, (_,i)=> marginX + i*step);
+    G.colX = Array.from({length:L}, (_,i)=> theMargin + i*step);
     G.nodeW = [230, 250, 280, 260].map(w=> Math.min(w, step*0.70));
   }
 
@@ -108,8 +108,9 @@ const SiteGraph = (() => {
     const dx = Math.max(60, (x2-x1)/2);
     path.setAttribute('d', `M ${x1} ${y1} C ${x1+dx} ${y1}, ${x2-dx} ${y2}, ${x2} ${y2}`);
     path.setAttribute('class', `link l${level}`);
+    path.classList.add('flow');        // guiones animados permanentes (CSS .link.flow)
     G.layers.links[level-1].appendChild(path);
-    setTimeout(()=> path.classList.add('draw'), delay);
+    setTimeout(()=> path.classList.add('draw'), delay); // aparición inicial
     return path;
   }
 
@@ -202,7 +203,7 @@ const SiteGraph = (() => {
     renderL0();
     applyTransform();
     setupGlow();
-    ensureAmbientParticles();     // ← partículas con pointer-events:none
+    ensureAmbientParticles();     // partículas con pointer-events:none
     updateBreadcrumb();
   }
 
@@ -281,9 +282,9 @@ const SiteGraph = (() => {
 
     const cvs = document.createElement('canvas');
     cvs.className = 'ambient-canvas';
-    cvs.style.pointerEvents = 'none';   // <- importantísimo
+    cvs.style.pointerEvents = 'none';   // no captura clics
     cvs.style.zIndex = '0';
-    // asegurar que queda DETRÁS del SVG
+    // detrás del SVG
     if (G.stage.firstChild) {
       G.stage.insertBefore(cvs, G.stage.firstChild);
     } else {
