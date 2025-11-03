@@ -1,9 +1,11 @@
-// /assets/js/graph.js — Versión PRO (Fase 1+2 con fix de clics)
+// /assets/js/graph.js — Versión PRO (Fase 1+2+3, sin “cámara inteligente”)
 // - Layout de columnas responsive
 // - Breadcrumb opcional (#graphBc)
-// - Resaltado de ruta activa y atenuación de lo demás
-// - Pan/zoom manual (sin cámara inteligente)
-// - Partículas ambientales SIN capturar eventos
+// - Resaltado/atenuación de ruta activa
+// - Pan/zoom manual (sin auto cámara)
+// - Partículas ambientales sin capturar eventos
+// - Fase 3: Entrada radial de hijos, “pulse” del nodo activo, flash en links,
+//           contadores en badges (L1: nº subcarpetas; L2: nº items), atajos de teclado.
 
 const SiteGraph = (() => {
   const NS = 'http://www.w3.org/2000/svg';
@@ -36,10 +38,10 @@ const SiteGraph = (() => {
   function relayoutColumns(){
     const bb = G.svg.getBoundingClientRect();
     const L = 4;
-    theMargin = 100;
-    const usable = Math.max(900, bb.width - theMargin*2);
+    const marginX = 100;
+    const usable = Math.max(900, bb.width - marginX*2);
     const step = usable / (L-1);
-    G.colX = Array.from({length:L}, (_,i)=> theMargin + i*step);
+    G.colX = Array.from({length:L}, (_,i)=> marginX + i*step);
     G.nodeW = [230, 250, 280, 260].map(w=> Math.min(w, step*0.70));
   }
 
@@ -60,11 +62,44 @@ const SiteGraph = (() => {
     if(level<=3) clear(G.layers.links[2]);
   }
 
+  /* ========= helpers FASE 3 ========= */
+
+  // Posición radial inicial alrededor de "from" (para entrada bonita)
+  function spawnRadial(fromBox, targetX, targetY, ix, total){
+    if (!fromBox){ return { x: targetX - 18, y: targetY }; }
+    const cx = fromBox.x + fromBox.w;   // borde derecho del padre
+    const cy = fromBox.y + fromBox.h/2;
+
+    const radius = Math.max(40, Math.min(110, 70 + total*2));
+    const spread = Math.max(Math.PI/5, Math.min(Math.PI/2.2, 0.45 + total*0.03)); // amplitud
+    const start = -spread/2;
+    const angle = start + (ix/(Math.max(1,total-1))) * spread;
+
+    const sx = cx + Math.cos(angle)*radius;
+    const sy = cy + Math.sin(angle)*radius;
+
+    // desplazamiento hacia la columna destino (un poco)
+    const bias = Math.min(80, (targetX - sx) * 0.25);
+    return { x: sx + bias, y: sy };
+  }
+
+  // Aplica transform a un g node
+  function setXY(el, x, y){ el.setAttribute('transform', `translate(${x},${y})`); }
+
   /* ====== Dibujo ====== */
-  function drawNode({level,x,y,w,h,title,sub,onClick,delay=0}){
+  function drawNode({level,x,y,w,h,title,sub,onClick,delay=0, tooltip, badgeValue, spawn}){
     const g = document.createElementNS(NS,'g');
     g.classList.add('node'); g.dataset.lvl=String(level);
-    g.setAttribute('transform', `translate(${x},${y})`);
+
+    // FASE 3: si viene spawn => colocación inicial radial (luego animamos)
+    if (spawn){
+      setXY(g, spawn.x, spawn.y);
+      requestAnimationFrame(()=> g.classList.add('moving')); // permitirá el tween al target
+      requestAnimationFrame(()=> setXY(g, x, y));
+    } else {
+      setXY(g, x, y);
+    }
+
     g.addEventListener('mouseenter', ()=> g.classList.add('hovered'));
     g.addEventListener('mouseleave', ()=> g.classList.remove('hovered'));
     if(onClick) g.addEventListener('click', onClick);
@@ -85,6 +120,14 @@ const SiteGraph = (() => {
       inner.appendChild(s);
     }
 
+    // Tooltip accesible (SVG <title>)
+    if (tooltip){
+      const tip = document.createElementNS(NS,'title');
+      tip.textContent = tooltip;
+      inner.appendChild(tip);
+    }
+
+    // Badge (FASE 3: valor dinámico si procede)
     const bkg = document.createElementNS(NS,'rect');
     bkg.setAttribute('x', w-34); bkg.setAttribute('y', 8);
     bkg.setAttribute('width', 22); bkg.setAttribute('height', 16);
@@ -93,7 +136,9 @@ const SiteGraph = (() => {
     inner.appendChild(bkg);
 
     const bt = document.createElementNS(NS,'text');
-    bt.setAttribute('x', w-23); bt.setAttribute('y', 20); bt.setAttribute('class','badge'); bt.textContent=level;
+    bt.setAttribute('x', w-23); bt.setAttribute('y', 20); bt.setAttribute('class','badge');
+    const badgeText = (badgeValue!=null) ? String(badgeValue) : String(level);
+    bt.textContent = badgeText;
     inner.appendChild(bt);
 
     G.layers.cols[level].appendChild(g);
@@ -108,7 +153,7 @@ const SiteGraph = (() => {
     const dx = Math.max(60, (x2-x1)/2);
     path.setAttribute('d', `M ${x1} ${y1} C ${x1+dx} ${y1}, ${x2-dx} ${y2}, ${x2} ${y2}`);
     path.setAttribute('class', `link l${level}`);
-    path.classList.add('flow');        // guiones animados permanentes (CSS .link.flow)
+    path.classList.add('flow');        // FASE 2: guiones animados constantes
     G.layers.links[level-1].appendChild(path);
     setTimeout(()=> path.classList.add('draw'), delay); // aparición inicial
     return path;
@@ -131,7 +176,8 @@ const SiteGraph = (() => {
     G.colsNodes[0] = roots.map((txt,i)=>{
       return drawNode({
         level:0, x:G.colX[0], y:yAt(i), w:G.nodeW[0], h:G.nodeH, title:txt,
-        onClick:()=>{ G.state.sel0=i; G.state.sel1=null; G.state.sel2=null; updateBreadcrumb(); renderFrom(1); highlightActive(); },
+        tooltip: txt,
+        onClick:()=>{ G.state.sel0=i; G.state.sel1=null; G.state.sel2=null; pulseNode(0,i); updateBreadcrumb(); renderFrom(1); highlightActive(true); },
         delay:40+i*40
       });
     });
@@ -140,14 +186,23 @@ const SiteGraph = (() => {
   function renderL1(){
     clearFrom(1);
     if(G.state.sel0==null) return;
-    const areas = (G.TREE[G.state.sel0].areas||[]).map(a=>a.nombre);
-    const yAt = layoutY(areas.length);
+    const areas = (G.TREE[G.state.sel0].areas||[]);
+    const names = areas.map(a=>a.nombre);
+    const yAt = layoutY(names.length);
     const left = G.colsNodes[0][G.state.sel0];
-    G.colsNodes[1] = areas.map((txt,i)=>{
+
+    G.colsNodes[1] = names.map((txt,i)=>{
+      // contador: nº subcarpetas
+      const count = (areas[i].subcarpetas||[]).length || 0;
+      const spawn = spawnRadial(left, G.colX[1], yAt(i), i, names.length);
+
       const box = drawNode({
         level:1, x:G.colX[1], y:yAt(i), w:G.nodeW[1], h:G.nodeH, title:txt,
-        onClick:()=>{ G.state.sel1=i; G.state.sel2=null; updateBreadcrumb(); renderFrom(2); highlightActive(); },
-        delay:60+i*40
+        tooltip: txt,
+        badgeValue: count,
+        onClick:()=>{ G.state.sel1=i; G.state.sel2=null; pulseNode(1,i); updateBreadcrumb(); renderFrom(2); highlightActive(true); },
+        delay:60+i*40,
+        spawn
       });
       box._link = drawLink(left, box, 1, 60+i*40);
       return box;
@@ -157,14 +212,23 @@ const SiteGraph = (() => {
   function renderL2(){
     clearFrom(2);
     if(G.state.sel0==null || G.state.sel1==null) return;
-    const subs = (G.TREE[G.state.sel0].areas[G.state.sel1].subcarpetas||[]);
+    const parent = G.TREE[G.state.sel0].areas[G.state.sel1];
+    const subs = (parent.subcarpetas||[]);
     const yAt = layoutY(subs.length);
     const left = G.colsNodes[1][G.state.sel1];
+
     G.colsNodes[2] = subs.map((txt,i)=>{
+      // contador: nº items L3
+      const itemCount = (window.GRAPH_MAKE_SIX ? window.GRAPH_MAKE_SIX(txt).length : 0);
+      const spawn = spawnRadial(left, G.colX[2], yAt(i), i, subs.length);
+
       const box = drawNode({
         level:2, x:G.colX[2], y:yAt(i), w:G.nodeW[2], h:G.nodeH, title:txt,
-        onClick:()=>{ G.state.sel2=i; updateBreadcrumb(); renderFrom(3); highlightActive(); },
-        delay:70+i*35
+        tooltip: txt,
+        badgeValue: itemCount,
+        onClick:()=>{ G.state.sel2=i; pulseNode(2,i); updateBreadcrumb(); renderFrom(3); highlightActive(true); },
+        delay:70+i*35,
+        spawn
       });
       box._link = drawLink(left, box, 2, 70+i*35);
       return box;
@@ -178,11 +242,16 @@ const SiteGraph = (() => {
     const items = (window.GRAPH_MAKE_SIX ? window.GRAPH_MAKE_SIX(subs[G.state.sel2]) : []);
     const yAt = layoutY(items.length);
     const left = G.colsNodes[2][G.state.sel2];
+
     G.colsNodes[3] = items.map((txt,i)=>{
+      const spawn = spawnRadial(left, G.colX[3], yAt(i), i, items.length);
+
       const box = drawNode({
         level:3, x:G.colX[3], y:yAt(i), w:G.nodeW[3], h:G.nodeH, title:txt, sub:"↗",
+        tooltip: txt,
         onClick:()=>{/* futuro: abrir enlace */},
-        delay:80+i*30
+        delay:80+i*30,
+        spawn
       });
       box._link = drawLink(left, box, 3, 80+i*30);
       return box;
@@ -203,19 +272,20 @@ const SiteGraph = (() => {
     renderL0();
     applyTransform();
     setupGlow();
-    ensureAmbientParticles();     // partículas con pointer-events:none
+    ensureAmbientParticles();
     updateBreadcrumb();
+    enableShortcuts(); // ← FASE 3: atajos teclado
   }
 
   /* ====== Breadcrumb (opcional) ====== */
   function updateBreadcrumb(){
     if(!G.bcEl) return;
     const parts=[];
-    if(G.state.sel0!=null) parts.push({t:G.TREE[G.state.sel0].raiz, cb:()=>{G.state.sel1=null; G.state.sel2=null; renderFrom(1); highlightActive(); }});
-    if(G.state.sel1!=null) parts.push({t:G.TREE[G.state.sel0].areas[G.state.sel1].nombre, cb:()=>{G.state.sel2=null; renderFrom(2); highlightActive(); }});
+    if(G.state.sel0!=null) parts.push({t:G.TREE[G.state.sel0].raiz, cb:()=>{G.state.sel1=null; G.state.sel2=null; renderFrom(1); highlightActive(true); }});
+    if(G.state.sel1!=null) parts.push({t:G.TREE[G.state.sel0].areas[G.state.sel1].nombre, cb:()=>{G.state.sel2=null; renderFrom(2); highlightActive(true); }});
     if(G.state.sel2!=null){
       const name = G.TREE[G.state.sel0].areas[G.state.sel1].subcarpetas[G.state.sel2];
-      parts.push({t:name, cb:()=>{ renderFrom(3); highlightActive(); }});
+      parts.push({t:name, cb:()=>{ renderFrom(3); highlightActive(true); }});
     }
 
     G.bcEl.innerHTML = '';
@@ -230,27 +300,42 @@ const SiteGraph = (() => {
     });
   }
 
-  /* ====== Resaltado/Atenuación ====== */
-  function highlightActive(){
+  /* ====== Resaltado/Atenuación + flash ====== */
+  function highlightActive(withFlash=false){
     // limpiar
-    G.root.querySelectorAll('.node.active,.node.focus').forEach(n=>{n.classList.remove('active','focus');});
-    G.root.querySelectorAll('.link.active').forEach(n=>n.classList.remove('active'));
+    G.root.querySelectorAll('.node.active,.node.focus,.node.pulse').forEach(n=>{n.classList.remove('active','focus','pulse');});
+    G.root.querySelectorAll('.link.active,.link.flash').forEach(n=>n.classList.remove('active','flash'));
     G.root.querySelectorAll('.dim-node').forEach(n=>n.classList.remove('dim-node'));
     G.root.querySelectorAll('.dim-link').forEach(n=>n.classList.remove('dim-link'));
 
-    // si hay selección, atenuo lo demás
     const anySel = (G.state.sel0!=null);
     if (!anySel) return;
 
-    // activo por niveles
     const actives = [];
-    if(G.state.sel0!=null){ const n0 = G.colsNodes[0][G.state.sel0]; n0?.el.classList.add('active','focus'); actives.push(n0?.el); }
-    if(G.state.sel1!=null){ const n1 = G.colsNodes[1][G.state.sel1]; n1?.el.classList.add('active','focus'); n1?._link?.classList.add('active'); actives.push(n1?.el); }
-    if(G.state.sel2!=null){ const n2 = G.colsNodes[2][G.state.sel2]; n2?.el.classList.add('active','focus'); n2?._link?.classList.add('active'); actives.push(n2?.el); }
+    if(G.state.sel0!=null){ const n0 = G.colsNodes[0][G.state.sel0]; if(n0){n0.el.classList.add('active','focus'); actives.push(n0.el);} }
+    if(G.state.sel1!=null){ const n1 = G.colsNodes[1][G.state.sel1]; if(n1){n1.el.classList.add('active','focus'); n1._link?.classList.add('active'); actives.push(n1.el);} }
+    if(G.state.sel2!=null){ const n2 = G.colsNodes[2][G.state.sel2]; if(n2){n2.el.classList.add('active','focus'); n2._link?.classList.add('active'); actives.push(n2.el);} }
 
-    // todo lo que no esté activo, lo atenúo
+    // flash temporal en links activos
+    if (withFlash){
+      G.root.querySelectorAll('.link.active').forEach(l=>{
+        l.classList.add('flash');
+        setTimeout(()=> l.classList.remove('flash'), 600);
+      });
+    }
+
+    // atenuación del resto
     G.root.querySelectorAll('.node').forEach(n=>{ if(!actives.includes(n)) n.classList.add('dim-node'); });
     G.root.querySelectorAll('.link').forEach(l=>{ if(!l.classList.contains('active')) l.classList.add('dim-link'); });
+  }
+
+  // Pequeño “pulse” del nodo seleccionado (FASE 3)
+  function pulseNode(level, ix){
+    const box = G.colsNodes[level]?.[ix];
+    if (box?.el){
+      box.el.classList.add('pulse');
+      setTimeout(()=> box.el.classList.remove('pulse'), 320);
+    }
   }
 
   /* ====== Glow cursor (sutil) ====== */
@@ -276,20 +361,15 @@ const SiteGraph = (() => {
     G.stage.addEventListener('mouseleave', ()=> c.setAttribute('opacity','0'));
   }
 
-  /* ====== Partículas ambientales (decoración) ====== */
+  /* ====== Partículas ambientales ====== */
   function ensureAmbientParticles(){
     if (!G.stage || G._ambient) return;
 
     const cvs = document.createElement('canvas');
     cvs.className = 'ambient-canvas';
-    cvs.style.pointerEvents = 'none';   // no captura clics
+    cvs.style.pointerEvents = 'none';
     cvs.style.zIndex = '0';
-    // detrás del SVG
-    if (G.stage.firstChild) {
-      G.stage.insertBefore(cvs, G.stage.firstChild);
-    } else {
-      G.stage.appendChild(cvs);
-    }
+    if (G.stage.firstChild) { G.stage.insertBefore(cvs, G.stage.firstChild); } else { G.stage.appendChild(cvs); }
     const ctx = cvs.getContext('2d');
 
     const P = {
@@ -382,6 +462,36 @@ const SiteGraph = (() => {
     }, { passive:false });
 
     G.stage.addEventListener('dblclick', ()=>{ G.scale=1; G.tx=0; G.ty=0; applyTransform(); });
+  }
+
+  /* ====== Atajos de teclado (FASE 3) ====== */
+  function enableShortcuts(){
+    document.addEventListener('keydown', (e)=>{
+      // Esc = subir nivel
+      if (e.key === 'Escape'){
+        if (G.state.sel2!=null){ G.state.sel2=null; renderFrom(3); highlightActive(true); updateBreadcrumb(); return; }
+        if (G.state.sel1!=null){ G.state.sel1=null; renderFrom(2); highlightActive(true); updateBreadcrumb(); return; }
+        if (G.state.sel0!=null){ G.state.sel0=null; renderFrom(1); highlightActive(true); updateBreadcrumb(); return; }
+      }
+
+      // navegar hermanos con ← →
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowRight'){
+        let lvl=null, idx=null, arr=null;
+        if (G.state.sel2!=null){ lvl=2; idx=G.state.sel2; arr=G.colsNodes[2]; }
+        else if (G.state.sel1!=null){ lvl=1; idx=G.state.sel1; arr=G.colsNodes[1]; }
+        else if (G.state.sel0!=null){ lvl=0; idx=G.state.sel0; arr=G.colsNodes[0]; }
+
+        if (lvl==null || !arr?.length) return;
+        const dir = (e.key==='ArrowRight') ? 1 : -1;
+        const next = (idx + dir + arr.length) % arr.length;
+
+        if (lvl===0){ G.state.sel0=next; G.state.sel1=null; G.state.sel2=null; renderFrom(1); }
+        else if (lvl===1){ G.state.sel1=next; G.state.sel2=null; renderFrom(2); }
+        else { G.state.sel2=next; renderFrom(3); }
+
+        pulseNode(lvl,next); highlightActive(true); updateBreadcrumb();
+      }
+    });
   }
 
   /* ====== API ====== */
