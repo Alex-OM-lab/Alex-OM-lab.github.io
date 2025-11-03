@@ -1,76 +1,99 @@
 // /assets/js/graph-data.js
 // ======================================================
-// Estructura jerárquica que alimenta el mapa visual.
-// Este archivo debe cargarse ANTES de graph.js
+// Contenido del mapa (L0–L3) + helpers para items por camino
 // ======================================================
 
 window.GRAPH_TREE = [
   {
-    raiz: "Teoría y datos curiosos",
+    raiz: "Formación_Alejandro_Orcajada",
     areas: [
       {
-        nombre: "Ciberseguridad",
+        nombre: "Teoría",
         subcarpetas: [
-          "Análisis Forense",
-          "DevSecOps",
-          "Documentación e informes",
-          "Puesta en producción segura",
-          "Respuesta a incidentes",
-          "Seguridad en redes",
-          "Seguridad de sistemas"
+          "Sistemas",
+          "Ciberseguridad"
         ]
       },
       {
-        nombre: "Sistemas",
+        nombre: "Portafolio",
         subcarpetas: [
-          "Administración de redes",
-          "Backups y recuperación",
-          "Bases de datos",
-          "Gestión de sistemas",
-          "Seguridad en sistemas",
-          "Virtualización y conectividad"
-        ]
-      }
-    ]
-  },
-  {
-    raiz: "Portafolio",
-    areas: [
-      {
-        nombre: "Ciberseguridad",
-        subcarpetas: [
-          "Análisis Forense",
-          "DevSecOps",
-          "Documentación e informes",
-          "Puesta en producción segura",
-          "Respuesta a incidentes",
-          "Seguridad en redes",
-          "Seguridad de sistemas"
-        ]
-      },
-      {
-        nombre: "Sistemas",
-        subcarpetas: [
-          "Administración de redes",
-          "Backups y recuperación",
-          "Bases de datos",
-          "Gestión de sistemas",
-          "Seguridad en sistemas",
-          "Virtualización y conectividad"
+          "Sistemas",
+          "Ciberseguridad"
         ]
       }
     ]
   }
 ];
 
-// ------------------------------------------------------
-// Función auxiliar opcional para generar artículos
-// ------------------------------------------------------
-window.GRAPH_MAKE_SIX = (name) =>
-  Array.from({ length: 6 }, (_, i) => `Artículo ${i + 1} — ${name}`);
+// ======================================================
+// Ítems (L3) conscientes del camino (root > área > sub)
+// ======================================================
+window.GRAPH_ITEMS = {
+  "Formación_Alejandro_Orcajada": {
+    "Teoría": {
+      "Sistemas": [
+        "Introducción a los Sistemas Operativos",
+        "Gestión de Usuarios y Permisos",
+        "Configuración de Redes Locales",
+        "Administración de Servidores Windows y Linux",
+        "Diseño de Bases de Datos Relacionales",
+        "Scripts de Automatización con PowerShell y Bash",
+        "Copias de Seguridad y Restauración de Datos",
+        "Cumplimiento y Documentación Técnica"
+      ],
+      "Ciberseguridad": [
+        "Principios de Seguridad en Redes",
+        "Hardening de Sistemas Linux y Windows",
+        "Integración de Seguridad en CI/CD",
+        "Introducción al Análisis Forense",
+        "Fases del Pentesting Ético",
+        "Gestión de Incidentes de Seguridad",
+        "Evaluación de Riesgos según MAGERIT",
+        "Requisitos del ENS e ISO 27001"
+      ]
+    },
+    "Portafolio": {
+      "Sistemas": [
+        "Práctica: Instalación de Windows Server y Ubuntu",
+        "Práctica: Configuración de VLANs y DHCP",
+        "Práctica: Active Directory y Políticas GPO",
+        "Práctica: Creación y Optimización de una Base de Datos MySQL",
+        "Práctica: Montaje de Servidores Web Apache y Nginx",
+        "Práctica: Implementación de un Entorno Virtual Seguro"
+      ],
+      "Ciberseguridad": [
+        "Práctica: Escaneo de Red con Nmap",
+        "Práctica: Auditoría de Seguridad Web con OWASP ZAP",
+        "Práctica: Simulación de Ataque con Metasploit",
+        "Práctica: Análisis de Memoria RAM con Volatility",
+        "Práctica: Implementación de un SIEM con Wazuh",
+        "Práctica: Elaboración de un Plan de Seguridad ENS"
+      ]
+    }
+  }
+};
 
-// ------------------------------------------------------
-// Nota: No necesitas llamar a nada aquí.
-// graph.js detectará automáticamente GRAPH_TREE
-// y generará el mapa visual al cargar la página.
-// ------------------------------------------------------
+// ======================================================
+// Helper público: devuelve items por camino exacto
+// ======================================================
+window.GRAPH_GET_ITEMS = function(rootName, areaName, subName){
+  const R = window.GRAPH_ITEMS?.[rootName]?.[areaName]?.[subName];
+  if (Array.isArray(R) && R.length) return R;
+
+  // Fallbacks por si falta algo:
+  const alt1 = window.GRAPH_ITEMS?.[rootName]?.[areaName];
+  if (alt1 && typeof alt1 === 'object') {
+    const first = Object.values(alt1).find(a => Array.isArray(a) && a.length);
+    if (first) return first;
+  }
+  // Último recurso: 6 placeholders
+  return Array.from({length: 6}, (_,i)=> `Artículo ${i+1} — ${subName}`);
+};
+
+// ======================================================
+// Fallback legacy (si algún código antiguo lo invoca)
+// ======================================================
+window.GRAPH_MAKE_SIX = function(name){
+  // No conoce el camino, así que devolvemos placeholders:
+  return Array.from({length: 6}, (_,i)=> `Artículo ${i+1} — ${name}`);
+};
