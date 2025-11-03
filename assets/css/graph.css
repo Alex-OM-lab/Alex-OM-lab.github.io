@@ -213,3 +213,32 @@
   .link.draw{ animation:none }
   .node, .node .node-in{ transition:none }
 }
+/* ===== Paso 2: Interacción PRO ===== */
+
+/* Atenuado global cuando hay una ruta activa */
+.graph-stage.dim-others .node:not(.active-path) { opacity: .25; filter: grayscale(15%); }
+.graph-stage.dim-others .link:not(.active-path) { opacity: .22; }
+
+/* Transiciones suaves de posición/opacity en nodos (grupo interno) */
+.node { transition: opacity .35s ease; }
+.node .node-in { transition: transform .35s cubic-bezier(.2,.9,.2,1); }
+
+/* Estado “colapsado”: dejamos un pulso para indicarlo */
+.node.collapsed rect { stroke-dasharray: 4 3; }
+
+/* Mini-mapa (opcional) */
+.graph-minimap{
+  position:absolute; right:10px; bottom:10px;
+  width:160px; height:100px; border:1px solid rgba(255,255,255,.12);
+  background:rgba(0,0,0,.35); border-radius:8px; overflow:hidden;
+  display:none; /* cambia a block si activas mini-mapa */
+}
+.graph-minimap canvas{ width:100%; height:100%; display:block; }
+
+/* Cursor de zoom a contenido durante animación */
+.graph-stage.is-zooming .svgroot { cursor: progress; }
+
+/* Reduce motion */
+@media (prefers-reduced-motion: reduce){
+  .node .node-in { transition: none; }
+}
