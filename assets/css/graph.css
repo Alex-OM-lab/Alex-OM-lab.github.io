@@ -8,7 +8,7 @@
 .graph-head{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:10px; }
 .graph-head h2{ margin:0 }
 
-/* escenario para “jugar” */
+/* escenario para “jugar” (SVG clásico) */
 .graph-stage{
   position:relative; border:1px solid rgba(255,255,255,.06); border-radius:12px;
   background:#0c1323; overflow:hidden; height:680px;
@@ -80,7 +80,7 @@
   stroke-width:1.9;
 }
 
-/* responsive altura del escenario */
+/* responsive altura del escenario (SVG) */
 @media (max-width: 960px){
   .graph-stage{ height:520px; }
 }
@@ -92,4 +92,40 @@
 @media (prefers-reduced-motion: reduce){
   .link.draw{ animation:none; stroke-dasharray:0; stroke-dashoffset:0; }
   .node, .node .node-in{ transition:none; }
+}
+
+/* =========================================================
+   NUEVO — Force Graph (Canvas) dentro del mismo graph.css
+   ========================================================= */
+.force-graph-stage{
+  position:relative;
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:12px;
+  background:#0c1323;
+  height:620px;
+  overflow:hidden;
+  margin-top:12px;
+}
+.force-graph-stage canvas{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  display:block;
+}
+.force-graph-stage .fg-hint{
+  position:absolute; left:10px; bottom:10px;
+  font-size:12.5px; color:var(--muted);
+  background:rgba(0,0,0,.35);
+  border:1px solid rgba(255,255,255,.08);
+  padding:6px 8px; border-radius:8px;
+  pointer-events:none; user-select:none;
+}
+.force-graph-stage.is-dragging{ cursor:grabbing; }
+.force-graph-stage canvas{ cursor:grab; }
+
+/* responsive altura del force graph */
+@media (max-width: 960px){
+  .force-graph-stage{ height:520px; }
+}
+@media (max-width: 640px){
+  .force-graph-stage{ height:420px; }
 }
