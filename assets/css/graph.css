@@ -1,4 +1,5 @@
-/* ====== GRAPH (jerárquico) — Estilo PRO ====== */
+/* ===== GRAPH (jerárquico) — Fase 1 Estética PRO ===== */
+
 .graph .card{
   border-radius: var(--radius);
   border:1px solid rgba(255,255,255,.06);
@@ -8,7 +9,7 @@
   box-shadow: 0 12px 30px rgba(2,6,12,.55);
 }
 
-/* cabecera con breadcrumb opcional */
+/* cabecera con breadcrumb (opcional) */
 .graph-head{
   display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin-bottom:10px;
 }
@@ -21,13 +22,38 @@
   padding:6px 10px; border:1px solid rgba(255,255,255,.06);
   background:rgba(255,255,255,.03); border-radius:999px;
 }
+.graph-bc .crumb:hover{ background:rgba(255,255,255,.06) }
 .graph-bc .sep{ opacity:.5 }
 
-/* escenario */
+/* escenario con fondo técnico + rejilla + viñeta */
 .graph-stage{
-  position:relative; border:1px solid rgba(255,255,255,.06); border-radius:12px;
-  background:#0c1323; overflow:hidden; height:640px;
+  position:relative;
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:14px;
+  background:
+    radial-gradient(1200px 700px at 80% -100px, rgba(255,159,26,.045), transparent 60%),
+    radial-gradient(900px 600px at -120px 20%, rgba(143,214,255,.035), transparent 55%),
+    #0b1220;
+  overflow:hidden;
+  height:640px;
 }
+
+.graph-stage::before{
+  content:"";
+  position:absolute; inset:0;
+  background-image:
+    linear-gradient(transparent 31px, rgba(255,255,255,.04) 32px),
+    linear-gradient(90deg, transparent 31px, rgba(255,255,255,.04) 32px);
+  background-size:32px 32px, 32px 32px;
+  opacity:.06; pointer-events:none;
+}
+.graph-stage::after{
+  content:"";
+  position:absolute; inset:0;
+  background:radial-gradient(120% 120% at 50% 10%, transparent 0%, transparent 55%, rgba(0,0,0,.28) 100%);
+  pointer-events:none;
+}
+
 #graphSvg{ width:100%; height:100%; display:block; }
 
 /* leyenda */
@@ -41,109 +67,7 @@
 .graph-legend .lvl2{ background:#8fd6ff }
 .graph-legend .lvl3{ background:#9be2b0 }
 
-/* nodos */
-.node{ cursor:pointer; }
-.node rect{
-  rx:12; ry:12;
-  fill:#0e1730;
-  stroke:rgba(255,255,255,.10);
-  stroke-width:1.2;
-  filter: drop-shadow(0 8px 18px rgba(0,0,0,.45));
-}
-.node[data-lvl="0"] rect{ fill:rgba(255,159,26,.14); stroke:rgba(255,159,26,.55) }
-.node[data-lvl="1"] rect{ fill:rgba(255,215,154,.10); stroke:rgba(255,215,154,.50) }
-.node[data-lvl="2"] rect{ fill:rgba(143,214,255,.08); stroke:rgba(143,214,255,.45) }
-.node[data-lvl="3"] rect{ fill:rgba(155,226,176,.08); stroke:rgba(155,226,176,.40) }
-
-.node .title{
-  fill:#e9eef6; font-weight:800; font-size:14px; letter-spacing:.2px;
-}
-.node .sub{ fill:#a8b2c2; font-size:12.5px; }
-
-/* badge nivel */
-.node .badge{
-  fill:#07101a; font-weight:900; font-size:11px;
-  text-anchor:middle; dominant-baseline:middle; pointer-events:none;
-}
-
-/* animación de entrada */
-.node{ opacity:0; transition:opacity .32s ease; }
-.node.is-in{ opacity:1; }
-
-/* conectores curvos + glow sutil */
-.link{ fill:none; stroke:rgba(255,159,26,.28); stroke-width:2;
-       filter: drop-shadow(0 0 4px rgba(255,159,26,.10)); }
-.link.l1{ stroke:rgba(255,215,154,.30) }
-.link.l2{ stroke:rgba(143,214,255,.30) }
-.link.l3{ stroke:rgba(155,226,176,.30) }
-
-.link.draw{
-  stroke-dasharray: 600;
-  stroke-dashoffset: 600;
-  animation: draw .6s ease forwards;
-}
-@keyframes draw{ to{ stroke-dashoffset:0 } }
-
-/* path activo (selección) */
-.link.active{ stroke-width:2.4; filter: drop-shadow(0 0 8px rgba(255,159,26,.25)); }
-.node.active rect{ stroke-width:1.9; filter: drop-shadow(0 0 16px rgba(255,159,26,.25)); }
-
-/* hover */
-.node rect{ transition:filter .18s ease, stroke-width .18s ease, transform .18s ease; }
-.node.hovered rect{ stroke-width:1.6; }
-.node.hovered .title{ text-decoration: none }
-
-/* micro-deslizamiento de contenido al entrar */
-.node .node-in{ transform:translateX(18px); transition:transform .28s ease; }
-.node.is-in .node-in{ transform:none; }
-
-/* cursores pan/zoom */
-.graph-stage.is-panning{ cursor:grabbing; }
-.graph-stage .svgroot{ cursor:grab; }
-
-/* responsive altura */
-@media (max-width: 960px){ .graph-stage{ height:520px; } }
-@media (max-width: 640px){ .graph-stage{ height:420px; } }
-
-/* reduce motion */
-@media (prefers-reduced-motion: reduce){
-  .link.draw{ animation:none; stroke-dasharray:0; stroke-dashoffset:0; }
-  .node, .node .node-in{ transition:none; }
-}
-/* ===== Estética Futurista: fondo, glow, partículas, pulso ===== */
-
-/* 1) Fondo técnico (rejilla muy tenue + viñeteado) */
-.graph-stage{
-  position:relative;
-  border:1px solid rgba(255,255,255,.06);
-  border-radius:14px;
-  background:
-    radial-gradient(1200px 700px at 80% -100px, rgba(255,159,26,.045), transparent 60%),
-    radial-gradient(900px 600px at -120px 20%, rgba(143,214,255,.035), transparent 55%),
-    #0b1220;
-  overflow:hidden;
-}
-
-/* patrón de rejilla sutil */
-.graph-stage::before{
-  content:"";
-  position:absolute; inset:0;
-  background-image:
-    linear-gradient(transparent 31px, rgba(255,255,255,.04) 32px),
-    linear-gradient(90deg, transparent 31px, rgba(255,255,255,.04) 32px);
-  background-size:32px 32px, 32px 32px;
-  opacity:.06; pointer-events:none;
-}
-
-/* viñeteado suave interior */
-.graph-stage::after{
-  content:"";
-  position:absolute; inset:0;
-  background:radial-gradient(120% 120% at 50% 10%, transparent 0%, transparent 55%, rgba(0,0,0,.28) 100%);
-  pointer-events:none;
-}
-
-/* 2) Canvas de partículas (lo crearemos por JS) */
+/* partículas (canvas) */
 .graph-stage .ambient-canvas{
   position:absolute; inset:0; width:100%; height:100%; display:block;
   pointer-events:none;
@@ -151,7 +75,8 @@
   opacity:.55;
 }
 
-/* 3) Nodos: glow + sombra flotante + bordes por nivel */
+/* nodos */
+.node{ cursor:pointer; }
 .node rect{
   rx:12; ry:12;
   fill:rgba(12,19,35,.92);
@@ -159,7 +84,6 @@
   filter: drop-shadow(0 12px 22px rgba(0,0,0,.55));
   transition: filter .2s ease, stroke-width .18s ease, transform .18s ease;
 }
-
 .node[data-lvl="0"] rect{ stroke: rgba(255,159,26,.55); box-shadow: 0 0 0 1px rgba(255,159,26,.18) inset; }
 .node[data-lvl="1"] rect{ stroke: rgba(255,215,154,.45); box-shadow: 0 0 0 1px rgba(255,215,154,.16) inset; }
 .node[data-lvl="2"] rect{ stroke: rgba(143,214,255,.45); box-shadow: 0 0 0 1px rgba(143,214,255,.16) inset; }
@@ -168,7 +92,14 @@
 .node .title{ fill:#e9eef6; font-weight:800; font-size:14px; letter-spacing:.2px; }
 .node .sub{ fill:#a8b2c2; font-size:12.5px; }
 
-/* hover: levita + halo */
+.node .badge{
+  fill:#07101a; font-weight:900; font-size:11px;
+  text-anchor:middle; dominant-baseline:middle; pointer-events:none;
+}
+
+/* hover + aparición */
+.node{ opacity:0; transition:opacity .32s ease; }
+.node.is-in{ opacity:1; }
 .node.hovered rect{
   stroke-width:1.6;
   filter:
@@ -176,17 +107,14 @@
     drop-shadow(0 12px 24px rgba(0,0,0,.6));
   transform: translateY(-2px);
 }
+.node .node-in{ transform: translateX(22px) scale(.995); transition: transform .35s ease; }
+.node.is-in .node-in{ transform: none; }
 
-/* 4) Enlaces con “flujo” (dash animado) */
-.link{
-  fill:none;
-  stroke:rgba(255,159,26,.35);
-  stroke-width:2;
-}
+/* conectores con “flujo” */
+.link{ fill:none; stroke:rgba(255,159,26,.35); stroke-width:2; }
 .link.l1{ stroke:rgba(255,215,154,.35) }
 .link.l2{ stroke:rgba(143,214,255,.35) }
 .link.l3{ stroke:rgba(155,226,176,.35) }
-
 .link.draw{
   stroke-dasharray: 6 10;
   animation: flow 2.4s linear infinite;
@@ -197,48 +125,19 @@
   to  { stroke-dashoffset:-64 }
 }
 
-/* 5) Pulse sutil cuando aparece un nodo */
-.node .node-in{ transform: translateX(22px) scale(.995); transition: transform .35s ease; }
-.node.is-in .node-in{ transform: none; }
+/* cursores pan/zoom */
+.graph-stage.is-panning{ cursor:grabbing; }
+.graph-stage .svgroot{ cursor:grab; }
 
-/* 6) Glow cursor (ya lo tenías, mantenemos) */
-#cursorGlow{ mix-blend-mode: screen; }
-
-/* 7) Responsive alturas */
+/* responsive altura */
 @media (max-width: 960px){ .graph-stage{ height:560px; } }
 @media (max-width: 640px){ .graph-stage{ height:460px; } }
 
-/* 8) Reduce motion */
+/* reduce motion */
 @media (prefers-reduced-motion: reduce){
   .link.draw{ animation:none }
   .node, .node .node-in{ transition:none }
 }
-/* ===== Paso 2: Interacción PRO ===== */
 
-/* Atenuado global cuando hay una ruta activa */
-.graph-stage.dim-others .node:not(.active-path) { opacity: .25; filter: grayscale(15%); }
-.graph-stage.dim-others .link:not(.active-path) { opacity: .22; }
-
-/* Transiciones suaves de posición/opacity en nodos (grupo interno) */
-.node { transition: opacity .35s ease; }
-.node .node-in { transition: transform .35s cubic-bezier(.2,.9,.2,1); }
-
-/* Estado “colapsado”: dejamos un pulso para indicarlo */
-.node.collapsed rect { stroke-dasharray: 4 3; }
-
-/* Mini-mapa (opcional) */
-.graph-minimap{
-  position:absolute; right:10px; bottom:10px;
-  width:160px; height:100px; border:1px solid rgba(255,255,255,.12);
-  background:rgba(0,0,0,.35); border-radius:8px; overflow:hidden;
-  display:none; /* cambia a block si activas mini-mapa */
-}
-.graph-minimap canvas{ width:100%; height:100%; display:block; }
-
-/* Cursor de zoom a contenido durante animación */
-.graph-stage.is-zooming .svgroot { cursor: progress; }
-
-/* Reduce motion */
-@media (prefers-reduced-motion: reduce){
-  .node .node-in { transition: none; }
-}
+/* glow del cursor (definido por JS) */
+#cursorGlow{ mix-blend-mode: screen; }
