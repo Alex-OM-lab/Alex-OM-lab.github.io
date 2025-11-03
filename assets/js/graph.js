@@ -1,10 +1,4 @@
-// /assets/js/graph.js — Fase 1 (visual PRO sin cámara inteligente)
-// - Layout en columnas responsive
-// - Breadcrumb opcional (#graphBc)
-// - Partículas ambientales (canvas) y glow de cursor
-// - Click simple para desplegar niveles
-// - Pan/zoom manual (sin zoom-to-fit automático)
-
+// /assets/js/graph.js — Versión PRO (Fase 2: radial + enfasis de ruta, sin cámara)
 const SiteGraph = (() => {
   const NS = 'http://www.w3.org/2000/svg';
 
@@ -12,32 +6,26 @@ const SiteGraph = (() => {
     svg:null, root:null, stage:null,
     layers:null, colsNodes:[[],[],[],[]],
     state:{ sel0:null, sel1:null, sel2:null },
-
-    // layout (se recalcula por ancho del contenedor)
+    // layout dinámico
     colX:[120, 460, 940, 1300],
     nodeW:[230, 250, 280, 260],
     nodeH:56, vGap:22,
-
-    // pan/zoom manual
+    // pan manual (existente)
     tx:0, ty:0, scale:1, minScale:0.6, maxScale:2.0,
-
     // data
     TREE:null,
-
     // UI
     bcEl:null,
-
-    // ambient
-    _ambient:null,
+    // partículas ambiente
+    _ambient:null
   };
 
-  /* ====== Utils ====== */
-  const clear = (g)=>{ while(g.firstChild) g.removeChild(g.firstChild); };
-  const applyTransform = ()=> G.root.setAttribute('transform', `translate(${G.tx},${G.ty}) scale(${G.scale})`);
+  /* ===== Utils ===== */
+  function clear(g){ while(g.firstChild) g.removeChild(g.firstChild); }
+  function applyTransform(){ G.root.setAttribute('transform', `translate(${G.tx},${G.ty}) scale(${G.scale})`); }
   function ptSvg(x,y){ const p=G.svg.createSVGPoint(); p.x=x; p.y=y; return p; }
   function screenToRoot(x,y){ const p=ptSvg(x,y); const m=G.root.getScreenCTM(); return m ? p.matrixTransform(m.inverse()) : {x,y}; }
 
-  // Recalcula columnas según ancho disponible
   function relayoutColumns(){
     const bb = G.svg.getBoundingClientRect();
     const L = 4;
@@ -45,11 +33,9 @@ const SiteGraph = (() => {
     const usable = Math.max(900, bb.width - marginX*2);
     const step = usable / (L-1);
     G.colX = Array.from({length:L}, (_,i)=> marginX + i*step);
-    // ancho de caja relativo al step
-    G.nodeW = [230, 250, 280, 260].map(w=> Math.min(w, Math.max(180, step*0.72)));
+    G.nodeW = [230, 250, 280, 260].map(w=> Math.min(w, step*0.70));
   }
 
-  /* ====== Capas ====== */
   function ensureLayers(){
     if (G.layers) return;
     const mk = id => { const g=document.createElementNS(NS,'g'); g.setAttribute('id',id); G.root.appendChild(g); return g; };
@@ -59,6 +45,7 @@ const SiteGraph = (() => {
     G.layers = { cols:[col0,col1,col2,col3], links:[links01,links12,links23], ui };
     G.colsNodes=[[],[],[],[]];
   }
+
   function clearFrom(level){
     for(let i=level;i<4;i++){ clear(G.layers.cols[i]); G.colsNodes[i]=[]; }
     if(level<=1) clear(G.layers.links[0]);
@@ -66,11 +53,18 @@ const SiteGraph = (() => {
     if(level<=3) clear(G.layers.links[2]);
   }
 
-  /* ====== Dibujo ====== */
-  function drawNode({level,x,y,w,h,title,sub,onClick,delay=0}){
+  /* ===== Dibujo ===== */
+  function nodeCenter(box){ return { cx: box.x + box.w/2, cy: box.y + box.h/2 }; }
+
+  function drawNode({level,x,y,w,h,title,sub,onClick,enterFrom,delay=0}){
     const g = document.createElementNS(NS,'g');
     g.classList.add('node'); g.dataset.lvl=String(level);
-    g.setAttribute('transform', `translate(${x},${y})`);
+
+    // Posición inicial (si hay animación radial)
+    const startX = enterFrom?.x ?? x;
+    const startY = enterFrom?.y ?? y;
+    g.setAttribute('transform', `translate(${startX},${startY})`);
+    if (enterFrom) g.classList.add('moving'); // habilita transición de transform
 
     g.addEventListener('mouseenter', ()=> g.classList.add('hovered'));
     g.addEventListener('mouseleave', ()=> g.classList.remove('hovered'));
@@ -92,7 +86,6 @@ const SiteGraph = (() => {
       inner.appendChild(s);
     }
 
-    // badge nivel
     const bkg = document.createElementNS(NS,'rect');
     bkg.setAttribute('x', w-34); bkg.setAttribute('y', 8);
     bkg.setAttribute('width', 22); bkg.setAttribute('height', 16);
@@ -105,7 +98,15 @@ const SiteGraph = (() => {
     inner.appendChild(bt);
 
     G.layers.cols[level].appendChild(g);
-    requestAnimationFrame(()=> setTimeout(()=> g.classList.add('is-in'), delay));
+
+    // Aparición
+    requestAnimationFrame(()=>{
+      setTimeout(()=>{
+        g.classList.add('is-in');
+        if (enterFrom){ g.setAttribute('transform', `translate(${x},${y})`); }
+      }, delay);
+    });
+
     return {x,y,w,h, el:g};
   }
 
@@ -121,7 +122,6 @@ const SiteGraph = (() => {
     return path;
   }
 
-  // layout vertical centrado por columna
   function layoutY(count){
     const H = G.svg.getBoundingClientRect().height || 640;
     const total = count*G.nodeH + Math.max(0,(count-1))*G.vGap;
@@ -129,7 +129,44 @@ const SiteGraph = (() => {
     return ix => y0 + ix*(G.nodeH+G.vGap);
   }
 
-  /* ====== Render por niveles ====== */
+  /* ===== Atenuación / foco de ruta ===== */
+  function clearDimAndFocus(){
+    G.root.querySelectorAll('.dim-node').forEach(n=>n.classList.remove('dim-node'));
+    G.root.querySelectorAll('.dim-link').forEach(n=>n.classList.remove('dim-link'));
+    G.root.querySelectorAll('.node.focus').forEach(n=>n.classList.remove('focus'));
+  }
+
+  function applyFocus(level){
+    // nivel activo: 0/1/2 (+ sus hijos)
+    clearDimAndFocus();
+
+    // Recolecta elementos activos
+    const actNodes = [];
+    const actLinks = [];
+
+    if (G.state.sel0!=null){
+      const n0 = G.colsNodes[0][G.state.sel0];
+      if (n0){ actNodes.push(n0.el); n0.el.classList.add('focus'); }
+    }
+    if (G.state.sel1!=null){
+      const n1 = G.colsNodes[1][G.state.sel1];
+      if (n1){ actNodes.push(n1.el); n1.el.classList.add('focus'); if (n1._link) actLinks.push(n1._link); }
+    }
+    if (G.state.sel2!=null){
+      const n2 = G.colsNodes[2][G.state.sel2];
+      if (n2){ actNodes.push(n2.el); n2.el.classList.add('focus'); if (n2._link) actLinks.push(n2._link); }
+    }
+    // hijos de último nivel abierto
+    if (level===1 && G.colsNodes[1]) G.colsNodes[1].forEach(n=>n?.el && actNodes.push(n.el));
+    if (level===2 && G.colsNodes[2]) G.colsNodes[2].forEach(n=>n?.el && actNodes.push(n.el));
+    if (level===3 && G.colsNodes[3]) G.colsNodes[3].forEach(n=>n?.el && actNodes.push(n.el));
+
+    // Atenúa el resto
+    G.root.querySelectorAll('.node').forEach(n=>{ if(!actNodes.includes(n)) n.classList.add('dim-node'); });
+    G.root.querySelectorAll('.link').forEach(l=>{ if(!actLinks.includes(l)) l.classList.add('dim-link'); });
+  }
+
+  /* ===== Render por niveles (con radial) ===== */
   function renderL0(){
     clearFrom(0);
     if(!G.TREE?.length) return;
@@ -138,7 +175,7 @@ const SiteGraph = (() => {
     G.colsNodes[0] = roots.map((txt,i)=>{
       return drawNode({
         level:0, x:G.colX[0], y:yAt(i), w:G.nodeW[0], h:G.nodeH, title:txt,
-        onClick:()=>{ G.state.sel0=i; G.state.sel1=null; G.state.sel2=null; updateBreadcrumb(); renderFrom(1); },
+        onClick:()=>{ G.state.sel0=i; G.state.sel1=null; G.state.sel2=null; updateBreadcrumb(); renderFrom(1); applyFocus(1); },
         delay:40+i*40
       });
     });
@@ -150,13 +187,16 @@ const SiteGraph = (() => {
     const areas = (G.TREE[G.state.sel0].areas||[]).map(a=>a.nombre);
     const yAt = layoutY(areas.length);
     const left = G.colsNodes[0][G.state.sel0];
+    const origin = nodeCenter(left);
+
     G.colsNodes[1] = areas.map((txt,i)=>{
       const box = drawNode({
         level:1, x:G.colX[1], y:yAt(i), w:G.nodeW[1], h:G.nodeH, title:txt,
-        onClick:()=>{ G.state.sel1=i; G.state.sel2=null; updateBreadcrumb(); renderFrom(2); },
+        enterFrom: { x: origin.cx - G.nodeW[1]/2, y: origin.cy - G.nodeH/2 },
+        onClick:()=>{ G.state.sel1=i; G.state.sel2=null; updateBreadcrumb(); renderFrom(2); applyFocus(2); },
         delay:60+i*40
       });
-      box._link = drawLink(left, box, 1, 60+i*40);
+      box._link = drawLink(left, box, 1, 80+i*40);
       return box;
     });
   }
@@ -167,13 +207,16 @@ const SiteGraph = (() => {
     const subs = (G.TREE[G.state.sel0].areas[G.state.sel1].subcarpetas||[]);
     const yAt = layoutY(subs.length);
     const left = G.colsNodes[1][G.state.sel1];
+    const origin = nodeCenter(left);
+
     G.colsNodes[2] = subs.map((txt,i)=>{
       const box = drawNode({
         level:2, x:G.colX[2], y:yAt(i), w:G.nodeW[2], h:G.nodeH, title:txt,
-        onClick:()=>{ G.state.sel2=i; updateBreadcrumb(); renderFrom(3); },
+        enterFrom: { x: origin.cx - G.nodeW[2]/2, y: origin.cy - G.nodeH/2 },
+        onClick:()=>{ G.state.sel2=i; updateBreadcrumb(); renderFrom(3); applyFocus(3); },
         delay:70+i*35
       });
-      box._link = drawLink(left, box, 2, 70+i*35);
+      box._link = drawLink(left, box, 2, 90+i*35);
       return box;
     });
   }
@@ -185,13 +228,16 @@ const SiteGraph = (() => {
     const items = (window.GRAPH_MAKE_SIX ? window.GRAPH_MAKE_SIX(subs[G.state.sel2]) : []);
     const yAt = layoutY(items.length);
     const left = G.colsNodes[2][G.state.sel2];
+    const origin = nodeCenter(left);
+
     G.colsNodes[3] = items.map((txt,i)=>{
       const box = drawNode({
         level:3, x:G.colX[3], y:yAt(i), w:G.nodeW[3], h:G.nodeH, title:txt, sub:"↗",
+        enterFrom: { x: origin.cx - G.nodeW[3]/2, y: origin.cy - G.nodeH/2 },
         onClick:()=>{/* futuro: abrir enlace */},
         delay:80+i*30
       });
-      box._link = drawLink(left, box, 3, 80+i*30);
+      box._link = drawLink(left, box, 3, 100+i*30);
       return box;
     });
   }
@@ -212,17 +258,18 @@ const SiteGraph = (() => {
     setupGlow();
     ensureAmbientParticles();
     updateBreadcrumb();
+    applyFocus(0);
   }
 
-  /* ====== Breadcrumb (opcional) ====== */
+  /* ===== Breadcrumb ===== */
   function updateBreadcrumb(){
     if(!G.bcEl) return;
     const parts=[];
-    if(G.state.sel0!=null) parts.push({t:G.TREE[G.state.sel0].raiz, cb:()=>{G.state.sel1=null; G.state.sel2=null; renderFrom(1);} });
-    if(G.state.sel1!=null) parts.push({t:G.TREE[G.state.sel0].areas[G.state.sel1].nombre, cb:()=>{G.state.sel2=null; renderFrom(2);} });
+    if(G.state.sel0!=null) parts.push({t:G.TREE[G.state.sel0].raiz, cb:()=>{G.state.sel1=null; G.state.sel2=null; renderFrom(1); updateBreadcrumb(); applyFocus(1);} });
+    if(G.state.sel1!=null) parts.push({t:G.TREE[G.state.sel0].areas[G.state.sel1].nombre, cb:()=>{G.state.sel2=null; renderFrom(2); updateBreadcrumb(); applyFocus(2);} });
     if(G.state.sel2!=null){
       const name = G.TREE[G.state.sel0].areas[G.state.sel1].subcarpetas[G.state.sel2];
-      parts.push({t:name, cb:()=>{ renderFrom(3);} });
+      parts.push({t:name, cb:()=>{ renderFrom(3); updateBreadcrumb(); applyFocus(3);} });
     }
 
     G.bcEl.innerHTML = '';
@@ -237,7 +284,7 @@ const SiteGraph = (() => {
     });
   }
 
-  /* ====== Glow cursor ====== */
+  /* ===== Glow cursor ===== */
   function setupGlow(){
     const defs = document.createElementNS(NS,'defs');
     const grad = document.createElementNS(NS,'radialGradient');
@@ -260,20 +307,18 @@ const SiteGraph = (() => {
     G.stage.addEventListener('mouseleave', ()=> c.setAttribute('opacity','0'));
   }
 
-  /* ====== Partículas ambientales (canvas) ====== */
+  /* ===== Partículas ambientales ===== */
   function ensureAmbientParticles(){
     if (!G.stage || G._ambient) return;
 
     const cvs = document.createElement('canvas');
     cvs.className = 'ambient-canvas';
+    cvs.style.position='absolute'; cvs.style.inset='0';
+    cvs.style.width='100%'; cvs.style.height='100%'; cvs.style.display='block';
     G.stage.prepend(cvs);
     const ctx = cvs.getContext('2d');
 
-    const P = {
-      w: 0, h: 0, dpr: Math.max(1, Math.min(2, window.devicePixelRatio || 1)),
-      pts: [],
-      tick: 0
-    };
+    const P = { w:0, h:0, dpr: Math.max(1, Math.min(2, window.devicePixelRatio || 1)), pts:[], tick:0 };
 
     function resize(){
       const r = G.stage.getBoundingClientRect();
@@ -282,11 +327,9 @@ const SiteGraph = (() => {
       cvs.width = Math.floor(P.w * P.dpr);
       cvs.height = Math.floor(P.h * P.dpr);
       ctx.setTransform(P.dpr, 0, 0, P.dpr, 0, 0);
-      // densidad moderada
       const count = Math.round((P.w * P.h) / 24000);
       P.pts = Array.from({length: count}, ()=>spawn());
     }
-
     function spawn(){
       return {
         x: Math.random()*P.w,
@@ -298,21 +341,17 @@ const SiteGraph = (() => {
         c: (Math.random()<0.5) ? 'rgba(255,159,26,' : 'rgba(143,214,255,'
       };
     }
-
     function step(){
       ctx.clearRect(0,0,P.w,P.h);
       P.tick++;
-
       for (const p of P.pts){
         const wob = Math.sin((P.tick/120) + p.r) * 0.15;
         p.x += p.vx * (0.6 + wob);
         p.y += p.vy * (0.6 + wob);
-
         if (p.x < -8) p.x = P.w+8;
         if (p.x > P.w+8) p.x = -8;
         if (p.y < -8) p.y = P.h+8;
         if (p.y > P.h+8) p.y = -8;
-
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
         ctx.fillStyle = p.c + p.a + ')';
@@ -320,20 +359,17 @@ const SiteGraph = (() => {
       }
       requestAnimationFrame(step);
     }
-
     window.addEventListener('resize', resize);
-    resize();
-    step();
-
+    resize(); step();
     G._ambient = { cvs, ctx, resize };
   }
 
-  /* ====== Pan/Zoom manual ====== */
+  /* ===== Pan/Zoom manual existente (sin auto-zoom) ===== */
   function enablePanZoom(){
     let dragging=false, start, startTx, startTy;
 
     G.svg.addEventListener('mousedown', (e)=>{
-      if(e.target.closest('.node')) return; // evita empezar a arrastrar sobre nodos
+      if(e.target.closest('.node')) return;
       dragging=true; G.stage.classList.add('is-panning');
       start = screenToRoot(e.clientX, e.clientY); startTx=G.tx; startTy=G.ty; e.preventDefault();
     });
@@ -362,21 +398,20 @@ const SiteGraph = (() => {
       G.scale = ns; applyTransform();
     }, { passive:false });
 
-    // reset manual con doble clic
     G.stage.addEventListener('dblclick', ()=>{ G.scale=1; G.tx=0; G.ty=0; applyTransform(); });
   }
 
-  /* ====== API ====== */
+  /* ===== API ===== */
   function init({ tree, stageId, svgId, rootId } = {}){
     G.TREE = tree || window.GRAPH_TREE || [];
     const _stage = stageId || 'graphStage';
-    const _svg = svgId || 'graphSvg';
-    const _root = rootId || 'graphRoot';
+    const _svg   = svgId   || 'graphSvg';
+    const _root  = rootId  || 'graphRoot';
 
     G.stage = document.getElementById(_stage);
     G.svg   = document.getElementById(_svg);
     G.root  = document.getElementById(_root);
-    G.bcEl  = document.getElementById('graphBc'); // opcional
+    G.bcEl  = document.getElementById('graphBc');
 
     if(!G.stage || !G.svg || !G.root) return;
     renderInit(); enablePanZoom();
