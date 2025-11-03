@@ -243,10 +243,6 @@
       </svg>
     </div>
     <!-- NUEVO: Mapa canvas por fuerzas -->
-    <div id="forceGraph" class="force-graph-stage" aria-label="Mapa visual interactivo (canvas)">
-      <canvas id="forceCanvas"></canvas>
-      <div class="fg-hint">Arrastra para mover • Rueda para zoom • Doble clic para reset</div>
-    </div>
 
     <div class="graph-legend">
       <span class="dot lvl0"></span> Nivel 0
@@ -312,7 +308,6 @@
 <!-- Graph -->
 <script src="assets/js/graph-data.js"></script> <!-- 1️⃣ datos base -->
 <script src="assets/js/graph.js"></script>       <!-- 2️⃣ mapa SVG clásico -->
-<script src="assets/js/graph-force.js" defer></script> <!-- 3️⃣ mapa canvas con fuerzas -->
   <!-- Año en footer (pequeño utilitario) -->
   <script>
     document.getElementById('y').textContent = new Date().getFullYear();
