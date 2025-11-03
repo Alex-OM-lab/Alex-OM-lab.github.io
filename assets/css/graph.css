@@ -35,8 +35,16 @@
 .node[data-lvl="1"] rect{ fill:rgba(255,215,154,.12); stroke:rgba(255,215,154,.5) }
 .node[data-lvl="2"] rect{ fill:rgba(143,214,255,.10); stroke:rgba(143,214,255,.45) }
 .node[data-lvl="3"] rect{ fill:rgba(155,226,176,.10); stroke:rgba(155,226,176,.4) }
+
 .node .title{ fill:#e9eef6; font-weight:800; font-size:14px; }
 .node .sub{ fill:#a8b2c2; font-size:12.5px; }
+
+/* badge (número de nivel, lo pinta graph.js) */
+.node .badge{
+  fill:#07101a; font-weight:900; font-size:11px;
+  text-anchor:middle; dominant-baseline:middle;
+  pointer-events:none;
+}
 
 /* animaciones de aparición (solo fade para no pisar el transform SVG) */
 .node{ opacity:0; transition:opacity .35s ease; }
@@ -65,3 +73,23 @@
 /* Glow suave en hover de nodos */
 .node rect{ transition:filter .2s ease, stroke-width .18s ease; }
 .node.hovered rect{ filter:drop-shadow(0 0 14px rgba(255,159,26,.18)); stroke-width:1.6; }
+
+/* focus accesible si algún día se navega con teclado y hacemos nodos focusables */
+.node:focus-visible rect{
+  outline:2px solid transparent;
+  stroke-width:1.9;
+}
+
+/* responsive altura del escenario */
+@media (max-width: 960px){
+  .graph-stage{ height:520px; }
+}
+@media (max-width: 640px){
+  .graph-stage{ height:420px; }
+}
+
+/* respeta reduce-motion */
+@media (prefers-reduced-motion: reduce){
+  .link.draw{ animation:none; stroke-dasharray:0; stroke-dashoffset:0; }
+  .node, .node .node-in{ transition:none; }
+}
