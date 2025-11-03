@@ -94,7 +94,6 @@
     }
     .skill-btn:hover{transform:translateY(-6px);box-shadow:0 12px 28px rgba(0,0,0,.6);background:rgba(255,159,26,.12);border-color:rgba(255,159,26,.42)}
     .skill-btn:active{transform:translateY(-2px)}
-    /* Responsive de las nuevas secciones */
     @media (max-width:980px){
       .grid-3{grid-template-columns:1fr}
       .skills-grid{grid-template-columns:1fr}
@@ -227,31 +226,31 @@
       </div>
     </section>
 
-
     <!-- ====================== MAPA VISUAL (GRAPH) ================== -->
-<section id="site-graph" class="graph reveal" data-reveal="fade-up" aria-labelledby="site-graph-title">
-  <div class="card">
-    <div class="graph-head">
-      <h2 id="site-graph-title" class="section-title">Mapa visual</h2>
-      <p class="kicker">Esquema interactivo — haz clic para desplegar niveles.</p>
-    </div>
+    <section id="site-graph" class="graph reveal" data-reveal="fade-up" aria-labelledby="site-graph-title">
+      <div class="card">
+        <div class="graph-head">
+          <h2 id="site-graph-title" class="section-title">Mapa visual</h2>
+          <p class="kicker">Esquema interactivo — haz clic para desplegar niveles.</p>
+        </div>
 
-    <!-- Mapa SVG antiguo -->
-    <div class="graph-stage" id="graphStage">
-      <svg id="graphSvg" class="svgroot" viewBox="0 0 1600 900">
-        <g id="graphRoot"></g>
-      </svg>
-    </div>
-    <!-- NUEVO: Mapa canvas por fuerzas -->
+        <!-- Mapa SVG con breadcrumb (añadido) -->
+        <div class="graph-stage" id="graphStage">
+          <div id="graphBc" class="graph-bc"></div> <!-- breadcrumb opcional -->
+          <svg id="graphSvg" class="svgroot" viewBox="0 0 1600 900">
+            <g id="graphRoot"></g>
+          </svg>
+        </div>
 
-    <div class="graph-legend">
-      <span class="dot lvl0"></span> Nivel 0
-      <span class="dot lvl1"></span> Nivel 1
-      <span class="dot lvl2"></span> Nivel 2
-      <span class="dot lvl3"></span> Nivel 3
-    </div>
-  </div>
-</section>
+        <div class="graph-legend">
+          <span class="dot lvl0"></span> Nivel 0
+          <span class="dot lvl1"></span> Nivel 1
+          <span class="dot lvl2"></span> Nivel 2
+          <span class="dot lvl3"></span> Nivel 3
+        </div>
+      </div>
+    </section>
+
     <!-- ===================== CARRUSEL DE CUBOS ===================== -->
     <section id="news-cubes" class="reveal" data-reveal="fade-up" aria-labelledby="news-cubes-title">
       <h2 id="news-cubes-title" class="section-title">Lecturas y artículos</h2>
@@ -272,6 +271,7 @@
         <div class="cube-dots" id="cubeDots" aria-hidden="true"></div>
       </div>
     </section>
+
     <!-- =========================== CONTACTO ======================== -->
     <section id="contact" class="reveal" data-reveal="fade-up" aria-labelledby="contact-title">
       <h2 id="contact-title" class="section-title">Contacto</h2>
@@ -305,10 +305,11 @@
   <!-- Cubes -->
   <script src="assets/js/cubes.js"></script>
 
-<!-- Graph -->
-<script src="assets/js/graph-data.js"></script> <!-- 1️⃣ datos base -->
-<script src="assets/js/graph.js"></script>       <!-- 2️⃣ mapa SVG clásico -->
-  <!-- Año en footer (pequeño utilitario) -->
+  <!-- Graph -->
+  <script src="assets/js/graph-data.js"></script> <!-- 1️⃣ datos base -->
+  <script src="assets/js/graph.js"></script>       <!-- 2️⃣ mapa SVG clásico+breadcrumb -->
+
+  <!-- Año en footer -->
   <script>
     document.getElementById('y').textContent = new Date().getFullYear();
   </script>
