@@ -1,95 +1,107 @@
 
-    /*  articulos se mueven de izquierda a derecha ============================================================
-       ========  CARRUSEL DE CUBOS (placeholder)  =================
-       Mantiene la estética y variables. 5 visibles en desktop.
-       ============================================================ */
-    .cube-carousel{
-      position:relative;
-      overflow:hidden;
-      border-radius:var(--radius);
-      background:linear-gradient(180deg,color-mix(in oklab,var(--panel) 92%,#0f1422 8%),var(--panel));
-      border:1px solid rgba(255,255,255,.06);
-      padding:14px;
-    }
-    .cube-head{
-      display:flex; align-items:baseline; justify-content:center; gap:12px; /* centrado */
-      margin-bottom:10px;
-      text-align:center;
-    }
-    .cube-head h3{margin:0; font-size:clamp(20px,2.2vw,26px)}
-    .cube-track{
-      display:flex;
-      gap:14px;
-      will-change: transform;
-      transition: transform .6s cubic-bezier(.22,.61,.36,1);
-    }
-    .cube{
-      flex:0 0 calc((100% - 14px*4)/5); /* 5 visibles con 4 gaps */
-      background:#0c1323;
-      border:1px solid rgba(255,255,255,.08);
-      border-radius:12px;
-      overflow:hidden;
-      box-shadow:0 6px 18px rgba(0,0,0,.22);
-      display:flex; flex-direction:column;
-    }
-    .cube:hover{ border-color:rgba(255,159,26,.35); box-shadow:0 10px 28px rgba(255,159,26,.12); transform:translateY(-1px); transition:transform .12s ease }
-    .cube-media{
-      width:100%; aspect-ratio:16/10; background:#0a1020; position:relative;
-      border-bottom:1px solid rgba(255,255,255,.06);
-    }
-    .cube-media img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover}
-    .cube-body{padding:10px 12px 12px; display:flex; flex-direction:column; gap:8px}
-    .cube-title{margin:0; font-weight:800; font-size:15.5px; color:var(--text)}
-    .cube-meta{font-size:12.5px; color:var(--muted)}
-    .cube-link{
-      margin-top:auto;
-      align-self:flex-start;
-      text-decoration:none; font-weight:700; font-size:13.5px;
-      color:#ffe2b0; padding:6px 10px; border-radius:999px;
-      background:rgba(255,159,26,.12); border:1px solid rgba(255,159,26,.35);
-      transition:background .18s,border-color .18s,transform .12s;
-    }
-    .cube-link:hover{ background:rgba(255,159,26,.18); border-color:rgba(255,159,26,.6); transform:translateY(-1px) }
+/*  ========  CARRUSEL DE CUBOS (grid deslizante)  =================
+    Mantiene la estética y variables. 5 visibles en desktop.
+    Flechas en hover, dots con glow, transiciones suaves.
+   ================================================================ */
 
-    /* Flechas */
-    .cube-nav{
-      position:absolute; inset:0; pointer-events:none;
-    }
-    .cube-btn{
-      position:absolute; top:50%; translate:0 -50%;
-      width:42px; height:42px; border-radius:999px;
-      background:rgba(17,26,45,.75);
-      border:1px solid rgba(255,255,255,.08);
-      display:flex; align-items:center; justify-content:center;
-      font-weight:900; color:#ffd79a; cursor:pointer;
-      opacity:0; pointer-events:none;
-      transition:opacity .18s ease, transform .12s ease, background .18s ease, border-color .18s ease;
-      box-shadow:0 4px 16px rgba(0,0,0,.35);
-    }
-    .cube-btn:hover{ transform:translateY(-1px); background:rgba(17,26,45,.9); border-color:rgba(255,159,26,.35) }
-    .cube-btn.prev{ left:6px }
-    .cube-btn.next{ right:6px }
-    .cube-carousel:hover .cube-btn,
-    .cube-carousel:has(.cube-btn:focus-visible){ opacity:1; pointer-events:auto }
+.cube-carousel{
+  position:relative;
+  overflow:hidden;
+  border-radius:var(--radius);
+  background:linear-gradient(180deg,color-mix(in oklab,var(--panel) 92%,#0f1422 8%),var(--panel));
+  border:1px solid rgba(255,255,255,.06);
+  padding:14px;
+}
+.cube-head{
+  display:flex; align-items:baseline; justify-content:center; gap:12px;
+  margin-bottom:10px; text-align:center;
+}
+.cube-head h3{margin:0; font-size:clamp(20px,2.2vw,26px)}
 
-    /* Indicadores */
-    .cube-dots{ display:flex; gap:6px; justify-content:center; margin-top:12px }
-    .cube-dot{
-      width:7px; height:7px; border-radius:999px;
-      background:rgba(255,255,255,.22);
-      transition:transform .12s, background .18s, box-shadow .18s;
-    }
-    .cube-dot.is-active{
-      background:var(--accent);
-      box-shadow:0 0 10px rgba(255,159,26,.6);
-      transform:scale(1.25);
-    }
-    /* Responsive: 3 y 2/1 visibles */
-    @media (max-width:1020px){ .cube{ flex-basis:calc((100% - 14px*2)/3) } }
-    @media (max-width:720px) { .cube{ flex-basis:calc((100% - 14px)/2) } }
-    @media (max-width:520px) { .cube{ flex-basis:100% } }
+/* Viewport + track */
+.cube-viewport{ overflow:hidden; }
+.cube-track{
+  display:flex;
+  gap:14px;
+  will-change: transform;
+  transition: transform .6s cubic-bezier(.22,.61,.36,1);
+  padding-bottom:2px; /* evita recorte de sombra */
+}
 
-    /* Reduce motion: desactivar autoplay */
-    @media (prefers-reduced-motion: reduce){
-      .cube-track{ transition:none }
-    }
+/* Ítems */
+.cube{
+  flex:0 0 calc((100% - 14px*4)/5); /* 5 visibles con 4 gaps */
+  background:#0c1323;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:12px;
+  overflow:hidden;
+  box-shadow:0 6px 18px rgba(0,0,0,.22);
+  display:flex; flex-direction:column;
+}
+.cube:hover{
+  border-color:rgba(255,159,26,.35);
+  box-shadow:0 10px 28px rgba(255,159,26,.12);
+  transform:translateY(-1px);
+  transition:transform .12s ease;
+}
+.cube-media{
+  width:100%; aspect-ratio:16/10; background:#0a1020; position:relative;
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+.cube-media img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover}
+.cube-body{padding:10px 12px 12px; display:flex; flex-direction:column; gap:8px}
+.cube-title{margin:0; font-weight:800; font-size:15.5px; color:var(--text)}
+.cube-meta{font-size:12.5px; color:var(--muted)}
+.cube-link{
+  margin-top:auto;
+  align-self:flex-start;
+  text-decoration:none; font-weight:700; font-size:13.5px;
+  color:#ffe2b0; padding:6px 10px; border-radius:999px;
+  background:rgba(255,159,26,.12); border:1px solid rgba(255,159,26,.35);
+  transition:background .18s,border-color .18s,transform .12s;
+}
+.cube-link:hover{ background:rgba(255,159,26,.18); border-color:rgba(255,159,26,.6); transform:translateY(-1px) }
+
+/* Flechas */
+.cube-nav{
+  position:absolute; inset:0; pointer-events:none;
+}
+.cube-btn{
+  position:absolute; top:50%; translate:0 -50%;
+  width:42px; height:42px; border-radius:999px;
+  background:rgba(17,26,45,.75);
+  border:1px solid rgba(255,255,255,.08);
+  display:flex; align-items:center; justify-content:center;
+  font-weight:900; color:#ffd79a; cursor:pointer;
+  opacity:0; pointer-events:none;
+  transition:opacity .18s ease, transform .12s ease, background .18s ease, border-color .18s ease;
+  box-shadow:0 4px 16px rgba(0,0,0,.35);
+}
+.cube-btn:hover{ transform:translateY(-1px); background:rgba(17,26,45,.9); border-color:rgba(255,159,26,.35) }
+.cube-btn.prev{ left:6px }
+.cube-btn.next{ right:6px }
+.cube-carousel:hover .cube-btn,
+.cube-carousel:has(.cube-btn:focus-visible){ opacity:1; pointer-events:auto }
+
+/* Indicadores */
+.cube-dots{ display:flex; gap:6px; justify-content:center; margin-top:12px }
+.cube-dot{
+  width:7px; height:7px; border-radius:999px;
+  background:rgba(255,255,255,.22);
+  transition:transform .12s, background .18s, box-shadow .18s;
+}
+.cube-dot.is-active{
+  background:var(--accent);
+  box-shadow:0 0 10px rgba(255,159,26,.6);
+  transform:scale(1.25);
+}
+
+/* Responsivo: 3 y 2/1 visibles (coincide con JS) */
+@media (max-width:1020px){ .cube{ flex-basis:calc((100% - 14px*2)/3) } }
+@media (max-width:720px) { .cube{ flex-basis:calc((100% - 14px)/2) } }
+@media (max-width:520px) { .cube{ flex-basis:100% } }
+
+/* Reduce motion: desactivar autoplay */
+@media (prefers-reduced-motion: reduce){
+  .cube-track{ transition:none }
+}
