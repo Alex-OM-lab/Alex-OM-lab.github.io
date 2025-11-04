@@ -1,7 +1,5 @@
 /*  ========  CARRUSEL DE CUBOS (grid deslizante)  =================
-    Mantiene la estética y variables. 5 visibles en desktop.
-    Flechas SIEMPRE visibles con naranja + glow, dots con glow,
-    transiciones suaves. Sin tocar el resto del sitio.
+    Ajuste: flechas dentro del panel, sin tapar artículos.
    ================================================================ */
 
 .cube-carousel{
@@ -18,11 +16,10 @@
 }
 .cube-head h3{margin:0; font-size:clamp(20px,2.2vw,26px)}
 
-/* Viewport + track
-   👉 padding lateral para dejar aire a las flechas y que no tapen las tarjetas */
+/* Viewport + track */
 .cube-viewport{
-  overflow:hidden;
-  padding:0 58px; /* ← NUEVO: espacio a izquierda/derecha para despejar el 1º y 5º ítem */
+  overflow:visible;              /* ← permite ver el brillo completo de las flechas */
+  padding:0 52px;                /* ← espacio lateral para las flechas */
 }
 .cube-track{
   display:flex;
@@ -66,7 +63,7 @@
 }
 .cube-link:hover{ background:rgba(255,159,26,.18); border-color:rgba(255,159,26,.6); transform:translateY(-1px) }
 
-/* Flechas SIEMPRE visibles, estilo naranja */
+/* Flechas */
 .cube-nav{ position:absolute; inset:0; pointer-events:none; }
 .cube-btn{
   position:absolute; top:58%;
@@ -81,11 +78,12 @@
   box-shadow:0 0 14px rgba(255,159,26,.25), 0 6px 18px rgba(0,0,0,.35);
   transition:transform .12s ease, background .18s ease, box-shadow .18s ease, border-color .18s ease;
   backdrop-filter: blur(4px);
-  z-index:2;
+  z-index:3;
 }
-/* Las acercamos un pelín al borde, pero ahora ya no tapan nada porque hay padding en el viewport */
-.cube-btn.prev{ left:6px }
-.cube-btn.next{ right:6px }
+
+/* centradas pero dentro del marco */
+.cube-btn.prev{ left:12px; }  /* ← más hacia el borde, sin tapar tarjetas */
+.cube-btn.next{ right:12px; } /* ← corregido: ahora no se sale del panel */
 
 .cube-btn:hover{
   transform:translateY(-1px) scale(1.04);
@@ -111,21 +109,21 @@
   transform:scale(1.25);
 }
 
-/* Responsivo: 3 y 2/1 visibles (coincide con JS) */
+/* Responsivo */
 @media (max-width:1020px){
-  .cube-viewport{ padding:0 52px } /* un poco menos en tablet */
+  .cube-viewport{ padding:0 46px }
   .cube{ flex-basis:calc((100% - 14px*2)/3) }
 }
 @media (max-width:720px){
-  .cube-viewport{ padding:0 46px }
+  .cube-viewport{ padding:0 40px }
   .cube{ flex-basis:calc((100% - 14px)/2) }
 }
 @media (max-width:520px){
-  .cube-viewport{ padding:0 40px }
+  .cube-viewport{ padding:0 36px }
   .cube{ flex-basis:100% }
 }
 
-/* Reduce motion: desactivar autoplay */
+/* Reduce motion */
 @media (prefers-reduced-motion: reduce){
   .cube-track{ transition:none }
 }
