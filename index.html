@@ -213,30 +213,32 @@
         <p style="margin-top:8px">Cuando publico artículos o notas, enlazo material de soporte y dejo un resumen con <strong>conclusiones accionables</strong>.</p>
       </div>
     </section>
-    <!-- ====================== MAPA VISUAL (GRAPH) ================== -->
-    <section id="site-graph" class="graph reveal" data-reveal="fade-up" aria-labelledby="site-graph-title">
-      <div class="card">
-        <div class="graph-head">
-          <h2 id="site-graph-title" class="section-title">Mapa visual</h2>
-          <p class="kicker">Esquema interactivo — haz clic para desplegar niveles.</p>
-        </div>
-
-        <!-- Mapa SVG con breadcrumb (añadido) -->
-        <div class="graph-stage" id="graphStage">
-          <div id="graphBc" class="graph-bc"></div> <!-- breadcrumb opcional -->
-          <svg id="graphSvg" class="svgroot" viewBox="0 0 1600 900">
-            <g id="graphRoot"></g>
-          </svg>
-        </div>
-
-        <div class="graph-legend">
-          <span class="dot lvl0"></span> Nivel 0
-          <span class="dot lvl1"></span> Nivel 1
-          <span class="dot lvl2"></span> Nivel 2
-          <span class="dot lvl3"></span> Nivel 3
-        </div>
+  <!-- ====================== MAPA VISUAL (GRAPH) ================== -->
+<section id="site-graph" class="graph reveal" data-reveal="fade-up" aria-labelledby="site-graph-title">
+  <div class="card">
+    <div class="graph-head">
+      <h2 id="site-graph-title" class="section-title">Mapa visual</h2>
+      <div style="display:flex;gap:12px;align-items:center">
+        <p class="kicker" style="margin:0">Esquema interactivo — haz clic para desplegar niveles.</p>
+        <button id="graphThemeToggle" class="theme-toggle" type="button" aria-label="Cambiar tema">Modo técnico</button>
       </div>
-    </section>
+    </div>
+
+    <div class="graph-stage" id="graphStage">
+      <div id="graphBc" class="graph-bc"></div> <!-- breadcrumb opcional -->
+      <svg id="graphSvg" class="svgroot" viewBox="0 0 1600 900">
+        <g id="graphRoot"></g>
+      </svg>
+    </div>
+
+    <div class="graph-legend">
+      <span class="dot lvl0"></span> Nivel 0
+      <span class="dot lvl1"></span> Nivel 1
+      <span class="dot lvl2"></span> Nivel 2
+      <span class="dot lvl3"></span> Nivel 3
+    </div>
+  </div>
+</section>
 
     <!-- ===================== CARRUSEL DE CUBOS ===================== -->
     <section id="news-cubes" class="reveal" data-reveal="fade-up" aria-labelledby="news-cubes-title">
