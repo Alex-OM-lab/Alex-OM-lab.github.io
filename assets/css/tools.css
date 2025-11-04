@@ -2,135 +2,103 @@
    Herramientas y Lenguajes
    ========================= */
 
-/* ---- Paleta elegante (Oscuro + Ámbar) ---- */
-:root{
-  --btn-bg-dark: #0e1523;                 /* fondo del botón (oscuro)  */
-  --btn-bd-amber: rgba(255,159,26,.30);   /* borde ámbar               */
-  --btn-hover-wash: rgba(255,159,26,.10); /* leve baño en hover        */
-  --btn-text: #e9eef6;                    /* texto claro neutro        */
-
-  --title-amber: #ff9f1a;                 /* acento títulos sección */
-  --title-glow: rgba(255,159,26,.25);
-
-  --card-title: #f3f5f8;                  /* color de los títulos de tarjetas "Especialidades" */
-  --chip-orange-glow: rgba(255,159,26,.10);
-}
-
-/* ===== Cabezera de la sección ===== */
+/* Encabezado de sección (envuelve el H2 y la pista) */
 .tools-head{
-  display:flex; align-items:baseline; gap:12px; justify-content:space-between; margin-bottom:10px;
+  display:flex;align-items:baseline;gap:12px;justify-content:space-between;margin-bottom:10px
 }
 .tools-head .section-title{
-  margin:0;
-  color:var(--title-amber);
-  text-shadow:0 0 8px var(--title-glow);
+  margin:0;color:var(--accent);text-shadow:0 0 8px rgba(255,159,26,.25)
 }
+.tools-head .hint{margin:0;color:var(--muted);font-size:13.5px}
 
-/* ===== Grid / tarjetas ===== */
+/* Layout de 2 columnas */
+.tools-wrap{margin-top:6px}
 .tools-grid{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:18px;
-  align-items:stretch;
+  align-items:start;
 }
+
+/* Tarjetas (columna izquierda: herramientas / derecha: lenguajes) */
 .tools-card{
-  position:relative;
-  background:#111c28;
-  border:1px solid rgba(255,255,255,.08);
-  border-radius:14px;
-  padding:14px 16px;
-  display:flex;flex-direction:column;gap:10px;min-height:100%;flex:1;
+  background:linear-gradient(180deg,color-mix(in oklab,var(--panel) 94%,#0f1422 6%),var(--panel));
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:var(--radius);
+  padding:12px;
+  display:flex;flex-direction:column;gap:10px;
+  min-height:100%;
 }
 
-/* === Títulos de tarjeta: centrados, más grandes, color acorde a la web === */
+/* Título de cada tarjeta (centrado y un poco más grande) */
 .tools-card h3{
-  margin:0 0 8px 0;
-  font-size:17px;
-  font-weight:900;
+  margin:2px 0 8px 0;
+  font-size:16px;
+  color:#ffe2b0;
+  font-weight:800;
   text-align:center;
-  color:var(--card-title);
   letter-spacing:.2px;
-  text-shadow:0 0 10px rgba(255,255,255,.04);
 }
 
-/* Centrado visual de las listas dentro de cada tarjeta */
-.tools-list{
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-  align-items:center;               /* centra el contenido */
-}
-.tools-list .tool-btn{ max-width: 92%; } /* aire lateral y centrado */
+/* Lista vertical de elementos */
+.tools-list{display:flex;flex-direction:column;gap:8px}
 
 /* =========================
-   Ítems (botón pastilla)
+   Ítems (botón alargado)
+   – GRID con columna izquierda fija para alinear nombres
    ========================= */
+
+/* Ajusta aquí el “eje” común de inicio del texto (px) */
+.tools-card .tool-btn{ --left-slot: 92px; }
+
 .tool-btn{
   display:grid;
-  grid-template-columns:1fr auto 1fr; /* izq chips – nombre – der chips/medidor */
+  grid-template-columns: var(--left-slot, 92px) 1fr auto; /* izq chips – nombre – der chips/medidor */
   align-items:center;
   gap:10px;
   width:100%;
-  padding:10px 12px;
-
-  /* Estética */
-  background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(0,0,0,.20) 60%), var(--btn-bg-dark);
-  border:1px solid var(--btn-bd-amber);
   border-radius:12px;
-
-  box-shadow:
-    0 1px 0 rgba(255,255,255,.03) inset,
-    0 0 0 1px rgba(255,255,255,.04) inset,
-    0 6px 12px rgba(0,0,0,.25);
-  overflow:hidden;
-  cursor:pointer;
-
-  transition:
-    transform .14s ease,
-    box-shadow .18s ease,
-    background .18s ease,
-    border-color .18s ease,
-    color .18s ease;
+  padding:10px 12px;
+  padding-left:14px;                     /* un poco de aire extra a la izquierda */
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.03), rgba(0,0,0,.2) 60%),
+    rgba(17,26,45,.85);
+  border:1px solid rgba(255,159,26,.28);
+  transition:box-shadow .18s, border-color .18s, transform .12s, background .18s;
+  box-shadow:0 1px 0 rgba(255,255,255,.04) inset, 0 0 0 1px rgba(255,255,255,.05) inset, 0 6px 12px rgba(0,0,0,.25);
 }
 .tool-btn:hover{
-  transform:translateY(-2px);
-  background:
-    linear-gradient(180deg, rgba(255,255,255,.04), rgba(0,0,0,.18) 60%),
-    var(--btn-bg-dark);
-  border-color: rgba(255,159,26,.45);
-  box-shadow:
-    0 12px 28px rgba(0,0,0,.45),
-    0 0 0 1px rgba(255,255,255,.05) inset,
-    0 0 18px rgba(255,159,26,.18);
-}
-.tool-btn:active{
+  border-color:rgba(255,159,26,.55);
+  box-shadow:0 10px 24px rgba(255,159,26,.18), 0 0 0 1px rgba(255,255,255,.06) inset;
   transform:translateY(-1px);
-  box-shadow:
-    0 6px 16px rgba(0,0,0,.35) inset,
-    0 8px 18px rgba(0,0,0,.30);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.05), rgba(0,0,0,.18) 60%),
+    rgba(17,26,45,.92);
 }
 
-/* Nombre centrado – mismo color que títulos de las tarjetas de "Especialidades" */
-.tool-name{
-  font-weight:900; letter-spacing:.2px; text-align:center;
-  color:var(--card-title);
-  white-space:nowrap; justify-self:center;
-  text-shadow: 0 0 10px var(--chip-orange-glow);
-}
-
-/* Slots laterales */
+/* Slots laterales (se respetan los anchos para alinear el texto) */
 .tool-slot--left,
-.tool-slot--right{ display:inline-flex; align-items:center; gap:8px; min-width:0; }
+.tool-slot--right{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  min-width:0;
+}
+.tool-slot--left{ min-width: var(--left-slot, 92px); }
 
-/* En la columna de HERRAMIENTAS desplazamos un poco el contenido a la derecha */
-#toolsList .tool-btn{ padding-left: 20px; }
-#toolsList .tool-slot--left{ display:none; } /* chips OS a la derecha, como pediste anteriormente */
-#toolsList .tool-slot--right{ justify-self:end; }
-#langsList .tool-slot--right{ justify-self:end; }
+/* Nombre centrado en su celda (pero alineado al inicio visual común) */
+.tool-name{
+  color:#ffe2b0 !important;   /* pediste este color exacto */
+  font-weight:800;
+  font-size:14.5px;
+  text-align:left;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  justify-self:start;          /* clave para que respete la columna */
+}
 
-/* =========================
-   Chips SO (sin cambios)
-   ========================= */
+/* Chips genéricos */
 .badge{
   font-size:11px; font-weight:800;
   padding:4px 8px; border-radius:999px;
@@ -138,7 +106,14 @@
   background:rgba(143,214,255,.08);
   color:#cfe6ff;
 }
-.badge.os{ background:rgba(255,255,255,.06); border-color:rgba(255,255,255,.14); color:#e6edf3 }
+
+/* Chips de SO generados por JS:
+   <span class="badge os win|lnx|mul"></span> (contenido via ::before) */
+.badge.os{
+  background:rgba(255,255,255,.06);
+  border-color:rgba(255,255,255,.14);
+  color:#e6edf3;
+}
 .badge.os.win{ background:rgba(155,226,176,.08); border-color:rgba(155,226,176,.32); color:#dbffe6 }
 .badge.os.lnx{ background:rgba(143,214,255,.10); border-color:rgba(143,214,255,.35); color:#bfe6ff }
 .badge.os.mul{ background:rgba(255,215,154,.10); border-color:rgba(255,215,154,.35); color:#ffeacc }
@@ -146,40 +121,86 @@
 .badge.os.lnx::before{ content:"Linux"; }
 .badge.os.mul::before{ content:"Multi"; }
 
-/* =========================
-   Barras de nivel (3 segmentos) – sin cambios
-   ========================= */
-.level-bar{
-  display:flex; align-items:center; gap:4px;
-  background:rgba(255,255,255,.08);
-  border:1px solid rgba(255,255,255,.1);
-  border-radius:999px; padding:3px 6px; box-shadow:inset 0 0 6px rgba(0,0,0,.25);
-  width:140px; justify-content:space-between;
-}
-.bar-segment{ flex:1; height:6px; border-radius:999px; background:rgba(255,255,255,.15); transition:all .25s ease; }
-.bar-segment.active{
-  background: linear-gradient(90deg, var(--title-amber), #ffd79a);
-  box-shadow: 0 0 8px rgba(255,159,26,.45);
-}
+/* (Compat) si en algún sitio usas .badge.lnx/.win/.mul sin .os */
+.badge.lnx{ background:rgba(143,214,255,.10); border-color:rgba(143,214,255,.35); color:#bfe6ff }
+.badge.win{ background:rgba(155,226,176,.08); border-color:rgba(155,226,176,.32); color:#dbffe6 }
+.badge.mul{ background:rgba(255,215,154,.10); border-color:rgba(255,215,154,.35); color:#ffeacc }
 
 /* =========================
-   Paginador (sin cambios)
+   Nivel de dominio (3 segmentos)
    ========================= */
-.tools-pager.topright{
-  position:absolute; top:8px; right:12px; display:flex; align-items:center; gap:10px;
+.level{
+  display:inline-flex; align-items:center; gap:10px;
+}
+
+/* Etiqueta nivel (opcional) */
+.level-label{
+  font-size:11px; font-weight:900; color:#ffe2b0;
+  background:rgba(255,159,26,.12); border:1px solid rgba(255,159,26,.35);
+  padding:2px 8px; border-radius:999px;
+}
+
+/* Medidor 3 segmentos (se ve en tu captura) */
+.meter3{
+  display:inline-flex; align-items:center; gap:8px;
+}
+.meter3 .seg{
+  width:68px; height:8px; border-radius:999px;
+  background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.1);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
+}
+.meter3 .seg.on{
+  background:linear-gradient(90deg,var(--accent) 0%, #ffd79a 100%);
+  border-color:rgba(255,159,26,.45);
+  box-shadow:0 0 10px rgba(255,159,26,.25), inset 0 1px 0 rgba(255,255,255,.06);
+}
+
+/* Estados por data-level (bajo|medio|alto). El JS ya enciende los segs. */
+.tool-btn[data-level="bajo"]      .meter3 .seg:nth-child(-n+1){ box-shadow:0 0 10px rgba(255,159,26,.25), inset 0 1px 0 rgba(255,255,255,.06); background:linear-gradient(90deg,var(--accent) 0%, #ffd79a 100%); border-color:rgba(255,159,26,.45); }
+.tool-btn[data-level="medio"]     .meter3 .seg:nth-child(-n+2){ box-shadow:0 0 10px rgba(255,159,26,.25), inset 0 1px 0 rgba(255,255,255,.06); background:linear-gradient(90deg,var(--accent) 0%, #ffd79a 100%); border-color:rgba(255,159,26,.45); }
+.tool-btn[data-level="alto"]      .meter3 .seg:nth-child(-n+3){ box-shadow:0 0 10px rgba(255,159,26,.25), inset 0 1px 0 rgba(255,255,255,.06); background:linear-gradient(90deg,var(--accent) 0%, #ffd79a 100%); border-color:rgba(255,159,26,.45); }
+
+/* ---------- Pie nivelado (evitar “escalón” entre columnas) ---------- */
+.card-footer{
+  min-height:64px;              /* asegura la misma altura en ambas tarjetas */
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-top:6px;
+}
+
+/* ---------- Paginación (Herramientas) ---------- */
+.tools-pager{
+  display:flex; align-items:center; justify-content:center; gap:10px;
 }
 .tools-arrow{
-  width:30px; height:30px; border-radius:999px;
-  background:rgba(255,140,26,.14);
-  border:1px solid rgba(255,140,26,.65);
-  color:#ffe2b0;
-  display:grid; place-items:center; cursor:pointer;
-  transition:transform .1s, background .2s;
+  width:36px; height:36px; border-radius:999px;
+  background:rgba(255,159,26,.14);
+  border:1px solid rgba(255,159,26,.65);
+  color:#ffe2b0; font-weight:900; line-height:1;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer;
+  transition:transform .12s, background .18s, border-color .18s, box-shadow .18s;
+  box-shadow:0 0 10px rgba(255,159,26,.25);
 }
-.tools-arrow:hover{ transform:translateY(-1px); background:rgba(255,140,26,.25); }
+.tools-arrow:hover{ transform:translateY(-1px); background:rgba(255,159,26,.22); border-color:rgba(255,159,26,.9) }
+.tools-arrow:disabled{ opacity:.45; cursor:not-allowed; transform:none }
+
+.tools-dots{ display:flex; gap:6px; align-items:center; }
+.tools-dot{
+  width:7px; height:7px; border-radius:999px;
+  background:rgba(255,255,255,.22);
+  transition:transform .12s, background .18s, box-shadow .18s;
+}
+.tools-dot.is-active{
+  background:var(--accent);
+  box-shadow:0 0 10px rgba(255,159,26,.6);
+  transform:scale(1.25);
+}
 
 /* Responsive */
 @media (max-width:900px){
   .tools-grid{ grid-template-columns:1fr; }
-  .tools-pager.topright{ position:static; justify-content:flex-end; margin-bottom:6px; }
+  .tools-card .tool-btn{ --left-slot: 78px; } /* en móvil, un poco menos */
 }
