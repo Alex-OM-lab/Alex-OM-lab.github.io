@@ -87,8 +87,8 @@
   outline:2px solid #0000;
   box-shadow:0 0 22px rgba(255,159,26,.55), 0 0 0 2px rgba(255,159,26,.95) inset;
 }
-.cube-btn.prev{ left:6px }
-.cube-btn.next{ right:6px }
+.cube-btn.prev{ left:-60px }
+.cube-btn.next{ right:-60px }
 
 /* Indicadores */
 .cube-dots{ display:flex; gap:6px; justify-content:center; margin-top:12px }
