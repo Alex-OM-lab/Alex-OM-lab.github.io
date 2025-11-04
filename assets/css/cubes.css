@@ -18,8 +18,12 @@
 }
 .cube-head h3{margin:0; font-size:clamp(20px,2.2vw,26px)}
 
-/* Viewport + track */
-.cube-viewport{ overflow:hidden; }
+/* Viewport + track
+   👉 padding lateral para dejar aire a las flechas y que no tapen las tarjetas */
+.cube-viewport{
+  overflow:hidden;
+  padding:0 58px; /* ← NUEVO: espacio a izquierda/derecha para despejar el 1º y 5º ítem */
+}
 .cube-track{
   display:flex;
   gap:14px;
@@ -65,7 +69,7 @@
 /* Flechas SIEMPRE visibles, estilo naranja */
 .cube-nav{ position:absolute; inset:0; pointer-events:none; }
 .cube-btn{
-  position:absolute; top:58%; /* ↓ antes 50%, ahora un poco más abajo */
+  position:absolute; top:58%;
   translate:0 -50%;
   width:46px; height:46px; border-radius:999px;
   background:rgba(255,159,26,.18);
@@ -77,7 +81,12 @@
   box-shadow:0 0 14px rgba(255,159,26,.25), 0 6px 18px rgba(0,0,0,.35);
   transition:transform .12s ease, background .18s ease, box-shadow .18s ease, border-color .18s ease;
   backdrop-filter: blur(4px);
+  z-index:2;
 }
+/* Las acercamos un pelín al borde, pero ahora ya no tapan nada porque hay padding en el viewport */
+.cube-btn.prev{ left:6px }
+.cube-btn.next{ right:6px }
+
 .cube-btn:hover{
   transform:translateY(-1px) scale(1.04);
   background:rgba(255,159,26,.28);
@@ -88,8 +97,6 @@
   outline:2px solid #0000;
   box-shadow:0 0 22px rgba(255,159,26,.55), 0 0 0 2px rgba(255,159,26,.95) inset;
 }
-.cube-btn.prev{ left:2px }   /* ← antes 6px, más pegada al borde */
-.cube-btn.next{ right:2px }  /* → antes 6px, más pegada al borde */
 
 /* Indicadores */
 .cube-dots{ display:flex; gap:6px; justify-content:center; margin-top:12px }
@@ -105,9 +112,18 @@
 }
 
 /* Responsivo: 3 y 2/1 visibles (coincide con JS) */
-@media (max-width:1020px){ .cube{ flex-basis:calc((100% - 14px*2)/3) } }
-@media (max-width:720px) { .cube{ flex-basis:calc((100% - 14px)/2) } }
-@media (max-width:520px) { .cube{ flex-basis:100% } }
+@media (max-width:1020px){
+  .cube-viewport{ padding:0 52px } /* un poco menos en tablet */
+  .cube{ flex-basis:calc((100% - 14px*2)/3) }
+}
+@media (max-width:720px){
+  .cube-viewport{ padding:0 46px }
+  .cube{ flex-basis:calc((100% - 14px)/2) }
+}
+@media (max-width:520px){
+  .cube-viewport{ padding:0 40px }
+  .cube{ flex-basis:100% }
+}
 
 /* Reduce motion: desactivar autoplay */
 @media (prefers-reduced-motion: reduce){
