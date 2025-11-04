@@ -1,147 +1,86 @@
-/*  ========  CARRUSEL DE CUBOS (grid deslizante)  =================
-    Estilo original de flechas (naranja sólido) + flechas FUERA del panel
-   ================================================================ */
+/* ====== OVERRIDES: Flechas fuera del marco (manteniendo estilo previo) ====== */
 
+/* Asegura que el contenedor deje ver elementos fuera (las flechas) */
 .cube-carousel{
-  position:relative;
-  overflow:visible; /* ← para ver flechas fuera del marco */
-  border-radius:var(--radius);
-  background:linear-gradient(180deg,color-mix(in oklab,var(--panel) 92%,#0f1422 8%),var(--panel));
-  border:1px solid rgba(255,255,255,.06);
-  padding:14px;
-}
-.cube-head{
-  display:flex; align-items:baseline; justify-content:center; gap:12px;
-  margin-bottom:10px; text-align:center;
-}
-.cube-head h3{margin:0; font-size:clamp(20px,2.2vw,26px)}
-
-/* Viewport + track */
-.cube-viewport{
-  overflow:visible; /* ← importante para que las flechas no recorten */
-  padding:0 20px;
-}
-.cube-track{
-  display:flex;
-  gap:14px;
-  will-change: transform;
-  transition: transform .6s cubic-bezier(.22,.61,.36,1);
-  padding-bottom:2px;
+  position: relative;
+  overflow: visible; /* ← importante para que se vean fuera */
 }
 
-/* Ítems */
-.cube{
-  flex:0 0 calc((100% - 14px*4)/5);
-  background:#0c1323;
-  border:1px solid rgba(255,255,255,.08);
-  border-radius:12px;
-  overflow:hidden;
-  box-shadow:0 6px 18px rgba(0,0,0,.22);
-  display:flex; flex-direction:column;
+/* Por si tu CSS anterior ocultaba todo: el viewport sí se queda en hidden para recortar tarjetas */
+.cube-carousel .cube-viewport{
+  overflow: hidden;
 }
-.cube:hover{
-  border-color:rgba(255,159,26,.35);
-  box-shadow:0 10px 28px rgba(255,159,26,.12);
-  transform:translateY(-1px);
-  transition:transform .12s ease;
-}
-.cube-media{
-  width:100%; aspect-ratio:16/10; background:#0a1020; position:relative;
-  border-bottom:1px solid rgba(255,255,255,.06);
-}
-.cube-media img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover}
-.cube-body{padding:10px 12px 12px; display:flex; flex-direction:column; gap:8px}
-.cube-title{margin:0; font-weight:800; font-size:15.5px; color:var(--text)}
-.cube-meta{font-size:12.5px; color:var(--muted)}
-.cube-link{
-  margin-top:auto;
-  align-self:flex-start;
-  text-decoration:none; font-weight:700; font-size:13.5px;
-  color:#ffe2b0; padding:6px 10px; border-radius:999px;
-  background:rgba(255,159,26,.12); border:1px solid rgba(255,159,26,.35);
-  transition:background .18s,border-color .18s,transform .12s;
-}
-.cube-link:hover{ background:rgba(255,159,26,.18); border-color:rgba(255,159,26,.6); transform:translateY(-1px) }
 
-/* ================= Flechas (estilo original) ==================== */
-.cube-nav{ position:absolute; inset:0; pointer-events:none; }
-
-.cube-btn{
-  position:absolute;
-  top:56%;
-  translate:0 -50%;
-  width:46px; height:46px; border-radius:999px;
-  background:var(--accent);           /* naranja sólido */
-  border:1px solid rgba(255,159,26,.55);
-  color:#111;                         /* icono negro para contraste */
-  font-weight:900; font-size:20px; line-height:1;
-  display:flex; align-items:center; justify-content:center;
-  cursor:pointer; pointer-events:auto;
-  z-index:3;
+/* Botones de navegación (respetando estilo anterior) */
+.cube-carousel .cube-btn{
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+  width: 46px; height: 46px;
+  border-radius: 999px;
+  background: radial-gradient(ellipse at 30% 30%, rgba(255,159,26,.22), rgba(255,159,26,.14)) , #151d2b;
+  border: 1px solid rgba(255,159,26,.55);
   box-shadow:
-    0 0 0 6px rgba(255,159,26,.12),
-    0 10px 28px rgba(0,0,0,.35);
-  transition:transform .12s ease, background .18s ease, box-shadow .18s ease, border-color .18s ease;
+    0 8px 22px rgba(0,0,0,.45),
+    0 0 0 3px rgba(255,159,26,.08) inset;
+  color: #111;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: transform .18s ease, box-shadow .18s ease, background .18s ease, opacity .18s ease;
+  opacity: .95;
 }
 
-/* POSICIÓN: fuera del panel como en tu mockup */
-.cube-btn.prev{ left:-42px; }   /* ← fuera hacia la izquierda */
-.cube-btn.next{ right:-42px; }  /* → fuera hacia la derecha */
+/* Flecha izquierda — fuera del marco */
+.cube-carousel .cube-btn.prev{
+  left: clamp(-58px, -3.6vw, -46px); /* ← fuera del borde con rango seguro */
+}
 
-.cube-btn:hover{
-  transform:translateY(-1px) scale(1.04);
-  background:#ffae3a; /* naranja un pelín más claro */
+/* Flecha derecha — fuera del marco */
+.cube-carousel .cube-btn.next{
+  right: clamp(-58px, -3.6vw, -46px); /* ← fuera del borde con rango seguro */
+}
+
+/* Icono interior: mantenemos el look anterior */
+.cube-carousel .cube-btn::before{
+  content: '';
+  width: 10px; height: 10px;
+  border-top: 2px solid rgba(255,159,26,.95);
+  border-right: 2px solid rgba(255,159,26,.95);
+  transform: rotate(45deg);
+  transition: transform .18s ease;
+}
+
+/* Direcciones */
+.cube-carousel .cube-btn.prev::before{ transform: translateX(1px) rotate(-135deg); }
+.cube-carousel .cube-btn.next::before{ transform: translateX(-1px) rotate(45deg); }
+
+/* Hover suave */
+.cube-carousel .cube-btn:hover{
+  transform: translateY(-50%) scale(1.04);
   box-shadow:
-    0 0 0 8px rgba(255,159,26,.18),
-    0 0 22px rgba(255,159,26,.55),
-    0 12px 34px rgba(0,0,0,.42);
-  border-color:rgba(255,159,26,.85);
-}
-.cube-btn:focus-visible{
-  outline:2px solid transparent;
-  box-shadow:
-    0 0 0 10px rgba(255,159,26,.22),
-    0 0 26px rgba(255,159,26,.65),
-    0 0 0 2px rgba(255,159,26,.95) inset;
+    0 10px 28px rgba(0,0,0,.55),
+    0 0 0 4px rgba(255,159,26,.12) inset,
+    0 0 12px rgba(255,159,26,.18);
 }
 
-/* Indicadores */
-.cube-dots{ display:flex; gap:6px; justify-content:center; margin-top:12px }
-.cube-dot{
-  width:7px; height:7px; border-radius:999px;
-  background:rgba(255,255,255,.22);
-  transition:transform .12s, background .18s, box-shadow .18s;
-}
-.cube-dot.is-active{
-  background:var(--accent);
-  box-shadow:0 0 10px rgba(255,159,26,.6);
-  transform:scale(1.25);
+/* Estado disabled (si tu JS lo aplica) */
+.cube-carousel .cube-btn[disabled]{
+  opacity: .35; pointer-events: none; filter: grayscale(.2);
 }
 
-/* Responsivo: acercamos un poco las flechas para pantallas estrechas */
-@media (max-width:1220px){
-  .cube{ flex-basis:calc((100% - 14px*3)/4) }
-  .cube-btn.prev{ left:-38px }
-  .cube-btn.next{ right:-38px }
+/* ===== Responsivo: en pantallas pequeñas no las saques demasiado ===== */
+@media (max-width: 1100px){
+  .cube-carousel .cube-btn.prev{ left: -40px; }
+  .cube-carousel .cube-btn.next{ right: -40px; }
 }
-@media (max-width:1020px){
-  .cube{ flex-basis:calc((100% - 14px*2)/3) }
-  .cube-btn.prev{ left:-34px }
-  .cube-btn.next{ right:-34px }
+@media (max-width: 860px){
+  .cube-carousel .cube-btn.prev{ left: -28px; }
+  .cube-carousel .cube-btn.next{ right: -28px; }
 }
-@media (max-width:720px){
-  .cube{ flex-basis:calc((100% - 14px)/2) }
-  .cube-btn{ width:42px; height:42px; font-size:18px }
-  .cube-btn.prev{ left:-30px }
-  .cube-btn.next{ right:-30px }
-}
-@media (max-width:520px){
-  .cube{ flex-basis:100% }
-  .cube-btn.prev{ left:-26px }
-  .cube-btn.next{ right:-26px }
-}
-
-/* Reduce motion */
-@media (prefers-reduced-motion: reduce){
-  .cube-track{ transition:none }
+@media (max-width: 680px){
+  /* En móviles las metemos dentro para que no se corten */
+  .cube-carousel .cube-btn.prev{ left: 8px; }
+  .cube-carousel .cube-btn.next{ right: 8px; }
 }
