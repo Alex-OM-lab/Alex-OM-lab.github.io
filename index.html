@@ -18,6 +18,7 @@
   <link rel="stylesheet" href="assets/css/cubes.css">
   <!-- Estilos de secciones existentes -->
   <link rel="stylesheet" href="assets/css/sections.css">
+  <!-- NUEVO: estilos de la sección Herramientas y Lenguajes -->
   <link rel="stylesheet" href="assets/css/tools.css">
 
   <style>
@@ -171,174 +172,35 @@
         </div>
       </div>
     </section>
- <!--NUEVA SECCION HERRAMEINTAS Y PROGRAMING -->
-<section id="stack" class="custom-section reveal" data-reveal="fade-up" aria-labelledby="stack-title">
-  <div class="tools-head">
-    <h2 id="stack-title" class="title">Herramientas y Lenguajes</h2>
-    <p class="hint">Chips con sistema operativo y nivel de dominio.</p>
-  </div>
 
-  <div class="tools-wrap">
-    <div class="tools-grid">
+    <!-- ================== HERRAMIENTAS Y LENGUAJES (chips pro, 2 columnas) ================== -->
+    <section id="tools" class="reveal" data-reveal="fade-up" aria-labelledby="tools-title">
+      <h2 id="tools-title" class="section-title">Herramientas y Lenguajes</h2>
+      <p class="kicker">Chips con sistema operativo y nivel de dominio.</p>
 
-      <!-- Columna 1: Herramientas -->
-      <div class="tools-col" aria-labelledby="tools-col-title">
-        <h3 id="tools-col-title">Herramientas</h3>
-
-        <div class="tool-list" role="list">
-          <div class="tool-btn" role="listitem">
-            <span class="tool-label">
-              <span class="tool-name">Nginx / Apache</span>
-            </span>
-            <span class="badge lnx">Linux</span>
+      <div class="tools-wrap">
+        <!-- Columna izquierda -->
+        <div class="tools-col">
+          <div class="tools-card">
+            <div class="tools-head">
+              <h3>Herramientas</h3>
+            </div>
+            <div id="toolsList" class="tools-list" aria-live="polite"></div>
           </div>
+        </div>
 
-          <div class="tool-btn" role="listitem">
-            <span class="tool-label">
-              <span class="tool-name">AD / GPO</span>
-            </span>
-            <span class="badge win">Windows</span>
-          </div>
-
-          <div class="tool-btn" role="listitem">
-            <span class="tool-label">
-              <span class="tool-name">Wazuh</span>
-            </span>
-            <span class="badge lnx">Linux</span>
-          </div>
-
-          <div class="tool-btn" role="listitem">
-            <span class="tool-label">
-              <span class="tool-name">ELK</span>
-            </span>
-            <span class="badge mul">Multi</span>
-          </div>
-
-          <div class="tool-btn" role="listitem">
-            <span class="tool-label">
-              <span class="tool-name">OpenVAS</span>
-            </span>
-            <span class="badge lnx">Linux</span>
-          </div>
-
-          <div class="tool-btn" role="listitem">
-            <span class="tool-label">
-              <span class="tool-name">Burp Suite</span>
-            </span>
-            <span class="badge mul">Multi</span>
-          </div>
-
-          <div class="tool-btn" role="listitem">
-            <span class="tool-label">
-              <span class="tool-name">Metasploit</span>
-            </span>
-            <span class="badge lnx">Linux</span>
-          </div>
-
-          <div class="tool-btn" role="listitem">
-            <span class="tool-label">
-              <span class="tool-name">Docker</span>
-            </span>
-            <span class="badge mul">Multi</span>
-          </div>
-
-          <div class="tool-btn" role="listitem">
-            <span class="tool-label">
-              <span class="tool-name">Volatility</span>
-            </span>
-            <span class="badge lnx">Linux</span>
-          </div>
-
-          <div class="tool-btn" role="listitem">
-            <span class="tool-label">
-              <span class="tool-name">Autopsy</span>
-            </span>
-            <span class="badge mul">Multi</span>
-          </div>
-
-          <div class="tool-btn" role="listitem">
-            <span class="tool-label">
-              <span class="tool-name">GNS3</span>
-            </span>
-            <span class="badge mul">Multi</span>
+        <!-- Columna derecha -->
+        <div class="tools-col">
+          <div class="tools-card">
+            <div class="tools-head">
+              <h3>Lenguajes</h3>
+            </div>
+            <div id="langsList" class="tools-list" aria-live="polite"></div>
           </div>
         </div>
       </div>
+    </section>
 
-      <!-- Columna 2: Lenguajes (con medidor) -->
-      <div class="tools-col" aria-labelledby="langs-col-title">
-        <h3 id="langs-col-title">Lenguajes</h3>
-
-        <div class="tool-list" role="list">
-          <div class="tool-btn" role="listitem" data-level="alto">
-            <span class="tool-label"><span class="tool-name">Python</span></span>
-            <span class="level">
-              <span class="level-label">alto</span>
-              <span class="meter"><i></i></span>
-            </span>
-          </div>
-
-          <div class="tool-btn" role="listitem" data-level="alto">
-            <span class="tool-label"><span class="tool-name">PHP</span></span>
-            <span class="level">
-              <span class="level-label">alto</span>
-              <span class="meter"><i></i></span>
-            </span>
-          </div>
-
-          <div class="tool-btn" role="listitem" data-level="medio">
-            <span class="tool-label"><span class="tool-name">PowerShell</span></span>
-            <span class="level">
-              <span class="level-label">medio</span>
-              <span class="meter"><i></i></span>
-            </span>
-          </div>
-
-          <div class="tool-btn" role="listitem" data-level="medio">
-            <span class="tool-label"><span class="tool-name">Bash</span></span>
-            <span class="level">
-              <span class="level-label">medio</span>
-              <span class="meter"><i></i></span>
-            </span>
-          </div>
-
-          <div class="tool-btn" role="listitem" data-level="medio-alto">
-            <span class="tool-label"><span class="tool-name">SQL</span></span>
-            <span class="level">
-              <span class="level-label">medio-alto</span>
-              <span class="meter"><i></i></span>
-            </span>
-          </div>
-
-          <div class="tool-btn" role="listitem" data-level="medio">
-            <span class="tool-label"><span class="tool-name">HTML</span></span>
-            <span class="level">
-              <span class="level-label">medio</span>
-              <span class="meter"><i></i></span>
-            </span>
-          </div>
-
-          <div class="tool-btn" role="listitem" data-level="medio">
-            <span class="tool-label"><span class="tool-name">CSS</span></span>
-            <span class="level">
-              <span class="level-label">medio</span>
-              <span class="meter"><i></i></span>
-            </span>
-          </div>
-
-          <div class="tool-btn" role="listitem" data-level="medio">
-            <span class="tool-label"><span class="tool-name">JavaScript</span></span>
-            <span class="level">
-              <span class="level-label">medio</span>
-              <span class="meter"><i></i></span>
-            </span>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</section>
     <!-- 🔹 SECCIÓN 6 — CÓMO INVESTIGO Y TRABAJO -->
     <section id="investigacion" class="custom-section reveal" data-reveal="fade-up" aria-labelledby="investigacion-title">
       <h2 id="investigacion-title" class="section-title">Cómo investigo y trabajo</h2>
@@ -348,32 +210,33 @@
         <p style="margin-top:8px">Cuando publico artículos o notas, enlazo material de soporte y dejo un resumen con <strong>conclusiones accionables</strong>.</p>
       </div>
     </section>
-  <!-- ====================== MAPA VISUAL (GRAPH) ================== -->
-<section id="site-graph" class="graph reveal" data-reveal="fade-up" aria-labelledby="site-graph-title">
-  <div class="card">
-    <div class="graph-head">
-      <h2 id="site-graph-title" class="section-title">Mapa visual</h2>
-      <div style="display:flex;gap:12px;align-items:center">
-        <p class="kicker" style="margin:0">Esquema interactivo — haz clic para desplegar niveles.</p>
-        <button id="graphThemeToggle" class="theme-toggle" type="button" aria-label="Cambiar tema">Modo técnico</button>
+
+    <!-- ====================== MAPA VISUAL (GRAPH) ================== -->
+    <section id="site-graph" class="graph reveal" data-reveal="fade-up" aria-labelledby="site-graph-title">
+      <div class="card">
+        <div class="graph-head">
+          <h2 id="site-graph-title" class="section-title">Mapa visual</h2>
+          <div style="display:flex;gap:12px;align-items:center">
+            <p class="kicker" style="margin:0">Esquema interactivo — haz clic para desplegar niveles.</p>
+            <button id="graphThemeToggle" class="theme-toggle" type="button" aria-label="Cambiar tema">Modo técnico</button>
+          </div>
+        </div>
+
+        <div class="graph-stage" id="graphStage">
+          <div id="graphBc" class="graph-bc"></div> <!-- breadcrumb opcional -->
+          <svg id="graphSvg" class="svgroot" viewBox="0 0 1600 900">
+            <g id="graphRoot"></g>
+          </svg>
+        </div>
+
+        <div class="graph-legend">
+          <span class="dot lvl0"></span> Nivel 0
+          <span class="dot lvl1"></span> Nivel 1
+          <span class="dot lvl2"></span> Nivel 2
+          <span class="dot lvl3"></span> Nivel 3
+        </div>
       </div>
-    </div>
-
-    <div class="graph-stage" id="graphStage">
-      <div id="graphBc" class="graph-bc"></div> <!-- breadcrumb opcional -->
-      <svg id="graphSvg" class="svgroot" viewBox="0 0 1600 900">
-        <g id="graphRoot"></g>
-      </svg>
-    </div>
-
-    <div class="graph-legend">
-      <span class="dot lvl0"></span> Nivel 0
-      <span class="dot lvl1"></span> Nivel 1
-      <span class="dot lvl2"></span> Nivel 2
-      <span class="dot lvl3"></span> Nivel 3
-    </div>
-  </div>
-</section>
+    </section>
 
     <!-- ===================== CARRUSEL DE CUBOS ===================== -->
     <section id="news-cubes" class="reveal" data-reveal="fade-up" aria-labelledby="news-cubes-title">
@@ -426,6 +289,7 @@
   <!-- NAV -->
   <script src="assets/js/nav-data.js" defer></script>
   <script src="assets/js/nav.js" defer></script>
+
   <!-- Cubes -->
   <script src="assets/js/cubes.js"></script>
 
@@ -438,6 +302,8 @@
     document.getElementById('y').textContent = new Date().getFullYear();
   </script>
   <script src="assets/js/scroll-reveal.js" defer></script>
+
+  <!-- NUEVO: lógica de Herramientas y Lenguajes -->
   <script src="assets/js/tools.js" defer></script>
 </body>
 </html>
