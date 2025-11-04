@@ -37,8 +37,7 @@
 
 /* =========================
    Ítem tipo botón (HERRAMIENTAS y LENGUAJES)
-   — Fondo naranja oscuro elegante (#1d150b)
-   — Hover/Active con elevación y brillo de bordes
+   — Fondo y borde solicitados
    ========================= */
 .tool-btn{
   display: grid;
@@ -48,11 +47,9 @@
   width: 100%;
   padding: 10px 14px;
 
-  /* === Fondo y borde === */
-  background:
-    linear-gradient(180deg, rgba(255,255,255,.03), rgba(0,0,0,.2) 60%),
-   rgba(255,159,26,0.28);
-  border: 1px solid rgba(255,140,26,.45); /* borde naranja */
+  /* === Fondo y borde (pedido) === */
+  background: rgba(255,159,26,0.08);
+  border: 1px solid rgba(255,159,26,0.28);
   border-radius: 10px; /* rectángulo redondeado */
   box-shadow:
     0 1px 0 rgba(255,255,255,.04) inset,
@@ -69,7 +66,7 @@
     background .22s ease;
 }
 
-/* Hover: elevación y brillo del borde */
+/* Hover: elevación y brillo del borde (sin cambios) */
 .tool-btn:hover{
   transform: translateY(-3px);
   border-color: rgba(255,159,26,.75);
@@ -80,7 +77,7 @@
     0 0 14px rgba(255,159,26,.18);
 }
 
-/* Active: tacto sutil */
+/* Active: tacto sutil (sin cambios) */
 .tool-btn:active{
   transform: translateY(-1px);
   border-color: rgba(255,159,26,.9);
@@ -91,7 +88,7 @@
     0 0 10px rgba(255,159,26,.22);
 }
 
-/* Tipografía del nombre dentro del botón */
+/* Tipografía del nombre dentro del botón (sin cambios) */
 .tool-name{
   font-family: "Tomorrow", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial;
   font-weight: 800;
@@ -186,3 +183,4 @@
   .tools-grid{ grid-template-columns:1fr; }
   .tools-pager.topright{ position: static; justify-content: flex-end; margin-bottom: 6px; }
 }
+
