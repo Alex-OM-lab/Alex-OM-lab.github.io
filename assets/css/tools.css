@@ -1,8 +1,6 @@
-/* ====== Tools & Languages (chips pro) ======
-   - Columna de Herramientas con badge de SO (Linux/Windows/Multi)
-   - Columna de Lenguajes con medidor de nivel dentro del chip
-   - Estética alineada con el sitio (naranja/glow, panel oscuro)
-   ========================================== */
+/* =========================
+   HERRAMIENTAS & LENGUAJES
+   ========================= */
 
 .tools-wrap{
   border:1px solid rgba(255,255,255,.06);
@@ -11,111 +9,112 @@
   padding:18px;
 }
 
+/* Cabeceras del bloque */
 .tools-head{
-  display:flex; align-items:baseline; justify-content:space-between; gap:14px;
-  margin-bottom:12px;
+  display:flex; align-items:baseline; justify-content:space-between; gap:12px;
+  margin-bottom:14px;
 }
-.tools-head h2{ margin:0; font-size:clamp(22px,2.6vw,30px) }
-.tools-sub{ color:var(--muted) }
+.tools-head .title{ margin:0; font-size:clamp(22px,2.4vw,28px) }
+.tools-head .hint{ color:var(--muted); font-size:13px }
 
+/* Dos columnas reales */
 .tools-grid{
-  display:grid; grid-template-columns:1fr 1fr; gap:18px;
+  display:grid; grid-template-columns:1fr 1fr; gap:16px;
 }
 
-/* Columnas */
+/* Tarjeta de columna */
 .tools-col{
   border:1px solid rgba(255,255,255,.06);
-  border-radius:14px;
-  background:rgba(10,16,30,.5);
+  background:rgba(7,12,22,.5);
+  border-radius:12px;
   padding:14px;
 }
 .tools-col h3{
   margin:0 0 10px;
-  font-size:clamp(16px,2vw,18px);
+  font-size:16px;
   color:#ffe2b0;
   letter-spacing:.2px;
 }
-.tools-list{
-  display:flex; flex-wrap:wrap; gap:10px;
+
+/* Lista de chips tipo botón largo */
+.tool-list{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:10px;
 }
 
-/* Chip base */
-.tool-chip{
-  position:relative;
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  padding:9px 12px;
+/* Botón largo (estilo clásico mejorado) */
+.tool-btn{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:12px;
+  padding:12px 14px;
   border-radius:12px;
-  background:rgba(255,255,255,.03);
-  border:1px solid rgba(255,255,255,.10);
-  color:var(--text);
-  font-weight:700; font-size:14px;
-  cursor:default;
-  transition: transform .12s ease, border-color .18s ease, box-shadow .18s ease, background .18s ease;
-}
-.tool-chip:hover{
-  transform:translateY(-1px);
-  border-color:rgba(255,159,26,.45);
   background:rgba(255,159,26,.08);
-  box-shadow:0 8px 22px rgba(255,159,26,.12);
+  border:1px solid rgba(255,159,26,.28);
+  color:var(--text);
+  font-weight:700;
+  text-decoration:none;
+  cursor:default;
+  transition:transform .16s ease, box-shadow .16s ease, background .16s ease, border-color .16s ease;
+}
+.tool-btn:hover{
+  transform:translateY(-3px);
+  box-shadow:0 12px 28px rgba(0,0,0,.45), 0 0 18px rgba(255,159,26,.18);
+  background:rgba(255,159,26,.12);
+  border-color:rgba(255,159,26,.45);
+}
+.tool-btn:active{ transform:translateY(-1px); }
+
+/* Texto izquierda dentro del botón */
+.tool-label{
+  display:flex; align-items:center; gap:10px;
+  min-width:0;
+}
+.tool-name{
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
 
-/* Badge SO (Herramientas) */
+/* Badge pequeño (SO) */
 .badge{
   font-size:11px; font-weight:800; letter-spacing:.2px;
-  padding:3px 7px;
-  border-radius:999px;
-  border:1px solid rgba(255,255,255,.14);
-  color:#d9e6f6; background:rgba(255,255,255,.06);
+  padding:4px 8px; border-radius:999px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(10,16,32,.6);
+  color:#cfe6ff;
+  white-space:nowrap;
+  box-shadow:0 2px 8px rgba(0,0,0,.20);
 }
-.badge.linux{
-  color:#a7ffcf; border-color:rgba(167,255,207,.25);
-  background:rgba(167,255,207,.08);
-}
-.badge.windows{
-  color:#a7d2ff; border-color:rgba(167,210,255,.25);
-  background:rgba(167,210,255,.08);
-}
-.badge.multi{
-  color:#ffe2b0; border-color:rgba(255,226,176,.28);
-  background:rgba(255,226,176,.08);
-}
+.badge.win{ color:#ffe2b0 }
+.badge.lnx{ color:#b9ffd2 }
+.badge.mul{ color:#b7d8ff }
 
-/* Medidor de nivel (Lenguajes) */
+/* Medidor de nivel (lenguajes) */
 .level{
-  --pct: 60; /* fallback */
+  display:flex; align-items:center; gap:10px;
+  min-width:160px;
+}
+.level-label{
+  font-size:11.5px; font-weight:900; color:#ffe2b0;
+  padding:4px 8px; border:1px solid rgba(255,159,26,.35);
+  border-radius:999px; background:rgba(255,159,26,.10);
+  white-space:nowrap;
+}
+.meter{
   position:relative;
-  isolation:isolate;
-  padding-right:44px; /* espacio para la “pill” */
+  width:110px; height:8px; border-radius:999px;
+  background:rgba(255,255,255,.10);
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.10);
 }
-.level::after{
-  content: attr(data-label);
-  position:absolute; right:8px; top:50%; translate:0 -50%;
-  font-size:11px; font-weight:900; color:#111;
-  background: var(--accent);
-  border:1px solid rgba(255,159,26,.65);
-  border-radius:999px; padding:3px 6px;
-  box-shadow:0 0 10px rgba(255,159,26,.35);
-  z-index:2;
-}
-.level::before{
-  /* barra de progreso sutil dentro del chip */
-  content:"";
-  position:absolute; inset:2px calc(44px + 2px) 2px 2px;
-  border-radius:10px;
-  background:
-    linear-gradient(90deg,
-      rgba(255,159,26,.28) 0%,
-      rgba(255,159,26,.35) var(--pct),
-      rgba(255,255,255,.04) var(--pct),
-      rgba(255,255,255,.04) 100%
-    );
-  z-index:0;
-  filter: drop-shadow(0 0 6px rgba(255,159,26,.25));
+.meter > i{
+  position:absolute; inset:0 100% 0 0; /* empieza vacío, JS ajusta */
+  border-radius:999px;
+  background:linear-gradient(90deg, rgba(255,159,26,.85), rgba(255,215,154,.85));
+  box-shadow:0 0 10px rgba(255,159,26,.45);
+  transition:inset .35s ease;
 }
 
 /* Responsive */
-@media (max-width:960px){
-  .tools-grid{ grid-template-columns:1fr; }
+@media (max-width:980px){
+  .tools-grid{ grid-template-columns:1fr }
 }
