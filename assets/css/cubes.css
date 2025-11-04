@@ -6,7 +6,7 @@
 
 .cube-carousel{
   position:relative;
-  overflow:hidden;
+  overflow:visible; /* ← permitir que las flechas salgan del marco */
   border-radius:var(--radius);
   background:linear-gradient(180deg,color-mix(in oklab,var(--panel) 92%,#0f1422 8%),var(--panel));
   border:1px solid rgba(255,255,255,.06);
@@ -63,7 +63,12 @@
 .cube-link:hover{ background:rgba(255,159,26,.18); border-color:rgba(255,159,26,.6); transform:translateY(-1px) }
 
 /* Flechas SIEMPRE visibles, estilo naranja */
-.cube-nav{ position:absolute; inset:0; pointer-events:none; }
+.cube-nav{
+  position:absolute;
+  inset:0 -70px;        /* ← expandir la capa hacia fuera a izq/der */
+  pointer-events:none;
+  z-index:5;            /* ← por encima de las tarjetas */
+}
 .cube-btn{
   position:absolute; top:50%; translate:0 -50%;
   width:46px; height:46px; border-radius:999px;
@@ -87,8 +92,8 @@
   outline:2px solid #0000;
   box-shadow:0 0 22px rgba(255,159,26,.55), 0 0 0 2px rgba(255,159,26,.95) inset;
 }
-.cube-btn.prev{ left:-10px }
-.cube-btn.next{ right:-10px }
+.cube-btn.prev{ left:14px }  /* ← quedan fuera del marco visual */
+.cube-btn.next{ right:14px } /* ← quedan fuera del marco visual */
 
 /* Indicadores */
 .cube-dots{ display:flex; gap:6px; justify-content:center; margin-top:12px }
