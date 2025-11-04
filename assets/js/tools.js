@@ -1,102 +1,98 @@
-/* =========================
-   Herramientas & Lenguajes
-   (render 2 columnas, chips largos)
-   ========================= */
+/* ============================================
+   Tools UI
+   - Consistencia de niveles (medidor)
+   - Paginación en "Herramientas" (2+ páginas)
+   ============================================ */
 
 (function(){
-  const toolsData = [
-    { name: 'Nginx / Apache', so: 'Linux' },
-    { name: 'AD / GPO',       so: 'Windows' },
-    { name: 'Wazuh',          so: 'Linux' },
-    { name: 'ELK',            so: 'Linux' },
-    { name: 'OpenVAS',        so: 'Linux' },
-    { name: 'Burp Suite',     so: 'Multi' },
-    { name: 'Metasploit',     so: 'Linux' },
-    { name: 'Docker',         so: 'Multi' },
-    { name: 'Volatility',     so: 'Linux' },
-    { name: 'Autopsy',        so: 'Multi' },
-    { name: 'GNS3',           so: 'Multi' },
-  ];
+  const $ = (sel,root=document)=>root.querySelector(sel);
+  const $$ = (sel,root=document)=>Array.from(root.querySelectorAll(sel));
 
-  const langsData = [
-    { name:'Python',     level:'alto',       pct: 95 },
-    { name:'PHP',        level:'alto',       pct: 92 },
-    { name:'PowerShell', level:'medio',      pct: 60 },
-    { name:'Bash',       level:'medio',      pct: 62 },
-    { name:'SQL',        level:'medio-alto', pct: 78 },
-    { name:'HTML',       level:'medio',      pct: 60 },
-    { name:'CSS',        level:'medio',      pct: 58 },
-    { name:'JavaScript', level:'medio',      pct: 64 },
-  ];
+  document.addEventListener('DOMContentLoaded', () => {
+    // 1) Normaliza medidores segun data-level
+    normalizeMeters();
 
-  function mk(tag, cls, txt){
-    const el = document.createElement(tag);
-    if (cls) el.className = cls;
-    if (txt) el.textContent = txt;
-    return el;
-  }
+    // 2) Paginación en la lista de herramientas (columna izquierda)
+    const toolsList = document.getElementById('toolsList') || $('[id="toolsList"]') || $('.tools-list'); // fallback
+    if (toolsList) enablePaging(toolsList, { perPage: 8 });
+  });
 
-  function badgeClass(so){
-    if (!so) return 'mul';
-    const v = so.toLowerCase();
-    if (v.includes('win')) return 'win';
-    if (v.includes('lin')) return 'lnx';
-    return 'mul';
-  }
-
-  function renderTools(listEl){
-    listEl.innerHTML = '';
-    toolsData.forEach(t=>{
-      const chip = mk('div','tool-chip');
-
-      const left = mk('div','tool-left');
-      const ttl  = mk('p','tool-title', t.name);
-      left.appendChild(ttl);
-
-      const right = mk('div','tool-right');
-      const badge = mk('span', 'badge-so ' + badgeClass(t.so), t.so || 'Multi');
-      right.appendChild(badge);
-
-      chip.append(left,right);
-      listEl.appendChild(chip);
+  function normalizeMeters(){
+    $$('.tool-btn[data-level]').forEach(btn=>{
+      const lvl = btn.getAttribute('data-level');
+      const bar = $('.meter i', btn);
+      if(!bar) return;
+      let w = 50;
+      if(lvl==='alto') w = 90;
+      else if(lvl==='medio-alto') w = 75;
+      else if(lvl==='medio') w = 55;
+      bar.style.width = w + '%';
     });
   }
 
-  function renderLangs(listEl){
-    listEl.innerHTML = '';
-    langsData.forEach(l=>{
-      const chip = mk('div','tool-chip');
+  /* ------------- PAGINACIÓN ------------- */
 
-      const left = mk('div','tool-left');
-      const ttl  = mk('p','tool-title', l.name);
-      left.appendChild(ttl);
+  function enablePaging(listEl,{perPage=8}={}){
+    const items = $$('.tool-btn', listEl);
+    if (items.length <= perPage) return; // no hace falta paginar
 
-      const right = mk('div','tool-right');
-      const level = mk('div','level');
-      const lb    = mk('span','level-badge', l.level);
-      const bar   = mk('div','level-bar');
-      const fill  = mk('div','level-fill');
-      fill.style.width = Math.max(4, Math.min(100, l.pct)) + '%';
-      bar.appendChild(fill);
-      level.append(lb, bar);
-      right.appendChild(level);
+    const pages = chunk(items, perPage);
+    let page = 0;
 
-      chip.append(left, right);
-      listEl.appendChild(chip);
+    // Contenedor de paginación (flechas + dots)
+    const pager = document.createElement('div');
+    pager.className = 'tools-pager';
+    const prev = mkArrow('‹'); prev.classList.add('tools-prev');
+    const next = mkArrow('›'); next.classList.add('tools-next');
+    const dots = document.createElement('div'); dots.className = 'tools-dots';
+
+    pager.appendChild(prev);
+    pager.appendChild(dots);
+    pager.appendChild(next);
+
+    // Inserta pager al final de la tarjeta (columna izquierda)
+    const card = listEl.closest('.tools-card') || listEl.parentElement;
+    card.appendChild(pager);
+
+    // Crea dots
+    const dotEls = pages.map((_,i)=>{
+      const d = document.createElement('span');
+      d.className = 'tools-dot' + (i===0 ? ' is-active':'');
+      d.addEventListener('click', ()=>render(i));
+      dots.appendChild(d);
+      return d;
     });
+
+    prev.addEventListener('click', ()=> render(page-1));
+    next.addEventListener('click', ()=> render(page+1));
+
+    render(0);
+
+    function render(p){
+      page = clamp(p, 0, pages.length-1);
+      // Oculta todo
+      items.forEach(it=> it.style.display='none');
+      // Muestra los de la página actual
+      pages[page].forEach(it=> it.style.display='flex');
+
+      // Dots activos
+      dotEls.forEach((d,i)=> d.classList.toggle('is-active', i===page));
+      // Flechas
+      prev.disabled = (page===0);
+      next.disabled = (page===pages.length-1);
+    }
   }
 
-  function init(){
-    const toolsList = document.getElementById('toolsList');
-    const langsList = document.getElementById('langsList');
-    if (!toolsList || !langsList) return;
-    renderTools(toolsList);
-    renderLangs(langsList);
+  /* Helpers */
+  function chunk(arr, size){
+    const out = [];
+    for(let i=0;i<arr.length;i+=size) out.push(arr.slice(i,i+size));
+    return out;
   }
-
-  if (document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
+  function clamp(v,min,max){ return Math.max(min, Math.min(max, v)); }
+  function mkArrow(txt){
+    const b=document.createElement('button');
+    b.type='button'; b.className='tools-arrow'; b.textContent=txt;
+    return b;
   }
 })();
