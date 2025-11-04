@@ -9,14 +9,24 @@
   --btn-hover-wash: rgba(255,159,26,.10); /* leve baño en hover        */
   --btn-text: #e9eef6;                    /* texto claro neutro        */
 
-  --title-amber: #ff9f1a;                 /* acento títulos */
+  --title-amber: #ff9f1a;                 /* acento títulos sección */
   --title-glow: rgba(255,159,26,.25);
 
-  --chip-orange-text: #e9962b;            /* naranja oscuro para texto de botón */
-  --chip-orange-glow: rgba(255,159,26,.12);
+  --card-title: #f3f5f8;                  /* color de los títulos de tarjetas "Especialidades" */
+  --chip-orange-glow: rgba(255,159,26,.10);
 }
 
-/* Grid / tarjetas */
+/* ===== Cabezera de la sección ===== */
+.tools-head{
+  display:flex; align-items:baseline; gap:12px; justify-content:space-between; margin-bottom:10px;
+}
+.tools-head .section-title{
+  margin:0;
+  color:var(--title-amber);
+  text-shadow:0 0 8px var(--title-glow);
+}
+
+/* ===== Grid / tarjetas ===== */
 .tools-grid{
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -32,13 +42,15 @@
   display:flex;flex-direction:column;gap:10px;min-height:100%;flex:1;
 }
 
-/* === Títulos de tarjeta como el resto de la web === */
+/* === Títulos de tarjeta: centrados, más grandes, color acorde a la web === */
 .tools-card h3{
   margin:0 0 8px 0;
-  font-size:15px;
-  font-weight:800;
-  color:var(--title-amber);
-  text-shadow:0 0 8px var(--title-glow);
+  font-size:17px;
+  font-weight:900;
+  text-align:center;
+  color:var(--card-title);
+  letter-spacing:.2px;
+  text-shadow:0 0 10px rgba(255,255,255,.04);
 }
 
 /* Centrado visual de las listas dentro de cada tarjeta */
@@ -98,10 +110,10 @@
     0 8px 18px rgba(0,0,0,.30);
 }
 
-/* Nombre centrado – naranja oscuro */
+/* Nombre centrado – mismo color que títulos de las tarjetas de "Especialidades" */
 .tool-name{
-  font-weight:800; letter-spacing:.2px; text-align:center;
-  color:var(--chip-orange-text);
+  font-weight:900; letter-spacing:.2px; text-align:center;
+  color:var(--card-title);
   white-space:nowrap; justify-self:center;
   text-shadow: 0 0 10px var(--chip-orange-glow);
 }
@@ -109,7 +121,10 @@
 /* Slots laterales */
 .tool-slot--left,
 .tool-slot--right{ display:inline-flex; align-items:center; gap:8px; min-width:0; }
-#toolsList .tool-slot--left{ display:none; }
+
+/* En la columna de HERRAMIENTAS desplazamos un poco el contenido a la derecha */
+#toolsList .tool-btn{ padding-left: 20px; }
+#toolsList .tool-slot--left{ display:none; } /* chips OS a la derecha, como pediste anteriormente */
 #toolsList .tool-slot--right{ justify-self:end; }
 #langsList .tool-slot--right{ justify-self:end; }
 
