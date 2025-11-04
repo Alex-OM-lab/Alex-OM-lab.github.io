@@ -2,6 +2,13 @@
    Herramientas y Lenguajes
    ========================= */
 
+/* ---- Variables para Chip Pro (con fallbacks) ---- */
+:root{
+  --btn-bg: rgba(255,159,26,.12);
+  --btn-bd: rgba(255,159,26,.35);
+  --btn-tx: #ffe2b0;
+}
+
 .tools-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -37,7 +44,7 @@
 
 /* =========================
    Ítem tipo botón (HERRAMIENTAS y LENGUAJES)
-   — Fondo, borde y texto solicitados
+   — Opción A: Chip Pro (coherente con .chip)
    ========================= */
 .tool-btn{
   display: grid;
@@ -45,64 +52,58 @@
   align-items: center;
   gap: 10px;
   width: 100%;
-  padding: 10px 14px;
+  padding: 10px 12px;
 
-  /* === Fondo y borde (pedido) === */
-  background: rgba(255,159,26,0.12);
-  border: 1px solid rgba(255,159,26,0.35);
-  border-radius: 10px; /* rectángulo redondeado */
+  /* Chip Pro */
+  background: var(--btn-bg, rgba(255,159,26,.12));
+  border: 1px solid var(--btn-bd, rgba(255,159,26,.35));
+  color: var(--btn-tx, #ffe2b0);
+  border-radius: 12px;
+
+  /* toques sutiles */
   box-shadow:
-    0 1px 0 rgba(255,255,255,.04) inset,
-    0 0 0 1px rgba(255,255,255,.05) inset,
-    0 6px 12px rgba(0,0,0,.25);
-
-  /* Texto interior (pedido) */
-  color: #ffe2b0;
-
+    0 1px 0 rgba(255,255,255,.03) inset,
+    0 0 0 1px rgba(255,255,255,.04) inset;
   overflow: hidden;
   cursor: pointer;
+
   transition:
-    transform .18s ease,
-    box-shadow .22s ease,
-    border-color .22s ease,
-    background .22s ease;
+    transform .14s ease,
+    box-shadow .18s ease,
+    background .18s ease,
+    border-color .18s ease,
+    color .18s ease;
 }
 
-/* Hover: elevación y brillo del borde (sin cambios) */
 .tool-btn:hover{
-  transform: translateY(-3px);
-  border-color: rgba(255,159,26,.75);
+  transform: translateY(-2px);
+  background: rgba(255,159,26,.16);
+  border-color: rgba(255,159,26,.55);
   box-shadow:
-    0 1px 0 rgba(255,255,255,.05) inset,
-    0 0 0 1px rgba(255,159,26,.35) inset,
-    0 10px 22px rgba(0,0,0,.35),
-    0 0 14px rgba(255,159,26,.18);
+    0 10px 24px rgba(255,159,26,.18),
+    0 0 0 1px rgba(255,255,255,.05) inset;
 }
 
-/* Active: tacto sutil (sin cambios) */
 .tool-btn:active{
   transform: translateY(-1px);
-  border-color: rgba(255,159,26,.9);
   box-shadow:
-    0 1px 0 rgba(255,255,255,.06) inset,
-    0 0 0 1px rgba(255,159,26,.45) inset,
-    0 6px 14px rgba(0,0,0,.3),
-    0 0 10px rgba(255,159,26,.22);
+    0 6px 16px rgba(255,159,26,.16) inset,
+    0 8px 18px rgba(0,0,0,.25);
 }
 
-/* Tipografía del nombre dentro del botón — color actualizado */
+/* Nombre centrado (usa el color del botón Chip Pro) */
 .tool-name{
   font-family: "Tomorrow", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial;
   font-weight: 800;
   letter-spacing: .2px;
   text-transform: none;
   text-align: center;
-  color: #ffe2b0; /* solicitado */
+  color: var(--btn-tx, #ffe2b0);
   white-space: nowrap;
   justify-self: center;
 }
 
-/* Slots laterales (chips SO a la derecha, nivel a la derecha) */
+/* Slots laterales (chips SO / barra nivel) */
 .tool-slot--left,
 .tool-slot--right{
   display: inline-flex;
@@ -113,22 +114,31 @@
 
 #toolsList .tool-slot--left { display: none; }
 #toolsList .tool-slot--right { justify-self: end; }
-
-/* =========================
-   Chips de Sistema Operativo (derecha en Herramientas)
-   ========================= */
-.badge.os.win { background: rgba(155,226,176,.08); border:1px solid rgba(155,226,176,.32); color:#dbffe6; }
-.badge.os.lnx { background: rgba(143,214,255,.10); border:1px solid rgba(143,214,255,.35); color:#bfe6ff; }
-.badge.os.mul { background: rgba(255,215,154,.10); border:1px solid rgba(255,215,154,.35); color:#ffeacc; }
-.badge.os.win::before { content: "Windows"; }
-.badge.os.lnx::before { content: "Linux"; }
-.badge.os.mul::before { content: "Multi"; }
-
-/* =========================
-   Barra de nivel (Lenguajes) — SIN CAMBIOS
-   ========================= */
 #langsList .tool-slot--right { justify-self: end; }
 
+/* =========================
+   Chips de Sistema Operativo (derecha en Herramientas) — sin cambios
+   ========================= */
+.badge{
+  font-size:11px; font-weight:800;
+  padding:4px 8px; border-radius:999px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(143,214,255,.08);
+  color:#cfe6ff;
+}
+
+.badge.os{ background:rgba(255,255,255,.06); border-color:rgba(255,255,255,.14); color:#e6edf3 }
+.badge.os.win{ background:rgba(155,226,176,.08); border-color:rgba(155,226,176,.32); color:#dbffe6 }
+.badge.os.lnx{ background:rgba(143,214,255,.10); border-color:rgba(143,214,255,.35); color:#bfe6ff }
+.badge.os.mul{ background:rgba(255,215,154,.10); border-color:rgba(255,215,154,.35); color:#ffeacc }
+
+.badge.os.win::before{ content:"Windows"; }
+.badge.os.lnx::before{ content:"Linux"; }
+.badge.os.mul::before{ content:"Multi"; }
+
+/* =========================
+   Barra de nivel (Lenguajes) — sin cambios
+   ========================= */
 .level-bar {
   display: flex;
   align-items: center;
@@ -154,7 +164,7 @@
 }
 
 /* =========================
-   Paginador (sin cambios)
+   Paginador — sin cambios
    ========================= */
 .tools-pager.topright {
   position: absolute;
