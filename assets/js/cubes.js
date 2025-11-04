@@ -1,4 +1,4 @@
-  // ======== Carrusel "cubos" — versión compacta, accesible y responsive ========
+// ======== Carrusel "cubos" — versión compacta, accesible y responsive ========
 // - 5/3/2/1 ítems visibles según ancho (coincide con CSS)
 // - Autoplay opcional (data-autoplay, data-interval)
 // - Mezcla opcional (data-shuffle)
@@ -8,16 +8,30 @@
   const wrap = document.querySelector('.cube-carousel');
   if (!wrap) return;
 
-  /* ---------- Datos de ejemplo (puedes reemplazar por los tuyos) ---------- */
+  /* ---------- Datos (placeholders basados en tu mapa) ---------- */
   const ARTICLES = [
-    { title:'Artículo 1: Placeholder', img:'https://picsum.photos/seed/a1/960/600', meta:'Guía • 7 min', excerpt:'Texto ficticio para probar el layout.', url:'#' },
-    { title:'Artículo 2: Placeholder', img:'https://picsum.photos/seed/a2/960/600', meta:'Tutorial • 5 min', excerpt:'Texto ficticio para probar el layout.', url:'#' },
-    { title:'Artículo 3: Placeholder', img:'https://picsum.photos/seed/a3/960/600', meta:'Análisis • 9 min', excerpt:'Texto ficticio para probar el layout.', url:'#' },
-    { title:'Artículo 4: Placeholder', img:'https://picsum.photos/seed/a4/960/600', meta:'Caso práctico • 6 min', excerpt:'Texto ficticio para probar el layout.', url:'#' },
-    { title:'Artículo 5: Placeholder', img:'https://picsum.photos/seed/a5/960/600', meta:'Referencia • 4 min', excerpt:'Texto ficticio para probar el layout.', url:'#' },
-    { title:'Artículo 6: Placeholder', img:'https://picsum.photos/seed/a6/960/600', meta:'Guía • 8 min', excerpt:'Texto ficticio para probar el layout.', url:'#' },
-    { title:'Artículo 7: Placeholder', img:'https://picsum.photos/seed/a7/960/600', meta:'Tutorial • 5 min', excerpt:'Texto ficticio para probar el layout.', url:'#' },
-    { title:'Artículo 8: Placeholder', img:'https://picsum.photos/seed/a8/960/600', meta:'Análisis • 10 min', excerpt:'Texto ficticio para probar el layout.', url:'#' },
+    // TEORÍA / SISTEMAS
+    { title:'Tipos de kernels y arquitecturas', img:'https://picsum.photos/seed/t-s-1/960/600', meta:'Teoría · Sistemas · 7 min', excerpt:'Conceptos clave sobre kernels monolíticos, microkernels y arquitecturas híbridas.', url:'#' },
+    { title:'Procesos, hilos y planificación', img:'https://picsum.photos/seed/t-s-2/960/600', meta:'Teoría · Sistemas · 8 min', excerpt:'Estados, algoritmos de planificación y sincronización básica.', url:'#' },
+    { title:'Sistemas de archivos y permisos', img:'https://picsum.photos/seed/t-s-3/960/600', meta:'Teoría · Sistemas · 6 min', excerpt:'ACL, modos Unix, jerarquías y buenas prácticas de organización.', url:'#' },
+    { title:'Redes y Comunicaciones — fundamentos', img:'https://picsum.photos/seed/t-s-4/960/600', meta:'Teoría · Redes · 9 min', excerpt:'Modelo OSI/TCP, direccionamiento y diagnóstico básico.', url:'#' },
+    { title:'Diseño de Bases de Datos relacionales', img:'https://picsum.photos/seed/t-s-5/960/600', meta:'Teoría · BBDD · 10 min', excerpt:'Normalización, claves y patrones de modelado.', url:'#' },
+    { title:'Virtualización y Cloud — conceptos clave', img:'https://picsum.photos/seed/t-s-6/960/600', meta:'Teoría · Cloud · 7 min', excerpt:'Hipervisores, contenedores y aprovisionamiento.', url:'#' },
+    { title:'Scripting con Bash y PowerShell', img:'https://picsum.photos/seed/t-s-7/960/600', meta:'Teoría · Scripting · 6 min', excerpt:'Automatización segura y estructuras esenciales.', url:'#' },
+    { title:'Documentación técnica y compliance', img:'https://picsum.photos/seed/t-s-8/960/600', meta:'Teoría · Normativa · 5 min', excerpt:'Plantillas, evidencias y trazabilidad.', url:'#' },
+
+    // TEORÍA / CIBERSEGURIDAD
+    { title:'Principios de seguridad en redes', img:'https://picsum.photos/seed/t-c-1/960/600', meta:'Teoría · Ciberseguridad · 7 min', excerpt:'Defensa en profundidad, segmentación y controles perimetrales.', url:'#' },
+    { title:'Hardening de sistemas Linux y Windows', img:'https://picsum.photos/seed/t-c-2/960/600', meta:'Teoría · Ciberseguridad · 8 min', excerpt:'Checklist de endurecimiento y auditoría básica.', url:'#' },
+    { title:'DevSecOps y CI/CD seguro', img:'https://picsum.photos/seed/t-c-3/960/600', meta:'Teoría · DevSecOps · 9 min', excerpt:'Shift-left, escaneo SAST/DAST y firmas de artefactos.', url:'#' },
+    { title:'Introducción al análisis forense', img:'https://picsum.photos/seed/t-c-4/960/600', meta:'Teoría · Forense · 6 min', excerpt:'Cadena de custodia, adquisición y triage.', url:'#' },
+
+    // PORTAFOLIO / SISTEMAS (prácticas)
+    { title:'Práctica: Active Directory y GPO', img:'https://picsum.photos/seed/p-s-1/960/600', meta:'Portafolio · Sistemas', excerpt:'Despliegue, OU, políticas y hardening básico.', url:'#' },
+    { title:'Práctica: VLANs y DHCP en laboratorio', img:'https://picsum.photos/seed/p-s-2/960/600', meta:'Portafolio · Redes', excerpt:'Topología, tagging y troubleshooting.', url:'#' },
+
+    // PORTAFOLIO / CIBERSEGURIDAD (prácticas)
+    { title:'Práctica: SIEM con Wazuh', img:'https://picsum.photos/seed/p-c-1/960/600', meta:'Portafolio · Ciberseguridad', excerpt:'Ingesta, reglas y casos de uso básicos.', url:'#' },
   ];
 
   /* ---------- Opciones ---------- */
@@ -120,12 +134,10 @@
 
   function translate(){
     const gap = 14; // coincide con CSS
-    // ancho de un item = (viewportWidth - gaps) / visibles
     const vw = viewport.clientWidth;
     const itemW = (vw - gap*(vis-1)) / vis;
     const x = -(itemW + gap) * vis * page;
     track.style.transform = `translate3d(${x}px,0,0)`;
-    // aria-live simple
     wrap.setAttribute('aria-live','polite');
   }
 
@@ -155,7 +167,6 @@
   wrap.addEventListener('focusin',  stop);
   wrap.addEventListener('focusout', start);
 
-  // Teclado en el carrusel
   wrap.addEventListener('keydown', (e)=>{
     if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
     if (e.key === 'ArrowRight'){ e.preventDefault(); next(); }
@@ -164,7 +175,6 @@
   window.addEventListener('resize', ()=>{
     const old = vis;
     computePages();
-    // si cambió el nº de visibles, recalculamos dots y posición
     if (old !== vis){
       updateDots();
       translate();
