@@ -8,6 +8,7 @@
   gap: 18px;
   align-items: stretch;
 }
+
 .tools-card {
   position: relative;
   background: #111c28;
@@ -20,6 +21,7 @@
   min-height: 100%;
   flex: 1;
 }
+
 .tools-card h3 {
   margin: 0 0 8px 0;
   font-size: 15px;
@@ -27,42 +29,76 @@
   font-weight: 800;
 }
 
-.tools-list { display: flex; flex-direction: column; gap: 8px; }
+.tools-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
 
-.tool-btn {
+/* =========================
+   Ítem tipo botón
+   — Ajustado para parecerse a la 1ª imagen:
+     fondo más “ink blue”, tipografía Tomorrow,
+     y radio moderado (rectángulo redondeado)
+   ========================= */
+.tool-btn{
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  grid-template-columns: 1fr auto 1fr; /* izq – nombre – der */
   align-items: center;
   gap: 10px;
-  border-radius: 12px;
+  width: 100%;
   padding: 10px 14px;
-  background: #0c1323;
-  border: 1px solid rgba(255,255,255,.08);
+
+  /* 👉 nuevo look */
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.035), rgba(0,0,0,0) 45%),
+    #0e1726; /* fondo del botón más cercano a la 1ª imagen */
+  border: 1px solid rgba(255, 190, 120, .28); /* filo ámbar suave */
+  border-radius: 10px; /* forma más recta con esquinas suaves */
+
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.04) inset,
+    0 8px 18px rgba(0,0,0,.25);
   overflow: hidden;
 }
-.tool-name {
-  text-align: center;
+
+.tool-name{
+  /* 👉 tipografía tipo “título” como en la 1ª imagen */
+  font-family: "Tomorrow", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial;
   font-weight: 800;
+  letter-spacing: .2px;
+  text-transform: none;
+  text-align: center;
   color: #e9eef6;
   white-space: nowrap;
   justify-self: center;
 }
 
-/* -------- Sistema Operativo (derecha en Herramientas) -------- */
-#toolsList .tool-slot--left { display: none; }
-#toolsList .tool-slot--right {
+/* Slots laterales (chips SO a la derecha, nivel a la derecha) */
+.tool-slot--left,
+.tool-slot--right{
   display: inline-flex;
+  align-items: center;
   gap: 8px;
-  justify-self: end;
+  min-width: 0;
 }
-.badge.os.win { background: rgba(155,226,176,.08); border:1px solid rgba(155,226,176,.32); color: #dbffe6; }
-.badge.os.lnx { background: rgba(143,214,255,.1); border:1px solid rgba(143,214,255,.35); color: #bfe6ff; }
-.badge.os.mul { background: rgba(255,215,154,.1); border:1px solid rgba(255,215,154,.35); color: #ffeacc; }
+
+#toolsList .tool-slot--left { display: none; }
+#toolsList .tool-slot--right { justify-self: end; }
+
+/* =========================
+   Chips de Sistema Operativo (derecha en Herramientas)
+   ========================= */
+.badge.os.win { background: rgba(155,226,176,.08); border:1px solid rgba(155,226,176,.32); color:#dbffe6; }
+.badge.os.lnx { background: rgba(143,214,255,.10); border:1px solid rgba(143,214,255,.35); color:#bfe6ff; }
+.badge.os.mul { background: rgba(255,215,154,.10); border:1px solid rgba(255,215,154,.35); color:#ffeacc; }
 .badge.os.win::before { content: "Windows"; }
 .badge.os.lnx::before { content: "Linux"; }
 .badge.os.mul::before { content: "Multi"; }
 
-/* -------- Barra de nivel (Lenguajes) -------- */
+/* =========================
+   Barra de nivel (Lenguajes) — SIN CAMBIOS DE LÓGICA
+   ========================= */
 #langsList .tool-slot--right { justify-self: end; }
 
 .level-bar {
@@ -89,7 +125,9 @@
   box-shadow: 0 0 8px rgba(255,140,26,.6);
 }
 
-/* -------- Paginador -------- */
+/* =========================
+   Paginador (no tocado)
+   ========================= */
 .tools-pager.topright {
   position: absolute;
   top: 8px;
@@ -114,7 +152,7 @@
   background: rgba(255,140,26,.25);
 }
 
-/* -------- Responsive -------- */
+/* Responsive */
 @media (max-width:900px){
   .tools-grid{ grid-template-columns:1fr; }
   .tools-pager.topright{ position: static; justify-content: flex-end; margin-bottom: 6px; }
