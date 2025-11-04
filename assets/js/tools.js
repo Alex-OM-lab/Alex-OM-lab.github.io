@@ -1,6 +1,6 @@
 /* ============================================
    Tools UI — Render + Medidores + Paginación
-   (versión con fixes: pager único + SO múltiples)
+   (pager arriba derecha + sin chip derecho en Herramientas)
    ============================================ */
 
 (function () {
@@ -9,18 +9,18 @@
 
   // ---- Datos (ajústalos cuando quieras) ----
   const TOOLS = [
-    { name: "Ansible", os: "linux", notes: "Automatización" },
-    { name: "Docker", os: "multi", notes: "Contenedores" },
-    { name: "Kali / Nmap", os: "linux", notes: "Pentest" },
-    { name: "Burp Suite", os: "windows/linux", notes: "AppSec" },
-    { name: "Metasploit", os: "linux", notes: "Red Team" },
-    { name: "OpenVAS", os: "linux", notes: "Vuln Mgmt" },
-    { name: "Wireshark", os: "windows/linux", notes: "Redes" },
-    { name: "pfSense", os: "linux", notes: "Firewall" },
-    { name: "Proxmox", os: "linux", notes: "Virtualización" },
-    { name: "VMware/ESXi", os: "windows", notes: "Virtualización" },
-    { name: "Azure AD", os: "windows", notes: "IAM" },
-    { name: "Git/GitHub", os: "multi", notes: "VC / CI" },
+    { name: "Ansible", os: "linux" },
+    { name: "Docker", os: "multi" },
+    { name: "Kali / Nmap", os: "linux" },
+    { name: "Burp Suite", os: "windows/linux" },
+    { name: "Metasploit", os: "linux" },
+    { name: "OpenVAS", os: "linux" },
+    { name: "Wireshark", os: "windows/linux" },
+    { name: "pfSense", os: "linux" },
+    { name: "Proxmox", os: "linux" },
+    { name: "VMware/ESXi", os: "windows" },
+    { name: "Azure AD", os: "windows" },
+    { name: "Git/GitHub", os: "multi" },
   ];
 
   const LANGS = [
@@ -42,11 +42,10 @@
 
     normalizeMeters();
 
-    // Paginación solo para Herramientas
+    // Paginación solo para Herramientas (arriba derecha)
     if (toolsList) {
       const card = toolsList.closest(".tools-card") || toolsList.parentElement;
-      const footer = $("#toolsFooter", card) || $(".card-footer", card) || card;
-      enablePaging(toolsList, { perPage: 8, footerEl: footer });
+      enablePagingTopRight(toolsList, { perPage: 8, cardEl: card });
     }
   });
 
@@ -58,12 +57,12 @@
         const osBadges = parseOs(t.os)
           .map((o) => `<span class="badge os ${o.cls}"></span>`)
           .join("");
-        const rightChip = t.notes ? `<span class="badge">${escapeHtml(t.notes)}</span>` : "";
+        // RIGHT CHIP ELIMINADO (pedido)
         return `
           <button class="tool-btn" type="button" aria-label="${escapeHtml(t.name)}">
             <span class="tool-slot--left">${osBadges}</span>
             <span class="tool-name">${escapeHtml(t.name)}</span>
-            <span class="tool-slot--right">${rightChip}</span>
+            <span class="tool-slot--right"></span>
           </button>`;
       })
       .join("");
@@ -96,25 +95,26 @@
       if (!bar) return;
       let w = 50;
       if (lvl === "alto") w = 90;
-      else if (lvl === "medio-alto" || lvl === "medio alto" || lvl === "medioalto") w = 75; // FIX typo 7\n5
+      else if (lvl === "medio-alto" || lvl === "medio alto" || lvl === "medioalto") w = 75;
       else if (lvl === "medio") w = 55;
+
+      // seguridad para no desbordar
+      w = Math.max(0, Math.min(100, w));
       bar.style.width = w + "%";
     });
   }
 
-  /* ---------- Paginación (Herramientas) ---------- */
+  /* ---------- Paginación ARRIBA-DERECHA (Herramientas) ---------- */
 
-  function enablePaging(listEl, { perPage = 8, footerEl = null } = {}) {
+  function enablePagingTopRight(listEl, { perPage = 8, cardEl = null } = {}) {
     const items = $$(".tool-btn", listEl);
-    // Limpia cualquier paginador/flechas previos en el footer para evitar duplicados
-    if (footerEl) {
-      $$(".tools-pager", footerEl).forEach((n) => n.remove());
-      // por si el HTML tenía flechas sueltas
-      $$(".tools-arrow", footerEl).forEach((n) => n.remove());
+
+    // limpiar cualquier paginador previo en la tarjeta
+    if (cardEl) {
+      $$(".tools-pager", cardEl).forEach((n) => n.remove());
     }
 
     if (items.length <= perPage) {
-      // No hace falta paginar: asegúrate de que se vean todos y no haya controles
       items.forEach((el) => (el.style.display = ""));
       return;
     }
@@ -124,7 +124,8 @@
 
     // Controles
     const pager = document.createElement("div");
-    pager.className = "tools-pager";
+    pager.className = "tools-pager topright"; // <- CSS lo colocará arriba derecha
+
     const prev = mkArrow("‹");
     const next = mkArrow("›");
     const dots = document.createElement("div");
@@ -134,7 +135,7 @@
     pager.appendChild(dots);
     pager.appendChild(next);
 
-    const host = footerEl || listEl.parentElement || listEl;
+    const host = cardEl || listEl.parentElement || listEl;
     host.appendChild(pager);
 
     const dotEls = pages.map((_, i) => {
@@ -152,11 +153,8 @@
 
     function render(p) {
       page = clamp(p, 0, pages.length - 1);
-      // Oculta todo
       items.forEach((el) => (el.style.display = "none"));
-      // Muestra solo la página actual
       pages[page].forEach((el) => (el.style.display = ""));
-      // Estado de dots / flechas
       dotEls.forEach((d, i) => d.classList.toggle("is-active", i === page));
       prev.disabled = page === 0;
       next.disabled = page === pages.length - 1;
@@ -171,9 +169,8 @@
     const raw = String(input)
       .toLowerCase()
       .replace(/\s+/g, "")
-      .replace(/[|]/g, "/"); // por si alguien usa |
+      .replace(/[|]/g, "/");
 
-    // si trae varios (/, ,)
     const parts = raw.split(/[\/,]+/).filter(Boolean);
     const uniq = Array.from(new Set(parts.length ? parts : [raw]));
 
@@ -181,7 +178,6 @@
       if (p === "win" || p === "windows") return { cls: "win", label: "Windows" };
       if (p === "lnx" || p === "linux") return { cls: "lnx", label: "Linux" };
       if (p === "multi" || p === "mul" || p === "cross" || p === "crossplatform") return { cls: "mul", label: "Multi" };
-      // fallback: intenta detectar palabras clave
       if (p.includes("win")) return { cls: "win", label: "Windows" };
       if (p.includes("lin")) return { cls: "lnx", label: "Linux" };
       return { cls: "mul", label: "Multi" };
