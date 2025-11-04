@@ -1,10 +1,11 @@
-// /assets/js/graph.js — PRO (Fase 1+2 + L3 por camino + flow + fix clics)
-// - L0/L1/L2 render idéntico (columnas responsive)
+// /assets/js/graph.js — Versión PRO (Fase 1+2+3)
+// - Layout de columnas responsive
 // - Breadcrumb opcional (#graphBc)
-// - Atenuación y resaltado de ruta activa
-// - Pan/zoom manual, sin cámara inteligente
-// - Partículas con pointer-events:none
-// - L3 usa GRAPH_GET_ITEMS(root, area, sub)
+// - Resaltado de ruta + atenuación
+// - Pan/zoom manual (sin cámara inteligente)
+// - Partículas ambientales SIN capturar eventos
+// - Micro-expansión (pulse) y flujo de enlaces permanente
+// - Toggle de tema (oscuro / técnico)
 
 const SiteGraph = (() => {
   const NS = 'http://www.w3.org/2000/svg';
@@ -13,24 +14,31 @@ const SiteGraph = (() => {
     svg:null, root:null, stage:null,
     layers:null, colsNodes:[[],[],[],[]],
     state:{ sel0:null, sel1:null, sel2:null },
+    // layout dinámico
     colX:[120, 460, 940, 1300],
     nodeW:[230, 250, 280, 260],
     nodeH:56, vGap:22,
+    // pan/zoom
     tx:0, ty:0, scale:1, minScale:0.6, maxScale:2.0,
+    // data
     TREE:null,
+    // UI
     bcEl:null,
+    // fx
     _ambient:null,
   };
 
-  /* Utils */
+  /* ====== Utils ====== */
   function clear(g){ while(g.firstChild) g.removeChild(g.firstChild); }
   function applyTransform(){ if (G.root) G.root.setAttribute('transform', `translate(${G.tx},${G.ty}) scale(${G.scale})`); }
   function ptSvg(x,y){ const p=G.svg.createSVGPoint(); p.x=x; p.y=y; return p; }
   function screenToRoot(x,y){ const p=ptSvg(x,y); const m=G.root.getScreenCTM(); return m ? p.matrixTransform(m.inverse()) : {x,y}; }
 
+  // recalcula columnas según ancho disponible
   function relayoutColumns(){
     const bb = G.svg.getBoundingClientRect();
-    const L = 4, marginX = 100;
+    const L = 4;
+    const marginX = 100;
     const usable = Math.max(900, bb.width - marginX*2);
     const step = usable / (L-1);
     G.colX = Array.from({length:L}, (_,i)=> marginX + i*step);
@@ -54,7 +62,7 @@ const SiteGraph = (() => {
     if(level<=3) clear(G.layers.links[2]);
   }
 
-  /* Dibujo */
+  /* ====== Dibujo ====== */
   function drawNode({level,x,y,w,h,title,sub,onClick,delay=0}){
     const g = document.createElementNS(NS,'g');
     g.classList.add('node'); g.dataset.lvl=String(level);
@@ -102,12 +110,13 @@ const SiteGraph = (() => {
     const dx = Math.max(60, (x2-x1)/2);
     path.setAttribute('d', `M ${x1} ${y1} C ${x1+dx} ${y1}, ${x2-dx} ${y2}, ${x2} ${y2}`);
     path.setAttribute('class', `link l${level}`);
-    path.classList.add('flow');  // guiones animados constantes
+    path.classList.add('flow');          // flujo permanente
     G.layers.links[level-1].appendChild(path);
-    setTimeout(()=> path.classList.add('draw'), delay);
+    setTimeout(()=> path.classList.add('draw'), delay); // aparición
     return path;
   }
 
+  // layout vertical centrado
   function layoutY(count){
     const H = G.svg.getBoundingClientRect().height || 640;
     const total = count*G.nodeH + Math.max(0,(count-1))*G.vGap;
@@ -115,18 +124,19 @@ const SiteGraph = (() => {
     return ix => y0 + ix*(G.nodeH+G.vGap);
   }
 
-  /* Render por niveles */
+  /* ====== Render por niveles ====== */
   function renderL0(){
     clearFrom(0);
     if(!G.TREE?.length) return;
     const roots = G.TREE.map(r=>r.raiz);
     const yAt = layoutY(roots.length);
     G.colsNodes[0] = roots.map((txt,i)=>{
-      return drawNode({
+      const box = drawNode({
         level:0, x:G.colX[0], y:yAt(i), w:G.nodeW[0], h:G.nodeH, title:txt,
-        onClick:()=>{ G.state.sel0=i; G.state.sel1=null; G.state.sel2=null; updateBreadcrumb(); renderFrom(1); highlightActive(); },
+        onClick:()=>{ G.state.sel0=i; G.state.sel1=null; G.state.sel2=null; updateBreadcrumb(); renderFrom(1); highlightActive(true); },
         delay:40+i*40
       });
+      return box;
     });
   }
 
@@ -139,12 +149,14 @@ const SiteGraph = (() => {
     G.colsNodes[1] = areas.map((txt,i)=>{
       const box = drawNode({
         level:1, x:G.colX[1], y:yAt(i), w:G.nodeW[1], h:G.nodeH, title:txt,
-        onClick:()=>{ G.state.sel1=i; G.state.sel2=null; updateBreadcrumb(); renderFrom(2); highlightActive(); },
+        onClick:()=>{ G.state.sel1=i; G.state.sel2=null; updateBreadcrumb(); renderFrom(2); highlightActive(true); },
         delay:60+i*40
       });
       box._link = drawLink(left, box, 1, 60+i*40);
       return box;
     });
+    // micro-pulse cuando aparecen
+    setTimeout(()=> { G.colsNodes[1].forEach(b=> b?.el.classList.add('pulse')); setTimeout(()=>G.colsNodes[1].forEach(b=> b?.el.classList.remove('pulse')), 360); }, 90);
   }
 
   function renderL2(){
@@ -156,45 +168,32 @@ const SiteGraph = (() => {
     G.colsNodes[2] = subs.map((txt,i)=>{
       const box = drawNode({
         level:2, x:G.colX[2], y:yAt(i), w:G.nodeW[2], h:G.nodeH, title:txt,
-        onClick:()=>{ G.state.sel2=i; updateBreadcrumb(); renderFrom(3); highlightActive(); },
+        onClick:()=>{ G.state.sel2=i; updateBreadcrumb(); renderFrom(3); highlightActive(true); },
         delay:70+i*35
       });
       box._link = drawLink(left, box, 2, 70+i*35);
       return box;
     });
+    setTimeout(()=> { G.colsNodes[2].forEach(b=> b?.el.classList.add('pulse')); setTimeout(()=>G.colsNodes[2].forEach(b=> b?.el.classList.remove('pulse')), 360); }, 120);
   }
 
   function renderL3(){
     clearFrom(3);
     if(G.state.sel0==null || G.state.sel1==null || G.state.sel2==null) return;
-
-    const rootName = G.TREE[G.state.sel0].raiz;
-    const areaName = G.TREE[G.state.sel0].areas[G.state.sel1].nombre;
     const subs = (G.TREE[G.state.sel0].areas[G.state.sel1].subcarpetas||[]);
-    const subName = subs[G.state.sel2];
-
-    // Items por camino exacto
-    let items = [];
-    if (typeof window.GRAPH_GET_ITEMS === 'function') {
-      items = window.GRAPH_GET_ITEMS(rootName, areaName, subName) || [];
-    } else if (typeof window.GRAPH_MAKE_SIX === 'function') {
-      items = window.GRAPH_MAKE_SIX(subName) || [];
-    }
-    if (!Array.isArray(items) || !items.length) {
-      items = Array.from({length:6}, (_,i)=> `Artículo ${i+1} — ${subName}`);
-    }
-
+    const items = (window.GRAPH_MAKE_SIX ? window.GRAPH_MAKE_SIX(subs[G.state.sel2]) : []);
     const yAt = layoutY(items.length);
     const left = G.colsNodes[2][G.state.sel2];
     G.colsNodes[3] = items.map((txt,i)=>{
       const box = drawNode({
         level:3, x:G.colX[3], y:yAt(i), w:G.nodeW[3], h:G.nodeH, title:txt, sub:"↗",
-        onClick:()=>{/* hook futuro */},
+        onClick:()=>{/* futuro: abrir enlace */},
         delay:80+i*30
       });
       box._link = drawLink(left, box, 3, 80+i*30);
       return box;
     });
+    setTimeout(()=> { G.colsNodes[3].forEach(b=> b?.el.classList.add('pulse')); setTimeout(()=>G.colsNodes[3].forEach(b=> b?.el.classList.remove('pulse')), 360); }, 140);
   }
 
   function renderFrom(level){
@@ -215,7 +214,7 @@ const SiteGraph = (() => {
     updateBreadcrumb();
   }
 
-  /* Breadcrumb */
+  /* ====== Breadcrumb (opcional) ====== */
   function updateBreadcrumb(){
     if(!G.bcEl) return;
     const parts=[];
@@ -238,23 +237,41 @@ const SiteGraph = (() => {
     });
   }
 
-  /* Resaltado/Atenuación */
-  function highlightActive(){
+  /* ====== Resaltado/Atenuación ====== */
+  function highlightActive(withFlash=false){
+    // limpiar
     G.root.querySelectorAll('.node.active,.node.focus').forEach(n=>{n.classList.remove('active','focus');});
-    G.root.querySelectorAll('.link.active').forEach(n=>n.classList.remove('active'));
+    G.root.querySelectorAll('.link.active,.link.flash').forEach(n=>n.classList.remove('active','flash'));
     G.root.querySelectorAll('.dim-node').forEach(n=>n.classList.remove('dim-node'));
     G.root.querySelectorAll('.dim-link').forEach(n=>n.classList.remove('dim-link'));
 
-    const actives = [];
-    if(G.state.sel0!=null){ const n0 = G.colsNodes[0][G.state.sel0]; n0?.el.classList.add('active','focus'); actives.push(n0?.el); }
-    if(G.state.sel1!=null){ const n1 = G.colsNodes[1][G.state.sel1]; n1?.el.classList.add('active','focus'); n1?._link?.classList.add('active'); actives.push(n1?.el); }
-    if(G.state.sel2!=null){ const n2 = G.colsNodes[2][G.state.sel2]; n2?.el.classList.add('active','focus'); n2?._link?.classList.add('active'); actives.push(n2?.el); }
+    const anySel = (G.state.sel0!=null);
+    if (!anySel) return;
 
+    const actives = [];
+    const flash = l => { if(withFlash && l){ l.classList.add('flash'); setTimeout(()=> l.classList.remove('flash'), 220); } };
+
+    if(G.state.sel0!=null){
+      const n0 = G.colsNodes[0][G.state.sel0];
+      n0?.el.classList.add('active','focus'); actives.push(n0?.el);
+    }
+    if(G.state.sel1!=null){
+      const n1 = G.colsNodes[1][G.state.sel1];
+      n1?.el.classList.add('active','focus'); actives.push(n1?.el);
+      if(n1?._link){ n1._link.classList.add('active'); flash(n1._link); }
+    }
+    if(G.state.sel2!=null){
+      const n2 = G.colsNodes[2][G.state.sel2];
+      n2?.el.classList.add('active','focus'); actives.push(n2?.el);
+      if(n2?._link){ n2._link.classList.add('active'); flash(n2._link); }
+    }
+
+    // atenuar no activos
     G.root.querySelectorAll('.node').forEach(n=>{ if(!actives.includes(n)) n.classList.add('dim-node'); });
     G.root.querySelectorAll('.link').forEach(l=>{ if(!l.classList.contains('active')) l.classList.add('dim-link'); });
   }
 
-  /* Glow cursor */
+  /* ====== Glow cursor (sutil) ====== */
   function setupGlow(){
     const defs = document.createElementNS(NS,'defs');
     const grad = document.createElementNS(NS,'radialGradient');
@@ -277,18 +294,33 @@ const SiteGraph = (() => {
     G.stage.addEventListener('mouseleave', ()=> c.setAttribute('opacity','0'));
   }
 
-  /* Partículas */
+  /* ====== Partículas ambientales (decoración) ====== */
   function ensureAmbientParticles(){
     if (!G.stage || G._ambient) return;
+
     const cvs = document.createElement('canvas');
     cvs.className = 'ambient-canvas';
     cvs.style.pointerEvents = 'none';
     cvs.style.zIndex = '0';
-    if (G.stage.firstChild) { G.stage.insertBefore(cvs, G.stage.firstChild); }
-    else { G.stage.appendChild(cvs); }
+    if (G.stage.firstChild) {
+      G.stage.insertBefore(cvs, G.stage.firstChild);
+    } else {
+      G.stage.appendChild(cvs);
+    }
     const ctx = cvs.getContext('2d');
 
-    const P = { w: 0, h: 0, dpr: Math.max(1, Math.min(2, window.devicePixelRatio || 1)), pts: [], tick: 0 };
+    const P = {
+      w: 0, h: 0, dpr: Math.max(1, Math.min(2, window.devicePixelRatio || 1)),
+      pts: [],
+      tick: 0
+    };
+
+    function colors(){
+      const tech = document.body.classList.contains('theme-tech');
+      return tech
+        ? ['rgba(0,230,118,','rgba(119,255,208,']    // verdes en modo técnico
+        : ['rgba(255,159,26,','rgba(143,214,255,'];  // naranja/azul en modo normal
+    }
 
     function resize(){
       const r = G.stage.getBoundingClientRect();
@@ -298,35 +330,52 @@ const SiteGraph = (() => {
       cvs.height = Math.floor(P.h * P.dpr);
       ctx.setTransform(P.dpr, 0, 0, P.dpr, 0, 0);
       const count = Math.round((P.w * P.h) / 24000);
-      P.pts = Array.from({length: count}, ()=>spawn());
+      const [c1,c2] = colors();
+      P.pts = Array.from({length: count}, ()=>spawn(c1,c2));
     }
 
-    function spawn(){ return {
-      x: Math.random()*P.w, y: Math.random()*P.h,
-      r: 0.6 + Math.random()*1.8, a: 0.22 + Math.random()*0.38,
-      vx: (-0.15 + Math.random()*0.3), vy: (-0.15 + Math.random()*0.3),
-      c: (Math.random()<0.5) ? 'rgba(255,159,26,' : 'rgba(143,214,255,'
-    };}
+    function spawn(c1,c2){
+      return {
+        x: Math.random()*P.w,
+        y: Math.random()*P.h,
+        r: 0.6 + Math.random()*1.8,
+        a: 0.22 + Math.random()*0.38,
+        vx: (-0.15 + Math.random()*0.3),
+        vy: (-0.15 + Math.random()*0.3),
+        c: (Math.random()<0.5) ? c1 : c2
+      };
+    }
 
     function step(){
-      ctx.clearRect(0,0,P.w,P.h); P.tick++;
+      ctx.clearRect(0,0,P.w,P.h);
+      P.tick++;
       for (const p of P.pts){
         const wob = Math.sin((P.tick/120) + p.r) * 0.15;
-        p.x += p.vx * (0.6 + wob); p.y += p.vy * (0.6 + wob);
-        if (p.x < -8) p.x = P.w+8; if (p.x > P.w+8) p.x = -8;
-        if (p.y < -8) p.y = P.h+8; if (p.y > P.h+8) p.y = -8;
-        ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
-        ctx.fillStyle = p.c + p.a + ')'; ctx.fill();
+        p.x += p.vx * (0.6 + wob);
+        p.y += p.vy * (0.6 + wob);
+        if (p.x < -8) p.x = P.w+8;
+        if (p.x > P.w+8) p.x = -8;
+        if (p.y < -8) p.y = P.h+8;
+        if (p.y > P.h+8) p.y = -8;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+        ctx.fillStyle = p.c + p.a + ')';
+        ctx.fill();
       }
       requestAnimationFrame(step);
     }
 
     window.addEventListener('resize', resize);
-    resize(); step();
+    // al cambiar de tema, regeneramos colores
+    window.addEventListener('graph-theme-change', resize);
+
+    resize();
+    step();
     G._ambient = { cvs, ctx, resize };
   }
 
-  /* Pan/Zoom manual */
+  /* ====== Pan/Zoom ====== */
   function enablePanZoom(){
     let dragging=false, start, startTx, startTy;
 
@@ -363,7 +412,25 @@ const SiteGraph = (() => {
     G.stage.addEventListener('dblclick', ()=>{ G.scale=1; G.tx=0; G.ty=0; applyTransform(); });
   }
 
-  /* API */
+  /* ====== Toggle de tema ====== */
+  function setupThemeToggle(){
+    const btn = document.getElementById('graphThemeToggle');
+    if(!btn) return;
+    const apply = (mode) => {
+      document.body.classList.toggle('theme-tech', mode==='tech');
+      // notifica a partículas para recolorear
+      window.dispatchEvent(new Event('graph-theme-change'));
+      btn.textContent = document.body.classList.contains('theme-tech') ? 'Modo oscuro' : 'Modo técnico';
+    };
+    btn.addEventListener('click', ()=>{
+      const tech = !document.body.classList.contains('theme-tech');
+      apply(tech ? 'tech' : 'dark');
+    });
+    // estado inicial legible del botón
+    apply(document.body.classList.contains('theme-tech') ? 'tech' : 'dark');
+  }
+
+  /* ====== API ====== */
   function init({ tree, stageId, svgId, rootId } = {}){
     G.TREE = tree || window.GRAPH_TREE || [];
     const _stage = stageId || 'graphStage';
@@ -373,10 +440,10 @@ const SiteGraph = (() => {
     G.stage = document.getElementById(_stage);
     G.svg   = document.getElementById(_svg);
     G.root  = document.getElementById(_root);
-    G.bcEl  = document.getElementById('graphBc');
+    G.bcEl  = document.getElementById('graphBc'); // opcional
 
     if(!G.stage || !G.svg || !G.root) return;
-    renderInit(); enablePanZoom();
+    renderInit(); enablePanZoom(); setupThemeToggle();
 
     window.addEventListener('resize', ()=>{ relayoutColumns(); renderFrom(1); applyTransform(); });
   }
