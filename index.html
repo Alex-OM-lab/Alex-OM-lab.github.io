@@ -20,7 +20,6 @@
   <link rel="stylesheet" href="assets/css/sections.css">
   <!-- NUEVO: estilos de la sección Herramientas y Lenguajes -->
   <link rel="stylesheet" href="assets/css/tools.css">
-
   <style>
     /* ===== Variables base (global) ===== */
     :root{
@@ -187,13 +186,7 @@
             <div class="tools-card">
               <div class="tools-head"><h3>Herramientas</h3></div>
               <div id="toolsList" class="tools-list" aria-live="polite"></div>
-
-              <!-- Paginador opcional (lo usará tools.js si hace falta) -->
-              <div class="tools-pager" id="toolsPager" hidden>
-                <button class="tools-arrow" id="toolsPrev" aria-label="Página anterior">‹</button>
-                <div class="tools-dots" id="toolsDots"></div>
-                <button class="tools-arrow" id="toolsNext" aria-label="Página siguiente">›</button>
-              </div>
+              <!-- (El paginador se inserta dinámicamente por tools.js en la esquina sup.-derecha) -->
             </div>
           </div>
 
