@@ -30,10 +30,16 @@
 }
 .tools-list{display:flex;flex-direction:column;gap:8px}
 
-/* Botones-línea (pastilla larga) */
+/* =========================
+   Ítems (pastilla larga)
+   — Grid para centrado real del nombre
+   ========================= */
 .tool-btn{
-  display:flex; align-items:center; gap:10px;
-  justify-content:space-between;
+  /* De flex -> grid para poder centrar el nombre exacto */
+  display:grid;
+  grid-template-columns:1fr auto 1fr; /* izq chips – nombre – der chips/medidor */
+  align-items:center;
+  gap:10px;
   width:100%;
   border-radius:12px;
   padding:10px 12px;
@@ -47,9 +53,26 @@
   transform:translateY(-1px);
 }
 
-/* Nombre a la izquierda, chips/medidor a la derecha */
-.tool-label{display:flex; align-items:center; gap:10px}
-.tool-name{color:#e9eef6; font-weight:800; font-size:14.5px}
+/* Slots laterales para chips / medidor */
+.tool-slot--left,
+.tool-slot--right{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  min-width:0;
+}
+
+/* Nombre centrado */
+.tool-name{
+  color:#e9eef6;
+  font-weight:800;
+  font-size:14.5px;
+  text-align:center;
+  white-space:nowrap;
+  justify-self:center;
+}
+
+/* Chips */
 .badge{
   font-size:11px; font-weight:800;
   padding:4px 8px; border-radius:999px;
@@ -57,12 +80,29 @@
   background:rgba(143,214,255,.08);
   color:#cfe6ff;
 }
+
+/* Chips específicos de SO generados por JS:
+   <span class="badge os win|lnx|mul"></span> (contenido via ::before) */
+.badge.os{
+  background:rgba(255,255,255,.06);
+  border-color:rgba(255,255,255,.14);
+  color:#e6edf3;
+}
+.badge.os.win{ background:rgba(155,226,176,.08); border-color:rgba(155,226,176,.32); color:#dbffe6 }
+.badge.os.lnx{ background:rgba(143,214,255,.10); border-color:rgba(143,214,255,.35); color:#bfe6ff }
+.badge.os.mul{ background:rgba(255,215,154,.10); border-color:rgba(255,215,154,.35); color:#ffeacc }
+
+.badge.os.win::before{ content:"Windows"; }
+.badge.os.lnx::before{ content:"Linux"; }
+.badge.os.mul::before{ content:"Multi"; }
+
+/* (Compat) si en algún sitio usas .badge.lnx/.win/.mul sin .os */
 .badge.lnx{ background:rgba(143,214,255,.10); border-color:rgba(143,214,255,.35); color:#bfe6ff }
 .badge.win{ background:rgba(155,226,176,.08); border-color:rgba(155,226,176,.32); color:#dbffe6 }
 .badge.mul{ background:rgba(255,215,154,.10); border-color:rgba(255,215,154,.35); color:#ffeacc }
 
 /* Nivel (lenguajes) */
-.level{display:flex; align-items:center; gap:8px}
+.level{display:inline-flex; align-items:center; gap:8px}
 .level-label{
   font-size:11px; font-weight:900; color:#ffe2b0;
   background:rgba(255,159,26,.12); border:1px solid rgba(255,159,26,.35);
@@ -82,15 +122,23 @@
   border-radius:999px;
 }
 
-/* Mapeo de nivel (JS añade style, pero dejamos fallback) */
+/* Mapeo de nivel (fallback). El JS ya lo ajusta por width% */
 .tool-btn[data-level="alto"]   .meter i{width:90%}
 .tool-btn[data-level="medio"]  .meter i{width:55%}
 .tool-btn[data-level="medio-alto"] .meter i{width:75%}
 
-/* ---------- Paginación (Herramientas) ---------- */
+/* ---------- Pie nivelado (evitar "escalón") ---------- */
+.card-footer{
+  min-height:64px;              /* asegura la misma altura en ambas tarjetas */
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-top:6px;
+}
 
+/* ---------- Paginación (Herramientas) ---------- */
 .tools-pager{
-  margin-top:8px; display:flex; align-items:center; justify-content:center; gap:10px;
+  display:flex; align-items:center; justify-content:center; gap:10px;
 }
 .tools-arrow{
   width:36px; height:36px; border-radius:999px;
