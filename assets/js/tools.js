@@ -1,6 +1,6 @@
 /* ============================================
    Tools UI — Render + Medidores + Paginación
-   (pager arriba derecha + SO en derecha + barras 3 niveles)
+   (pager arriba derecha + chips de SO a la derecha)
    ============================================ */
 
 (function () {
@@ -17,17 +17,14 @@
     { name: "OpenVAS", os: "linux" },
     { name: "Wireshark", os: "windows/linux" },
     { name: "pfSense", os: "linux" },
-    { name: "Proxmox", os: "linux" },
-    { name: "VMware/ESXi", os: "windows" },
-    { name: "Azure AD", os: "windows" },
     { name: "Git/GitHub", os: "multi" },
   ];
 
   const LANGS = [
-    { name: "Bash", level: "alto" },         // 100%
-    { name: "PowerShell", level: "medio-alto" }, // 66%
-    { name: "SQL", level: "medio-alto" },        // 66%
-    { name: "Python", level: "medio" },          // 33%
+    { name: "Bash", level: "alto" },
+    { name: "PowerShell", level: "medio-alto" },
+    { name: "SQL", level: "medio-alto" },
+    { name: "Python", level: "medio" },
     { name: "YAML/Ansible", level: "medio-alto" },
     { name: "HTML/CSS", level: "medio" },
     { name: "JavaScript", level: "medio" },
@@ -57,7 +54,6 @@
         const osBadges = parseOs(t.os)
           .map((o) => `<span class="badge os ${o.cls}"></span>`)
           .join("");
-        // SO a la DERECHA; izquierda vacía (mismo patrón visual que Lenguajes)
         return `
           <button class="tool-btn" type="button" aria-label="${escapeHtml(t.name)}">
             <span class="tool-slot--left"></span>
@@ -70,37 +66,35 @@
 
   function renderLangs(container, data) {
     container.innerHTML = data
-      .map(
-        (l) => `
-      <div class="tool-btn" data-level="${escapeHtml(l.level)}">
-        <span class="tool-slot--left"></span>
-        <span class="tool-name">${escapeHtml(l.name)}</span>
-        <span class="tool-slot--right">
-          <span class="level">
-            <span class="level-label badge">${labelLevel(l.level)}</span>
-            <span class="meter" aria-hidden="true"><i></i></span>
-          </span>
-        </span>
-      </div>`
-      )
+      .map((l) => {
+        const lvl = (l.level || "").toLowerCase();
+        return `
+          <button class="tool-btn" type="button" data-level="${escapeHtml(l.level)}" aria-label="${escapeHtml(l.name)} ${escapeHtml(l.level)}">
+            <span class="tool-slot--left"></span>
+            <span class="tool-name">${escapeHtml(l.name)}</span>
+            <span class="tool-slot--right level">
+              <span class="level-label">${escapeHtml(l.level)}</span>
+              <span class="meter" aria-hidden="true"><i></i></span>
+            </span>
+          </button>`;
+      })
       .join("");
   }
 
-  /* ---------- Medidores (3 niveles discretos) ---------- */
+  /* ---------- 3 niveles fijos para barras ---------- */
   function normalizeMeters() {
     $$('.tool-btn[data-level]').forEach((btn) => {
       const lvl = (btn.getAttribute("data-level") || "").toLowerCase().trim();
       const bar = $(".meter i", btn);
       if (!bar) return;
-
-      // 3 pasos: medio = 33%, medio-alto = 66%, alto = 100%
       let w = 33;
-      if (lvl === "medio-alto" || lvl === "medio alto" || lvl === "medioalto") w = 66;
-      else if (lvl === "alto") w = 100;
+      if (lvl === "alto") w = 100;
+      else if (lvl === "medio-alto" || lvl === "medio alto" || lvl === "medioalto" || lvl === "medio") w = 66;
+      else if (lvl === "basico" || lvl === "básico") w = 33;
 
+      // seguridad para no desbordar
       w = Math.max(0, Math.min(100, w));
       bar.style.width = w + "%";
-      bar.style.maxWidth = "100%";
     });
   }
 
@@ -108,7 +102,11 @@
   function enablePagingTopRight(listEl, { perPage = 8, cardEl = null } = {}) {
     const items = $$(".tool-btn", listEl);
 
-    if (cardEl) $$(".tools-pager", cardEl).forEach((n) => n.remove());
+    // limpiar cualquier paginador previo en la tarjeta
+    if (cardEl) {
+      $$(".tools-pager", cardEl).forEach((n) => n.remove());
+    }
+
     if (items.length <= perPage) {
       items.forEach((el) => (el.style.display = ""));
       return;
@@ -117,8 +115,9 @@
     const pages = chunk(items, perPage);
     let page = 0;
 
+    // Controles
     const pager = document.createElement("div");
-    pager.className = "tools-pager topright";
+    pager.className = "tools-pager topright"; // <- CSS lo colocará arriba derecha
 
     const prev = mkArrow("‹");
     const next = mkArrow("›");
@@ -129,12 +128,9 @@
     pager.appendChild(dots);
     pager.appendChild(next);
 
-    const host = cardEl || listEl.parentElement || listEl;
-    host.appendChild(pager);
-
     const dotEls = pages.map((_, i) => {
-      const d = document.createElement("span");
-      d.className = "tools-dot" + (i === 0 ? " is-active" : "");
+      const d = document.createElement("div");
+      d.className = "tools-dot";
       d.addEventListener("click", () => render(i));
       dots.appendChild(d);
       return d;
@@ -142,6 +138,9 @@
 
     prev.addEventListener("click", () => render(page - 1));
     next.addEventListener("click", () => render(page + 1));
+
+    // Insertar pager en la tarjeta contenedora
+    if (cardEl) cardEl.appendChild(pager);
 
     render(0);
 
@@ -158,37 +157,24 @@
   /* ---------- Helpers ---------- */
 
   function parseOs(input) {
+    // Devuelve array de {cls:'win'|'lnx'|'mul', label:'Windows'|...}
     if (!input) return [];
-    const raw = String(input).toLowerCase().replace(/\s+/g, "").replace(/[|]/g, "/");
+    const raw = String(input)
+      .toLowerCase()
+      .replace(/\s+/g, "")
+      .replace(/[|]/g, "/");
+
     const parts = raw.split(/[\/,]+/).filter(Boolean);
     const uniq = Array.from(new Set(parts.length ? parts : [raw]));
     return uniq.map((p) => {
-      if (p === "win" || p === "windows") return { cls: "win", label: "Windows" };
-      if (p === "lnx" || p === "linux") return { cls: "lnx", label: "Linux" };
-      if (p === "multi" || p === "mul" || p === "cross" || p === "crossplatform") return { cls: "mul", label: "Multi" };
       if (p.includes("win")) return { cls: "win", label: "Windows" };
       if (p.includes("lin")) return { cls: "lnx", label: "Linux" };
       return { cls: "mul", label: "Multi" };
     });
   }
 
-  function labelLevel(level) {
-    const l = (level || "").toLowerCase();
-    if (l === "alto") return "Alto";
-    if (l === "medio-alto" || l === "medio alto" || l === "medioalto") return "Medio-alto";
-    return "Medio";
-  }
-
-  function chunk(arr, size) {
-    const out = [];
-    for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
-    return out;
-  }
-
-  function clamp(v, min, max) {
-    return Math.max(min, Math.min(max, v));
-  }
-
+  const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
+  const chunk = (arr, n) => arr.reduce((a, _, i) => (i % n ? a : [...a, arr.slice(i, i + n)]), []);
   function mkArrow(txt) {
     const b = document.createElement("button");
     b.type = "button";
