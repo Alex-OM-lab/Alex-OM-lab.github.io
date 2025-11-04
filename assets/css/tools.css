@@ -37,7 +37,8 @@
 
 /* =========================
    Ítem tipo botón (HERRAMIENTAS y LENGUAJES)
-   — Fondo oscuro, borde naranja, efecto de brillo y elevación
+   — Fondo naranja oscuro elegante (#1d150b)
+   — Hover/Active con elevación y brillo de bordes
    ========================= */
 .tool-btn{
   display: grid;
@@ -47,8 +48,10 @@
   width: 100%;
   padding: 10px 14px;
 
-  /* === Fondo y borde original === */
-  background-color: #0E1523;
+  /* === Fondo y borde === */
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.03), rgba(0,0,0,.2) 60%),
+    #1d150b; /* naranja oscuro elegante */
   border: 1px solid rgba(255,140,26,.45); /* borde naranja */
   border-radius: 10px; /* rectángulo redondeado */
   box-shadow:
@@ -183,4 +186,3 @@
   .tools-grid{ grid-template-columns:1fr; }
   .tools-pager.topright{ position: static; justify-content: flex-end; margin-bottom: 6px; }
 }
-
