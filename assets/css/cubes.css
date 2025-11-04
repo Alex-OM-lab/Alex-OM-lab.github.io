@@ -65,7 +65,8 @@
 /* Flechas SIEMPRE visibles, estilo naranja */
 .cube-nav{ position:absolute; inset:0; pointer-events:none; }
 .cube-btn{
-  position:absolute; top:50%; translate:0 -50%;
+  position:absolute; top:58%; /* ↓ antes 50%, ahora un poco más abajo */
+  translate:0 -50%;
   width:46px; height:46px; border-radius:999px;
   background:rgba(255,159,26,.18);
   border:1px solid rgba(255,159,26,.75);
@@ -87,8 +88,8 @@
   outline:2px solid #0000;
   box-shadow:0 0 22px rgba(255,159,26,.55), 0 0 0 2px rgba(255,159,26,.95) inset;
 }
-.cube-btn.prev{ left:6px }
-.cube-btn.next{ right:6px }
+.cube-btn.prev{ left:2px }   /* ← antes 6px, más pegada al borde */
+.cube-btn.next{ right:2px }  /* → antes 6px, más pegada al borde */
 
 /* Indicadores */
 .cube-dots{ display:flex; gap:6px; justify-content:center; margin-top:12px }
