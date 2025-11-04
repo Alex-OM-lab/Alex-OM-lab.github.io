@@ -1,6 +1,6 @@
 /* ============================================
    Tools UI — Render + Medidores + Paginación
-   (pager arriba derecha + sin chip derecho en Herramientas)
+   (pager arriba derecha + SO en derecha + barras 3 niveles)
    ============================================ */
 
 (function () {
@@ -24,10 +24,10 @@
   ];
 
   const LANGS = [
-    { name: "Bash", level: "alto" },
-    { name: "PowerShell", level: "medio-alto" },
-    { name: "SQL", level: "medio-alto" },
-    { name: "Python", level: "medio" },
+    { name: "Bash", level: "alto" },         // 100%
+    { name: "PowerShell", level: "medio-alto" }, // 66%
+    { name: "SQL", level: "medio-alto" },        // 66%
+    { name: "Python", level: "medio" },          // 33%
     { name: "YAML/Ansible", level: "medio-alto" },
     { name: "HTML/CSS", level: "medio" },
     { name: "JavaScript", level: "medio" },
@@ -57,12 +57,12 @@
         const osBadges = parseOs(t.os)
           .map((o) => `<span class="badge os ${o.cls}"></span>`)
           .join("");
-        // RIGHT CHIP ELIMINADO (pedido)
+        // SO a la DERECHA; izquierda vacía (mismo patrón visual que Lenguajes)
         return `
           <button class="tool-btn" type="button" aria-label="${escapeHtml(t.name)}">
-            <span class="tool-slot--left">${osBadges}</span>
+            <span class="tool-slot--left"></span>
             <span class="tool-name">${escapeHtml(t.name)}</span>
-            <span class="tool-slot--right"></span>
+            <span class="tool-slot--right">${osBadges}</span>
           </button>`;
       })
       .join("");
@@ -86,34 +86,29 @@
       .join("");
   }
 
-  /* ---------- Medidores ---------- */
-
+  /* ---------- Medidores (3 niveles discretos) ---------- */
   function normalizeMeters() {
     $$('.tool-btn[data-level]').forEach((btn) => {
       const lvl = (btn.getAttribute("data-level") || "").toLowerCase().trim();
       const bar = $(".meter i", btn);
       if (!bar) return;
-      let w = 50;
-      if (lvl === "alto") w = 90;
-      else if (lvl === "medio-alto" || lvl === "medio alto" || lvl === "medioalto") w = 75;
-      else if (lvl === "medio") w = 55;
 
-      // seguridad para no desbordar
+      // 3 pasos: medio = 33%, medio-alto = 66%, alto = 100%
+      let w = 33;
+      if (lvl === "medio-alto" || lvl === "medio alto" || lvl === "medioalto") w = 66;
+      else if (lvl === "alto") w = 100;
+
       w = Math.max(0, Math.min(100, w));
       bar.style.width = w + "%";
+      bar.style.maxWidth = "100%";
     });
   }
 
   /* ---------- Paginación ARRIBA-DERECHA (Herramientas) ---------- */
-
   function enablePagingTopRight(listEl, { perPage = 8, cardEl = null } = {}) {
     const items = $$(".tool-btn", listEl);
 
-    // limpiar cualquier paginador previo en la tarjeta
-    if (cardEl) {
-      $$(".tools-pager", cardEl).forEach((n) => n.remove());
-    }
-
+    if (cardEl) $$(".tools-pager", cardEl).forEach((n) => n.remove());
     if (items.length <= perPage) {
       items.forEach((el) => (el.style.display = ""));
       return;
@@ -122,9 +117,8 @@
     const pages = chunk(items, perPage);
     let page = 0;
 
-    // Controles
     const pager = document.createElement("div");
-    pager.className = "tools-pager topright"; // <- CSS lo colocará arriba derecha
+    pager.className = "tools-pager topright";
 
     const prev = mkArrow("‹");
     const next = mkArrow("›");
@@ -164,16 +158,10 @@
   /* ---------- Helpers ---------- */
 
   function parseOs(input) {
-    // Devuelve array de {cls:'win'|'lnx'|'mul', label:'Windows'|...}
     if (!input) return [];
-    const raw = String(input)
-      .toLowerCase()
-      .replace(/\s+/g, "")
-      .replace(/[|]/g, "/");
-
+    const raw = String(input).toLowerCase().replace(/\s+/g, "").replace(/[|]/g, "/");
     const parts = raw.split(/[\/,]+/).filter(Boolean);
     const uniq = Array.from(new Set(parts.length ? parts : [raw]));
-
     return uniq.map((p) => {
       if (p === "win" || p === "windows") return { cls: "win", label: "Windows" };
       if (p === "lnx" || p === "linux") return { cls: "lnx", label: "Linux" };
