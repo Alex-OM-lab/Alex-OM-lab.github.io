@@ -51,7 +51,7 @@
   /* === Fondo y borde === */
   background:
     linear-gradient(180deg, rgba(255,255,255,.03), rgba(0,0,0,.2) 60%),
-    #2a1c0f; /* naranja oscuro elegante */
+    #3a2410; /* naranja oscuro elegante */
   border: 1px solid rgba(255,140,26,.45); /* borde naranja */
   border-radius: 10px; /* rectángulo redondeado */
   box-shadow:
