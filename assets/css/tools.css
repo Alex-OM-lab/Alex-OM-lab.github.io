@@ -36,10 +36,9 @@
 }
 
 /* =========================
-   Ítem tipo botón
-   — Ajustado para parecerse a la 1ª imagen:
-     fondo más “ink blue”, tipografía Tomorrow,
-     y radio moderado (rectángulo redondeado)
+   Ítem tipo botón (HERRAMIENTAS y LENGUAJES)
+   — Fondo, tipografía y forma como en la 1ª imagen
+   — Hover/Active con elevación y brillo de bordes
    ========================= */
 .tool-btn{
   display: grid;
@@ -49,21 +48,50 @@
   width: 100%;
   padding: 10px 14px;
 
-  /* 👉 nuevo look */
+  /* >>> Nuevo look (color y forma) */
   background:
-    linear-gradient(180deg, rgba(255,255,255,.035), rgba(0,0,0,0) 45%),
-    #0e1726; /* fondo del botón más cercano a la 1ª imagen */
-  border: 1px solid rgba(255, 190, 120, .28); /* filo ámbar suave */
-  border-radius: 10px; /* forma más recta con esquinas suaves */
-
+    linear-gradient(180deg, rgba(255,255,255,.03), rgba(0,0,0,0) 45%),
+    #0d1626; /* fondo “ink blue” oscuro */
+  border: 1px solid rgba(255,159,26,.34);          /* filo ámbar */
+  border-radius: 10px;                              /* rectángulo redondeado */
   box-shadow:
-    0 1px 0 rgba(255,255,255,.04) inset,
-    0 8px 18px rgba(0,0,0,.25);
+    0 1px 0 rgba(255,255,255,.04) inset,           /* leve brillo interior */
+    0 0 0 1px rgba(255,255,255,.06) inset,         /* contorno sutil interno */
+    0 8px 18px rgba(0,0,0,.25);                    /* profundidad base */
+
   overflow: hidden;
+  cursor: pointer;
+  transition:
+    transform .18s ease,
+    box-shadow .22s ease,
+    border-color .22s ease,
+    background .22s ease;
 }
 
+/* Hover: se eleva y brillan bordes */
+.tool-btn:hover{
+  transform: translateY(-3px);
+  border-color: rgba(255,159,26,.55);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.05) inset,
+    0 0 0 1px rgba(255,159,26,.32) inset,
+    0 10px 22px rgba(0,0,0,.35),
+    0 0 14px rgba(255,159,26,.18);
+}
+
+/* Active: tacto “click” manteniendo el brillo */
+.tool-btn:active{
+  transform: translateY(-1px);
+  border-color: rgba(255,159,26,.65);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.06) inset,
+    0 0 0 1px rgba(255,159,26,.40) inset,
+    0 6px 14px rgba(0,0,0,.3),
+    0 0 10px rgba(255,159,26,.22);
+}
+
+/* Tipografía del nombre dentro del botón */
 .tool-name{
-  /* 👉 tipografía tipo “título” como en la 1ª imagen */
   font-family: "Tomorrow", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial;
   font-weight: 800;
   letter-spacing: .2px;
@@ -97,7 +125,7 @@
 .badge.os.mul::before { content: "Multi"; }
 
 /* =========================
-   Barra de nivel (Lenguajes) — SIN CAMBIOS DE LÓGICA
+   Barra de nivel (Lenguajes) — SIN CAMBIOS
    ========================= */
 #langsList .tool-slot--right { justify-self: end; }
 
@@ -126,7 +154,7 @@
 }
 
 /* =========================
-   Paginador (no tocado)
+   Paginador (sin cambios)
    ========================= */
 .tools-pager.topright {
   position: absolute;
