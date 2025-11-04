@@ -175,27 +175,34 @@
 
     <!-- ================== HERRAMIENTAS Y LENGUAJES (chips pro, 2 columnas) ================== -->
     <section id="tools" class="reveal" data-reveal="fade-up" aria-labelledby="tools-title">
-    <h2 id="stack-title" class="section-title">Herramientas y Lenguajes</h2>
-      <p class="kicker">Chips con sistema operativo y nivel de dominio.</p>
+      <div class="tools-head">
+        <h2 id="tools-title" class="section-title">Herramientas y Lenguajes</h2>
+        <p class="hint">Chips con sistema operativo y nivel de dominio.</p>
+      </div>
 
       <div class="tools-wrap">
-        <!-- Columna izquierda -->
-        <div class="tools-col">
-          <div class="tools-card">
-            <div class="tools-head">
-              <h3>Herramientas</h3>
-            </div>
-            <div id="toolsList" class="tools-list" aria-live="polite"></div>
-          </div>
-        </div>
+        <div class="tools-grid">
+          <!-- Columna izquierda -->
+          <div class="tools-col">
+            <div class="tools-card">
+              <div class="tools-head"><h3>Herramientas</h3></div>
+              <div id="toolsList" class="tools-list" aria-live="polite"></div>
 
-        <!-- Columna derecha -->
-        <div class="tools-col">
-          <div class="tools-card">
-            <div class="tools-head">
-              <h3>Lenguajes</h3>
+              <!-- Paginador opcional (lo usará tools.js si hace falta) -->
+              <div class="tools-pager" id="toolsPager" hidden>
+                <button class="tools-arrow" id="toolsPrev" aria-label="Página anterior">‹</button>
+                <div class="tools-dots" id="toolsDots"></div>
+                <button class="tools-arrow" id="toolsNext" aria-label="Página siguiente">›</button>
+              </div>
             </div>
-            <div id="langsList" class="tools-list" aria-live="polite"></div>
+          </div>
+
+          <!-- Columna derecha -->
+          <div class="tools-col">
+            <div class="tools-card">
+              <div class="tools-head"><h3>Lenguajes</h3></div>
+              <div id="langsList" class="tools-list" aria-live="polite"></div>
+            </div>
           </div>
         </div>
       </div>
