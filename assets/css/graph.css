@@ -8,6 +8,15 @@
 .graph-head{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:10px; }
 .graph-head h2{ margin:0 }
 
+/* Botón de tema (Fase 3) */
+.theme-toggle{
+  appearance:none; border:1px solid rgba(255,255,255,.12); background:#0e1730;
+  color:var(--text); padding:8px 12px; border-radius:10px; font-weight:700; cursor:pointer;
+  transition:transform .15s ease, background .2s ease, border-color .2s ease;
+}
+.theme-toggle:hover{ transform:translateY(-2px); background:#12203f; border-color:rgba(255,255,255,.22) }
+.theme-toggle:active{ transform:translateY(0) }
+
 /* escenario */
 .graph-stage{
   position:relative;
@@ -58,10 +67,24 @@
 /* ===== Nodos ===== */
 .node{ cursor:pointer; opacity:0; }
 .node rect{ rx:10; ry:10; fill:#0e1730; stroke:rgba(255,255,255,.10); stroke-width:1.2; }
-.node[data-lvl="0"] rect{ fill:rgba(255,159,26,.18); stroke:rgba(255,159,26,.55) }
-.node[data-lvl="1"] rect{ fill:rgba(255,215,154,.12); stroke:rgba(255,215,154,.5) }
-.node[data-lvl="2"] rect{ fill:rgba(143,214,255,.10); stroke:rgba(143,214,255,.45) }
-.node[data-lvl="3"] rect{ fill:rgba(155,226,176,.10); stroke:rgba(155,226,176,.4) }
+
+/* “Borde degradado” por nivel (simulado con doble glow de color) */
+.node[data-lvl="0"] rect{
+  fill:rgba(255,159,26,.18); stroke:rgba(255,159,26,.55);
+  filter: drop-shadow(0 0 10px rgba(255,159,26,.12)) drop-shadow(0 0 20px rgba(255,159,26,.08));
+}
+.node[data-lvl="1"] rect{
+  fill:rgba(255,215,154,.12); stroke:rgba(255,215,154,.5);
+  filter: drop-shadow(0 0 10px rgba(255,215,154,.10)) drop-shadow(0 0 18px rgba(255,215,154,.06));
+}
+.node[data-lvl="2"] rect{
+  fill:rgba(143,214,255,.10); stroke:rgba(143,214,255,.45);
+  filter: drop-shadow(0 0 10px rgba(143,214,255,.10)) drop-shadow(0 0 18px rgba(143,214,255,.06));
+}
+.node[data-lvl="3"] rect{
+  fill:rgba(155,226,176,.10); stroke:rgba(155,226,176,.4);
+  filter: drop-shadow(0 0 10px rgba(155,226,176,.10)) drop-shadow(0 0 18px rgba(155,226,176,.06));
+}
 
 .node .title{ fill:#e9eef6; font-weight:800; font-size:14px; }
 .node .sub{ fill:#a8b2c2; font-size:12.5px; }
@@ -86,7 +109,7 @@
 .node rect{ transition:filter .2s ease, stroke-width .18s ease; }
 .node.hovered rect{ filter:drop-shadow(0 0 14px rgba(255,159,26,.18)); stroke-width:1.6; }
 
-/* “Pulse” (FASE 3) */
+/* “Pulse” (FASE 3: micro-expansión al abrir) */
 .node.pulse .node-in{ animation:pulse .32s ease; }
 @keyframes pulse{
   0%{ transform:scale(1); }
@@ -98,7 +121,7 @@
 .dim-node{ opacity:.34; }
 .dim-link{ opacity:.28; }
 
-/* ===== Enlaces + animación ===== */
+/* ===== Enlaces + animación (flujo tipo radar) ===== */
 .link{
   fill:none;
   stroke:rgba(255,159,26,.55);
@@ -134,6 +157,45 @@
 /* Cursores para pan/zoom */
 .graph-stage.is-panning{ cursor:grabbing; }
 .graph-stage .svgroot{ cursor:grab; }
+
+/* ===================== THEME: modo técnico (verde) ===================== */
+body.theme-tech{
+  --bg:#050a08;
+  --panel:#0a1410;
+  --text:#e5ffe9;
+  --muted:#9fe0b0;
+  --accent:#00e676;      /* verde fosforito */
+  --accent-soft:#82ffbe;
+}
+body.theme-tech .graph-stage{ background:#07110d; }
+body.theme-tech .graph-bc{ background:rgba(6,14,10,.6); }
+body.theme-tech .theme-toggle{ background:#09160f; border-color:rgba(0,230,118,.25); }
+body.theme-tech .theme-toggle:hover{ background:#0b1d15; }
+
+/* Ajuste de colores por nivel en modo técnico */
+body.theme-tech .graph-legend .lvl0{ background:#00e676 }
+body.theme-tech .graph-legend .lvl1{ background:#b3ffd5 }
+body.theme-tech .graph-legend .lvl2{ background:#77ffd0 }
+body.theme-tech .graph-legend .lvl3{ background:#a8ffc6 }
+
+body.theme-tech .node[data-lvl="0"] rect{
+  fill:rgba(0,230,118,.16); stroke:rgba(0,230,118,.6);
+  filter: drop-shadow(0 0 12px rgba(0,230,118,.16)) drop-shadow(0 0 22px rgba(0,230,118,.10));
+}
+body.theme-tech .node[data-lvl="1"] rect{
+  fill:rgba(131,255,199,.12); stroke:rgba(131,255,199,.52);
+}
+body.theme-tech .node[data-lvl="2"] rect{
+  fill:rgba(119,255,208,.10); stroke:rgba(119,255,208,.45);
+}
+body.theme-tech .node[data-lvl="3"] rect{
+  fill:rgba(168,255,198,.10); stroke:rgba(168,255,198,.42);
+}
+
+body.theme-tech .link{ stroke:rgba(0,230,118,.6); filter: drop-shadow(0 0 5px rgba(0,230,118,.18)); }
+body.theme-tech .link.l1{ stroke:rgba(131,255,199,.6) }
+body.theme-tech .link.l2{ stroke:rgba(119,255,208,.6) }
+body.theme-tech .link.l3{ stroke:rgba(168,255,198,.6) }
 
 /* Responsive */
 @media (max-width: 960px){
