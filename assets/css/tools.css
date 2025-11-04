@@ -37,8 +37,7 @@
 
 /* =========================
    Ítem tipo botón (HERRAMIENTAS y LENGUAJES)
-   — Fondo, tipografía y forma como en la 1ª imagen
-   — Hover/Active con elevación y brillo de bordes
+   — Fondo oscuro, borde naranja, efecto de brillo y elevación
    ========================= */
 .tool-btn{
   display: grid;
@@ -48,17 +47,16 @@
   width: 100%;
   padding: 10px 14px;
 
-  /* >>> Nuevo look (color y forma) */
-  background:
-    linear-gradient(180deg, rgba(255,255,255,.03), rgba(0,0,0,0) 45%),
-    #ff8c1a; /* fondo igual al original */
-  border: 1px solid rgba(255,159,26,.34);          /* filo ámbar */
-  border-radius: 10px;                              /* rectángulo redondeado */
+  /* === Fondo y borde original === */
+  background-color: #0E1523;
+  border: 1px solid rgba(255,140,26,.45); /* borde naranja */
+  border-radius: 10px; /* rectángulo redondeado */
   box-shadow:
-    0 1px 0 rgba(255,255,255,.04) inset,           /* leve brillo interior */
-    0 0 0 1px rgba(255,255,255,.06) inset,         /* contorno sutil interno */
-    0 8px 18px rgba(0,0,0,.25);                    /* profundidad base */
+    0 1px 0 rgba(255,255,255,.04) inset,
+    0 0 0 1px rgba(255,255,255,.05) inset,
+    0 6px 12px rgba(0,0,0,.25);
 
+  color: #e9eef6;
   overflow: hidden;
   cursor: pointer;
   transition:
@@ -68,24 +66,24 @@
     background .22s ease;
 }
 
-/* Hover: se eleva y brillan bordes */
+/* Hover: elevación y brillo del borde */
 .tool-btn:hover{
   transform: translateY(-3px);
-  border-color: rgba(255,159,26,.55);
+  border-color: rgba(255,159,26,.75);
   box-shadow:
     0 1px 0 rgba(255,255,255,.05) inset,
-    0 0 0 1px rgba(255,159,26,.32) inset,
+    0 0 0 1px rgba(255,159,26,.35) inset,
     0 10px 22px rgba(0,0,0,.35),
     0 0 14px rgba(255,159,26,.18);
 }
 
-/* Active: tacto “click” manteniendo el brillo */
+/* Active: tacto sutil */
 .tool-btn:active{
   transform: translateY(-1px);
-  border-color: rgba(255,159,26,.65);
+  border-color: rgba(255,159,26,.9);
   box-shadow:
     0 1px 0 rgba(255,255,255,.06) inset,
-    0 0 0 1px rgba(255,159,26,.40) inset,
+    0 0 0 1px rgba(255,159,26,.45) inset,
     0 6px 14px rgba(0,0,0,.3),
     0 0 10px rgba(255,159,26,.22);
 }
@@ -185,3 +183,4 @@
   .tools-grid{ grid-template-columns:1fr; }
   .tools-pager.topright{ position: static; justify-content: flex-end; margin-bottom: 6px; }
 }
+
