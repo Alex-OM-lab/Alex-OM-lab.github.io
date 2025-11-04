@@ -15,6 +15,7 @@
   align-items:start;
 }
 .tools-card{
+  position:relative; /* <-- necesario para colocar el pager arriba-dcha */
   background:linear-gradient(180deg,color-mix(in oklab,var(--panel) 94%,#0f1422 6%),var(--panel));
   border:1px solid rgba(255,255,255,.06);
   border-radius:var(--radius);
@@ -46,6 +47,7 @@
   background:#0c1323;
   border:1px solid rgba(255,255,255,.08);
   transition:box-shadow .18s, border-color .18s, transform .12s;
+  overflow:hidden; /* evita que cualquier subelemento sobresalga */
 }
 .tool-btn:hover{
   border-color:rgba(255,159,26,.35);
@@ -108,18 +110,21 @@
   background:rgba(255,159,26,.12); border:1px solid rgba(255,159,26,.35);
   padding:2px 8px; border-radius:999px;
 }
+
+/* Barras: más finas, con detalle y sin desbordes */
 .meter{
-  position:relative; width:140px; height:6px; border-radius:999px;
+  position:relative; width:160px; height:6px; border-radius:999px;
   background:rgba(255,255,255,.10);
   border:1px solid rgba(255,255,255,.08);
-  overflow:hidden;
+  overflow:hidden; /* <- nunca sobresale */
 }
 .meter i{
   position:absolute; inset:0 auto 0 0;
   width:40%; height:100%;
+  max-width:100%;              /* tope duro para no salirse */
   background:linear-gradient(90deg,var(--accent) 0%, #ffd79a 100%);
-  box-shadow:0 0 10px rgba(255,159,26,.35);
-  border-radius:999px;
+  box-shadow:0 0 10px rgba(255,159,26,.35) inset;
+  border-radius:inherit;       /* extremos redondeados */
 }
 
 /* Mapeo de nivel (fallback). El JS ya lo ajusta por width% */
@@ -139,6 +144,14 @@
 /* ---------- Paginación (Herramientas) ---------- */
 .tools-pager{
   display:flex; align-items:center; justify-content:center; gap:10px;
+}
+.tools-pager.topright{
+  position:absolute;
+  top:8px;
+  right:12px;
+  display:flex;
+  align-items:center;
+  gap:10px;
 }
 .tools-arrow{
   width:36px; height:36px; border-radius:999px;
@@ -165,7 +178,13 @@
   transform:scale(1.25);
 }
 
+/* ---------- Cambios específicos pedidos ---------- */
+/* Ocultar la etiqueta derecha SOLO en la columna de Herramientas */
+#toolsList .tool-slot--right{ display:none; }
+
 /* Responsive */
 @media (max-width:900px){
   .tools-grid{ grid-template-columns:1fr; }
+  /* En móvil, el pager puede ir arriba pero sin fixed absoluto */
+  .tools-pager.topright{ position:static; justify-content:flex-end; margin-bottom:6px; }
 }
