@@ -1,119 +1,123 @@
-/* ===================== HERRAMIENTAS & LENGUAJES (chips pro, 2 columnas) ===================== */
+/* =========================
+   Herramientas y Lenguajes
+   ========================= */
 
-:root{
-  --tools-card-bg: linear-gradient(180deg, color-mix(in oklab, var(--panel) 92%, #0f1422 8%), var(--panel));
-  --chip-bg: #0c1323;
-  --chip-bd: rgba(255,255,255,.10);
-  --chip-bd-hover: rgba(255,159,26,.55);
-  --chip-glow: rgba(255,159,26,.18);
-  --chip-pad-y: 12px;
-  --chip-pad-x: 14px;
-  --chip-radius: 12px;
-}
+.tools-head{display:flex;align-items:baseline;gap:12px;justify-content:space-between;margin-bottom:10px}
+.tools-head .section-title{margin:0;color:var(--accent);text-shadow:0 0 8px rgba(255,159,26,.25)}
+.tools-head .hint{margin:0;color:var(--muted);font-size:13.5px}
 
-/* contenedor 2 columnas */
-.tools-wrap{
+/* Layout de 2 columnas balanceadas */
+.tools-wrap{margin-top:6px}
+.tools-grid{
   display:grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns:1fr 1fr;
   gap:18px;
+  align-items:start;
 }
-
-.tools-col{ min-width: 0; }
-
 .tools-card{
-  background: var(--tools-card-bg);
+  background:linear-gradient(180deg,color-mix(in oklab,var(--panel) 94%,#0f1422 6%),var(--panel));
   border:1px solid rgba(255,255,255,.06);
-  border-radius: var(--radius);
-  padding:14px;
+  border-radius:var(--radius);
+  padding:12px;
+  display:flex;flex-direction:column;gap:10px;
+  min-height:100%;
 }
-
-.tools-head{
-  display:flex; align-items:center; justify-content:space-between;
-  margin-bottom:12px;
+.tools-card h3{
+  margin:0 0 6px 0;
+  font-size:15px;
+  color:#cfe6ff;
+  font-weight:800;
 }
-.tools-head h3{ margin:0; font-size:clamp(16px,1.8vw,18px); color:#ffe2b0; }
+.tools-list{display:flex;flex-direction:column;gap:8px}
 
-.tools-list{
-  display:flex; flex-direction:column; gap:10px;
-}
-
-/* ===== Chip base (píldora larga) ===== */
-.tool-chip{
+/* Botones-línea (pastilla larga) */
+.tool-btn{
   display:flex; align-items:center; gap:10px;
   justify-content:space-between;
   width:100%;
-  background: var(--chip-bg);
-  border:1px solid var(--chip-bd);
-  border-radius: var(--chip-radius);
-  padding: var(--chip-pad-y) var(--chip-pad-x);
-  box-shadow: 0 6px 18px rgba(0,0,0,.22);
-  transition: border-color .18s ease, box-shadow .18s ease, transform .12s ease, background .18s ease;
+  border-radius:12px;
+  padding:10px 12px;
+  background:#0c1323;
+  border:1px solid rgba(255,255,255,.08);
+  transition:box-shadow .18s, border-color .18s, transform .12s;
+}
+.tool-btn:hover{
+  border-color:rgba(255,159,26,.35);
+  box-shadow:0 8px 18px rgba(255,159,26,.12);
+  transform:translateY(-1px);
 }
 
-.tool-chip:hover{
-  border-color: var(--chip-bd-hover);
-  box-shadow: 0 10px 28px var(--chip-glow);
-  transform: translateY(-1px);
+/* Nombre a la izquierda, chips/medidor a la derecha */
+.tool-label{display:flex; align-items:center; gap:10px}
+.tool-name{color:#e9eef6; font-weight:800; font-size:14.5px}
+.badge{
+  font-size:11px; font-weight:800;
+  padding:4px 8px; border-radius:999px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(143,214,255,.08);
+  color:#cfe6ff;
 }
+.badge.lnx{ background:rgba(143,214,255,.10); border-color:rgba(143,214,255,.35); color:#bfe6ff }
+.badge.win{ background:rgba(155,226,176,.08); border-color:rgba(155,226,176,.32); color:#dbffe6 }
+.badge.mul{ background:rgba(255,215,154,.10); border-color:rgba(255,215,154,.35); color:#ffeacc }
 
-/* lado izquierdo: título y meta pequeña */
-.tool-left{ display:flex; align-items:center; gap:10px; min-width:0; }
-.tool-title{
-  margin:0;
-  color: var(--text);
-  font-weight:800;
-  font-size: 15px;
-  white-space: nowrap;
-  overflow: hidden; text-overflow: ellipsis;
+/* Nivel (lenguajes) */
+.level{display:flex; align-items:center; gap:8px}
+.level-label{
+  font-size:11px; font-weight:900; color:#ffe2b0;
+  background:rgba(255,159,26,.12); border:1px solid rgba(255,159,26,.35);
+  padding:2px 8px; border-radius:999px;
 }
-
-/* lado derecho: badge o medidor */
-.tool-right{ display:flex; align-items:center; gap:10px; }
-
-/* badge SO (pequeño) */
-.badge-so{
-  font-size: 11px; font-weight:800; color:#cff2ff;
-  background: rgba(143,214,255,.16);
-  border:1px solid rgba(143,214,255,.45);
-  padding:4px 8px; border-radius: 999px;
-  white-space: nowrap;
-}
-.badge-so.win { color:#e0f0ff; background: rgba(143,214,255,.12); }
-.badge-so.lnx { color:#c7ffd8; background: rgba(155,226,176,.12); border-color: rgba(155,226,176,.45); }
-.badge-so.mul { color:#ffe2b0; background: rgba(255,215,154,.12); border-color: rgba(255,215,154,.45); }
-
-/* medidor inline (dentro del chip de lenguaje) */
-.level{
-  display:flex; align-items:center; gap:8px;
-}
-.level-badge{
-  font-size:11px; font-weight:900; color:#111;
-  background: var(--accent);
-  border:1px solid rgba(255,159,26,.85);
-  padding:3px 6px; border-radius: 999px;
-  text-transform: lowercase;
-  white-space: nowrap;
-}
-.level-bar{
-  position:relative;
-  width:150px; height:8px; border-radius:999px;
-  background: rgba(255,159,26,.16);
-  border:1px solid rgba(255,159,26,.35);
+.meter{
+  position:relative; width:140px; height:6px; border-radius:999px;
+  background:rgba(255,255,255,.10);
+  border:1px solid rgba(255,255,255,.08);
   overflow:hidden;
 }
-.level-fill{
-  position:absolute; left:0; top:0; bottom:0;
-  background: linear-gradient(90deg, var(--accent), #ffd79a);
-  border-right:1px solid rgba(255,255,255,.15);
+.meter i{
+  position:absolute; inset:0 auto 0 0;
+  width:40%; height:100%;
+  background:linear-gradient(90deg,var(--accent) 0%, #ffd79a 100%);
+  box-shadow:0 0 10px rgba(255,159,26,.35);
+  border-radius:999px;
 }
 
-/* compactación en pantallas pequeñas */
-@media (max-width: 960px){
-  .tools-wrap{ grid-template-columns: 1fr; }
-  .level-bar{ width:120px; }
+/* Mapeo de nivel (JS añade style, pero dejamos fallback) */
+.tool-btn[data-level="alto"]   .meter i{width:90%}
+.tool-btn[data-level="medio"]  .meter i{width:55%}
+.tool-btn[data-level="medio-alto"] .meter i{width:75%}
+
+/* ---------- Paginación (Herramientas) ---------- */
+
+.tools-pager{
+  margin-top:8px; display:flex; align-items:center; justify-content:center; gap:10px;
 }
-@media (max-width: 560px){
-  .tool-chip{ padding:10px 12px; }
-  .tool-title{ font-size:14px; }
-  .level-bar{ width:100px; }
+.tools-arrow{
+  width:36px; height:36px; border-radius:999px;
+  background:rgba(255,159,26,.14);
+  border:1px solid rgba(255,159,26,.65);
+  color:#ffe2b0; font-weight:900; line-height:1;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer;
+  transition:transform .12s, background .18s, border-color .18s, box-shadow .18s;
+  box-shadow:0 0 10px rgba(255,159,26,.25);
+}
+.tools-arrow:hover{ transform:translateY(-1px); background:rgba(255,159,26,.22); border-color:rgba(255,159,26,.9) }
+.tools-arrow:disabled{ opacity:.45; cursor:not-allowed; transform:none }
+
+.tools-dots{ display:flex; gap:6px; align-items:center; }
+.tools-dot{
+  width:7px; height:7px; border-radius:999px;
+  background:rgba(255,255,255,.22);
+  transition:transform .12s, background .18s, box-shadow .18s;
+}
+.tools-dot.is-active{
+  background:var(--accent);
+  box-shadow:0 0 10px rgba(255,159,26,.6);
+  transform:scale(1.25);
+}
+
+/* Responsive */
+@media (max-width:900px){
+  .tools-grid{ grid-template-columns:1fr; }
 }
