@@ -51,7 +51,7 @@
   /* >>> Nuevo look (color y forma) */
   background:
     linear-gradient(180deg, rgba(255,255,255,.03), rgba(0,0,0,0) 45%),
-    #0e1523; /* fondo igual al original */
+    #ff8c1a; /* fondo igual al original */
   border: 1px solid rgba(255,159,26,.34);          /* filo ámbar */
   border-radius: 10px;                              /* rectángulo redondeado */
   box-shadow:
