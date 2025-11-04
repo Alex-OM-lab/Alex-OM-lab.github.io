@@ -12,18 +12,17 @@
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:18px;
-  align-items:stretch;         /* <- fuerza que ambas columnas estiren igual */
+  align-items:stretch;
+  padding-right:12px;
 }
-.tools-col{display:flex}       /* <- permite que la tarjeta crezca a la misma altura */
 .tools-card{
-  position:relative; /* necesario para colocar el pager arriba-dcha */
+  position:relative; /* <-- necesario para colocar el pager arriba-dcha */
   background:linear-gradient(180deg,color-mix(in oklab,var(--panel) 94%,#0f1422 6%),var(--panel));
   border:1px solid rgba(255,255,255,.06);
   border-radius:var(--radius);
-  padding:12px 16px;           /* +4px de aire a la derecha */
+  padding:12px;
   display:flex;flex-direction:column;gap:10px;
   min-height:100%;
-  flex:1;                      /* <- iguala altura con la otra columna */
 }
 .tools-card h3{
   margin:0 0 6px 0;
@@ -38,25 +37,24 @@
    — Grid para centrado real del nombre
    ========================= */
 .tool-btn{
+  /* De flex -> grid para poder centrar el nombre exacto */
   display:grid;
   grid-template-columns:1fr auto 1fr; /* izq chips – nombre – der chips/medidor */
   align-items:center;
   gap:10px;
   width:100%;
   border-radius:12px;
-  padding:10px 14px 10px 12px; /* un poco más de aire a la derecha */
+  padding:10px 12px;
   background:#0c1323;
   border:1px solid rgba(255,255,255,.08);
   transition:box-shadow .18s, border-color .18s, transform .12s;
-  overflow:hidden; /* evita desbordes */
+  overflow:hidden; /* evita que cualquier subelemento sobresalga */
 }
 .tool-btn:hover{
   border-color:rgba(255,159,26,.35);
   box-shadow:0 8px 18px rgba(255,159,26,.12);
   transform:translateY(-1px);
 }
-
-/* Slots laterales para chips / medidor */
 .tool-slot--left,
 .tool-slot--right{
   display:inline-flex;
@@ -64,9 +62,6 @@
   gap:8px;
   min-width:0;
 }
-#toolsList .tool-slot--left{ display:none }   /* Herramientas: SO en la derecha */
-#toolsList .tool-slot--right{ display:inline-flex; justify-self:end } /* visible (chips SO) */
-#langsList .tool-slot--right{ justify-self:end } /* Lenguajes: nivel a la derecha */
 
 /* Nombre centrado */
 .tool-name{
@@ -97,6 +92,7 @@
 .badge.os.win{ background:rgba(155,226,176,.08); border-color:rgba(155,226,176,.32); color:#dbffe6 }
 .badge.os.lnx{ background:rgba(143,214,255,.10); border-color:rgba(143,214,255,.35); color:#bfe6ff }
 .badge.os.mul{ background:rgba(255,215,154,.10); border-color:rgba(255,215,154,.35); color:#ffeacc }
+
 .badge.os.win::before{ content:"Windows"; }
 .badge.os.lnx::before{ content:"Linux"; }
 .badge.os.mul::before{ content:"Multi"; }
@@ -106,9 +102,7 @@
 .badge.win{ background:rgba(155,226,176,.08); border-color:rgba(155,226,176,.32); color:#dbffe6 }
 .badge.mul{ background:rgba(255,215,154,.10); border-color:rgba(255,215,154,.35); color:#ffeacc }
 
-/* =========================
-   Lenguajes — 3 niveles
-   ========================= */
+/* Nivel (lenguajes) */
 .level{display:inline-flex; align-items:center; gap:8px}
 .level-label{
   font-size:11px; font-weight:900; color:#ffe2b0;
@@ -116,42 +110,42 @@
   padding:2px 8px; border-radius:999px;
 }
 
+/* Barras: más finas, con detalle y sin desbordes */
 .meter{
   position:relative; width:160px; height:6px; border-radius:999px;
   background:rgba(255,255,255,.10);
   border:1px solid rgba(255,255,255,.08);
-  overflow:hidden;
-}
-.meter::before{
-  /* marcas suaves en 1/3 y 2/3 para los 3 niveles */
-  content:"";
-  position:absolute; inset:0;
-  background:
-    linear-gradient(90deg, transparent 0 33%, rgba(255,255,255,.12) 33% 34%, transparent 34% 66%, rgba(255,255,255,.12) 66% 67%, transparent 67% 100%);
-  pointer-events:none;
+  overflow:hidden; /* <- nunca sobresale */
 }
 .meter i{
   position:absolute; inset:0 auto 0 0;
-  width:0%; height:100%;
-  max-width:100%;
+  width:40%; height:100%;
+  max-width:100%;              /* tope duro para no salirse */
   background:linear-gradient(90deg,var(--accent) 0%, #ffd79a 100%);
   box-shadow:0 0 10px rgba(255,159,26,.35) inset;
-  border-radius:inherit;
+  border-radius:inherit;       /* extremos redondeados */
 }
 
-/* Fallback por si no corre el JS (3 pasos) */
-.tool-btn[data-level="medio"] .meter i{ width:33% }
-.tool-btn[data-level="medio-alto"] .meter i{ width:66% }
-.tool-btn[data-level="alto"] .meter i{ width:100% }
+/* Mapeo de nivel (fallback). El JS ya lo ajusta por width%) — 3 niveles */
+.tool-btn[data-level="alto"]   .meter i{width:100%}
+.tool-btn[data-level="medio"]  .meter i{width:66%}
+.tool-btn[data-level="medio-alto"] .meter i{width:66%}
 
-/* ---------- Paginación (Herramientas) ---------- */
-.tools-pager{
-  display:flex; align-items:center; justify-content:center; gap:10px;
+/* ---------- Pie nivelado (evitar "escalón") ---------- */
+.card-footer{
+  min-height:64px;              /* asegura la misma altura en ambas tarjetas */
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-top:6px;
 }
+.card-footer .hint{margin:0;color:var(--muted);font-size:13px}
+
+/* ---------- Paginador arriba-derecha ---------- */
 .tools-pager.topright{
   position:absolute;
   top:8px;
-  right:16px; /* un poco más separada del borde */
+  right:12px;
   display:flex;
   align-items:center;
   gap:10px;
@@ -168,6 +162,7 @@
 }
 .tools-arrow:hover{ transform:translateY(-1px); background:rgba(255,159,26,.22); border-color:rgba(255,159,26,.9) }
 .tools-arrow:disabled{ opacity:.45; cursor:not-allowed; transform:none }
+
 .tools-dots{ display:flex; gap:6px; align-items:center; }
 .tools-dot{
   width:7px; height:7px; border-radius:999px;
@@ -180,12 +175,18 @@
   transform:scale(1.25);
 }
 
-/* ---------- Cosas a limpiar / asegurar ---------- */
-/* Esconde cualquier paginador estático del HTML si existiera */
-#toolsPager{ display:none !important; }
-
-/* Responsive */
 @media (max-width:900px){
   .tools-grid{ grid-template-columns:1fr; }
+  /* En móvil, el pager puede ir arriba pero sin fixed absoluto */
   .tools-pager.topright{ position:static; justify-content:flex-end; margin-bottom:6px; }
 }
+
+/* 3er nivel explícito */
+.tool-btn[data-level="basico"] .meter i, .tool-btn[data-level="básico"] .meter i{width:33%}
+
+/* OS badges en lado derecho para Herramientas */
+#toolsList .tool-slot--right{justify-self:end; display:inline-flex; gap:8px}
+#toolsList .tool-slot--left{display:none}
+
+/* Separación de la pared derecha */
+.tools-grid > .tools-card:last-child{ margin-right:6px; }
