@@ -1,112 +1,182 @@
-  /* ========= Carrusel de cubos ========= */
-  (function initCubeCarousel(){
-    const root = document.querySelector('.cube-carousel');
-    if(!root) return;
+  // ======== Carrusel "cubos" — versión compacta, accesible y responsive ========
+// - 5/3/2/1 ítems visibles según ancho (coincide con CSS)
+// - Autoplay opcional (data-autoplay, data-interval)
+// - Mezcla opcional (data-shuffle)
+// - Pausa en hover/focus, flechas + dots, soporte teclado
 
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const autoplay = root.dataset.autoplay === 'true' && !prefersReduced;
-    const intervalMs = parseInt(root.dataset.interval || '3200', 10);
-    const shuffle = root.dataset.shuffle === 'true';
+(function(){
+  const wrap = document.querySelector('.cube-carousel');
+  if (!wrap) return;
 
-    const track = document.getElementById('cubeTrack');
-    const dotsEl = document.getElementById('cubeDots');
-    const btnPrev = document.getElementById('cubePrev');
-    const btnNext = document.getElementById('cubeNext');
+  /* ---------- Datos de ejemplo (puedes reemplazar por los tuyos) ---------- */
+  const ARTICLES = [
+    { title:'Artículo 1: Placeholder', img:'https://picsum.photos/seed/a1/960/600', meta:'Guía • 7 min', excerpt:'Texto ficticio para probar el layout.', url:'#' },
+    { title:'Artículo 2: Placeholder', img:'https://picsum.photos/seed/a2/960/600', meta:'Tutorial • 5 min', excerpt:'Texto ficticio para probar el layout.', url:'#' },
+    { title:'Artículo 3: Placeholder', img:'https://picsum.photos/seed/a3/960/600', meta:'Análisis • 9 min', excerpt:'Texto ficticio para probar el layout.', url:'#' },
+    { title:'Artículo 4: Placeholder', img:'https://picsum.photos/seed/a4/960/600', meta:'Caso práctico • 6 min', excerpt:'Texto ficticio para probar el layout.', url:'#' },
+    { title:'Artículo 5: Placeholder', img:'https://picsum.photos/seed/a5/960/600', meta:'Referencia • 4 min', excerpt:'Texto ficticio para probar el layout.', url:'#' },
+    { title:'Artículo 6: Placeholder', img:'https://picsum.photos/seed/a6/960/600', meta:'Guía • 8 min', excerpt:'Texto ficticio para probar el layout.', url:'#' },
+    { title:'Artículo 7: Placeholder', img:'https://picsum.photos/seed/a7/960/600', meta:'Tutorial • 5 min', excerpt:'Texto ficticio para probar el layout.', url:'#' },
+    { title:'Artículo 8: Placeholder', img:'https://picsum.photos/seed/a8/960/600', meta:'Análisis • 10 min', excerpt:'Texto ficticio para probar el layout.', url:'#' },
+  ];
 
-    const ITEMS = Array.from({length:12}).map((_,i)=>({
-      id: i+1,
-      titulo: `Artículo ${i+1}: Placeholder`,
-      resumen: `Resumen breve del contenido ${i+1}. Texto ficticio para probar el layout.`,
-      img: `assets/placeholder_${(i%6)+1}.jpg`,
-      href: "#"
-    }));
+  /* ---------- Opciones ---------- */
+  const autoplay   = wrap.getAttribute('data-autoplay') === 'true';
+  const intervalMs = parseInt(wrap.getAttribute('data-interval') || '4000', 10);
+  const shuffle    = wrap.getAttribute('data-shuffle') === 'true';
 
-    if(shuffle) ITEMS.sort(()=>Math.random()-.5);
+  const viewport = wrap.querySelector('.cube-viewport');
+  const track    = wrap.querySelector('.cube-track');
+  const prevBtn  = wrap.querySelector('#cubePrev');
+  const nextBtn  = wrap.querySelector('#cubeNext');
+  const dotsWrap = wrap.querySelector('#cubeDots');
 
-    const makeCube = (item) => {
-      const li = document.createElement('article');
-      li.className = 'cube';
-      li.setAttribute('role','listitem');
-      li.innerHTML = `
-        <div class="cube-media"><img src="${item.img}" alt="Imagen del ${item.titulo}" loading="lazy"></div>
-        <div class="cube-body">
-          <h4 class="cube-title">${item.titulo}</h4>
-          <div class="cube-meta">${item.resumen}</div>
-          <a class="cube-link" href="${item.href}">Ver más</a>
-        </div>`;
-      return li;
-    };
+  if (!viewport || !track) return;
 
-    const baseNodes = ITEMS.map(makeCube);
-    const cloneNodes = ITEMS.map(makeCube);
-    baseNodes.forEach(n=>track.appendChild(n));
-    cloneNodes.forEach(n=>track.appendChild(n));
+  /* ---------- Utilidades ---------- */
+  function shuffled(arr){
+    const a = arr.slice();
+    for(let i=a.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [a[i],a[j]] = [a[j],a[i]];
+    }
+    return a;
+  }
 
-    track.setAttribute('role','list');
+  function visibleCount(){
+    const w = window.innerWidth;
+    if (w <= 520)  return 1;
+    if (w <= 720)  return 2;
+    if (w <= 1020) return 3;
+    return 5;
+  }
 
-    ITEMS.forEach((_,idx)=>{
-      const d = document.createElement('span');
-      d.className = 'cube-dot' + (idx===0?' is-active':'');
-      dotsEl.appendChild(d);
-    });
+  /* ---------- Render ---------- */
+  const data = shuffle ? shuffled(ARTICLES) : ARTICLES.slice();
 
-    let index = 0;
-    let timer = null;
-    let itemWidth = () => (track.querySelector('.cube')?.getBoundingClientRect().width || 0) + 14;
-    let max = ITEMS.length;
+  function renderItems(){
+    track.innerHTML = '';
+    data.forEach((it, idx)=>{
+      const item = document.createElement('article');
+      item.className = 'cube';
+      item.setAttribute('role','listitem');
 
-    const setActiveDot = (i)=>{
-      const dots = Array.from(dotsEl.children);
-      dots.forEach((el,ix)=> el.classList.toggle('is-active', ix === (i % max)));
-    };
-
-    const jumpIfNeeded = ()=>{
-      if(index >= max){
-        index = index % max;
-        track.style.transition = 'none';
-        track.style.transform = `translateX(${-index*itemWidth()}px)`;
-        void track.offsetWidth;
-        track.style.transition = '';
-      } else if(index < 0){
-        index = (index + max) % max + max;
-        track.style.transition = 'none';
-        track.style.transform = `translateX(${-index*itemWidth()}px)`;
-        void track.offsetWidth;
-        track.style.transition = '';
+      const media = document.createElement('div');
+      media.className = 'cube-media';
+      if (it.img){
+        const img = document.createElement('img');
+        img.src = it.img; img.alt = it.title || 'Artículo';
+        media.appendChild(img);
       }
-    };
+      const body = document.createElement('div');
+      body.className = 'cube-body';
 
-    const goTo = (i)=>{ index = i; track.style.transform = `translateX(${-index*itemWidth()}px)`; setActiveDot(index); };
-    const next = ()=>{ goTo(index+1); };
-    const prev = ()=>{ goTo(index-1); };
+      const h = document.createElement('h4');
+      h.className = 'cube-title';
+      h.textContent = it.title || `Artículo ${idx+1}`;
 
-    const start = ()=>{ if(timer || !autoplay) return; timer = setInterval(()=>{ next(); jumpIfNeeded(); }, intervalMs); };
-    const stop  = ()=>{ clearInterval(timer); timer = null; };
+      const meta = document.createElement('div');
+      meta.className = 'cube-meta';
+      meta.textContent = it.meta || '—';
 
-    root.addEventListener('mouseenter', ()=>{ stop(); });
-    root.addEventListener('mouseleave', ()=>{ start(); });
-    root.addEventListener('focusin', ()=>{ stop(); });
-    root.addEventListener('focusout', ()=>{ start(); });
+      const p = document.createElement('p');
+      p.className = 'cube-meta';
+      p.textContent = it.excerpt || 'Resumen breve del contenido.';
 
-    btnNext.addEventListener('click', ()=>{ stop(); next(); jumpIfNeeded(); });
-    btnPrev.addEventListener('click', ()=>{ stop(); prev(); jumpIfNeeded(); });
+      const a = document.createElement('a');
+      a.className = 'cube-link';
+      a.href = it.url || '#';
+      a.textContent = 'Ver más';
 
-    let touchX = null, deltaX = 0, swiping = false;
-    root.addEventListener('touchstart', (e)=>{ touchX = e.touches[0].clientX; deltaX = 0; swiping = true; stop(); }, {passive:true});
-    root.addEventListener('touchmove', (e)=>{
-      if(!swiping) return;
-      deltaX = e.touches[0].clientX - touchX;
-      track.style.transition = 'none';
-      track.style.transform = `translateX(${-(index*itemWidth()) + deltaX}px)`;
-    }, {passive:true});
-    root.addEventListener('touchend', ()=>{
-      track.style.transition = '';
-      if(Math.abs(deltaX) > itemWidth()*0.25){ (deltaX < 0) ? next() : prev(); jumpIfNeeded(); } else { goTo(index); }
-      swiping = false; start();
+      body.append(h, meta, p, a);
+      item.append(media, body);
+      track.appendChild(item);
     });
+  }
 
-    window.addEventListener('resize', ()=>{ goTo(index); });
+  /* ---------- Estado y navegación ---------- */
+  let vis = visibleCount();
+  let page = 0;
+  let pages = 1;
+  let timer = null;
 
-    goTo(0);
-    if(autoplay) start();
-  })();
+  function computePages(){
+    vis = visibleCount();
+    pages = Math.max(1, Math.ceil(data.length / vis));
+    page = Math.min(page, pages - 1);
+  }
+
+  function updateDots(){
+    dotsWrap.innerHTML = '';
+    for(let i=0;i<pages;i++){
+      const d = document.createElement('button');
+      d.type = 'button';
+      d.className = 'cube-dot' + (i===page ? ' is-active' : '');
+      d.setAttribute('aria-label', `Ir a página ${i+1}`);
+      d.addEventListener('click', ()=> goTo(i));
+      dotsWrap.appendChild(d);
+    }
+  }
+
+  function translate(){
+    const gap = 14; // coincide con CSS
+    // ancho de un item = (viewportWidth - gaps) / visibles
+    const vw = viewport.clientWidth;
+    const itemW = (vw - gap*(vis-1)) / vis;
+    const x = -(itemW + gap) * vis * page;
+    track.style.transform = `translate3d(${x}px,0,0)`;
+    // aria-live simple
+    wrap.setAttribute('aria-live','polite');
+  }
+
+  function goTo(n){
+    page = (n + pages) % pages;
+    updateDots();
+    translate();
+  }
+
+  function next(){ goTo(page + 1); }
+  function prev(){ goTo(page - 1); }
+
+  /* ---------- Autoplay ---------- */
+  function start(){
+    if (!autoplay || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    stop();
+    timer = setInterval(next, intervalMs);
+  }
+  function stop(){ if (timer) { clearInterval(timer); timer = null; } }
+
+  /* ---------- Eventos ---------- */
+  if (prevBtn) prevBtn.addEventListener('click', prev);
+  if (nextBtn) nextBtn.addEventListener('click', next);
+
+  wrap.addEventListener('mouseenter', stop);
+  wrap.addEventListener('mouseleave', start);
+  wrap.addEventListener('focusin',  stop);
+  wrap.addEventListener('focusout', start);
+
+  // Teclado en el carrusel
+  wrap.addEventListener('keydown', (e)=>{
+    if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+    if (e.key === 'ArrowRight'){ e.preventDefault(); next(); }
+  });
+
+  window.addEventListener('resize', ()=>{
+    const old = vis;
+    computePages();
+    // si cambió el nº de visibles, recalculamos dots y posición
+    if (old !== vis){
+      updateDots();
+      translate();
+    } else {
+      translate();
+    }
+  });
+
+  /* ---------- Init ---------- */
+  renderItems();
+  computePages();
+  updateDots();
+  translate();
+  start();
+})();
