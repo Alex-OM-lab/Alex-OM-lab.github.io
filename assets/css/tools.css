@@ -2,7 +2,7 @@
    Herramientas y Lenguajes
    ========================= */
 
-/* Encabezado de sección (envuelve el H2 y la pista) */
+/* Encabezado sección */
 .tools-head{
   display:flex;align-items:baseline;gap:12px;justify-content:space-between;margin-bottom:10px
 }
@@ -11,26 +11,26 @@
 }
 .tools-head .hint{margin:0;color:var(--muted);font-size:13.5px}
 
-/* Layout de 2 columnas */
+/* Layout de 2 columnas balanceadas y de igual altura */
 .tools-wrap{margin-top:6px}
 .tools-grid{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:18px;
-  align-items:start;
+  align-items:stretch;
+  grid-auto-rows:1fr;                /* ← iguala la altura de las dos tarjetas */
 }
 
-/* Tarjetas (columna izquierda: herramientas / derecha: lenguajes) */
+/* Tarjetas (paneles) */
 .tools-card{
   background:linear-gradient(180deg,color-mix(in oklab,var(--panel) 94%,#0f1422 6%),var(--panel));
   border:1px solid rgba(255,255,255,.06);
   border-radius:var(--radius);
   padding:12px;
   display:flex;flex-direction:column;gap:10px;
-  min-height:100%;
+  height:100%;
 }
 
-/* Título de cada tarjeta (centrado y un poco más grande) */
 .tools-card h3{
   margin:2px 0 8px 0;
   font-size:16px;
@@ -40,7 +40,7 @@
   letter-spacing:.2px;
 }
 
-/* Lista vertical de elementos */
+/* Lista vertical */
 .tools-list{display:flex;flex-direction:column;gap:8px}
 
 /* =========================
@@ -48,18 +48,19 @@
    – GRID con columna izquierda fija para alinear nombres
    ========================= */
 
-/* Ajusta aquí el “eje” común de inicio del texto (px) */
+/* Ajusta aquí el eje común del inicio del texto */
 .tools-card .tool-btn{ --left-slot: 92px; }
 
 .tool-btn{
   display:grid;
-  grid-template-columns: var(--left-slot, 92px) 1fr auto; /* izq chips – nombre – der chips/medidor */
+  grid-template-columns: var(--left-slot, 92px) 1fr auto;  /* izq chips – nombre – der (nivel) */
   align-items:center;
   gap:10px;
   width:100%;
+  min-height:44px;
   border-radius:12px;
   padding:10px 12px;
-  padding-left:14px;                     /* un poco de aire extra a la izquierda */
+  padding-left:14px;
   background:
     linear-gradient(180deg, rgba(255,255,255,.03), rgba(0,0,0,.2) 60%),
     rgba(17,26,45,.85);
@@ -76,7 +77,7 @@
     rgba(17,26,45,.92);
 }
 
-/* Slots laterales (se respetan los anchos para alinear el texto) */
+/* Slots laterales */
 .tool-slot--left,
 .tool-slot--right{
   display:inline-flex;
@@ -86,19 +87,19 @@
 }
 .tool-slot--left{ min-width: var(--left-slot, 92px); }
 
-/* Nombre centrado en su celda (pero alineado al inicio visual común) */
+/* Nombre del ítem */
 .tool-name{
-  color:#ffe2b0 !important;   /* pediste este color exacto */
+  color:#ffe2b0 !important;          /* pedido explícito */
   font-weight:800;
   font-size:14.5px;
   text-align:left;
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
-  justify-self:start;          /* clave para que respete la columna */
+  justify-self:start;
 }
 
-/* Chips genéricos */
+/* Chips */
 .badge{
   font-size:11px; font-weight:800;
   padding:4px 8px; border-radius:999px;
@@ -107,8 +108,7 @@
   color:#cfe6ff;
 }
 
-/* Chips de SO generados por JS:
-   <span class="badge os win|lnx|mul"></span> (contenido via ::before) */
+/* Chips de SO (vía JS badge os) */
 .badge.os{
   background:rgba(255,255,255,.06);
   border-color:rgba(255,255,255,.14);
@@ -121,33 +121,44 @@
 .badge.os.lnx::before{ content:"Linux"; }
 .badge.os.mul::before{ content:"Multi"; }
 
-/* (Compat) si en algún sitio usas .badge.lnx/.win/.mul sin .os */
+/* (Compat por si usas .badge.lnx/.win/.mul) */
 .badge.lnx{ background:rgba(143,214,255,.10); border-color:rgba(143,214,255,.35); color:#bfe6ff }
 .badge.win{ background:rgba(155,226,176,.08); border-color:rgba(155,226,176,.32); color:#dbffe6 }
 .badge.mul{ background:rgba(255,215,154,.10); border-color:rgba(255,215,154,.35); color:#ffeacc }
 
 /* =========================
-   Nivel de dominio (3 segmentos)
+   Nivel de dominio — COMPAT
+   Soporta:
+   1) .meter > i (barra continua con relleno)
+   2) .meter3 .seg (tres segmentos)
    ========================= */
-.level{
-  display:inline-flex; align-items:center; gap:10px;
-}
 
-/* Etiqueta nivel (opcional) */
-.level-label{
-  font-size:11px; font-weight:900; color:#ffe2b0;
-  background:rgba(255,159,26,.12); border:1px solid rgba(255,159,26,.35);
-  padding:2px 8px; border-radius:999px;
+/* --- Formato 1: barra continua (.meter + <i>) --- */
+.meter{
+  position:relative; width:160px; height:8px; border-radius:999px;
+  background:rgba(255,255,255,.10);
+  border:1px solid rgba(255,255,255,.08);
+  overflow:hidden;
 }
+.meter i{
+  position:absolute; inset:0 auto 0 0;
+  width:40%; height:100%;
+  background:linear-gradient(90deg,var(--accent) 0%, #ffd79a 100%);
+  box-shadow:0 0 10px rgba(255,159,26,.35);
+  border-radius:999px;
+}
+/* mapeo niveles (por data-level en el contenedor) */
+.tool-btn[data-level="bajo"]   .meter i{ width:33% }
+.tool-btn[data-level="medio"]  .meter i{ width:66% }
+.tool-btn[data-level="alto"]   .meter i{ width:100% }
 
-/* Medidor 3 segmentos (se ve en tu captura) */
-.meter3{
-  display:inline-flex; align-items:center; gap:8px;
-}
+/* --- Formato 2: tres segmentos (.meter3 .seg x3) --- */
+.level{ display:inline-flex; align-items:center; gap:10px; }
+.meter3{ display:inline-flex; align-items:center; gap:10px; }
 .meter3 .seg{
-  width:68px; height:8px; border-radius:999px;
+  width:60px; height:8px; border-radius:999px;
   background:rgba(255,255,255,.12);
-  border:1px solid rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.10);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
 }
 .meter3 .seg.on{
@@ -155,15 +166,14 @@
   border-color:rgba(255,159,26,.45);
   box-shadow:0 0 10px rgba(255,159,26,.25), inset 0 1px 0 rgba(255,255,255,.06);
 }
+/* atajos por data-level (enciende 1/2/3) */
+.tool-btn[data-level="bajo"]      .meter3 .seg:nth-child(-n+1){ background:linear-gradient(90deg,var(--accent) 0%, #ffd79a 100%); border-color:rgba(255,159,26,.45); box-shadow:0 0 10px rgba(255,159,26,.25), inset 0 1px 0 rgba(255,255,255,.06); }
+.tool-btn[data-level="medio"]     .meter3 .seg:nth-child(-n+2){ background:linear-gradient(90deg,var(--accent) 0%, #ffd79a 100%); border-color:rgba(255,159,26,.45); box-shadow:0 0 10px rgba(255,159,26,.25), inset 0 1px 0 rgba(255,255,255,.06); }
+.tool-btn[data-level="alto"]      .meter3 .seg:nth-child(-n+3){ background:linear-gradient(90deg,var(--accent) 0%, #ffd79a 100%); border-color:rgba(255,159,26,.45); box-shadow:0 0 10px rgba(255,159,26,.25), inset 0 1px 0 rgba(255,255,255,.06); }
 
-/* Estados por data-level (bajo|medio|alto). El JS ya enciende los segs. */
-.tool-btn[data-level="bajo"]      .meter3 .seg:nth-child(-n+1){ box-shadow:0 0 10px rgba(255,159,26,.25), inset 0 1px 0 rgba(255,255,255,.06); background:linear-gradient(90deg,var(--accent) 0%, #ffd79a 100%); border-color:rgba(255,159,26,.45); }
-.tool-btn[data-level="medio"]     .meter3 .seg:nth-child(-n+2){ box-shadow:0 0 10px rgba(255,159,26,.25), inset 0 1px 0 rgba(255,255,255,.06); background:linear-gradient(90deg,var(--accent) 0%, #ffd79a 100%); border-color:rgba(255,159,26,.45); }
-.tool-btn[data-level="alto"]      .meter3 .seg:nth-child(-n+3){ box-shadow:0 0 10px rgba(255,159,26,.25), inset 0 1px 0 rgba(255,255,255,.06); background:linear-gradient(90deg,var(--accent) 0%, #ffd79a 100%); border-color:rgba(255,159,26,.45); }
-
-/* ---------- Pie nivelado (evitar “escalón” entre columnas) ---------- */
+/* ---------- Pie nivelado ---------- */
 .card-footer{
-  min-height:64px;              /* asegura la misma altura en ambas tarjetas */
+  min-height:64px;
   display:flex;
   align-items:center;
   justify-content:center;
