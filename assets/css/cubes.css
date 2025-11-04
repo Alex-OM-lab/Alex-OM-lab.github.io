@@ -1,7 +1,7 @@
-
 /*  ========  CARRUSEL DE CUBOS (grid deslizante)  =================
     Mantiene la estética y variables. 5 visibles en desktop.
-    Flechas en hover, dots con glow, transiciones suaves.
+    Flechas SIEMPRE visibles con naranja + glow, dots con glow,
+    transiciones suaves. Sin tocar el resto del sitio.
    ================================================================ */
 
 .cube-carousel{
@@ -25,12 +25,12 @@
   gap:14px;
   will-change: transform;
   transition: transform .6s cubic-bezier(.22,.61,.36,1);
-  padding-bottom:2px; /* evita recorte de sombra */
+  padding-bottom:2px;
 }
 
 /* Ítems */
 .cube{
-  flex:0 0 calc((100% - 14px*4)/5); /* 5 visibles con 4 gaps */
+  flex:0 0 calc((100% - 14px*4)/5);
   background:#0c1323;
   border:1px solid rgba(255,255,255,.08);
   border-radius:12px;
@@ -62,26 +62,33 @@
 }
 .cube-link:hover{ background:rgba(255,159,26,.18); border-color:rgba(255,159,26,.6); transform:translateY(-1px) }
 
-/* Flechas */
-.cube-nav{
-  position:absolute; inset:0; pointer-events:none;
-}
+/* Flechas SIEMPRE visibles, estilo naranja */
+.cube-nav{ position:absolute; inset:0; pointer-events:none; }
 .cube-btn{
   position:absolute; top:50%; translate:0 -50%;
-  width:42px; height:42px; border-radius:999px;
-  background:rgba(17,26,45,.75);
-  border:1px solid rgba(255,255,255,.08);
+  width:46px; height:46px; border-radius:999px;
+  background:rgba(255,159,26,.18);
+  border:1px solid rgba(255,159,26,.75);
+  color:#ffe2b0; font-weight:900; font-size:22px; line-height:1;
   display:flex; align-items:center; justify-content:center;
-  font-weight:900; color:#ffd79a; cursor:pointer;
-  opacity:0; pointer-events:none;
-  transition:opacity .18s ease, transform .12s ease, background .18s ease, border-color .18s ease;
-  box-shadow:0 4px 16px rgba(0,0,0,.35);
+  cursor:pointer; pointer-events:auto;
+  opacity:1;
+  box-shadow:0 0 14px rgba(255,159,26,.25), 0 6px 18px rgba(0,0,0,.35);
+  transition:transform .12s ease, background .18s ease, box-shadow .18s ease, border-color .18s ease;
+  backdrop-filter: blur(4px);
 }
-.cube-btn:hover{ transform:translateY(-1px); background:rgba(17,26,45,.9); border-color:rgba(255,159,26,.35) }
+.cube-btn:hover{
+  transform:translateY(-1px) scale(1.04);
+  background:rgba(255,159,26,.28);
+  border-color:rgba(255,159,26,.95);
+  box-shadow:0 0 18px rgba(255,159,26,.45), 0 10px 28px rgba(0,0,0,.42);
+}
+.cube-btn:focus-visible{
+  outline:2px solid #0000;
+  box-shadow:0 0 22px rgba(255,159,26,.55), 0 0 0 2px rgba(255,159,26,.95) inset;
+}
 .cube-btn.prev{ left:6px }
 .cube-btn.next{ right:6px }
-.cube-carousel:hover .cube-btn,
-.cube-carousel:has(.cube-btn:focus-visible){ opacity:1; pointer-events:auto }
 
 /* Indicadores */
 .cube-dots{ display:flex; gap:6px; justify-content:center; margin-top:12px }
