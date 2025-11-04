@@ -1,182 +1,182 @@
-/* ===== Carrusel de artículos (15 ítems) =====
-   - Flechas con estilo “anterior”, posicionadas fuera del carrusel
-   - Dots, drag/swipe, autoplay suave
-*/
+  // ======== Carrusel "cubos" — versión compacta, accesible y responsive ========
+// - 5/3/2/1 ítems visibles según ancho (coincide con CSS)
+// - Autoplay opcional (data-autoplay, data-interval)
+// - Mezcla opcional (data-shuffle)
+// - Pausa en hover/focus, flechas + dots, soporte teclado
 
 (function(){
-  const $ = sel => document.querySelector(sel);
+  const wrap = document.querySelector('.cube-carousel');
+  if (!wrap) return;
 
-  // 15 ítems de ejemplo (coherentes con tu mapa)
-  const CUBE_ITEMS = [
-    // Página 1
-    {img:'https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1200&auto=format&fit=crop', title:'DevSecOps y CI/CD seguro', meta:'Teoría · DevSecOps · 9 min', desc:'Shift-left, escaneo SAST/DAST y firmas de artefactos.'},
-    {img:'https://images.unsplash.com/photo-1529257414772-1960b0f4f8a4?q=80&w=1200&auto=format&fit=crop', title:'Práctica: Active Directory y GPO', meta:'Portafolio · Sistemas · 8 min', desc:'Despliegue, OU, políticas y hardening básico.'},
-    {img:'https://images.unsplash.com/photo-1469474968028-56623f02e42e?q=80&w=1200&auto=format&fit=crop', title:'Virtualización y Cloud — conceptos clave', meta:'Teoría · Cloud · 7 min', desc:'Hipervisores, contenedores y aprovisionamiento.'},
-    {img:'https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?q=80&w=1200&auto=format&fit=crop', title:'Principios de seguridad en redes', meta:'Teoría · Ciberseguridad · 7 min', desc:'Defensa en profundidad, segmentación y controles perimetrales.'},
-    {img:'https://images.unsplash.com/photo-1526481280698-8fcc13fd6a62?q=80&w=1200&auto=format&fit=crop', title:'Sistemas de archivos y permisos', meta:'Teoría · Sistemas · 6 min', desc:'ACL, modos Unix, jerarquías y buenas prácticas.'},
-
-    // Página 2
-    {img:'https://images.unsplash.com/photo-1532619675605-1ede6e88d07b?q=80&w=1200&auto=format&fit=crop', title:'Documentación técnica y compliance', meta:'Teoría · Normativa · 5 min', desc:'Plantillas, evidencias y trazabilidad.'},
-    {img:'https://images.unsplash.com/photo-1477414348463-c0eb7f1359b6?q=80&w=1200&auto=format&fit=crop', title:'Hardening de sistemas Linux y Windows', meta:'Teoría · Ciberseguridad · 8 min', desc:'Checklist de endurecimiento y auditoría básica.'},
-    {img:'https://images.unsplash.com/photo-1482192596544-9eb780fc7f66?q=80&w=1200&auto=format&fit=crop', title:'SIEM con Wazuh (práctica)', meta:'Portafolio · Ciberseguridad · 9 min', desc:'Ingesta, reglas y casos de uso básicos.'},
-    {img:'https://images.unsplash.com/photo-1469474968028-56623f02e42e?q=80&w=1200&auto=format&fit=crop', title:'Tipos de kernels y arquitecturas', meta:'Teoría · Sistemas · 7 min', desc:'Monolíticos, microkernels y arquitecturas híbridas.'},
-    {img:'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1200&auto=format&fit=crop', title:'Redes y comunicaciones — fundamentos', meta:'Teoría · Redes · 9 min', desc:'Modelo OSI/TCP, direccionamiento y diagnóstico básico.'},
-
-    // Página 3
-    {img:'https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?q=80&w=1200&auto=format&fit=crop', title:'Gestión de servidores', meta:'Teoría · Sistemas · 8 min', desc:'Automatización, backups y monitoreo.'},
-    {img:'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=1200&auto=format&fit=crop', title:'Bases de datos relacionales', meta:'Teoría · BBDD · 10 min', desc:'Normalización, índices y patrones de modelo.'},
-    {img:'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1200&auto=format&fit=crop', title:'Programación y scripting', meta:'Teoría · Dev · 6 min', desc:'PowerShell, Bash y Python para automatización.'},
-    {img:'https://images.unsplash.com/photo-1482192596544-9eb780fc7f66?q=80&w=1200&auto=format&fit=crop', title:'Respuesta a incidentes', meta:'Teoría · Ciberseguridad · 8 min', desc:'Clasificación, contención, erradicación y lecciones aprendidas.'},
-    {img:'https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1200&auto=format&fit=crop', title:'Cumplimiento ENS / ISO / RGPD', meta:'Teoría · Normativa · 9 min', desc:'Gobierno, riesgos y evidencias auditables.'}
+  /* ---------- Datos de ejemplo (puedes reemplazar por los tuyos) ---------- */
+  const ARTICLES = [
+    { title:'Artículo 1: Placeholder', img:'https://picsum.photos/seed/a1/960/600', meta:'Guía • 7 min', excerpt:'Texto ficticio para probar el layout.', url:'#' },
+    { title:'Artículo 2: Placeholder', img:'https://picsum.photos/seed/a2/960/600', meta:'Tutorial • 5 min', excerpt:'Texto ficticio para probar el layout.', url:'#' },
+    { title:'Artículo 3: Placeholder', img:'https://picsum.photos/seed/a3/960/600', meta:'Análisis • 9 min', excerpt:'Texto ficticio para probar el layout.', url:'#' },
+    { title:'Artículo 4: Placeholder', img:'https://picsum.photos/seed/a4/960/600', meta:'Caso práctico • 6 min', excerpt:'Texto ficticio para probar el layout.', url:'#' },
+    { title:'Artículo 5: Placeholder', img:'https://picsum.photos/seed/a5/960/600', meta:'Referencia • 4 min', excerpt:'Texto ficticio para probar el layout.', url:'#' },
+    { title:'Artículo 6: Placeholder', img:'https://picsum.photos/seed/a6/960/600', meta:'Guía • 8 min', excerpt:'Texto ficticio para probar el layout.', url:'#' },
+    { title:'Artículo 7: Placeholder', img:'https://picsum.photos/seed/a7/960/600', meta:'Tutorial • 5 min', excerpt:'Texto ficticio para probar el layout.', url:'#' },
+    { title:'Artículo 8: Placeholder', img:'https://picsum.photos/seed/a8/960/600', meta:'Análisis • 10 min', excerpt:'Texto ficticio para probar el layout.', url:'#' },
   ];
 
-  // Construcción DOM
-  const viewport = document.getElementById('cubeViewport') || document.querySelector('.cube-viewport');
-  const track = document.getElementById('cubeTrack') || document.querySelector('.cube-track');
-  const dotsWrap = document.getElementById('cubeDots') || document.querySelector('.cube-dots');
-  const btnPrev = document.getElementById('cubePrev') || document.querySelector('.cube-btn.prev');
-  const btnNext = document.getElementById('cubeNext') || document.querySelector('.cube-btn.next');
+  /* ---------- Opciones ---------- */
+  const autoplay   = wrap.getAttribute('data-autoplay') === 'true';
+  const intervalMs = parseInt(wrap.getAttribute('data-interval') || '4000', 10);
+  const shuffle    = wrap.getAttribute('data-shuffle') === 'true';
 
-  if(!viewport || !track) return;
+  const viewport = wrap.querySelector('.cube-viewport');
+  const track    = wrap.querySelector('.cube-track');
+  const prevBtn  = wrap.querySelector('#cubePrev');
+  const nextBtn  = wrap.querySelector('#cubeNext');
+  const dotsWrap = wrap.querySelector('#cubeDots');
 
-  // Pintar tarjetas
-  track.innerHTML = '';
-  CUBE_ITEMS.forEach(item=>{
-    const card = document.createElement('article');
-    card.className = 'cube-card';
-    card.innerHTML = `
-      <img class="cube-img" src="${item.img}" alt="" loading="lazy">
-      <div class="cube-body">
-        <h4 class="cube-title">${item.title}</h4>
-        <div class="cube-meta">${item.meta}</div>
-        <p class="cube-desc">${item.desc}</p>
-        <button class="cube-more" type="button">Ver más</button>
-      </div>
-    `;
-    track.appendChild(card);
-  });
+  if (!viewport || !track) return;
 
-  // Lógica del carrusel
-  const state = {
-    index: 0,
-    perView: 4,
-    dragging: false,
-    startX: 0,
-    startTx: 0,
-    autoplay: true,
-    timer: null
-  };
-
-  function recompute(){
-    const w = viewport.clientWidth;
-    const cardW = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--cube-card-w')) || 320;
-    const gap = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--cube-gap')) || 18;
-    state.perView = Math.max(1, Math.floor((w + gap) / (cardW + gap)));
-    const maxIndex = Math.max(0, CUBE_ITEMS.length - state.perView);
-    if(state.index > maxIndex) state.index = maxIndex;
-    update();
-    updateDots();
-    updateBtns();
+  /* ---------- Utilidades ---------- */
+  function shuffled(arr){
+    const a = arr.slice();
+    for(let i=a.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [a[i],a[j]] = [a[j],a[i]];
+    }
+    return a;
   }
 
-  function update(){
-    const gap = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--cube-gap')) || 18;
-    const cards = track.children;
-    if(!cards.length) return;
-    const cardW = cards[0].getBoundingClientRect().width;
-    const x = -(state.index * (cardW + gap));
-    track.style.transform = `translate3d(${x}px,0,0)`;
+  function visibleCount(){
+    const w = window.innerWidth;
+    if (w <= 520)  return 1;
+    if (w <= 720)  return 2;
+    if (w <= 1020) return 3;
+    return 5;
   }
 
-  function goTo(idx){
-    const maxIndex = Math.max(0, CUBE_ITEMS.length - state.perView);
-    state.index = Math.max(0, Math.min(maxIndex, idx));
-    update();
-    updateDots();
-    updateBtns();
+  /* ---------- Render ---------- */
+  const data = shuffle ? shuffled(ARTICLES) : ARTICLES.slice();
+
+  function renderItems(){
+    track.innerHTML = '';
+    data.forEach((it, idx)=>{
+      const item = document.createElement('article');
+      item.className = 'cube';
+      item.setAttribute('role','listitem');
+
+      const media = document.createElement('div');
+      media.className = 'cube-media';
+      if (it.img){
+        const img = document.createElement('img');
+        img.src = it.img; img.alt = it.title || 'Artículo';
+        media.appendChild(img);
+      }
+      const body = document.createElement('div');
+      body.className = 'cube-body';
+
+      const h = document.createElement('h4');
+      h.className = 'cube-title';
+      h.textContent = it.title || `Artículo ${idx+1}`;
+
+      const meta = document.createElement('div');
+      meta.className = 'cube-meta';
+      meta.textContent = it.meta || '—';
+
+      const p = document.createElement('p');
+      p.className = 'cube-meta';
+      p.textContent = it.excerpt || 'Resumen breve del contenido.';
+
+      const a = document.createElement('a');
+      a.className = 'cube-link';
+      a.href = it.url || '#';
+      a.textContent = 'Ver más';
+
+      body.append(h, meta, p, a);
+      item.append(media, body);
+      track.appendChild(item);
+    });
   }
 
-  function next(){ goTo(state.index + 1); }
-  function prev(){ goTo(state.index - 1); }
+  /* ---------- Estado y navegación ---------- */
+  let vis = visibleCount();
+  let page = 0;
+  let pages = 1;
+  let timer = null;
 
-  function updateBtns(){
-    const maxIndex = Math.max(0, CUBE_ITEMS.length - state.perView);
-    if(btnPrev) btnPrev.disabled = (state.index <= 0);
-    if(btnNext) btnNext.disabled = (state.index >= maxIndex);
+  function computePages(){
+    vis = visibleCount();
+    pages = Math.max(1, Math.ceil(data.length / vis));
+    page = Math.min(page, pages - 1);
   }
 
-  // Dots
-  function buildDots(){
-    if(!dotsWrap) return;
+  function updateDots(){
     dotsWrap.innerHTML = '';
-    const pages = Math.max(1, CUBE_ITEMS.length - state.perView + 1);
     for(let i=0;i<pages;i++){
-      const d = document.createElement('span');
-      d.className = 'cube-dot';
+      const d = document.createElement('button');
+      d.type = 'button';
+      d.className = 'cube-dot' + (i===page ? ' is-active' : '');
+      d.setAttribute('aria-label', `Ir a página ${i+1}`);
       d.addEventListener('click', ()=> goTo(i));
       dotsWrap.appendChild(d);
     }
   }
-  function updateDots(){
-    if(!dotsWrap) return;
-    const dots = dotsWrap.querySelectorAll('.cube-dot');
-    dots.forEach((d, i)=> d.classList.toggle('is-active', i===state.index));
+
+  function translate(){
+    const gap = 14; // coincide con CSS
+    // ancho de un item = (viewportWidth - gaps) / visibles
+    const vw = viewport.clientWidth;
+    const itemW = (vw - gap*(vis-1)) / vis;
+    const x = -(itemW + gap) * vis * page;
+    track.style.transform = `translate3d(${x}px,0,0)`;
+    // aria-live simple
+    wrap.setAttribute('aria-live','polite');
   }
 
-  // Drag/Swipe
-  function onDown(e){
-    state.dragging = true;
-    track.classList.add('is-dragging');
-    state.startX = (e.touches ? e.touches[0].clientX : e.clientX);
-    const m = getComputedStyle(track).transform;
-    const tx = m !== 'none' ? parseFloat(m.split(',')[4]) : 0;
-    state.startTx = tx || 0;
-  }
-  function onMove(e){
-    if(!state.dragging) return;
-    const x = (e.touches ? e.touches[0].clientX : e.clientX);
-    const dx = x - state.startX;
-    track.style.transform = `translate3d(${state.startTx + dx}px,0,0)`;
-  }
-  function onUp(e){
-    if(!state.dragging) return;
-    state.dragging = false;
-    track.classList.remove('is-dragging');
-    const x = (e.changedTouches ? e.changedTouches[0].clientX : e.clientX);
-    const dx = x - state.startX;
-    const threshold = 50;
-    if(dx < -threshold) next();
-    else if(dx > threshold) prev();
-    else update(); // snap back
+  function goTo(n){
+    page = (n + pages) % pages;
+    updateDots();
+    translate();
   }
 
-  // Autoplay
-  function startAuto(){
-    if(state.timer || !state.autoplay) return;
-    state.timer = setInterval(()=>{
-      const maxIndex = Math.max(0, CUBE_ITEMS.length - state.perView);
-      if(state.index >= maxIndex) goTo(0);
-      else next();
-    }, 6000);
+  function next(){ goTo(page + 1); }
+  function prev(){ goTo(page - 1); }
+
+  /* ---------- Autoplay ---------- */
+  function start(){
+    if (!autoplay || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    stop();
+    timer = setInterval(next, intervalMs);
   }
-  function stopAuto(){
-    if(state.timer){ clearInterval(state.timer); state.timer = null; }
-  }
+  function stop(){ if (timer) { clearInterval(timer); timer = null; } }
 
-  // Eventos
-  window.addEventListener('resize', recompute);
-  if(btnNext) btnNext.addEventListener('click', ()=>{ stopAuto(); next(); startAuto(); });
-  if(btnPrev) btnPrev.addEventListener('click', ()=>{ stopAuto(); prev(); startAuto(); });
+  /* ---------- Eventos ---------- */
+  if (prevBtn) prevBtn.addEventListener('click', prev);
+  if (nextBtn) nextBtn.addEventListener('click', next);
 
-  viewport.addEventListener('mousedown', onDown);
-  window.addEventListener('mousemove', onMove);
-  window.addEventListener('mouseup', onUp);
-  viewport.addEventListener('touchstart', onDown, {passive:true});
-  window.addEventListener('touchmove', onMove, {passive:true});
-  window.addEventListener('touchend', onUp);
+  wrap.addEventListener('mouseenter', stop);
+  wrap.addEventListener('mouseleave', start);
+  wrap.addEventListener('focusin',  stop);
+  wrap.addEventListener('focusout', start);
 
-  // Init
-  buildDots();
-  recompute();
-  startAuto();
+  // Teclado en el carrusel
+  wrap.addEventListener('keydown', (e)=>{
+    if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+    if (e.key === 'ArrowRight'){ e.preventDefault(); next(); }
+  });
+
+  window.addEventListener('resize', ()=>{
+    const old = vis;
+    computePages();
+    // si cambió el nº de visibles, recalculamos dots y posición
+    if (old !== vis){
+      updateDots();
+      translate();
+    } else {
+      translate();
+    }
+  });
+
+  /* ---------- Init ---------- */
+  renderItems();
+  computePages();
+  updateDots();
+  translate();
+  start();
 })();
