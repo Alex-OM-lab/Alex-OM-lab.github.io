@@ -1,13 +1,12 @@
 /* ============================================
-   Tools UI — Render + Medidores + Paginación
-   (pager arriba derecha + chips de SO a la derecha)
+   Tools UI — versión con barra de 3 niveles (Bajo / Medio / Alto)
    ============================================ */
 
 (function () {
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 
-  // ---- Datos (ajústalos cuando quieras) ----
+  // ---- Datos ----
   const TOOLS = [
     { name: "Ansible", os: "linux" },
     { name: "Docker", os: "multi" },
@@ -17,17 +16,20 @@
     { name: "OpenVAS", os: "linux" },
     { name: "Wireshark", os: "windows/linux" },
     { name: "pfSense", os: "linux" },
+    { name: "Proxmox", os: "linux" },
+    { name: "VMware/ESXi", os: "windows" },
+    { name: "Azure AD", os: "windows" },
     { name: "Git/GitHub", os: "multi" },
   ];
 
   const LANGS = [
     { name: "Bash", level: "alto" },
-    { name: "PowerShell", level: "medio-alto" },
-    { name: "SQL", level: "medio-alto" },
-    { name: "Python", level: "medio" },
-    { name: "YAML/Ansible", level: "medio-alto" },
+    { name: "PowerShell", level: "medio" },
+    { name: "SQL", level: "medio" },
+    { name: "Python", level: "bajo" },
     { name: "HTML/CSS", level: "medio" },
     { name: "JavaScript", level: "medio" },
+    { name: "YAML/Ansible", level: "alto" },
   ];
 
   document.addEventListener("DOMContentLoaded", () => {
@@ -37,9 +39,8 @@
     if (toolsList) renderTools(toolsList, TOOLS);
     if (langsList) renderLangs(langsList, LANGS);
 
-    normalizeMeters();
+    if (langsList) renderLevelBars(langsList);
 
-    // Paginación solo para Herramientas (arriba derecha)
     if (toolsList) {
       const card = toolsList.closest(".tools-card") || toolsList.parentElement;
       enablePagingTopRight(toolsList, { perPage: 8, cardEl: card });
@@ -66,84 +67,72 @@
 
   function renderLangs(container, data) {
     container.innerHTML = data
-      .map((l) => {
-        const lvl = (l.level || "").toLowerCase();
-        return `
-          <button class="tool-btn" type="button" data-level="${escapeHtml(l.level)}" aria-label="${escapeHtml(l.name)} ${escapeHtml(l.level)}">
-            <span class="tool-slot--left"></span>
-            <span class="tool-name">${escapeHtml(l.name)}</span>
-            <span class="tool-slot--right level">
-              <span class="level-label">${escapeHtml(l.level)}</span>
-              <span class="meter" aria-hidden="true"><i></i></span>
-            </span>
-          </button>`;
-      })
+      .map(
+        (l) => `
+        <div class="tool-btn" data-level="${escapeHtml(l.level)}">
+          <span class="tool-slot--left"></span>
+          <span class="tool-name">${escapeHtml(l.name)}</span>
+          <span class="tool-slot--right">
+            <div class="level-bar" data-level="${escapeHtml(l.level)}">
+              <span class="bar-segment"></span>
+              <span class="bar-segment"></span>
+              <span class="bar-segment"></span>
+            </div>
+          </span>
+        </div>`
+      )
       .join("");
   }
 
-  /* ---------- 3 niveles fijos para barras ---------- */
-  function normalizeMeters() {
-    $$('.tool-btn[data-level]').forEach((btn) => {
-      const lvl = (btn.getAttribute("data-level") || "").toLowerCase().trim();
-      const bar = $(".meter i", btn);
-      if (!bar) return;
-      let w = 33;
-      if (lvl === "alto") w = 100;
-      else if (lvl === "medio-alto" || lvl === "medio alto" || lvl === "medioalto" || lvl === "medio") w = 66;
-      else if (lvl === "basico" || lvl === "básico") w = 33;
+  /* ---------- Nueva barra de 3 niveles ---------- */
+  function renderLevelBars(root) {
+    $$(".level-bar", root).forEach((bar) => {
+      const level = (bar.getAttribute("data-level") || "").toLowerCase();
+      const segments = $$(".bar-segment", bar);
 
-      // seguridad para no desbordar
-      w = Math.max(0, Math.min(100, w));
-      bar.style.width = w + "%";
+      // Resetea
+      segments.forEach((s) => s.classList.remove("active"));
+
+      // Asigna número de segmentos activos
+      let activeCount = 1;
+      if (level === "medio") activeCount = 2;
+      if (level === "alto") activeCount = 3;
+
+      segments.forEach((s, i) => {
+        if (i < activeCount) s.classList.add("active");
+      });
     });
   }
 
   /* ---------- Paginación ARRIBA-DERECHA (Herramientas) ---------- */
   function enablePagingTopRight(listEl, { perPage = 8, cardEl = null } = {}) {
     const items = $$(".tool-btn", listEl);
-
-    // limpiar cualquier paginador previo en la tarjeta
-    if (cardEl) {
-      $$(".tools-pager", cardEl).forEach((n) => n.remove());
-    }
-
+    if (cardEl) $$(".tools-pager", cardEl).forEach((n) => n.remove());
     if (items.length <= perPage) {
       items.forEach((el) => (el.style.display = ""));
       return;
     }
-
     const pages = chunk(items, perPage);
     let page = 0;
-
-    // Controles
     const pager = document.createElement("div");
-    pager.className = "tools-pager topright"; // <- CSS lo colocará arriba derecha
-
+    pager.className = "tools-pager topright";
     const prev = mkArrow("‹");
     const next = mkArrow("›");
     const dots = document.createElement("div");
     dots.className = "tools-dots";
-
-    pager.appendChild(prev);
-    pager.appendChild(dots);
-    pager.appendChild(next);
-
+    pager.append(prev, dots, next);
+    const host = cardEl || listEl.parentElement || listEl;
+    host.appendChild(pager);
     const dotEls = pages.map((_, i) => {
-      const d = document.createElement("div");
-      d.className = "tools-dot";
+      const d = document.createElement("span");
+      d.className = "tools-dot" + (i === 0 ? " is-active" : "");
       d.addEventListener("click", () => render(i));
       dots.appendChild(d);
       return d;
     });
-
     prev.addEventListener("click", () => render(page - 1));
     next.addEventListener("click", () => render(page + 1));
-
-    // Insertar pager en la tarjeta contenedora
-    if (cardEl) cardEl.appendChild(pager);
-
     render(0);
-
     function render(p) {
       page = clamp(p, 0, pages.length - 1);
       items.forEach((el) => (el.style.display = "none"));
@@ -157,13 +146,8 @@
   /* ---------- Helpers ---------- */
 
   function parseOs(input) {
-    // Devuelve array de {cls:'win'|'lnx'|'mul', label:'Windows'|...}
     if (!input) return [];
-    const raw = String(input)
-      .toLowerCase()
-      .replace(/\s+/g, "")
-      .replace(/[|]/g, "/");
-
+    const raw = String(input).toLowerCase().replace(/\s+/g, "").replace(/[|]/g, "/");
     const parts = raw.split(/[\/,]+/).filter(Boolean);
     const uniq = Array.from(new Set(parts.length ? parts : [raw]));
     return uniq.map((p) => {
@@ -173,8 +157,16 @@
     });
   }
 
-  const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
-  const chunk = (arr, n) => arr.reduce((a, _, i) => (i % n ? a : [...a, arr.slice(i, i + n)]), []);
+  function chunk(arr, size) {
+    const out = [];
+    for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
+    return out;
+  }
+
+  function clamp(v, min, max) {
+    return Math.max(min, Math.min(max, v));
+  }
+
   function mkArrow(txt) {
     const b = document.createElement("button");
     b.type = "button";
