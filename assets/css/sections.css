@@ -1,41 +1,88 @@
+/* =====================================================
+   SECCIONES · Estilos de página (tema oscuro cálido)
+   ===================================================== */
 
 :root{
   --bg:#0b1220;
-  --panel:rgba(255,255,255,0.05);
-  --panel-border:rgba(255,255,255,0.10);
-  --panel-border-strong:rgba(255,255,255,0.18);
+  --panel:rgba(255,255,255,0.06);
+  --panel-border:rgba(255,255,255,0.12);
   --text:#e6edf6;
   --muted:#9bb0c3;
   --accent:#ff9f1a;
 }
 
-/* layout base (no cambios a tu tema) */
-section.custom-section{padding:60px 0;border-top:1px solid rgba(255,255,255,0.06);background:transparent}
-.section-title{color:var(--accent);margin:0 0 8px}
-.kicker{color:var(--muted);margin:0 0 16px}
+/* ===== Base de secciones ===== */
+section.custom-section{
+  padding:60px 0;
+  background:transparent;
+  border-top:1px solid rgba(255,255,255,0.06);
+}
 
-/* CARD general – igual que 'Sobre mí' */
+.section-title{
+  margin:0 0 8px;
+  color:var(--accent);
+}
+
+.kicker{
+  margin:0 0 18px;
+  color:var(--muted);
+}
+
+/* ===== Utilidad tarjeta (la que usas en “Sobre mí”) ===== */
 .card{
   background:var(--panel);
-  border:1px solid var(--panel-border-strong);
+  border:1px solid var(--panel-border);
   border-radius:14px;
   padding:20px;
-  box-shadow:0 0 0 1px rgba(0,0,0,0.08) inset;
+  box-shadow:0 0 0 1px rgba(0,0,0,.08) inset;
 }
 
-/* === ESPECIALIDADES === */
-/* card envolviendo TODAS las columnas */
-.specialties-wrapper{margin-top:8px}
-.specialties-wrapper .card{padding:22px}
+/* =====================================================
+   ESPECIALIDADES — tarjeta gris ÚNICA con 3 columnas
+   ===================================================== */
 
-/* grid de 3 columnas dentro de la tarjeta */
-.specialties-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
-.specialty h3{margin:0 0 8px;font-weight:800;color:#f8d8a0}
-.specialty p{margin:0;color:var(--text);opacity:.92}
+.specialties-wrapper{ margin-top:10px; }
 
-/* responsive */
+/* tarjeta gris que envuelve todas las columnas */
+.specialties-card{
+  background:var(--panel);
+  border:1px solid var(--panel-border);
+  border-radius:14px;
+  padding:24px;
+  box-shadow:0 0 0 1px rgba(0,0,0,.08) inset;
+}
+
+/* grid interno de 3 columnas (1 en móvil) */
+.specialties-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:24px;
+}
+
+.specialty h3{
+  margin:0 0 8px;
+  font-weight:800;
+  color:#f8d8a0;
+}
+
+.specialty p{
+  margin:0;
+  color:var(--text);
+  opacity:.92;
+}
+
 @media (max-width:980px){
-  .specialties-grid{grid-template-columns:1fr;gap:14px}
-  .specialties-wrapper .card{padding:18px}
+  .specialties-grid{
+    grid-template-columns:1fr;
+    gap:16px;
+  }
+  .specialties-card{ padding:18px; }
 }
 
+/* ===== Accesibilidad util ===== */
+.visually-hidden{
+  position:absolute!important;
+  clip:rect(0,0,0,0)!important;
+  width:1px!important; height:1px!important;
+  overflow:hidden!important; white-space:nowrap!important;
+}
