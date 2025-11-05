@@ -1,11 +1,5 @@
-// /assets/js/graph.js — Versión PRO (Fase 1+2+3) con ajuste dinámico de ancho de nodos
-// - Layout de columnas responsive
-// - Breadcrumb opcional (#graphBc)
-// - Resaltado de ruta + atenuación
-// - Pan/zoom manual
-// - Partículas ambientales SIN capturar eventos
-// - Animaciones (reveal + flow líneas)
-// - Toggle de tema (oscuro / técnico)
+// /assets/js/graph.js — Versión PRO con ajuste dinámico + wrap/ellipsis en títulos
+// Mantiene: layout, breadcrumb, pan/zoom, partículas, animaciones y colores.
 
 const SiteGraph = (() => {
   const NS = 'http://www.w3.org/2000/svg';
@@ -35,9 +29,9 @@ const SiteGraph = (() => {
   function ptSvg(x,y){ const p=G.svg.createSVGPoint(); p.x=x; p.y=y; return p; }
   function screenToRoot(x,y){ const p=ptSvg(x,y); const m=G.root.getScreenCTM(); return m ? p.matrixTransform(m.inverse()) : {x,y}; }
 
-  // ancho máximo útil de cada nodo (en función del ancho real entre columnas)
+  // ancho máximo útil de cada nodo (en función del ancho entre columnas)
   function clampNodeWidth(level, wNeeded){
-    const maxPerCol = Math.floor(G.colStep * 0.90);  // deja ~10% de aire entre columnas
+    const maxPerCol = Math.floor(G.colStep * 0.90);  // ~10% de aire entre columnas
     const minBase   = G.nodeW[level];
     return Math.max(minBase, Math.min(wNeeded, maxPerCol));
   }
@@ -51,7 +45,6 @@ const SiteGraph = (() => {
     const step = usable / (L-1);
     G.colStep = step;
     G.colX = Array.from({length:L}, (_,i)=> marginX + i*step);
-    // base mínima por columna (no el máximo)
     G.nodeW = [230, 250, 280, 260].map(w=> Math.min(w, Math.floor(step*0.70)));
   }
 
@@ -72,7 +65,117 @@ const SiteGraph = (() => {
     if(level<=3) clear(G.layers.links[2]);
   }
 
-  /* ---------- DIBUJO DE NODO con ajuste de ancho ---------- */
+  /* ========= Ajuste de texto: wrap 2 líneas + elipsis + tooltip ========= */
+  const PAD_L = 14, PAD_R = 14, BADGE_BLOCK = 34, LINE_H = 18;
+
+  function textLength(el){ return (el.getComputedTextLength ? el.getComputedTextLength() : el.getBBox().width) || 0; }
+
+  function trimToWidth(str, el, maxW){
+    // recorta por caracteres y añade "…" cuando no cabe
+    let s = str;
+    el.textContent = s + '…';
+    while (textLength(el) > maxW && s.length > 0){
+      s = s.slice(0, -1);
+      el.textContent = s + '…';
+    }
+    return el.textContent; // ya incluye …
+  }
+
+  function wrapTitleToTwoLines(textEl, fullText, availW){
+    // Limpia y construye tspans
+    textEl.textContent = '';
+    const t1 = document.createElementNS(NS,'tspan');
+    const t2 = document.createElementNS(NS,'tspan');
+    t1.setAttribute('x', 14); t1.setAttribute('dy', 0);
+    t2.setAttribute('x', 14); t2.setAttribute('dy', LINE_H);
+
+    // Partimos por palabras
+    const words = fullText.split(/\s+/);
+    let line1 = '', line2 = '', i = 0;
+
+    // Construir línea 1
+    while (i < words.length){
+      const test = (line1 ? line1 + ' ' : '') + words[i];
+      t1.textContent = test; textEl.appendChild(t1);
+      if (textLength(textEl) <= availW){ line1 = test; i++; textEl.removeChild(t1); }
+      else { textEl.removeChild(t1); break; }
+    }
+    t1.textContent = line1 || words[i++] || '';
+
+    // Resto para línea 2
+    let rest = words.slice(i).join(' ');
+    if (rest){
+      t2.textContent = rest;
+      textEl.appendChild(t1);
+      textEl.appendChild(t2);
+
+      // Si no cabe, recortamos con elipsis
+      if (textLength(textEl) > availW){
+        // medimos con t2 solo
+        const probe = document.createElementNS(NS,'text');
+        probe.setAttribute('class', textEl.getAttribute('class'));
+        const p2 = document.createElementNS(NS,'tspan');
+        p2.textContent = rest; probe.appendChild(p2);
+        textEl.parentNode.appendChild(probe); // temporal para obtener métrica
+        trimToWidth(rest, p2, availW);
+        t2.textContent = p2.textContent;
+        probe.remove();
+      }
+    } else {
+      textEl.appendChild(t1);
+    }
+  }
+
+  function fitNodeContent(g, level, titleEl, subEl, rectEl, badgeRect, badgeText){
+    // ancho disponible actual
+    const baseW = parseFloat(rectEl.getAttribute('width')) || G.nodeW[level];
+    const maxPerCol = Math.floor(G.colStep * 0.90);
+    const minBase   = G.nodeW[level];
+
+    // Primero intentamos con el ancho base y medir
+    const tryWidth = (w)=>{
+      const availW = w - PAD_L - BADGE_BLOCK - PAD_R;
+      // re-wrap del título
+      wrapTitleToTwoLines(titleEl, titleEl.getAttribute('data-full') || titleEl.textContent, availW);
+      // ancho visual del título (máx de líneas)
+      const lines = titleEl.querySelectorAll('tspan');
+      let titleMax = 0;
+      lines.forEach(tspan=>{
+        const probe = document.createElementNS(NS,'text');
+        probe.setAttribute('class', titleEl.getAttribute('class'));
+        const p2 = document.createElementNS(NS,'tspan');
+        p2.textContent = tspan.textContent;
+        probe.appendChild(p2);
+        titleEl.parentNode.appendChild(probe);
+        titleMax = Math.max(titleMax, textLength(probe));
+        probe.remove();
+      });
+
+      const subW = subEl ? (subEl.getBBox().width || 0) : 0;
+      return PAD_L + Math.max(titleMax, subW) + BADGE_BLOCK + PAD_R;
+    };
+
+    let needed = Math.ceil(tryWidth(baseW));
+    let finalW = clampNodeWidth(level, needed);
+
+    // si aún no cabe, ensanchamos hasta el máximo por columna
+    if (finalW < needed){
+      needed = Math.ceil(tryWidth(maxPerCol));
+      finalW = clampNodeWidth(level, needed);
+    }
+
+    // aplicar ancho final y recolocar badge
+    rectEl.setAttribute('width', finalW);
+    badgeRect.setAttribute('x', finalW - BADGE_BLOCK);
+    badgeText.setAttribute('x', finalW - (BADGE_BLOCK - 11));
+
+    // tooltip con el título completo
+    let tip = g.querySelector('title');
+    if (!tip){ tip = document.createElementNS(NS,'title'); g.appendChild(tip); }
+    tip.textContent = titleEl.getAttribute('data-full') || titleEl.textContent;
+  }
+
+  /* ---------------- DIBUJO DE NODO ---------------- */
   function drawNode({level,x,y,w,h,title,sub,onClick,delay=0}){
     const g = document.createElementNS(NS,'g');
     g.classList.add('node'); g.dataset.lvl=String(level);
@@ -83,17 +186,16 @@ const SiteGraph = (() => {
 
     const inner = document.createElementNS(NS,'g'); inner.classList.add('node-in'); g.appendChild(inner);
 
-    // base rect
     const r = document.createElementNS(NS,'rect');
     r.setAttribute('width', w); r.setAttribute('height', h);
     inner.appendChild(r);
 
-    // title
     const t = document.createElementNS(NS,'text');
-    t.setAttribute('x', 14); t.setAttribute('y', 22); t.setAttribute('class','title'); t.textContent=title;
+    t.setAttribute('x', 14); t.setAttribute('y', 22); t.setAttribute('class','title');
+    t.setAttribute('data-full', title);           // guardamos el título completo para tooltip y wrap
+    t.textContent = title;
     inner.appendChild(t);
 
-    // subtitle opcional
     let s = null;
     if(sub){
       s = document.createElementNS(NS,'text');
@@ -101,7 +203,6 @@ const SiteGraph = (() => {
       inner.appendChild(s);
     }
 
-    // badge (nivel)
     const bkg = document.createElementNS(NS,'rect');
     bkg.setAttribute('x', w-34); bkg.setAttribute('y', 8);
     bkg.setAttribute('width', 22); bkg.setAttribute('height', 16);
@@ -113,29 +214,15 @@ const SiteGraph = (() => {
     bt.setAttribute('x', w-23); bt.setAttribute('y', 20); bt.setAttribute('class','badge'); bt.textContent=level;
     inner.appendChild(bt);
 
-    // ---- Ajuste dinámico del ancho según el texto real ----
-    // Medimos el ancho del texto una vez el nodo está en el DOM.
-    // padding: 14 izquierda + 14 derecha; bloque de badge ~34px (22 + 12 de margen)
-    const PAD_L = 14, PAD_R = 14, BADGE_BLOCK = 34;
-    const titleW = t.getBBox().width;
-    const subW   = s ? s.getBBox().width : 0;
-    const textW  = Math.max(titleW, subW);
-
-    let needed = PAD_L + textW + BADGE_BLOCK + PAD_R;
-    let finalW = clampNodeWidth(level, Math.ceil(needed));
-
-    // Aplicamos el ancho final y recolocamos badge
-    r.setAttribute('width', finalW);
-    bkg.setAttribute('x', finalW - BADGE_BLOCK);
-    bt.setAttribute('x', finalW - (BADGE_BLOCK - 11)); // centrado del número dentro de 22px
-
-    // Guardamos
-    const box = {x,y,w:finalW,h, el:g};
     G.layers.cols[level].appendChild(g);
+
+    // Ajuste de texto/ancho una vez está en el DOM
+    fitNodeContent(g, level, t, s, r, bkg, bt);
 
     // entrada diferida (para animación)
     requestAnimationFrame(()=> setTimeout(()=> g.classList.add('is-in'), delay));
-    return box;
+
+    return {x,y,w:parseFloat(r.getAttribute('width')),h, el:g};
   }
 
   function drawLink(from,to,level,delay=0){
@@ -190,7 +277,6 @@ const SiteGraph = (() => {
       box._link = drawLink(left, box, 1, 60+i*40);
       return box;
     });
-    // el 'pulse' aquí no hace nada si no existe en CSS (no rompe)
     setTimeout(()=> { G.colsNodes[1].forEach(b=> b?.el.classList.add('pulse')); setTimeout(()=>G.colsNodes[1].forEach(b=> b?.el.classList.remove('pulse')), 360); }, 90);
   }
 
