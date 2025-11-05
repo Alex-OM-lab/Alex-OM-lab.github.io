@@ -8,7 +8,7 @@
 .graph-head{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:10px; }
 .graph-head h2{ margin:0 }
 
-/* Botón de tema (Fase 3) */
+/* Botón de tema */
 .theme-toggle{
   appearance:none; border:1px solid rgba(255,255,255,.12); background:#0e1730;
   color:var(--text); padding:8px 12px; border-radius:10px; font-weight:700; cursor:pointer;
@@ -41,17 +41,12 @@
 
 /* CAPA DE PARTÍCULAS (decorativa, no interactiva) */
 .graph-stage .ambient-canvas{
-  position:absolute; inset:0;
-  width:100%; height:100%;
-  pointer-events:none;
-  z-index:0;
+  position:absolute; inset:0; width:100%; height:100%;
+  pointer-events:none; z-index:0;
 }
 
 /* SVG ocupa todo y queda por encima del canvas */
-#graphSvg{
-  width:100%; height:100%; display:block;
-  position:relative; z-index:1;
-}
+#graphSvg{ width:100%; height:100%; display:block; position:relative; z-index:1; }
 
 /* leyenda */
 .graph-legend{
@@ -59,63 +54,79 @@
   color:var(--muted); font-size:13px;
 }
 .graph-legend .dot{ width:10px; height:10px; border-radius:999px; display:inline-block; box-shadow:0 0 10px rgba(0,0,0,.25) }
-.graph-legend .lvl0{ background:var(--accent) }
-.graph-legend .lvl1{ background:#ffd79a }
-.graph-legend .lvl2{ background:#8fd6ff }
-.graph-legend .lvl3{ background:#9be2b0 }
+.graph-legend .lvl0{ background:var(--accent) }    /* Naranja acento */
+.graph-legend .lvl1{ background:#ffd79a }          /* Dorado suave  */
+.graph-legend .lvl2{ background:#8fd6ff }          /* Azul suave    */
+.graph-legend .lvl3{ background:#9be2b0 }          /* Verde suave   */
 
 /* ===== Nodos ===== */
-.node{ cursor:pointer; opacity:1; }        /* mantenemos visibilidad del grupo */
+.node{ cursor:pointer; opacity:1; }
+.node rect{ rx:10; ry:10; fill:#0e1730; stroke:rgba(255,255,255,.10); stroke-width:1.2; }
 
-/* ==== NUEVA ANIMACIÓN PROFESIONAL DE APARICIÓN/EXPANSIÓN ==== */
-/* Estado base (antes de aparecer): sutil blur + leve desplazamiento + opacidad baja */
-.node .node-in{
-  opacity:0;
-  transform: translateY(14px) scale(.97);
-  filter: blur(6px);
-  will-change: transform, filter, opacity;
+/* Borde + glow por nivel (paleta acorde al sitio) */
+.node[data-lvl="0"] rect{
+  fill:rgba(255,159,26,.18); stroke:rgba(255,159,26,.55);
+  filter: drop-shadow(0 0 10px rgba(255,159,26,.12)) drop-shadow(0 0 20px rgba(255,159,26,.08));
+}
+.node[data-lvl="1"] rect{
+  fill:rgba(255,215,154,.12); stroke:rgba(255,215,154,.5);
+  filter: drop-shadow(0 0 10px rgba(255,215,154,.10)) drop-shadow(0 0 18px rgba(255,215,154,.06));
+}
+.node[data-lvl="2"] rect{
+  fill:rgba(143,214,255,.10); stroke:rgba(143,214,255,.45);
+  filter: drop-shadow(0 0 10px rgba(143,214,255,.10)) drop-shadow(0 0 18px rgba(143,214,255,.06));
+}
+.node[data-lvl="3"] rect{
+  fill:rgba(155,226,176,.10); stroke:rgba(155,226,176,.4);
+  filter: drop-shadow(0 0 10px rgba(155,226,176,.10)) drop-shadow(0 0 18px rgba(155,226,176,.06));
 }
 
-/* Aparición inicial con cadena de animaciones (reveal + activate) */
+/* textos */
+.node .title{ fill:#e9eef6; font-weight:800; font-size:13.8px; letter-spacing:.1px; text-rendering:geometricPrecision; }
+.node .sub{   fill:#a8b2c2; font-size:12.4px; text-rendering:geometricPrecision; }
+.node .badge{
+  fill:#07101a; font-weight:900; font-size:11px;
+  text-anchor:middle; dominant-baseline:middle; pointer-events:none;
+}
+
+/* ==== Animación profesional de aparición/expansión ==== */
+.node .node-in{
+  opacity:0; transform: translateY(14px) scale(.97); filter: blur(6px);
+  will-change: transform, filter, opacity;
+}
 .node.is-in .node-in{
   animation:
     node-reveal .6s cubic-bezier(.2,.8,.2,1) forwards,
-    node-activate .42s cubic-bezier(.22,.61,.36,1) .6s forwards; /* empieza tras el reveal */
+    node-activate .42s cubic-bezier(.22,.61,.36,1) .6s forwards;
 }
-
-/* Re-activación al expandir nivel (sin animation aquí para no pisar el reveal) */
-.node:not(.dim-node) .node-in{
-  /* sin 'animation:' aquí */
-}
+/* NO animación aquí para no pisar el reveal */
+.node:not(.dim-node) .node-in{}
 
 /* Keyframes */
 @keyframes node-reveal{
   0%   { opacity:0; transform: translateY(14px) scale(.97); filter: blur(6px); }
-  60%  { opacity:1; transform: translateY(0) scale(1.005); filter: blur(0.5px); }
-  100% { opacity:1; transform: none; filter: blur(0); }
+  60%  { opacity:1; transform: translateY(0) scale(1.005); filter: blur(.5px); }
+  100% { opacity:1; transform:none; filter: blur(0); }
 }
-
 @keyframes node-activate{
   0%   { transform: translateY(6px) scale(.99); filter: blur(2px); }
-  100% { transform: none;                 filter: blur(0); }
+  100% { transform:none; filter: blur(0); }
 }
 
 /* Animación de recolocado y foco */
 .node.moving{ transition: transform .55s cubic-bezier(.2,.8,.2,1); }
-
-/* Hover sutil */
-.node rect{ rx:10; ry:10; fill:#0e1730; stroke:rgba(255,255,255,.10); stroke-width:1.2;
-  transition:filter .2s ease, stroke-width .18s ease; }
-.node.hovered rect{ filter:drop-shadow(0 0 14px rgba(255,159,26,.18)); stroke-width:1.6; }
-
-/* Foco: mantenemos el realce del rect sin aplicar escalados antiguos */
+.node.focus .node-in{ transform:scale(1.02); transition:transform .25s ease; }
 .node.focus rect{ stroke-width:1.8; filter: drop-shadow(0 0 14px rgba(255,159,26,.18)); }
 
-/* Atenuación de contenido no activo */
+/* Hover sutil */
+.node rect{ transition:filter .2s ease, stroke-width .18s ease; }
+.node.hovered rect{ filter:drop-shadow(0 0 14px rgba(255,159,26,.18)); stroke-width:1.6; }
+
+/* Atenuación */
 .dim-node{ opacity:.34; }
 .dim-link{ opacity:.28; }
 
-/* ===== Enlaces + animación (flujo tipo radar) ===== */
+/* ===== Enlaces ===== */
 .link{
   fill:none;
   stroke:rgba(255,159,26,.55);
@@ -126,7 +137,7 @@
 .link.l2{ stroke:rgba(143,214,255,.55) }
 .link.l3{ stroke:rgba(155,226,176,.55) }
 
-/* aparición del trazo */
+/* aparición del trazo y flujo */
 .link.draw{
   stroke-dasharray: 600;
   stroke-dashoffset: 600;
@@ -134,19 +145,14 @@
 }
 @keyframes draw{ to{ stroke-dashoffset:0 } }
 
-/* flujo continuo en guiones (ajustado por ti a la mitad de velocidad actual) */
 .link.flow{
   stroke-dasharray: 10 8;
   animation: flow 10s linear infinite;
 }
-@keyframes flow{
-  to { stroke-dashoffset: -18; }
-}
+@keyframes flow{ to { stroke-dashoffset: -18; } }
 
-/* flash corto al activar ruta (FASE 3) */
-.link.flash{
-  filter: drop-shadow(0 0 8px rgba(255,255,255,.25));
-}
+/* flash corto */
+.link.flash{ filter: drop-shadow(0 0 8px rgba(255,255,255,.25)); }
 
 /* Cursores para pan/zoom */
 .graph-stage.is-panning{ cursor:grabbing; }
@@ -154,37 +160,24 @@
 
 /* ===================== THEME: modo técnico (verde) ===================== */
 body.theme-tech{
-  --bg:#050a08;
-  --panel:#0a1410;
-  --text:#e5ffe9;
-  --muted:#9fe0b0;
-  --accent:#00e676;      /* verde fosforito */
-  --accent-soft:#82ffbe;
+  --bg:#050a08; --panel:#0a1410; --text:#e5ffe9; --muted:#9fe0b0;
+  --accent:#00e676; --accent-soft:#82ffbe;
 }
 body.theme-tech .graph-stage{ background:#07110d; }
 body.theme-tech .graph-bc{ background:rgba(6,14,10,.6); }
 body.theme-tech .theme-toggle{ background:#09160f; border-color:rgba(0,230,118,.25); }
 body.theme-tech .theme-toggle:hover{ background:#0b1d15; }
 
-/* Ajuste de colores por nivel en modo técnico */
+/* Colores por nivel en modo técnico */
 body.theme-tech .graph-legend .lvl0{ background:#00e676 }
 body.theme-tech .graph-legend .lvl1{ background:#b3ffd5 }
 body.theme-tech .graph-legend .lvl2{ background:#77ffd0 }
 body.theme-tech .graph-legend .lvl3{ background:#a8ffc6 }
 
-body.theme-tech .node[data-lvl="0"] rect{
-  fill:rgba(0,230,118,.16); stroke:rgba(0,230,118,.6);
-  filter: drop-shadow(0 0 12px rgba(0,230,118,.16)) drop-shadow(0 0 22px rgba(0,230,118,.10));
-}
-body.theme-tech .node[data-lvl="1"] rect{
-  fill:rgba(131,255,199,.12); stroke:rgba(131,255,199,.52);
-}
-body.theme-tech .node[data-lvl="2"] rect{
-  fill:rgba(119,255,208,.10); stroke:rgba(119,255,208,.45);
-}
-body.theme-tech .node[data-lvl="3"] rect{
-  fill:rgba(168,255,198,.10); stroke:rgba(168,255,198,.42);
-}
+body.theme-tech .node[data-lvl="0"] rect{ fill:rgba(0,230,118,.16); stroke:rgba(0,230,118,.6); filter: drop-shadow(0 0 12px rgba(0,230,118,.16)) drop-shadow(0 0 22px rgba(0,230,118,.10)); }
+body.theme-tech .node[data-lvl="1"] rect{ fill:rgba(131,255,199,.12); stroke:rgba(131,255,199,.52); }
+body.theme-tech .node[data-lvl="2"] rect{ fill:rgba(119,255,208,.10); stroke:rgba(119,255,208,.45); }
+body.theme-tech .node[data-lvl="3"] rect{ fill:rgba(168,255,198,.10); stroke:rgba(168,255,198,.42); }
 
 body.theme-tech .link{ stroke:rgba(0,230,118,.6); filter: drop-shadow(0 0 5px rgba(0,230,118,.18)); }
 body.theme-tech .link.l1{ stroke:rgba(131,255,199,.6) }
@@ -192,12 +185,8 @@ body.theme-tech .link.l2{ stroke:rgba(119,255,208,.6) }
 body.theme-tech .link.l3{ stroke:rgba(168,255,198,.6) }
 
 /* Responsive */
-@media (max-width: 960px){
-  .graph-stage{ height:520px; }
-}
-@media (max-width: 640px){
-  .graph-stage{ height:420px; }
-}
+@media (max-width: 960px){ .graph-stage{ height:520px; } }
+@media (max-width: 640px){ .graph-stage{ height:420px; } }
 
 /* Reduce motion */
 @media (prefers-reduced-motion: reduce){
@@ -205,3 +194,4 @@ body.theme-tech .link.l3{ stroke:rgba(168,255,198,.6) }
   .node, .node .node-in{ transition:none; animation:none; filter:none; transform:none; opacity:1; }
   .node.moving{ transition:none; }
 }
+
