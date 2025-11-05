@@ -1,10 +1,21 @@
 /* =========================================================
-   SECTIONS — estilo base de los bloques de página
-   (mantiene el tema oscuro cálido y no toca nav/hero/tools)
+   SECTIONS.CSS — estilos de secciones + restauración de fondo
    ========================================================= */
 
+/* ===== Fondo global (restaurado) ===== */
+body{
+  /* mismo fondo que el diseño original */
+  background:
+    radial-gradient(1400px 800px at 80% -100px, rgba(255,159,26,.06), transparent 60%),
+    radial-gradient(1200px 700px at -200px 20%, rgba(255,215,154,.05), transparent 60%),
+    #0b1220; /* var(--bg) por compatibilidad */
+  color:#e9eef6; /* var(--text) */
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+/* ===== Variables de color auxiliares (fallbacks) ===== */
 :root{
-  --bg:#0b1220;
   --panel:#111a2d;
   --text:#e9eef6;
   --muted:#a8b2c2;
@@ -13,56 +24,98 @@
   --radius:14px;
 }
 
-/* contenedor general de contenido (ya existe en index) */
-.container{width:min(1100px,92%);margin:0 auto}
+/* ===== Contenedor y espaciados de secciones ===== */
+.container{ width:min(1100px,92%); margin:0 auto; }
+section{ padding:26px 0; }
 
-/* secciones estándar */
-section{padding:26px 0}
+/* Títulos y subtítulos (sin líneas decorativas) */
 .section-title{
   font-size:clamp(24px,3vw,34px);
-  margin:0 0 10px;
+  margin:0 0 14px;
   color:var(--accent);
   text-shadow:0 0 8px rgba(255,159,26,.25);
 }
-.kicker{color:var(--muted);margin:0 0 16px}
+.kicker{ color:var(--muted); margin:0 0 18px; }
 
-/* Card compartida (mismo estilo que “Sobre mí”) */
+/* ===== Card universal (mismo estilo que “Sobre mí”) ===== */
 .card{
-  background:linear-gradient(180deg,color-mix(in oklab,var(--panel) 92%,#0f1422 8%),var(--panel));
+  background:linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--panel) 92%, #0f1422 8%),
+    var(--panel)
+  );
   border:1px solid rgba(255,255,255,.06);
-  border-radius:var(--radius);
-  padding:16px;
-}
-
-/* Espaciado de párrafos dentro de cards de texto */
-.card > p{margin:0 0 10px}
-.card > p:last-child{margin-bottom:0}
-
-/* ======= Especialidades (3 columnas) ======= */
-.grid-3{
-  display:grid;grid-template-columns:repeat(3,1fr);gap:18px
-}
-
-/* Título de cada especialidad encima de su caja */
-.specialty{
-  display:flex;flex-direction:column;gap:8px
-}
-.specialty-title{
-  margin:0; font-size:17px; font-weight:800; color:#ffe2b0;
-}
-
-/* La caja gris sólo rodea el texto descriptivo */
-.specialty-text.card{
+  border-radius:12px;
   padding:14px;
+  box-shadow:0 12px 30px rgba(0,0,0,.35);
 }
 
-/* ======= Cómo investigo y trabajo ======= */
-/* Un único cuadro gris para todo el texto (sin incluir el h2) */
-.investigacion-wrap.card{
-  padding:16px;
+/* Párrafos dentro de cards (suaves y legibles) */
+.card p{
+  margin:0;
+  line-height:1.6;
+}
+.card p + p{ margin-top:10px; }
+
+/* ===== Grids reutilizables ===== */
+.grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+@media (max-width:980px){ .grid{ grid-template-columns:1fr 1fr } }
+@media (max-width:620px){ .grid{ grid-template-columns:1fr } }
+
+/* ===== Especialidades
+   - El TÍTULO h3 queda fuera del marco
+   - Solo el texto va dentro de .card (como en “Sobre mí”)
+   ===================================================== */
+#especialidades .item{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+#especialidades .item h3{
+  margin:0;
+  font-size:18px;
+  color:#ffe2b0;
+}
+#especialidades .item .card{
+  /* hereda el estilo .card (mismo marco gris) */
 }
 
-/* Responsive */
-@media (max-width:980px){
-  .grid-3{grid-template-columns:1fr}
+/* ===== Cómo investigo y trabajo
+   - Todo el contenido (kicker + párrafos) en UNA sola .card
+   ===================================================== */
+#investigacion .card{
+  /* hereda .card sin burbujas separadas */
+}
+
+/* ===== Utilidades varias empleadas en la web ===== */
+.project img{
+  width:100%;
+  aspect-ratio:16/10;
+  object-fit:cover;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,.06);
+}
+.project h4{ margin:10px 0 6px; }
+.project p{ margin:0; color:var(--muted); }
+
+.contact-box{ display:grid; grid-template-columns:1.1fr .9fr; gap:22px; }
+@media (max-width:980px){ .contact-box{ grid-template-columns:1fr } }
+
+input,textarea{
+  background:#0c1323;
+  color:var(--text);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:10px;
+  padding:12px 14px;
+  font-size:16px;
+}
+textarea{ min-height:140px; resize:vertical; }
+
+/* Footer */
+footer{
+  padding:40px 0;
+  color:#a9b1bd;
+  text-align:center;
+  border-top:1px solid rgba(255,255,255,.06);
+  margin-top:10px;
 }
