@@ -4,137 +4,42 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Alejandro Orcajada Meseguer | Administrador de Sistemas y Ciberseguridad</title>
-  <meta name="description" content="Portafolio profesional de Alejandro Orcajada Meseguer, Administrador de Sistemas y Ciberseguridad."/>
   <meta name="theme-color" content="#0b1220"/>
 
-  <!-- Fuentes -->
+  <!-- Fuentes / Iconos -->
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Tomorrow:wdth,wght@100..125,400..900&display=swap" rel="stylesheet"/>
-
-  <!-- Iconos necesarios para la tabla -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 
-  <!-- CSS del sitio (nombre SIN números) -->
-  <link rel="stylesheet" href="assets/css/nav.css"/>
-  <link rel="stylesheet" href="assets/css/hero-glitch.css"/>
-  <link rel="stylesheet" href="assets/css/graph.css"/>
-  <link rel="stylesheet" href="assets/css/cubes.css"/>
-  <link rel="stylesheet" href="assets/css/sections.css"/> <!-- ✅ aquí enlaza tu sections.css sin (xx) -->
-
-  <style>
-    /* ===== Variables base (global) ===== */
-    :root{
-      --bg:#0b1220; --panel:#111a2d; --text:#e9eef6; --muted:#a8b2c2;
-      --accent:#ff9f1a; --accent-soft:#ffd79a; --radius:14px;
-      --nav-font:15.5px; --nav-pad-y:12px; --nav-gap:12px; --hero-offset:12vh;
-    }
-    *{box-sizing:border-box} html,body{margin:0}
-    body{
-      font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,Inter,"Helvetica Neue",Arial;
-      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
-      background:
-        radial-gradient(1400px 800px at 80% -100px, rgba(255,159,26,.06), transparent 60%),
-        radial-gradient(1200px 700px at -200px 20%, rgba(255,215,154,.05), transparent 60%),
-        var(--bg);
-      color:var(--text);
-    }
-    .container{width:min(1100px,92%);margin:0 auto}
-    section{padding:26px 0}
-    .section-title{font-size:clamp(24px,3vw,34px);margin:0 0 10px}
-    .kicker{color:var(--muted);margin:0 0 20px}
-    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-    .card{background:linear-gradient(180deg,color-mix(in oklab,var(--panel) 92%,#0f1422 8%),var(--panel));border:1px solid rgba(255,255,255,.06);border-radius:var(--radius);padding:16px}
-    .project img{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:10px;border:1px solid rgba(255,255,255,.06)}
-    .project h4{margin:10px 0 6px}.project p{margin:0;color:var(--muted)}
-    .contact-box{display:grid;grid-template-columns:1.1fr .9fr;gap:22px}
-    form{display:grid;gap:12px}
-    input,textarea{background:#0c1323;color:var(--text);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:12px 14px;font-size:16px}
-    textarea{min-height:140px;resize:vertical}
-    footer{padding:40px 0;color:#a9b1bd;text-align:center;border-top:1px solid rgba(255,255,255,.06);margin-top:10px}
-    @media (max-width:980px){.grid{grid-template-columns:1fr 1fr}.contact-box{grid-template-columns:1fr}}
-    @media (max-width:620px){.grid{grid-template-columns:1fr}}
-
-    /* ========= CSS NUEVO SOLO PARA LAS 4 SECCIONES AÑADIDAS ========= */
-    .custom-section{padding:32px 0;border-top:1px solid rgba(255,255,255,.06)}
-    .custom-section .section-title{color:var(--accent);text-shadow:0 0 8px rgba(255,159,26,.25)}
-    .custom-section .card{background:linear-gradient(180deg,color-mix(in oklab,var(--panel) 94%,#0f1422 6%),var(--panel));border:1px solid rgba(255,255,255,.05)}
-    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-    .specialty h3{margin:0 0 8px;font-size:18px;color:#ffe2b0}
-    .skills-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-    .skills-col{display:flex;flex-direction:column;gap:8px}
-    .skill-btn{background:rgba(255,159,26,.08);border:1px solid rgba(255,159,26,.28);color:#ffe2b0;padding:10px 12px;border-radius:12px;font-weight:700;text-align:left;cursor:pointer;transition:transform .18s,box-shadow .18s,background .18s,border-color .18s}
-    .skill-btn:hover{transform:translateY(-6px);box-shadow:0 12px 28px rgba(0,0,0,.6);background:rgba(255,159,26,.12);border-color:rgba(255,159,26,.42)}
-    .skill-btn:active{transform:translateY(-2px)}
-    @media (max-width:980px){.grid-3{grid-template-columns:1fr}.skills-grid{grid-template-columns:1fr}}
-
-    /* OVERRIDE para quitar fondo gris en Especialidades/Investigación */
-    #especialidades .card, #investigacion .card{background:transparent!important;border:none!important;box-shadow:none!important;padding:0!important}
-    #especialidades .specialty{padding:10px 0}
-    #investigacion .card > * {margin-top:8px}
-    #investigacion .card > *:first-child {margin-top:0}
-  </style>
+  <!-- CSS global (incluye la tabla en #tools-pro) -->
+  <link rel="stylesheet" href="assets/css/sections.css"/>
 </head>
 <body>
-  <!-- NAV -->
+  <!-- ========================= NAV ========================== -->
   <header class="topbar">
     <div class="topwrap">
       <a class="brand" href="./"><span class="brand-dot"></span><span>AO · Portafolio</span></a>
-      <nav class="menu-left" id="nav" aria-label="Navegación principal"></nav>
       <nav class="menu-right"><a class="nav-link" href="./">Inicio</a></nav>
     </div>
   </header>
 
-  <!-- HERO -->
-  <div class="hero-wrap" id="home">
+  <!-- ========================= HERO ========================= -->
+  <section class="hero-wrap" id="home">
     <div class="hero">
-      <span class="glitch-wrap">
-        <h1 id="heroTitle"><span id="typeName"></span><span id="cursorName" class="cursor">|</span></h1>
-        <canvas id="glitchCanvas" width="0" height="0" aria-hidden="true"></canvas>
-      </span>
-      <h2><span id="typeRole"></span><span id="cursorRole" class="cursor off">|</span></h2>
-      <p id="lead" class="lead">Me especializo en diseñar, securizar y operar infraestructuras robustas. Automatizo despliegues, fortalezco defensas y mejoro la fiabilidad de servicios con prácticas DevOps/SecOps.</p>
+      <h1 class="hero-title">Alejandro Orcajada Meseguer</h1>
+      <h2 class="hero-sub">Administrador de Sistemas y Ciberseguridad</h2>
+      <p class="lead">
+        Diseño, securizo y opero infraestructuras. Automatización (DevOps/SecOps),
+        hardening y respuesta a incidentes.
+      </p>
     </div>
-  </div>
+  </section>
 
+  <!-- ============ HERRAMIENTAS Y LENGUAJES (TABLA) ============ -->
   <main class="container">
-    <!-- SOBRE MÍ -->
-    <section id="sobre-mi" class="custom-section reveal" data-reveal="fade-up" aria-labelledby="sobre-mi-title">
-      <h2 id="sobre-mi-title" class="section-title">Sobre mí</h2>
-      <p class="kicker">Perfil personal, formación y objetivos profesionales.</p>
-      <div class="card">
-        <p><strong>Soy Alejandro Orcajada Meseguer</strong>, Técnico Superior en ASIR y Máster en Ciberseguridad. Mi foco combina <em>administración de sistemas</em>, <em>hardening</em> y <em>respuesta a incidentes</em>. Busco aprender, crecer y asumir responsabilidades técnicas con impacto.</p>
-        <p style="margin-top:10px"><strong>Objetivo:</strong> incorporarme a un equipo donde pueda evolucionar hacia roles de mayor responsabilidad (<em>SysOps / Platform Engineer / Threat Hunter / Incident Responder</em>) y contribuir con soluciones seguras y operables.</p>
-      </div>
-    </section>
-
-    <!-- ESPECIALIDADES -->
-    <section id="especialidades" class="custom-section" aria-labelledby="especialidades-title">
-      <h2 id="especialidades-title" class="section-title">Especialidades</h2>
-      <p class="kicker">Áreas con especialización práctica y enfoque técnico.</p>
-      <div class="specialties-wrapper">
-        <div class="specialties-card">
-          <div class="specialties-grid">
-            <div class="specialty">
-              <h3>Administración y gestión de BBDD</h3>
-              <p>SQL, MariaDB, PostgreSQL. Hardening, backups, replicación y automatización de tareas críticas para disponibilidad, rendimiento y seguridad.</p>
-            </div>
-            <div class="specialty">
-              <h3>Red Team y Pentesting</h3>
-              <p>Nmap, Burp, Metasploit, OpenVAS. Enfoque profesional en informes, PoC y recomendaciones accionables para mitigar riesgos.</p>
-            </div>
-            <div class="specialty">
-              <h3>Automatización de procesos</h3>
-              <p>Backups, despliegues y pipelines repetibles con Ansible, PowerShell y Bash. Estándares y control de cambios para fiabilidad.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- HERRAMIENTAS Y LENGUAJES (TU TABLA) -->
-    <section id="tools" class="reveal" data-reveal="fade-up" aria-labelledby="tools-title">
+    <section id="tools" aria-labelledby="tools-title">
       <div id="tools-pro">
-        <h2 id="tools-title" class="section-title tools-title"><i class="fa-solid fa-code-branch"></i> Herramientas y Lenguajes</h2>
+        <h2 id="tools-title" class="section-title"><i class="fa-solid fa-code-branch"></i> Herramientas y Lenguajes</h2>
 
         <div class="grid">
           <!-- HERRAMIENTAS -->
@@ -145,8 +50,11 @@
               <div class="search" id="searchBox">
                 <i class="fa-solid fa-magnifying-glass"></i>
                 <input id="searchInput" type="text" placeholder="Buscar herramienta…">
-                <button class="clear" id="clearBtn" title="Limpiar búsqueda"><i class="fa-solid fa-xmark"></i></button>
+                <button class="clear" id="clearBtn" title="Limpiar búsqueda">
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
               </div>
+
               <span class="count" id="resultCount">12</span>
 
               <div class="filter" aria-label="Filtrar por sistema operativo">
@@ -157,258 +65,126 @@
             </div>
 
             <div class="card-body">
-              <div id="toolsListNew"><!-- render JS --></div>
+              <div id="toolsList"><!-- render JS --></div>
             </div>
 
             <div class="card-foot nav">
-              <button class="navbtn" id="prevBtn"><span class="ico"><i class="fa-solid fa-angle-left"></i></span> Anterior</button>
+              <button class="navbtn" id="prevBtn" type="button">
+                <span class="ico"><i class="fa-solid fa-angle-left"></i></span> Anterior
+              </button>
               <div class="dots">
                 <div id="pagerDots"></div>
                 <span class="counter" id="pageCounter">1/1</span>
               </div>
-              <button class="navbtn right" id="nextBtn">Siguiente <span class="ico"><i class="fa-solid fa-angle-right"></i></span></button>
+              <button class="navbtn right" id="nextBtn" type="button">
+                Siguiente <span class="ico"><i class="fa-solid fa-angle-right"></i></span>
+              </button>
             </div>
           </section>
 
           <!-- LENGUAJES -->
           <section class="card" id="langsCard">
             <div class="card-head langs"><i class="fa-solid fa-code"></i> Lenguajes</div>
+
             <div class="card-body" id="langsBody">
               <div class="row" data-tooltip="Shell en GNU/Linux">
-                <div class="left"><i class="fa-solid fa-terminal"></i><strong>Bash</strong><span class="sub" style="display:block;color:var(--muted);font-size:.85rem;margin-top:2px">Dominio alto</span></div>
-                <div class="right"><div class="level" data-tooltip="3 de 3"><span class="seg on"></span><span class="seg on"></span><span class="seg on"></span></div></div>
+                <div class="left">
+                  <i class="fa-solid fa-terminal"></i><strong>Bash</strong>
+                  <span class="sub">Dominio alto</span>
+                </div>
+                <div class="right">
+                  <div class="level" data-tooltip="3 de 3">
+                    <span class="seg on"></span><span class="seg on"></span><span class="seg on"></span>
+                  </div>
+                </div>
               </div>
+
               <div class="row" data-tooltip="Automatización en Windows">
-                <div class="left"><i class="fa-brands fa-windows"></i><strong>PowerShell</strong><span class="sub" style="display:block;color:var(--muted);font-size:.85rem;margin-top:2px">Intermedio</span></div>
-                <div class="right"><div class="level" data-tooltip="2 de 3"><span class="seg on"></span><span class="seg on"></span><span class="seg"></span></div></div>
+                <div class="left">
+                  <i class="fa-brands fa-windows"></i><strong>PowerShell</strong>
+                  <span class="sub">Intermedio</span>
+                </div>
+                <div class="right">
+                  <div class="level" data-tooltip="2 de 3">
+                    <span class="seg on"></span><span class="seg on"></span><span class="seg"></span>
+                  </div>
+                </div>
               </div>
+
               <div class="row">
-                <div class="left"><i class="fa-solid fa-database"></i><strong>SQL</strong><span class="sub" style="display:block;color:var(--muted);font-size:.85rem;margin-top:2px">Intermedio</span></div>
-                <div class="right"><div class="level" data-tooltip="2 de 3"><span class="seg on"></span><span class="seg on"></span><span class="seg"></span></div></div>
+                <div class="left">
+                  <i class="fa-solid fa-database"></i><strong>SQL</strong>
+                  <span class="sub">Intermedio</span>
+                </div>
+                <div class="right">
+                  <div class="level" data-tooltip="2 de 3">
+                    <span class="seg on"></span><span class="seg on"></span><span class="seg"></span>
+                  </div>
+                </div>
               </div>
+
               <div class="row">
-                <div class="left"><i class="fa-brands fa-python"></i><strong>Python</strong><span class="sub" style="display:block;color:var(--muted);font-size:.85rem;margin-top:2px">Dominio alto</span></div>
-                <div class="right"><div class="level" data-tooltip="3 de 3"><span class="seg on"></span><span class="seg on"></span><span class="seg on"></span></div></div>
+                <div class="left">
+                  <i class="fa-brands fa-python"></i><strong>Python</strong>
+                  <span class="sub">Dominio alto</span>
+                </div>
+                <div class="right">
+                  <div class="level" data-tooltip="3 de 3">
+                    <span class="seg on"></span><span class="seg on"></span><span class="seg on"></span>
+                  </div>
+                </div>
               </div>
+
               <div class="row">
-                <div class="left"><i class="fa-solid fa-code"></i><strong>HTML / CSS</strong><span class="sub" style="display:block;color:var(--muted);font-size:.85rem;margin-top:2px">Intermedio</span></div>
-                <div class="right"><div class="level" data-tooltip="2 de 3"><span class="seg on"></span><span class="seg on"></span><span class="seg"></span></div></div>
+                <div class="left">
+                  <i class="fa-solid fa-code"></i><strong>HTML / CSS</strong>
+                  <span class="sub">Intermedio</span>
+                </div>
+                <div class="right">
+                  <div class="level" data-tooltip="2 de 3">
+                    <span class="seg on"></span><span class="seg on"></span><span class="seg"></span>
+                  </div>
+                </div>
               </div>
+
               <div class="row">
-                <div class="left"><i class="fa-brands fa-js"></i><strong>JavaScript</strong><span class="sub" style="display:block;color:var(--muted);font-size:.85rem;margin-top:2px">Intermedio</span></div>
-                <div class="right"><div class="level" data-tooltip="2 de 3"><span class="seg on"></span><span class="seg on"></span><span class="seg"></span></div></div>
+                <div class="left">
+                  <i class="fa-brands fa-js"></i><strong>JavaScript</strong>
+                  <span class="sub">Intermedio</span>
+                </div>
+                <div class="right">
+                  <div class="level" data-tooltip="2 de 3">
+                    <span class="seg on"></span><span class="seg on"></span><span class="seg"></span>
+                  </div>
+                </div>
               </div>
+
               <div class="row">
-                <div class="left"><i class="fa-solid fa-gears"></i><strong>YAML / Ansible</strong><span class="sub" style="display:block;color:var(--muted);font-size:.85rem;margin-top:2px">Dominio alto</span></div>
-                <div class="right"><div class="level" data-tooltip="3 de 3"><span class="seg on"></span><span class="seg on"></span><span class="seg on"></span></div></div>
+                <div class="left">
+                  <i class="fa-solid fa-gears"></i><strong>YAML / Ansible</strong>
+                  <span class="sub">Dominio alto</span>
+                </div>
+                <div class="right">
+                  <div class="level" data-tooltip="3 de 3">
+                    <span class="seg on"></span><span class="seg on"></span><span class="seg on"></span>
+                  </div>
+                </div>
               </div>
             </div>
+
             <div class="card-foot"></div>
           </section>
-        </div>
-
-        <!-- Placeholders ocultos por compatibilidad -->
-        <div id="toolsLegacyPlaceholders" hidden>
-          <div id="toolsList"></div>
-          <div id="langsList"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- INVESTIGACIÓN -->
-    <section id="investigacion" class="custom-section reveal" data-reveal="fade-up" aria-labelledby="investigacion-title">
-      <h2 id="investigacion-title" class="section-title">Cómo investigo y trabajo</h2>
-      <p class="kicker">Metodología profesional y verificable.</p>
-      <div class="card">
-        <p>Trabajo con metodologías replicables: priorizo documentación oficial, papers y repos mantenidos. Verifico en laboratorio (sandbox), registro comandos, versiones y artefactos y publico con referencias y pruebas reproducibles.</p>
-        <p style="margin-top:8px">Cuando publico artículos o notas, enlazo material de soporte y dejo un resumen con <strong>conclusiones accionables</strong>.</p>
-      </div>
-    </section>
-
-    <!-- MAPA VISUAL -->
-    <section id="site-graph" class="graph reveal" data-reveal="fade-up" aria-labelledby="site-graph-title">
-      <div class="card">
-        <div class="graph-head">
-          <h2 id="site-graph-title" class="section-title">Mapa visual</h2>
-          <div style="display:flex;gap:12px;align-items:center">
-            <p class="kicker" style="margin:0">Esquema interactivo — haz clic para desplegar niveles.</p>
-            <button id="graphThemeToggle" type="button" class="theme-toggle" aria-label="Cambiar tema">Modo técnico</button>
-          </div>
-        </div>
-        <div class="graph-stage" id="graphStage">
-          <div class="graph-bc" id="graphBc"></div>
-          <svg id="graphSvg" class="svgroot" viewBox="0 0 1600 900"><g id="graphRoot"></g></svg>
-        </div>
-        <div class="graph-legend"><span class="dot lvl0"></span> Nivel 0 <span class="dot lvl1"></span> Nivel 1 <span class="dot lvl2"></span> Nivel 2 <span class="dot lvl3"></span> Nivel 3</div>
-      </div>
-    </section>
-
-    <!-- CUBOS -->
-    <section id="news-cubes" class="reveal" data-reveal="fade-up" aria-labelledby="news-cubes-title">
-      <h2 id="news-cubes-title" class="section-title">Lecturas y artículos</h2>
-      <p class="kicker">Novedades seleccionadas — desplazamiento suave y continuo.</p>
-      <div class="cube-carousel" data-autoplay="true" data-interval="3200" data-shuffle="true" aria-roledescription="carrusel">
-        <div class="cube-head"><h3>Artículos interesantes</h3></div>
-        <div class="cube-viewport" role="region" aria-label="Carrusel de artículos" style="overflow:hidden"><div id="cubeTrack" class="cube-track" role="list"></div></div>
-        <div class="cube-nav" aria-hidden="false">
-          <button class="cube-btn prev" id="cubePrev" type="button" aria-label="Artículo anterior">‹</button>
-          <button class="cube-btn next" id="cubeNext" type="button" aria-label="Artículo siguiente">›</button>
-        </div>
-        <div class="cube-dots" id="cubeDots" aria-hidden="true"></div>
-      </div>
-    </section>
-
-    <!-- CONTACTO -->
-    <section id="contact" class="reveal" data-reveal="fade-up" aria-labelledby="contact-title">
-      <h2 id="contact-title" class="section-title">Contacto</h2>
-      <div class="contact-box">
-        <div class="card">
-          <p>¿Tienes un proyecto o una consulta técnica? Escríbeme y te respondo.</p>
-          <p><strong>Email:</strong> <a href="mailto:alex@tu-dominio.com">alex@tu-dominio.com</a></p>
-          <p><strong>LinkedIn:</strong> <a href="https://www.linkedin.com/in/tuusuario" target="_blank" rel="noopener">linkedin.com/in/tuusuario</a></p>
-        </div>
-        <div class="card">
-          <form method="post" action="mailto:alex@tu-dominio.com" enctype="text/plain">
-            <label>Nombre<br><input name="nombre" required></label>
-            <label>Email<br><input type="email" name="email" required></label>
-            <label>Mensaje<br><textarea name="mensaje" required></textarea></label>
-            <button type="submit" style="background:var(--accent);color:#111;padding:10px 16px;border-radius:10px;border:0;font-weight:700">Enviar</button>
-          </form>
         </div>
       </div>
     </section>
   </main>
 
-  <footer>© <span id="y"></span> Alejandro Orcajada Meseguer — Administrador de Sistemas y Ciberseguridad</footer>
-
-  <!-- JS del sitio -->
-  <script defer src="assets/js/hero-glitch.js"></script>
-  <script defer src="assets/js/nav-data.js"></script>
-  <script defer src="assets/js/nav.js"></script>
-  <script src="assets/js/cubes.js"></script>
-  <script src="assets/js/graph-data.js"></script>
-  <script src="assets/js/graph.js"></script>
-  <script defer src="assets/js/scroll-reveal.js"></script>
-  <script defer src="assets/js/tools.js"></script> <!-- enlace original conservado -->
+  <!-- ========================= FOOTER ========================= -->
+  <footer class="footer">
+    © <span id="y"></span> Alejandro Orcajada Meseguer — Administrador de Sistemas y Ciberseguridad
+  </footer>
 
   <script>document.getElementById('y').textContent = new Date().getFullYear();</script>
-
-  <!-- JS de la nueva tabla (encapsulado a #tools-pro) -->
-  <script>
-  (function(){
-    const root = document.getElementById('tools-pro'); if(!root) return;
-    const tools = [
-      { name:"Ansible",     os:"linux",   icon:"fa-brands fa-redhat" },
-      { name:"Docker",      os:"multi",   icon:"fa-brands fa-docker" },
-      { name:"Kali / Nmap", os:"linux",   icon:"fa-solid fa-magnifying-glass" },
-      { name:"Burp Suite",  os:"windows", icon:"fa-solid fa-bug" },
-      { name:"Metasploit",  os:"linux",   icon:"fa-solid fa-skull-crossbones" },
-      { name:"OpenVAS",     os:"linux",   icon:"fa-solid fa-shield-halved" },
-      { name:"Wireshark",   os:"windows", icon:"fa-solid fa-wave-square" },
-      { name:"pfSense",     os:"linux",   icon:"fa-solid fa-network-wired" },
-      { name:"ZAP",         os:"multi",   icon:"fa-solid fa-bolt" },
-      { name:"Terraform",   os:"linux",   icon:"fa-solid fa-cubes" },
-      { name:"Podman",      os:"linux",   icon:"fa-solid fa-boxes-stacked" },
-      { name:"Nessus",      os:"windows", icon:"fa-solid fa-spider" }
-    ];
-    const state = { page:0, perPage: root.querySelectorAll('#langsBody .row').length, query:'', os:new Set(), selected:new Set() };
-    const list = root.querySelector('#toolsListNew'), dots = root.querySelector('#pagerDots'), counter = root.querySelector('#pageCounter');
-    const prevBtn = root.querySelector('#prevBtn'), nextBtn = root.querySelector('#nextBtn');
-    const toolsCard = root.querySelector('#toolsCard'), langsCard = root.querySelector('#langsCard');
-    const resultCount = root.querySelector('#resultCount');
-    const searchBox = root.querySelector('#searchBox'), searchInput = root.querySelector('#searchInput'), clearBtn = root.querySelector('#clearBtn');
-
-    let searchTimer = null;
-    searchInput.addEventListener('input', e=>{
-      clearTimeout(searchTimer);
-      searchTimer = setTimeout(()=>{
-        state.query = e.target.value.trim().toLowerCase();
-        searchBox.classList.toggle('has-text', !!state.query);
-        state.page = 0; render(true);
-      }, 120);
-    });
-    clearBtn.addEventListener('click', ()=>{ searchInput.value=''; state.query=''; searchBox.classList.remove('has-text'); state.page=0; render(true); });
-    root.querySelectorAll('.tag').forEach(tag=>{
-      tag.addEventListener('click', ()=>{
-        const val = tag.dataset.os;
-        if(tag.classList.toggle('on')) state.os.add(val); else state.os.delete(val);
-        state.page = 0; render(true);
-      });
-    });
-
-    function chip(os){
-      const map = {
-        linux:{cls:'chip linux',label:'Linux',icon:'fa-brands fa-linux',tip:'Disponible en Linux'},
-        windows:{cls:'chip windows',label:'Windows',icon:'fa-brands fa-windows',tip:'Disponible en Windows'},
-        multi:{cls:'chip multi',label:'Multi',icon:'fa-solid fa-layer-group',tip:'Disponible en varios sistemas'}
-      };
-      const d = map[os] || map.multi;
-      return `<span class="${d.cls}" data-tooltip="${d.tip}"><i class="${d.icon}"></i>${d.label}</span>`;
-    }
-    function applyFilters(items){
-      let out = items;
-      if(state.query) out = out.filter(t=>t.name.toLowerCase().includes(state.query));
-      if(state.os.size) out = out.filter(t=>state.os.has(t.os));
-      return out;
-    }
-    function bindSelectableRows(scope=root){
-      scope.querySelectorAll('.row[role="button"]').forEach(row=>{
-        const pulseOnce=()=>{row.classList.add('pulse'); const h=()=>{row.classList.remove('pulse'); row.removeEventListener('animationend',h)}; row.addEventListener('animationend',h);};
-        row.addEventListener('click', ()=>{
-          const id=row.dataset.id;
-          if(state.selected.has(id)) state.selected.delete(id); else state.selected.add(id);
-          row.classList.toggle('active'); row.setAttribute('aria-pressed', state.selected.has(id) ? 'true':'false'); pulseOnce();
-        });
-        row.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); row.click(); } });
-      });
-    }
-
-    let lockedHeight=0;
-    function lockHeights(){
-      toolsCard.style.setProperty('--locked-card-height','auto');
-      langsCard.style.setProperty('--locked-card-height','auto');
-      const h=Math.max(toolsCard.offsetHeight, langsCard.offsetHeight);
-      lockedHeight=Math.max(lockedHeight,h);
-      toolsCard.style.setProperty('--locked-card-height',lockedHeight+'px');
-      langsCard.style.setProperty('--locked-card-height',lockedHeight+'px');
-    }
-    function resetLock(){ lockedHeight=0; toolsCard.style.setProperty('--locked-card-height','auto'); langsCard.style.setProperty('--locked-card-height','auto'); }
-
-    function render(withEntrance=false){
-      const filtered = applyFilters(tools);
-      const totalPages = Math.max(1, Math.ceil(filtered.length / state.perPage));
-      state.page = Math.min(state.page, totalPages-1);
-      const start = state.page * state.perPage;
-      const items = filtered.slice(start, start + state.perPage);
-      list.innerHTML = items.map(t=>{
-        const active = state.selected.has(t.name) ? 'active' : '';
-        return `<div class="row ${active}" data-id="${t.name}" role="button" aria-pressed="${!!active}" tabindex="0" title="${t.name}">
-                  <div class="left"><i class="${t.icon}"></i> ${t.name}</div>
-                  <div class="right">${chip(t.os)}</div>
-                </div>`;
-      }).join('');
-      dots.innerHTML = Array.from({length: totalPages}, (_,i)=>`<span class="dot ${i===state.page?'active':''}"></span>`).join('');
-      counter.textContent = `${state.page+1}/${totalPages}`;
-      resultCount.textContent = filtered.length;
-      prevBtn.disabled = state.page===0; nextBtn.disabled = state.page===totalPages-1;
-      bindSelectableRows(list);
-      if(withEntrance){
-        list.querySelectorAll('.row').forEach((row,i)=>{
-          row.classList.add('page-enter'); row.style.animationDelay = `${i*40}ms`;
-          row.addEventListener('animationend', ()=>{ row.classList.remove('page-enter'); row.style.animationDelay=''; }, {once:true});
-        });
-      }
-      lockHeights();
-    }
-    function refitAfterChange(action){ resetLock(); action(); requestAnimationFrame(()=>lockHeights()); }
-    prevBtn.addEventListener('click', ()=>{ if(state.page>0){ state.page--; render(true); }});
-    nextBtn.addEventListener('click', ()=>{
-      const tp = Math.max(1, Math.ceil(applyFilters(tools).length/state.perPage));
-      if(state.page<tp-1){ state.page++; render(true); }
-    });
-    window.addEventListener('resize', ()=> refitAfterChange(()=>render(false)));
-    window.addEventListener('load', ()=>{ render(true); requestAnimationFrame(()=>lockHeights()); });
-  })();
-  </script>
+  <script src="assets/js/tools.js" defer></script>
 </body>
 </html>
