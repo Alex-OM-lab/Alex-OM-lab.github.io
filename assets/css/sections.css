@@ -57,37 +57,3 @@ section.custom-section {
   animation: fadeUp 0.8s ease forwards;
 }
 /* ===== Separador inferior profesional para títulos de sección ===== */
-.section-title {
-  position: relative;
-  padding-bottom: 18px;      /* deja espacio para la línea */
-  margin-bottom: 22px;       /* separación del contenido siguiente */
-}
-
-/* Línea decorativa inferior */
-.section-title::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 180px;               /* 🔹 más larga: ajusta aquí si quieres */
-  height: 3px;
-  border-radius: 999px;
-  background: linear-gradient(90deg,
-              rgba(255,159,26,.9) 0%,
-              rgba(255,215,154,.65) 45%,
-              rgba(255,159,26,0) 100%);
-  box-shadow:
-    0 0 10px rgba(255,159,26,.25),
-    0 0 20px rgba(255,159,26,.1);
-}
-
-/* 🔸 Versión para títulos centrados */
-.section-title.is-center::after {
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-/* Responsivo */
-@media (max-width: 720px){
-  .section-title::after { width: 140px; height: 2px; }
-}
