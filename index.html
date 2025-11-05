@@ -7,202 +7,99 @@
   <meta name="description" content="Portafolio profesional de Alejandro Orcajada Meseguer, Administrador de Sistemas y Ciberseguridad." />
   <meta name="theme-color" content="#0b1220" />
 
-  <!-- Fuentes para el hero (Tomorrow) -->
+  <!-- Fuentes hero -->
   <link href="https://fonts.googleapis.com/css2?family=Tomorrow:wdth,wght@100..125,400..900&display=swap" rel="stylesheet">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-  <!-- CSS de componentes -->
+  <!-- CSS de componentes existentes -->
   <link rel="stylesheet" href="assets/css/nav.css">
   <link rel="stylesheet" href="assets/css/hero-glitch.css">
   <link rel="stylesheet" href="assets/css/graph.css">
   <link rel="stylesheet" href="assets/css/cubes.css">
-  <!-- Estilos de secciones existentes -->
+  <!-- Secciones (este archivo lo acabo de reconstruir) -->
   <link rel="stylesheet" href="assets/css/sections.css">
-  <!-- NUEVO: estilos de la sección Herramientas y Lenguajes -->
+  <!-- Herramientas/Lenguajes -->
   <link rel="stylesheet" href="assets/css/tools.css">
-  <style>
-    /* ===== Variables base (global) ===== */
-    :root{
-      --bg:#0b1220;
-      --panel:#111a2d;
-      --text:#e9eef6;
-      --muted:#a8b2c2;
-      --accent:#ff9f1a;
-      --accent-soft:#ffd79a;
-      --radius:14px;
-
-      --nav-font:15.5px;
-      --nav-pad-y:12px;
-      --nav-gap:12px;
-
-      --hero-offset:12vh;
-    }
-
-    *{box-sizing:border-box}
-    html,body{margin:0}
-    body{
-      font-family: Poppins, system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial;
-      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
-      background:
-        radial-gradient(1400px 800px at 80% -100px, rgba(255,159,26,.06), transparent 60%),
-        radial-gradient(1200px 700px at -200px 20%, rgba(255,215,154,.05), transparent 60%),
-        var(--bg);
-      color:var(--text);
-    }
-
-    /* ===== Layout de contenido (no hero, no nav) ===== */
-    .container{width:min(1100px,92%);margin:0 auto}
-    section{padding:26px 0}
-    .section-title{font-size:clamp(24px,3vw,34px);margin:0 0 10px}
-    .kicker{color:var(--muted);margin:0 0 20px}
-
-    .chips{display:flex;flex-wrap:wrap;gap:10px}
-    .chip{padding:8px 12px;border-radius:999px;background:rgba(255,159,26,.12);border:1px solid rgba(255,159,26,.35);color:#ffe2b0;font-weight:600;font-size:14px}
-
-    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-    .card{background:linear-gradient(180deg,color-mix(in oklab,var(--panel) 92%,#0f1422 8%),var(--panel));border:1px solid rgba(255,255,255,.06);border-radius:var(--radius);padding:16px}
-    .project img{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:10px;border:1px solid rgba(255,255,255,.06)}
-    .project h4{margin:10px 0 6px}
-    .project p{margin:0;color:var(--muted)}
-    .contact-box{display:grid;grid-template-columns:1.1fr .9fr;gap:22px}
-    form{display:grid;gap:12px}
-    input,textarea{background:#0c1323;color:var(--text);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:12px 14px;font-size:16px}
-    textarea{min-height:140px;resize:vertical}
-    footer{padding:40px 0;color:#a9b1bd;text-align:center;border-top:1px solid rgba(255,255,255,.06);margin-top:10px}
-    @media (max-width:980px){.grid{grid-template-columns:1fr 1fr}.contact-box{grid-template-columns:1fr}}
-    @media (max-width:620px){.grid{grid-template-columns:1fr}}
-
-    /* ========= CSS NUEVO SOLO PARA LAS 4 SECCIONES AÑADIDAS ========= */
-    .custom-section{padding:32px 0;border-top:1px solid rgba(255,255,255,.06)}
-    .custom-section .section-title{color:var(--accent);text-shadow:0 0 8px rgba(255,159,26,.25)}
-    .custom-section .card{background:linear-gradient(180deg,color-mix(in oklab,var(--panel) 94%,#0f1422 6%),var(--panel));border:1px solid rgba(255,255,255,.05)}
-    /* Especialidades: 3 columnas */
-    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-    .specialty h3{margin:0 0 8px;font-size:18px;color:#ffe2b0}
-    /* Habilidades: 3 columnas de botones (5 por columna aprox) */
-    .skills-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-    .skills-col{display:flex;flex-direction:column;gap:8px}
-    .skill-btn{
-      background:rgba(255,159,26,0.08);
-      border:1px solid rgba(255,159,26,0.28);
-      color:#ffe2b0;
-      padding:10px 12px;
-      border-radius:12px;
-      font-weight:700;
-      text-align:left;
-      cursor:pointer;
-      transition:transform .18s ease, box-shadow .18s ease, background .18s ease, border-color .18s ease;
-    }
-    .skill-btn:hover{transform:translateY(-6px);box-shadow:0 12px 28px rgba(0,0,0,.6);background:rgba(255,159,26,.12);border-color:rgba(255,159,26,.42)}
-    .skill-btn:active{transform:translateY(-2px)}
-    @media (max-width:980px){
-      .grid-3{grid-template-columns:1fr}
-      .skills-grid{grid-template-columns:1fr}
-    }
-    /* ========= FIN CSS NUEVO ========= */
-
-    /* =========================================================
-       FIX: quitar el fondo gris SOLO en “Especialidades” y
-            “Cómo investigo y trabajo”. OJO al id: #investigacion
-       ========================================================= */
-    #especialidades .card,
-    #investigacion .card{
-      background: transparent !important;
-      border: none !important;
-      box-shadow: none !important;
-      padding: 0 !important;
-    }
-  </style>
 </head>
 <body>
 
-  <!-- ========================= NAV ========================== -->
+  <!-- NAV -->
   <header class="topbar">
     <div class="topwrap">
       <a class="brand" href="./"><span class="brand-dot"></span><span>AO · Portafolio</span></a>
-
-      <!-- Menú izquierda -->
       <nav class="menu-left" id="nav" aria-label="Navegación principal"></nav>
-
-      <!-- Menú derecha -->
-      <nav class="menu-right">
-        <a class="nav-link" href="./">Inicio</a>
-      </nav>
+      <nav class="menu-right"><a class="nav-link" href="./">Inicio</a></nav>
     </div>
   </header>
 
-  <!-- ========================= HERO ========================== -->
+  <!-- HERO -->
   <div id="home" class="hero-wrap">
     <div class="hero">
       <span class="glitch-wrap">
-        <h1 id="heroTitle">
-          <span id="typeName"></span><span id="cursorName" class="cursor">|</span>
-        </h1>
+        <h1 id="heroTitle"><span id="typeName"></span><span id="cursorName" class="cursor">|</span></h1>
         <canvas id="glitchCanvas" width="0" height="0" aria-hidden="true"></canvas>
       </span>
-
-      <h2>
-        <span id="typeRole"></span><span id="cursorRole" class="cursor off">|</span>
-      </h2>
-
-      <p id="lead" class="lead">
-        Me especializo en diseñar, securizar y operar infraestructuras robustas. Automatizo despliegues, fortalezco defensas y mejoro la fiabilidad de servicios con prácticas DevOps/SecOps.
-      </p>
+      <h2><span id="typeRole"></span><span id="cursorRole" class="cursor off">|</span></h2>
+      <p id="lead" class="lead">Me especializo en diseñar, securizar y operar infraestructuras robustas. Automatizo despliegues, fortalezco defensas y mejoro la fiabilidad de servicios con prácticas DevOps/SecOps.</p>
     </div>
   </div>
 
-  <!-- ============ NUEVAS SECCIONES AÑADIDAS (SIN TOCAR LO DEMÁS) ============ -->
   <main class="container">
 
-    <!-- 🔹 SECCIÓN 3 — SOBRE MÍ -->
-    <section id="sobre-mi" class="custom-section reveal" data-reveal="fade-up" aria-labelledby="sobre-mi-title">
+    <!-- SOBRE MÍ (igual que ya estaba) -->
+    <section id="sobre-mi" aria-labelledby="sobre-mi-title">
       <h2 id="sobre-mi-title" class="section-title">Sobre mí</h2>
       <p class="kicker">Perfil personal, formación y objetivos profesionales.</p>
+
       <div class="card">
         <p><strong>Soy Alejandro Orcajada Meseguer</strong>, Técnico Superior en ASIR y Máster en Ciberseguridad. Mi foco combina <em>administración de sistemas</em>, <em>hardening</em> y <em>respuesta a incidentes</em>. Busco aprender, crecer y asumir responsabilidades técnicas con impacto.</p>
-        <p style="margin-top:10px"><strong>Objetivo:</strong> incorporarme a un equipo donde pueda evolucionar hacia roles de mayor responsabilidad (<em>SysOps / Platform Engineer / Threat Hunter / Incident Responder</em>) y contribuir con soluciones seguras y operables.</p>
+        <p style="margin-top:8px"><strong>Objetivo:</strong> incorporarme a un equipo donde pueda evolucionar hacia roles de mayor responsabilidad (<em>SysOps / Platform Engineer / Threat Hunter / Incident Responder</em>) y contribuir con soluciones seguras y operables.</p>
       </div>
     </section>
 
-    <!-- 🔹 SECCIÓN 4 — ESPECIALIDADES (3 columnas) -->
-    <section id="especialidades" class="custom-section reveal" data-reveal="fade-up" aria-labelledby="especialidades-title">
+    <!-- ESPECIALIDADES: título fuera, texto dentro de su card -->
+    <section id="especialidades" aria-labelledby="especialidades-title">
       <h2 id="especialidades-title" class="section-title">Especialidades</h2>
       <p class="kicker">Áreas con especialización práctica y enfoque técnico.</p>
+
       <div class="grid-3">
-        <div class="card specialty">
-          <h3>Administración y gestión de BBDD</h3>
-          <p>SQL, MariaDB, PostgreSQL. Hardening, backups, replicación y automatización de tareas críticas para disponibilidad, rendimiento y seguridad.</p>
+        <!-- 1 -->
+        <div class="specialty">
+          <h3 class="specialty-title">Administración y gestión de BBDD</h3>
+          <div class="specialty-text card">
+            <p>SQL, MariaDB, PostgreSQL. Hardening, backups, replicación y automatización de tareas críticas para disponibilidad, rendimiento y seguridad.</p>
+          </div>
         </div>
-        <div class="card specialty">
-          <h3>Red Team y Pentesting</h3>
-          <p>Nmap, Burp, Metasploit, OpenVAS. Enfoque profesional en informes, PoC y recomendaciones accionables para mitigar riesgos.</p>
+        <!-- 2 -->
+        <div class="specialty">
+          <h3 class="specialty-title">Red Team y Pentesting</h3>
+          <div class="specialty-text card">
+            <p>Nmap, Burp, Metasploit, OpenVAS. Enfoque profesional en informes, PoC y recomendaciones accionables para mitigar riesgos.</p>
+          </div>
         </div>
-        <div class="card specialty">
-          <h3>Automatización de procesos</h3>
-          <p>Backups, despliegues y pipelines repetibles con Ansible, PowerShell y Bash. Estándares y control de cambios para fiabilidad.</p>
+        <!-- 3 -->
+        <div class="specialty">
+          <h3 class="specialty-title">Automatización de procesos</h3>
+          <div class="specialty-text card">
+            <p>Backups, despliegues y pipelines repetibles con Ansible, PowerShell y Bash. Estándares y control de cambios para fiabilidad.</p>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- ================== HERRAMIENTAS Y LENGUAJES (chips pro, 2 columnas) ================== -->
-    <section id="tools" class="reveal" data-reveal="fade-up" aria-labelledby="tools-title">
-      <div class="tools-head">
-        <h2 id="tools-title" class="section-title">Herramientas y Lenguajes</h2>
-        <p class="hint">Chips con sistema operativo y nivel de dominio.</p>
-      </div>
+    <!-- HERRAMIENTAS & LENGUAJES (sin cambios funcionales) -->
+    <section id="tools" aria-labelledby="tools-title">
+      <h2 id="tools-title" class="section-title">Herramientas y Lenguajes</h2>
+      <p class="kicker">Chips con sistema operativo y nivel de dominio.</p>
 
       <div class="tools-wrap">
         <div class="tools-grid">
-          <!-- Columna izquierda -->
           <div class="tools-col">
             <div class="tools-card">
               <div class="tools-head"><h3>Herramientas</h3></div>
               <div id="toolsList" class="tools-list" aria-live="polite"></div>
-              <!-- (El paginador se inserta dinámicamente por tools.js en la esquina sup.-derecha) -->
             </div>
           </div>
-
-          <!-- Columna derecha -->
           <div class="tools-col">
             <div class="tools-card">
               <div class="tools-head"><h3>Lenguajes</h3></div>
@@ -213,25 +110,19 @@
       </div>
     </section>
 
-<!-- 🔹 SECCIÓN 6 — CÓMO INVESTIGO Y TRABAJO -->
-<section id="investigacion" class="custom-section reveal" data-reveal="fade-up" aria-labelledby="investigacion-title">
-  <h2 id="investigacion-title" class="section-title">Cómo investigo y trabajo</h2>
-  <p class="kicker">Metodología profesional y verificable.</p>
+    <!-- CÓMO INVESTIGO Y TRABAJO: UN SOLO CUADRO GRIS PARA TODO EL TEXTO -->
+    <section id="investigacion" aria-labelledby="investigacion-title">
+      <h2 id="investigacion-title" class="section-title">Cómo investigo y trabajo</h2>
 
-  <p>
-    Trabajo con metodologías replicables: priorizo documentación oficial, papers y repos mantenidos.
-    Verifico en laboratorio (sandbox), registro comandos, versiones y artefactos (PCAP, capturas)
-    y publico con referencias y pruebas reproducibles.
-  </p>
+      <div class="investigacion-wrap card">
+        <p class="kicker" style="margin:0 0 10px">Metodología profesional y verificable.</p>
+        <p>Trabajo con metodologías replicables: priorizo documentación oficial, papers y repos mantenidos. Verifico en laboratorio (sandbox), registro comandos, versiones y artefactos (PCAP, capturas) y publico con referencias y pruebas reproducibles.</p>
+        <p style="margin-top:8px">Cuando publico artículos o notas, enlazo material de soporte y dejo un resumen con <strong>conclusiones accionables</strong>.</p>
+      </div>
+    </section>
 
-  <p>
-    Cuando publico artículos o notas, enlazo material de soporte y dejo un resumen con
-    <strong>conclusiones accionables</strong>.
-  </p>
-</section>
-
-    <!-- ====================== MAPA VISUAL (GRAPH) ================== -->
-    <section id="site-graph" class="graph reveal" data-reveal="fade-up" aria-labelledby="site-graph-title">
+    <!-- MAPA VISUAL -->
+    <section id="site-graph" class="graph" aria-labelledby="site-graph-title">
       <div class="card">
         <div class="graph-head">
           <h2 id="site-graph-title" class="section-title">Mapa visual</h2>
@@ -242,7 +133,7 @@
         </div>
 
         <div class="graph-stage" id="graphStage">
-          <div id="graphBc" class="graph-bc"></div> <!-- breadcrumb opcional -->
+          <div id="graphBc" class="graph-bc"></div>
           <svg id="graphSvg" class="svgroot" viewBox="0 0 1600 900">
             <g id="graphRoot"></g>
           </svg>
@@ -257,29 +148,26 @@
       </div>
     </section>
 
-    <!-- ===================== CARRUSEL DE CUBOS ===================== -->
-    <section id="news-cubes" class="reveal" data-reveal="fade-up" aria-labelledby="news-cubes-title">
+    <!-- CARRUSEL -->
+    <section id="news-cubes" aria-labelledby="news-cubes-title">
       <h2 id="news-cubes-title" class="section-title">Lecturas y artículos</h2>
       <p class="kicker">Novedades seleccionadas — desplazamiento suave y continuo.</p>
 
       <div class="cube-carousel" data-autoplay="true" data-interval="3200" data-shuffle="true" aria-roledescription="carrusel">
         <div class="cube-head"><h3>Artículos interesantes</h3></div>
-
         <div class="cube-viewport" role="region" aria-label="Carrusel de artículos" style="overflow:hidden">
           <div class="cube-track" id="cubeTrack" role="list"></div>
         </div>
-
         <div class="cube-nav" aria-hidden="false">
           <button class="cube-btn prev" type="button" id="cubePrev" aria-label="Artículo anterior">‹</button>
           <button class="cube-btn next" type="button" id="cubeNext" aria-label="Artículo siguiente">›</button>
         </div>
-
         <div class="cube-dots" id="cubeDots" aria-hidden="true"></div>
       </div>
     </section>
 
-    <!-- =========================== CONTACTO ======================== -->
-    <section id="contact" class="reveal" data-reveal="fade-up" aria-labelledby="contact-title">
+    <!-- CONTACTO -->
+    <section id="contact" aria-labelledby="contact-title">
       <h2 id="contact-title" class="section-title">Contacto</h2>
       <div class="contact-box">
         <div class="card">
@@ -301,28 +189,18 @@
 
   <footer>© <span id="y"></span> Alejandro Orcajada Meseguer — Administrador de Sistemas y Ciberseguridad</footer>
 
-  <!-- ========================= JS ========================== -->
-  <!-- Hero: typing + glitch -->
+  <!-- JS -->
   <script src="assets/js/hero-glitch.js" defer></script>
-
-  <!-- NAV -->
   <script src="assets/js/nav-data.js" defer></script>
   <script src="assets/js/nav.js" defer></script>
-
-  <!-- Cubes -->
   <script src="assets/js/cubes.js"></script>
-
-  <!-- Graph -->
-  <script src="assets/js/graph-data.js"></script> <!-- 1️⃣ datos base -->
-  <script src="assets/js/graph.js"></script>       <!-- 2️⃣ mapa SVG clásico+breadcrumb -->
-
-  <!-- Año en footer -->
+  <script src="assets/js/graph-data.js"></script>
+  <script src="assets/js/graph.js"></script>
   <script>
     document.getElementById('y').textContent = new Date().getFullYear();
   </script>
   <script src="assets/js/scroll-reveal.js" defer></script>
-
-  <!-- NUEVO: lógica de Herramientas y Lenguajes -->
   <script src="assets/js/tools.js" defer></script>
 </body>
 </html>
+
