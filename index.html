@@ -1,27 +1,25 @@
 <!DOCTYPE html>
+
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Alejandro Orcajada Meseguer | Administrador de Sistemas y Ciberseguridad</title>
-  <meta name="description" content="Portafolio profesional de Alejandro Orcajada Meseguer, Administrador de Sistemas y Ciberseguridad." />
-  <meta name="theme-color" content="#0b1220" />
-
-  <!-- Fuentes para el hero (Tomorrow) -->
-  <link href="https://fonts.googleapis.com/css2?family=Tomorrow:wdth,wght@100..125,400..900&display=swap" rel="stylesheet">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-  <!-- CSS de componentes -->
-  <link rel="stylesheet" href="assets/css/nav.css">
-  <link rel="stylesheet" href="assets/css/hero-glitch.css">
-  <link rel="stylesheet" href="assets/css/graph.css">
-  <link rel="stylesheet" href="assets/css/cubes.css">
-  <!-- Estilos de secciones existentes -->
-  <link rel="stylesheet" href="assets/css/sections.css">
-  <!-- NUEVO: estilos de la sección Herramientas y Lenguajes -->
-  <link rel="stylesheet" href="assets/css/tools.css">
-
-  <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Alejandro Orcajada Meseguer | Administrador de Sistemas y Ciberseguridad</title>
+<meta content="Portafolio profesional de Alejandro Orcajada Meseguer, Administrador de Sistemas y Ciberseguridad." name="description"/>
+<meta content="#0b1220" name="theme-color"/>
+<!-- Fuentes para el hero (Tomorrow) -->
+<link href="https://fonts.googleapis.com/css2?family=Tomorrow:wdth,wght@100..125,400..900&amp;display=swap" rel="stylesheet"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<!-- CSS de componentes -->
+<link href="assets/css/nav.css" rel="stylesheet"/>
+<link href="assets/css/hero-glitch.css" rel="stylesheet"/>
+<link href="assets/css/graph.css" rel="stylesheet"/>
+<link href="assets/css/cubes.css" rel="stylesheet"/>
+<!-- Estilos de secciones existentes -->
+<link href="assets/css/sections.css" rel="stylesheet"/>
+<!-- NUEVO: estilos de la sección Herramientas y Lenguajes -->
+<link href="assets/css/tools.css" rel="stylesheet"/>
+<style>
     /* ===== Variables base (global) ===== */
     :root{
       --bg:#0b1220;
@@ -118,213 +116,187 @@
   </style>
 </head>
 <body>
-
-  <!-- ========================= NAV ========================== -->
-  <header class="topbar">
-    <div class="topwrap">
-      <a class="brand" href="./"><span class="brand-dot"></span><span>AO · Portafolio</span></a>
-
-      <!-- Menú izquierda -->
-      <nav class="menu-left" id="nav" aria-label="Navegación principal"></nav>
-
-      <!-- Menú derecha -->
-      <nav class="menu-right">
-        <a class="nav-link" href="./">Inicio</a>
-      </nav>
-    </div>
-  </header>
-
-  <!-- ========================= HERO ========================== -->
-  <div id="home" class="hero-wrap">
-    <div class="hero">
-      <span class="glitch-wrap">
-        <h1 id="heroTitle">
-          <span id="typeName"></span><span id="cursorName" class="cursor">|</span>
-        </h1>
-        <canvas id="glitchCanvas" width="0" height="0" aria-hidden="true"></canvas>
-      </span>
-
-      <h2>
-        <span id="typeRole"></span><span id="cursorRole" class="cursor off">|</span>
-      </h2>
-
-      <p id="lead" class="lead">
+<!-- ========================= NAV ========================== -->
+<header class="topbar">
+<div class="topwrap">
+<a class="brand" href="./"><span class="brand-dot"></span><span>AO · Portafolio</span></a>
+<!-- Menú izquierda -->
+<nav aria-label="Navegación principal" class="menu-left" id="nav"></nav>
+<!-- Menú derecha -->
+<nav class="menu-right">
+<a class="nav-link" href="./">Inicio</a>
+</nav>
+</div>
+</header>
+<!-- ========================= HERO ========================== -->
+<div class="hero-wrap" id="home">
+<div class="hero">
+<span class="glitch-wrap">
+<h1 id="heroTitle">
+<span id="typeName"></span><span class="cursor" id="cursorName">|</span>
+</h1>
+<canvas aria-hidden="true" height="0" id="glitchCanvas" width="0"></canvas>
+</span>
+<h2>
+<span id="typeRole"></span><span class="cursor off" id="cursorRole">|</span>
+</h2>
+<p class="lead" id="lead">
         Me especializo en diseñar, securizar y operar infraestructuras robustas. Automatizo despliegues, fortalezco defensas y mejoro la fiabilidad de servicios con prácticas DevOps/SecOps.
       </p>
-    </div>
-  </div>
-
-  <!-- ============ NUEVAS SECCIONES AÑADIDAS (SIN TOCAR LO DEMÁS) ============ -->
-  <main class="container">
-
-    <!-- 🔹 SECCIÓN 3 — SOBRE MÍ -->
-    <section id="sobre-mi" class="custom-section reveal" data-reveal="fade-up" aria-labelledby="sobre-mi-title">
-      <h2 id="sobre-mi-title" class="section-title">Sobre mí</h2>
-      <p class="kicker">Perfil personal, formación y objetivos profesionales.</p>
-      <div class="card">
-        <p><strong>Soy Alejandro Orcajada Meseguer</strong>, Técnico Superior en ASIR y Máster en Ciberseguridad. Mi foco combina <em>administración de sistemas</em>, <em>hardening</em> y <em>respuesta a incidentes</em>. Busco aprender, crecer y asumir responsabilidades técnicas con impacto.</p>
-        <p style="margin-top:10px"><strong>Objetivo:</strong> incorporarme a un equipo donde pueda evolucionar hacia roles de mayor responsabilidad (<em>SysOps / Platform Engineer / Threat Hunter / Incident Responder</em>) y contribuir con soluciones seguras y operables.</p>
-      </div>
-    </section>
-
-<!-- 🔹 SECCIÓN 4 — ESPECIALIDADES (tarjeta gris compartida) -->
-<section id="especialidades" class="custom-section reveal" data-reveal="fade-up" aria-labelledby="especialidades-title">
-  <h2 id="especialidades-title" class="section-title">Especialidades</h2>
-  <p class="kicker">Áreas con especialización práctica y enfoque técnico.</p>
-
-  <!-- Tarjeta gris compartida para toda la sección -->
-  <div class="card card--section">
-    <div class="specialties-grid">
-      <div class="specialty is-active">
-        <h3 class="specialty-title">Administración y gestión de BBDD</h3>
-        <p>SQL, MariaDB, PostgreSQL. Hardening, backups, replicación y automatización de tareas críticas para disponibilidad, rendimiento y seguridad.</p>
-      </div>
-      <div class="specialty">
-        <h3 class="specialty-title">Red Team y Pentesting</h3>
-        <p>Nmap, Burp, Metasploit, OpenVAS. Enfoque profesional en informes, PoC y recomendaciones accionables para mitigar riesgos.</p>
-      </div>
-      <div class="specialty">
-        <h3 class="specialty-title">Automatización de procesos</h3>
-        <p>Backups, despliegues y pipelines repetibles con Ansible, PowerShell y Bash. Estándares y control de cambios para fiabilidad.</p>
-      </div>
-    </div>
-  </div>
+</div>
+</div>
+<!-- ============ NUEVAS SECCIONES AÑADIDAS (SIN TOCAR LO DEMÁS) ============ -->
+<main class="container">
+<!-- 🔹 SECCIÓN 3 — SOBRE MÍ -->
+<section aria-labelledby="sobre-mi-title" class="custom-section reveal" data-reveal="fade-up" id="sobre-mi">
+<h2 class="section-title" id="sobre-mi-title">Sobre mí</h2>
+<p class="kicker">Perfil personal, formación y objetivos profesionales.</p>
+<div class="card">
+<p><strong>Soy Alejandro Orcajada Meseguer</strong>, Técnico Superior en ASIR y Máster en Ciberseguridad. Mi foco combina <em>administración de sistemas</em>, <em>hardening</em> y <em>respuesta a incidentes</em>. Busco aprender, crecer y asumir responsabilidades técnicas con impacto.</p>
+<p style="margin-top:10px"><strong>Objetivo:</strong> incorporarme a un equipo donde pueda evolucionar hacia roles de mayor responsabilidad (<em>SysOps / Platform Engineer / Threat Hunter / Incident Responder</em>) y contribuir con soluciones seguras y operables.</p>
+</div>
 </section>
+<!-- 🔹 SECCIÓN 4 — ESPECIALIDADES (3 columnas) -->
+<section aria-labelledby="especialidades-title" class="custom-section reveal" data-reveal="fade-up" id="especialidades">
+<h2 class="section-title" id="especialidades-title">Especialidades</h2>
+<p class="kicker">Áreas con especialización práctica y enfoque técnico.</p>
+<!-- Tarjeta gris compartida para toda la sección -->
 
 
-    <!-- ================== HERRAMIENTAS Y LENGUAJES (chips pro, 2 columnas) ================== -->
-    <section id="tools" class="reveal" data-reveal="fade-up" aria-labelledby="tools-title">
-      <div class="tools-head">
-        <h2 id="tools-title" class="section-title">Herramientas y Lenguajes</h2>
-        <p class="hint">Chips con sistema operativo y nivel de dominio.</p>
-      </div>
-
-      <div class="tools-wrap">
-        <div class="tools-grid">
-          <!-- Columna izquierda -->
-          <div class="tools-col">
-            <div class="tools-card">
-              <div class="tools-head"><h3>Herramientas</h3></div>
-              <div id="toolsList" class="tools-list" aria-live="polite"></div>
-              <!-- (El paginador se inserta dinámicamente por tools.js en la esquina sup.-derecha) -->
-            </div>
-          </div>
-
-          <!-- Columna derecha -->
-          <div class="tools-col">
-            <div class="tools-card">
-              <div class="tools-head"><h3>Lenguajes</h3></div>
-              <div id="langsList" class="tools-list" aria-live="polite"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 🔹 SECCIÓN 6 — CÓMO INVESTIGO Y TRABAJO -->
-    <section id="investigacion" class="custom-section reveal" data-reveal="fade-up" aria-labelledby="investigacion-title">
-      <h2 id="investigacion-title" class="section-title">Cómo investigo y trabajo</h2>
-      <p class="kicker">Metodología profesional y verificable.</p>
-      <div class="card">
-        <p>Trabajo con metodologías replicables: priorizo documentación oficial, papers y repos mantenidos. Verifico en laboratorio (sandbox), registro comandos, versiones y artefactos (PCAP, capturas) y publico con referencias y pruebas reproducibles.</p>
-        <p style="margin-top:8px">Cuando publico artículos o notas, enlazo material de soporte y dejo un resumen con <strong>conclusiones accionables</strong>.</p>
-      </div>
-    </section>
-
-    <!-- ====================== MAPA VISUAL (GRAPH) ================== -->
-    <section id="site-graph" class="graph reveal" data-reveal="fade-up" aria-labelledby="site-graph-title">
-      <div class="card">
-        <div class="graph-head">
-          <h2 id="site-graph-title" class="section-title">Mapa visual</h2>
-          <div style="display:flex;gap:12px;align-items:center">
-            <p class="kicker" style="margin:0">Esquema interactivo — haz clic para desplegar niveles.</p>
-            <button id="graphThemeToggle" class="theme-toggle" type="button" aria-label="Cambiar tema">Modo técnico</button>
-          </div>
-        </div>
-
-        <div class="graph-stage" id="graphStage">
-          <div id="graphBc" class="graph-bc"></div> <!-- breadcrumb opcional -->
-          <svg id="graphSvg" class="svgroot" viewBox="0 0 1600 900">
-            <g id="graphRoot"></g>
-          </svg>
-        </div>
-
-        <div class="graph-legend">
-          <span class="dot lvl0"></span> Nivel 0
+<div class="specialties-wrapper">
+<div class="card">
+<div class="specialties-grid">
+<div class="specialty">
+<h3>Administración y gestión de BBDD</h3>
+<p>SQL, MariaDB, PostgreSQL. Hardening, backups, replicación y automatización de tareas críticas para disponibilidad, rendimiento y seguridad.</p>
+</div>
+<div class="specialty">
+<h3>Red Team y Pentesting</h3>
+<p>Nmap, Burp, Metasploit, OpenVAS. Enfoque profesional en informes, PoC y recomendaciones accionables para mitigar riesgos.</p>
+</div>
+<div class="specialty">
+<h3>Automatización de procesos</h3>
+<p>Backups, despliegues y pipelines repetibles con Ansible, PowerShell y Bash. Estándares y control de cambios para fiabilidad.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ================== HERRAMIENTAS Y LENGUAJES (chips pro, 2 columnas) ================== -->
+<section aria-labelledby="tools-title" class="reveal" data-reveal="fade-up" id="tools">
+<div class="tools-head">
+<h2 class="section-title" id="tools-title">Herramientas y Lenguajes</h2>
+<p class="hint">Chips con sistema operativo y nivel de dominio.</p>
+</div>
+<div class="tools-wrap">
+<div class="tools-grid">
+<!-- Columna izquierda -->
+<div class="tools-col">
+<div class="tools-card">
+<div class="tools-head"><h3>Herramientas</h3></div>
+<div aria-live="polite" class="tools-list" id="toolsList"></div>
+<!-- (El paginador se inserta dinámicamente por tools.js en la esquina sup.-derecha) -->
+</div>
+</div>
+<!-- Columna derecha -->
+<div class="tools-col">
+<div class="tools-card">
+<div class="tools-head"><h3>Lenguajes</h3></div>
+<div aria-live="polite" class="tools-list" id="langsList"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 🔹 SECCIÓN 6 — CÓMO INVESTIGO Y TRABAJO -->
+<section aria-labelledby="investigacion-title" class="custom-section reveal" data-reveal="fade-up" id="investigacion">
+<h2 class="section-title" id="investigacion-title">Cómo investigo y trabajo</h2>
+<p class="kicker">Metodología profesional y verificable.</p>
+<div class="card">
+<p>Trabajo con metodologías replicables: priorizo documentación oficial, papers y repos mantenidos. Verifico en laboratorio (sandbox), registro comandos, versiones y artefactos (PCAP, capturas) y publico con referencias y pruebas reproducibles.</p>
+<p style="margin-top:8px">Cuando publico artículos o notas, enlazo material de soporte y dejo un resumen con <strong>conclusiones accionables</strong>.</p>
+</div>
+</section>
+<!-- ====================== MAPA VISUAL (GRAPH) ================== -->
+<section aria-labelledby="site-graph-title" class="graph reveal" data-reveal="fade-up" id="site-graph">
+<div class="card">
+<div class="graph-head">
+<h2 class="section-title" id="site-graph-title">Mapa visual</h2>
+<div style="display:flex;gap:12px;align-items:center">
+<p class="kicker" style="margin:0">Esquema interactivo — haz clic para desplegar niveles.</p>
+<button aria-label="Cambiar tema" class="theme-toggle" id="graphThemeToggle" type="button">Modo técnico</button>
+</div>
+</div>
+<div class="graph-stage" id="graphStage">
+<div class="graph-bc" id="graphBc"></div> <!-- breadcrumb opcional -->
+<svg class="svgroot" id="graphSvg" viewbox="0 0 1600 900">
+<g id="graphRoot"></g>
+</svg>
+</div>
+<div class="graph-legend">
+<span class="dot lvl0"></span> Nivel 0
           <span class="dot lvl1"></span> Nivel 1
           <span class="dot lvl2"></span> Nivel 2
           <span class="dot lvl3"></span> Nivel 3
         </div>
-      </div>
-    </section>
-
-    <!-- ===================== CARRUSEL DE CUBOS ===================== -->
-    <section id="news-cubes" class="reveal" data-reveal="fade-up" aria-labelledby="news-cubes-title">
-      <h2 id="news-cubes-title" class="section-title">Lecturas y artículos</h2>
-      <p class="kicker">Novedades seleccionadas — desplazamiento suave y continuo.</p>
-
-      <div class="cube-carousel" data-autoplay="true" data-interval="3200" data-shuffle="true" aria-roledescription="carrusel">
-        <div class="cube-head"><h3>Artículos interesantes</h3></div>
-
-        <div class="cube-viewport" role="region" aria-label="Carrusel de artículos" style="overflow:hidden">
-          <div class="cube-track" id="cubeTrack" role="list"></div>
-        </div>
-
-        <div class="cube-nav" aria-hidden="false">
-          <button class="cube-btn prev" type="button" id="cubePrev" aria-label="Artículo anterior">‹</button>
-          <button class="cube-btn next" type="button" id="cubeNext" aria-label="Artículo siguiente">›</button>
-        </div>
-
-        <div class="cube-dots" id="cubeDots" aria-hidden="true"></div>
-      </div>
-    </section>
-
-    <!-- =========================== CONTACTO ======================== -->
-    <section id="contact" class="reveal" data-reveal="fade-up" aria-labelledby="contact-title">
-      <h2 id="contact-title" class="section-title">Contacto</h2>
-      <div class="contact-box">
-        <div class="card">
-          <p>¿Tienes un proyecto o una consulta técnica? Escríbeme y te respondo.</p>
-          <p><strong>Email:</strong> <a href="mailto:alex@tu-dominio.com">alex@tu-dominio.com</a></p>
-          <p><strong>LinkedIn:</strong> <a href="https://www.linkedin.com/in/tuusuario" target="_blank" rel="noopener">linkedin.com/in/tuusuario</a></p>
-        </div>
-        <div class="card">
-          <form action="mailto:alex@tu-dominio.com" method="post" enctype="text/plain">
-            <label>Nombre<br><input name="nombre" required /></label>
-            <label>Email<br><input name="email" type="email" required /></label>
-            <label>Mensaje<br><textarea name="mensaje" required></textarea></label>
-            <button type="submit" style="background:var(--accent);color:#111;padding:10px 16px;border-radius:10px;border:0;font-weight:700">Enviar</button>
-          </form>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer>© <span id="y"></span> Alejandro Orcajada Meseguer — Administrador de Sistemas y Ciberseguridad</footer>
-
-  <!-- ========================= JS ========================== -->
-  <!-- Hero: typing + glitch -->
-  <script src="assets/js/hero-glitch.js" defer></script>
-
-  <!-- NAV -->
-  <script src="assets/js/nav-data.js" defer></script>
-  <script src="assets/js/nav.js" defer></script>
-
-  <!-- Cubes -->
-  <script src="assets/js/cubes.js"></script>
-
-  <!-- Graph -->
-  <script src="assets/js/graph-data.js"></script> <!-- 1️⃣ datos base -->
-  <script src="assets/js/graph.js"></script>       <!-- 2️⃣ mapa SVG clásico+breadcrumb -->
-
-  <!-- Año en footer -->
-  <script>
+</div>
+</section>
+<!-- ===================== CARRUSEL DE CUBOS ===================== -->
+<section aria-labelledby="news-cubes-title" class="reveal" data-reveal="fade-up" id="news-cubes">
+<h2 class="section-title" id="news-cubes-title">Lecturas y artículos</h2>
+<p class="kicker">Novedades seleccionadas — desplazamiento suave y continuo.</p>
+<div aria-roledescription="carrusel" class="cube-carousel" data-autoplay="true" data-interval="3200" data-shuffle="true">
+<div class="cube-head"><h3>Artículos interesantes</h3></div>
+<div aria-label="Carrusel de artículos" class="cube-viewport" role="region" style="overflow:hidden">
+<div class="cube-track" id="cubeTrack" role="list"></div>
+</div>
+<div aria-hidden="false" class="cube-nav">
+<button aria-label="Artículo anterior" class="cube-btn prev" id="cubePrev" type="button">‹</button>
+<button aria-label="Artículo siguiente" class="cube-btn next" id="cubeNext" type="button">›</button>
+</div>
+<div aria-hidden="true" class="cube-dots" id="cubeDots"></div>
+</div>
+</section>
+<!-- =========================== CONTACTO ======================== -->
+<section aria-labelledby="contact-title" class="reveal" data-reveal="fade-up" id="contact">
+<h2 class="section-title" id="contact-title">Contacto</h2>
+<div class="contact-box">
+<div class="card">
+<p>¿Tienes un proyecto o una consulta técnica? Escríbeme y te respondo.</p>
+<p><strong>Email:</strong> <a href="mailto:alex@tu-dominio.com">alex@tu-dominio.com</a></p>
+<p><strong>LinkedIn:</strong> <a href="https://www.linkedin.com/in/tuusuario" rel="noopener" target="_blank">linkedin.com/in/tuusuario</a></p>
+</div>
+<div class="card">
+<form action="mailto:alex@tu-dominio.com" enctype="text/plain" method="post">
+<label>Nombre<br/><input name="nombre" required=""/></label>
+<label>Email<br/><input name="email" required="" type="email"/></label>
+<label>Mensaje<br/><textarea name="mensaje" required=""></textarea></label>
+<button style="background:var(--accent);color:#111;padding:10px 16px;border-radius:10px;border:0;font-weight:700" type="submit">Enviar</button>
+</form>
+</div>
+</div>
+</section>
+</main>
+<footer>© <span id="y"></span> Alejandro Orcajada Meseguer — Administrador de Sistemas y Ciberseguridad</footer>
+<!-- ========================= JS ========================== -->
+<!-- Hero: typing + glitch -->
+<script defer="" src="assets/js/hero-glitch.js"></script>
+<!-- NAV -->
+<script defer="" src="assets/js/nav-data.js"></script>
+<script defer="" src="assets/js/nav.js"></script>
+<!-- Cubes -->
+<script src="assets/js/cubes.js"></script>
+<!-- Graph -->
+<script src="assets/js/graph-data.js"></script> <!-- 1️⃣ datos base -->
+<script src="assets/js/graph.js"></script> <!-- 2️⃣ mapa SVG clásico+breadcrumb -->
+<!-- Año en footer -->
+<script>
     document.getElementById('y').textContent = new Date().getFullYear();
   </script>
-  <script src="assets/js/scroll-reveal.js" defer></script>
-
-  <!-- NUEVO: lógica de Herramientas y Lenguajes -->
-  <script src="assets/js/tools.js" defer></script>
+<script defer="" src="assets/js/scroll-reveal.js"></script>
+<!-- NUEVO: lógica de Herramientas y Lenguajes -->
+<script defer="" src="assets/js/tools.js"></script>
 </body>
 </html>
+
 
