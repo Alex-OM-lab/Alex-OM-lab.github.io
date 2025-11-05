@@ -20,7 +20,6 @@
   <link rel="stylesheet" href="assets/css/sections.css">
   <!-- NUEVO: estilos de la sección Herramientas y Lenguajes -->
   <link rel="stylesheet" href="assets/css/tools.css">
-
   <style>
     /* ===== Variables base (global) ===== */
     :root{
@@ -102,8 +101,10 @@
     }
     /* ========= FIN CSS NUEVO ========= */
 
-    /* ====== OVERRIDE: quitar “fondo gris” en Especialidades e Investigación ======
-       OJO: el id correcto es #investigacion (no #investigo).                        */
+    /* =========================================================
+       FIX: quitar el fondo gris SOLO en “Especialidades” y
+            “Cómo investigo y trabajo”. OJO al id: #investigacion
+       ========================================================= */
     #especialidades .card,
     #investigacion .card{
       background: transparent !important;
@@ -111,10 +112,6 @@
       box-shadow: none !important;
       padding: 0 !important;
     }
-    /* Un poco de aire para que no se pegue el contenido al quitar la tarjeta */
-    #especialidades .specialty{ padding: 10px 0; }
-    #investigacion .card > * { margin-top: 8px; }
-    #investigacion .card > *:first-child { margin-top: 0; }
   </style>
 </head>
 <body>
