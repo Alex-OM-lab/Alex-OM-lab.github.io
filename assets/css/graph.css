@@ -76,15 +76,16 @@
   will-change: transform, filter, opacity;
 }
 
-/* Aparición inicial (cuando el layout marca is-in) */
+/* Aparición inicial con cadena de animaciones (reveal + activate) */
 .node.is-in .node-in{
-  animation: node-reveal .6s cubic-bezier(.2,.8,.2,1) forwards;
+  animation:
+    node-reveal .6s cubic-bezier(.2,.8,.2,1) forwards,
+    node-activate .42s cubic-bezier(.22,.61,.36,1) .6s forwards; /* empieza tras el reveal */
 }
 
-/* Re-activación al expandir nivel (cuando deja de estar atenuado) */
+/* Re-activación al expandir nivel (sin animation aquí para no pisar el reveal) */
 .node:not(.dim-node) .node-in{
-  /* se dispara al quitar la clase .dim-node en el enfoque de un nivel */
-  animation: node-activate .42s cubic-bezier(.22,.61,.36,1) forwards;
+  /* sin 'animation:' aquí */
 }
 
 /* Keyframes */
@@ -98,9 +99,6 @@
   0%   { transform: translateY(6px) scale(.99); filter: blur(2px); }
   100% { transform: none;                 filter: blur(0); }
 }
-
-/* Eliminamos la animación anterior “micro-deslizamiento” y “pulse” */
-/* (no quedan reglas activas de la animación anterior) */
 
 /* Animación de recolocado y foco */
 .node.moving{ transition: transform .55s cubic-bezier(.2,.8,.2,1); }
