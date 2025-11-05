@@ -6,10 +6,18 @@
 section.custom-section {
   padding: 60px 0;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
+  background: transparent; /* ✅ Fondo limpio por defecto */
 }
 
-section.custom-section:nth-of-type(even) {
+/* ❌ Eliminado el fondo gris en secciones pares */
+/* section.custom-section:nth-of-type(even) {
   background: rgba(255, 255, 255, 0.02);
+} */
+
+/* Forzar transparencia en secciones específicas por seguridad */
+#especialidades.custom-section,
+#investigacion.custom-section {
+  background: transparent !important;
 }
 
 .custom-section .container {
