@@ -1,13 +1,33 @@
-/* ============================================
-   Tools UI — versión con barra de 3 niveles (Bajo / Medio / Alto)
-   ============================================ */
-
+/* ===========================================================
+   Herramientas y Lenguajes — LÓGICA DE INTERFAZ
+   =========================================================== */
 (function () {
+  "use strict";
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 
-  // ---- Datos ----
-  const TOOLS = [
+  const root = $("#tools-pro");
+  if (!root) return;
+
+  const els = {
+    toolsCard: $("#toolsCard", root),
+    langsCard: $("#langsCard", root),
+    langsBody: $("#langsBody", root),
+
+    list: $("#toolsList", root),
+    pagerDots: $("#pagerDots", root),
+    pageCounter: $("#pageCounter", root),
+    prevBtn: $("#prevBtn", root),
+    nextBtn: $("#nextBtn", root),
+    resultCount: $("#resultCount", root),
+
+    searchBox: $("#searchBox", root),
+    searchInput: $("#searchInput", root),
+    clearBtn: $("#clearBtn", root),
+    tagButtons: $$(".tag", root),
+  };
+
+  const TOOLS_SRC = [
     { name: "Ansible", os: "linux" },
     { name: "Docker", os: "multi" },
     { name: "Kali / Nmap", os: "linux" },
@@ -22,158 +42,190 @@
     { name: "Git/GitHub", os: "multi" },
   ];
 
-  const LANGS = [
-    { name: "Bash", level: "alto" },
-    { name: "PowerShell", level: "medio" },
-    { name: "SQL", level: "medio" },
-    { name: "Python", level: "bajo" },
-    { name: "HTML/CSS", level: "medio" },
-    { name: "JavaScript", level: "medio" },
-    { name: "YAML/Ansible", level: "alto" },
-  ];
+  const ICONS = {
+    default: "fa-solid fa-cube",
+    linux: "fa-brands fa-linux",
+    windows: "fa-brands fa-windows",
+    multi: "fa-solid fa-layer-group",
+    "Ansible": "fa-brands fa-redhat",
+    "Docker": "fa-brands fa-docker",
+    "Kali / Nmap": "fa-solid fa-magnifying-glass",
+    "Burp Suite": "fa-solid fa-bug",
+    "Metasploit": "fa-solid fa-skull-crossbones",
+    "OpenVAS": "fa-solid fa-shield-halved",
+    "Wireshark": "fa-solid fa-wave-square",
+    "pfSense": "fa-solid fa-network-wired",
+    "Proxmox": "fa-solid fa-server",
+    "VMware/ESXi": "fa-solid fa-diagram-project",
+    "Azure AD": "fa-solid fa-cloud",
+    "Git/GitHub": "fa-brands fa-git-alt",
+  };
 
-  document.addEventListener("DOMContentLoaded", () => {
-    const toolsList = $("#toolsList");
-    const langsList = $("#langsList");
+  const normalizeOS = (raw) => {
+    const s = String(raw || "").toLowerCase();
+    const hasWin = /win/.test(s);
+    const hasLin = /lin/.test(s);
+    if (hasWin && hasLin) return "multi";
+    if (hasWin) return "windows";
+    if (hasLin) return "linux";
+    return "multi";
+  };
 
-    if (toolsList) renderTools(toolsList, TOOLS);
-    if (langsList) renderLangs(langsList, LANGS);
+  const TOOLS = TOOLS_SRC.map(t => ({ name: t.name, os: normalizeOS(t.os) }));
 
-    if (langsList) renderLevelBars(langsList);
+  const state = {
+    page: 0,
+    perPage: Math.max(1, $$(".row", els.langsBody).length),
+    query: "",
+    os: new Set(),
+    selected: new Set(),
+  };
 
-    if (toolsList) {
-      const card = toolsList.closest(".tools-card") || toolsList.parentElement;
-      enablePagingTopRight(toolsList, { perPage: 8, cardEl: card });
+  function renderTools(withEntrance = false) {
+    const filtered = applyFilters(TOOLS);
+    const totalPages = Math.max(1, Math.ceil(filtered.length / state.perPage));
+    state.page = Math.min(state.page, totalPages - 1);
+
+    const start = state.page * state.perPage;
+    const items = filtered.slice(start, start + state.perPage);
+
+    els.list.innerHTML = items.map(t => {
+      const active = state.selected.has(t.name) ? "active" : "";
+      const icon = ICONS[t.name] || ICONS.default;
+      return `
+        <div class="row ${active}" data-id="${escapeHtml(t.name)}"
+             role="button" tabindex="0" aria-pressed="${active ? "true" : "false"}"
+             title="${escapeHtml(t.name)}">
+          <div class="left"><i class="${icon}"></i> ${escapeHtml(t.name)}</div>
+          <div class="right">${chip(t.os)}</div>
+        </div>`;
+    }).join("");
+
+    els.pagerDots.innerHTML = Array.from({ length: totalPages }, (_, i) =>
+      `<span class="dot ${i === state.page ? "active" : ""}"></span>`
+    ).join("");
+    els.pageCounter.textContent = `${state.page + 1}/${totalPages}`;
+    els.prevBtn.disabled = state.page === 0;
+    els.nextBtn.disabled = state.page === totalPages - 1;
+
+    els.resultCount.textContent = filtered.length;
+
+    bindSelectableRows(els.list);
+
+    if (withEntrance) {
+      $$(".row", els.list).forEach((row, i) => {
+        row.classList.add("page-enter");
+        row.style.animationDelay = `${i * 40}ms`;
+        row.addEventListener("animationend", () => {
+          row.classList.remove("page-enter");
+          row.style.animationDelay = "";
+        }, { once: true });
+      });
     }
-  });
 
-  /* ---------- Render ---------- */
-
-  function renderTools(container, data) {
-    container.innerHTML = data
-      .map((t) => {
-        const osBadges = parseOs(t.os)
-          .map((o) => `<span class="badge os ${o.cls}"></span>`)
-          .join("");
-        return `
-          <button class="tool-btn" type="button" aria-label="${escapeHtml(t.name)}">
-            <span class="tool-slot--left"></span>
-            <span class="tool-name">${escapeHtml(t.name)}</span>
-            <span class="tool-slot--right">${osBadges}</span>
-          </button>`;
-      })
-      .join("");
+    lockCardHeights();
   }
 
-  function renderLangs(container, data) {
-    container.innerHTML = data
-      .map(
-        (l) => `
-        <div class="tool-btn" data-level="${escapeHtml(l.level)}">
-          <span class="tool-slot--left"></span>
-          <span class="tool-name">${escapeHtml(l.name)}</span>
-          <span class="tool-slot--right">
-            <div class="level-bar" data-level="${escapeHtml(l.level)}">
-              <span class="bar-segment"></span>
-              <span class="bar-segment"></span>
-              <span class="bar-segment"></span>
-            </div>
-          </span>
-        </div>`
-      )
-      .join("");
+  function applyFilters(items) {
+    let out = items;
+    if (state.query) {
+      const q = state.query;
+      out = out.filter(t => t.name.toLowerCase().includes(q));
+    }
+    if (state.os.size) {
+      out = out.filter(t => state.os.has(t.os));
+    }
+    return out;
   }
 
-  /* ---------- Nueva barra de 3 niveles ---------- */
-  function renderLevelBars(root) {
-    $$(".level-bar", root).forEach((bar) => {
-      const level = (bar.getAttribute("data-level") || "").toLowerCase();
-      const segments = $$(".bar-segment", bar);
+  function chip(os) {
+    const map = {
+      linux:   { cls: "chip linux",   label: "Linux",   icon: "fa-brands fa-linux",      tip: "Disponible en Linux" },
+      windows: { cls: "chip windows", label: "Windows", icon: "fa-brands fa-windows",    tip: "Disponible en Windows" },
+      multi:   { cls: "chip multi",   label: "Multi",   icon: "fa-solid fa-layer-group", tip: "Disponible en varios sistemas" },
+    };
+    const d = map[os] || map.multi;
+    return `<span class="${d.cls}" data-tooltip="${d.tip}"><i class="${d.icon}"></i>${d.label}</span>`;
+  }
 
-      // Resetea
-      segments.forEach((s) => s.classList.remove("active"));
-
-      // Asigna número de segmentos activos
-      let activeCount = 1;
-      if (level === "medio") activeCount = 2;
-      if (level === "alto") activeCount = 3;
-
-      segments.forEach((s, i) => {
-        if (i < activeCount) s.classList.add("active");
+  function bindSelectableRows(scope = root) {
+    $$('.row[role="button"]', scope).forEach(row => {
+      const pulse = () => {
+        row.classList.add("pulse");
+        const end = () => { row.classList.remove("pulse"); row.removeEventListener("animationend", end); };
+        row.addEventListener("animationend", end);
+      };
+      row.addEventListener("click", () => {
+        const id = row.dataset.id;
+        if (state.selected.has(id)) state.selected.delete(id);
+        else state.selected.add(id);
+        row.classList.toggle("active");
+        row.setAttribute("aria-pressed", state.selected.has(id) ? "true" : "false");
+        pulse();
+      });
+      row.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); row.click(); }
       });
     });
   }
 
-  /* ---------- Paginación ARRIBA-DERECHA (Herramientas) ---------- */
-  function enablePagingTopRight(listEl, { perPage = 8, cardEl = null } = {}) {
-    const items = $$(".tool-btn", listEl);
-    if (cardEl) $$(".tools-pager", cardEl).forEach((n) => n.remove());
-    if (items.length <= perPage) {
-      items.forEach((el) => (el.style.display = ""));
-      return;
-    }
-    const pages = chunk(items, perPage);
-    let page = 0;
-    const pager = document.createElement("div");
-    pager.className = "tools-pager topright";
-    const prev = mkArrow("‹");
-    const next = mkArrow("›");
-    const dots = document.createElement("div");
-    dots.className = "tools-dots";
-    pager.append(prev, dots, next);
-    const host = cardEl || listEl.parentElement || listEl;
-    host.appendChild(pager);
-    const dotEls = pages.map((_, i) => {
-      const d = document.createElement("span");
-      d.className = "tools-dot" + (i === 0 ? " is-active" : "");
-      d.addEventListener("click", () => render(i));
-      dots.appendChild(d);
-      return d;
+  let lockedHeight = 0;
+  function resetLock() {
+    lockedHeight = 0;
+    els.toolsCard?.style.setProperty("--locked-card-height", "auto");
+    els.langsCard?.style.setProperty("--locked-card-height", "auto");
+  }
+  function lockCardHeights() {
+    if (!els.toolsCard || !els.langsCard) return;
+    els.toolsCard.style.setProperty("--locked-card-height", "auto");
+    els.langsCard.style.setProperty("--locked-card-height", "auto");
+    const h = Math.max(els.toolsCard.offsetHeight, els.langsCard.offsetHeight);
+    lockedHeight = Math.max(lockedHeight, h);
+    els.toolsCard.style.setProperty("--locked-card-height", lockedHeight + "px");
+    els.langsCard.style.setProperty("--locked-card-height", lockedHeight + "px");
+  }
+
+  let searchTimer = null;
+  els.searchInput?.addEventListener("input", (e) => {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => {
+      state.query = (e.target.value || "").trim().toLowerCase();
+      els.searchBox?.classList.toggle("has-text", !!state.query);
+      state.page = 0;
+      renderTools(true);
+    }, 120);
+  });
+  els.clearBtn?.addEventListener("click", () => {
+    if (!els.searchInput) return;
+    els.searchInput.value = "";
+    state.query = "";
+    els.searchBox?.classList.remove("has-text");
+    state.page = 0;
+    renderTools(true);
+  });
+  els.tagButtons.forEach(tag => {
+    tag.addEventListener("click", () => {
+      const val = (tag.dataset.os || "").trim();
+      if (!val) return;
+      if (tag.classList.toggle("on")) state.os.add(val);
+      else state.os.delete(val);
+      state.page = 0;
+      renderTools(true);
     });
-    prev.addEventListener("click", () => render(page - 1));
-    next.addEventListener("click", () => render(page + 1));
-    render(0);
-    function render(p) {
-      page = clamp(p, 0, pages.length - 1);
-      items.forEach((el) => (el.style.display = "none"));
-      pages[page].forEach((el) => (el.style.display = ""));
-      dotEls.forEach((d, i) => d.classList.toggle("is-active", i === page));
-      prev.disabled = page === 0;
-      next.disabled = page === pages.length - 1;
-    }
-  }
+  });
+  els.prevBtn?.addEventListener("click", () => {
+    if (state.page > 0) { state.page--; renderTools(true); }
+  });
+  els.nextBtn?.addEventListener("click", () => {
+    const tp = Math.max(1, Math.ceil(applyFilters(TOOLS).length / state.perPage));
+    if (state.page < tp - 1) { state.page++; renderTools(true); }
+  });
 
-  /* ---------- Helpers ---------- */
-
-  function parseOs(input) {
-    if (!input) return [];
-    const raw = String(input).toLowerCase().replace(/\s+/g, "").replace(/[|]/g, "/");
-    const parts = raw.split(/[\/,]+/).filter(Boolean);
-    const uniq = Array.from(new Set(parts.length ? parts : [raw]));
-    return uniq.map((p) => {
-      if (p.includes("win")) return { cls: "win", label: "Windows" };
-      if (p.includes("lin")) return { cls: "lnx", label: "Linux" };
-      return { cls: "mul", label: "Multi" };
-    });
-  }
-
-  function chunk(arr, size) {
-    const out = [];
-    for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
-    return out;
-  }
-
-  function clamp(v, min, max) {
-    return Math.max(min, Math.min(max, v));
-  }
-
-  function mkArrow(txt) {
-    const b = document.createElement("button");
-    b.type = "button";
-    b.className = "tools-arrow";
-    b.textContent = txt;
-    return b;
-  }
+  window.addEventListener("resize", () => {
+    resetLock();
+    renderTools(false);
+    requestAnimationFrame(lockCardHeights);
+  });
 
   function escapeHtml(str) {
     return String(str)
@@ -183,4 +235,9 @@
       .replace(/"/g, "&quot;")
       .replace(/'/g, "&#039;");
   }
+
+  window.addEventListener("load", () => {
+    renderTools(true);
+    requestAnimationFrame(lockCardHeights);
+  });
 })();
