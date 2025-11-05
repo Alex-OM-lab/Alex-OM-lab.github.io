@@ -170,7 +170,7 @@
 /* flujo continuo en guiones (más lento) */
 .link.flow{
   stroke-dasharray: 10 8;
-  animation: flow 20s linear infinite;
+  animation: flow 10s linear infinite;
 }
 @keyframes flow{
   to { stroke-dashoffset: -18; }
