@@ -1,20 +1,20 @@
 /* =========================================================
-   SECTIONS.CSS — estilos de secciones + restauración de fondo
+   SECTIONS.CSS — Fondo restaurado + tarjetas unificadas
    ========================================================= */
 
-/* ===== Fondo global (restaurado) ===== */
+/* ===== Fondo global (restaurado y con gradientes originales) ===== */
 body{
-  /* mismo fondo que el diseño original */
   background:
     radial-gradient(1400px 800px at 80% -100px, rgba(255,159,26,.06), transparent 60%),
     radial-gradient(1200px 700px at -200px 20%, rgba(255,215,154,.05), transparent 60%),
-    #0b1220; /* var(--bg) por compatibilidad */
+    #0b1220; /* var(--bg) */
   color:#e9eef6; /* var(--text) */
+  font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,Inter,"Helvetica Neue",Arial;
   -webkit-font-smoothing:antialiased;
   -moz-osx-font-smoothing:grayscale;
 }
 
-/* ===== Variables de color auxiliares (fallbacks) ===== */
+/* ===== Variables base ===== */
 :root{
   --panel:#111a2d;
   --text:#e9eef6;
@@ -24,11 +24,11 @@ body{
   --radius:14px;
 }
 
-/* ===== Contenedor y espaciados de secciones ===== */
+/* ===== Contenedores de secciones ===== */
 .container{ width:min(1100px,92%); margin:0 auto; }
 section{ padding:26px 0; }
 
-/* Títulos y subtítulos (sin líneas decorativas) */
+/* ===== Títulos y subtítulos ===== */
 .section-title{
   font-size:clamp(24px,3vw,34px);
   margin:0 0 14px;
@@ -46,48 +46,50 @@ section{ padding:26px 0; }
   );
   border:1px solid rgba(255,255,255,.06);
   border-radius:12px;
-  padding:14px;
+  padding:18px 20px;
   box-shadow:0 12px 30px rgba(0,0,0,.35);
 }
 
-/* Párrafos dentro de cards (suaves y legibles) */
-.card p{
-  margin:0;
-  line-height:1.6;
+/* ===== Párrafos dentro de cards ===== */
+.card p{ margin:0 0 10px; line-height:1.6; }
+.card p:last-child{ margin-bottom:0; }
+
+/* =========================================================
+   1️⃣  ESPECIALIDADES — UN SOLO CUADRO GRIS PARA TODO EL TEXTO
+   ========================================================= */
+#especialidades .card{
+  /* el marco abarca las tres columnas de texto */
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px;
 }
-.card p + p{ margin-top:10px; }
-
-/* ===== Grids reutilizables ===== */
-.grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
-@media (max-width:980px){ .grid{ grid-template-columns:1fr 1fr } }
-@media (max-width:620px){ .grid{ grid-template-columns:1fr } }
-
-/* ===== Especialidades
-   - El TÍTULO h3 queda fuera del marco
-   - Solo el texto va dentro de .card (como en “Sobre mí”)
-   ===================================================== */
 #especialidades .item{
   display:flex;
   flex-direction:column;
-  gap:8px;
+  gap:6px;
 }
 #especialidades .item h3{
   margin:0;
   font-size:18px;
   color:#ffe2b0;
 }
-#especialidades .item .card{
-  /* hereda el estilo .card (mismo marco gris) */
+
+/* responsive */
+@media (max-width:980px){
+  #especialidades .card{ grid-template-columns:1fr 1fr; }
+}
+@media (max-width:640px){
+  #especialidades .card{ grid-template-columns:1fr; }
 }
 
-/* ===== Cómo investigo y trabajo
-   - Todo el contenido (kicker + párrafos) en UNA sola .card
-   ===================================================== */
+/* =========================================================
+   2️⃣  CÓMO INVESTIGO Y TRABAJO — UN SOLO MARCO GRIS
+   ========================================================= */
 #investigacion .card{
-  /* hereda .card sin burbujas separadas */
+  padding:18px 20px;
 }
 
-/* ===== Utilidades varias empleadas en la web ===== */
+/* ===== Contacto y otros estilos reutilizables ===== */
 .project img{
   width:100%;
   aspect-ratio:16/10;
@@ -111,7 +113,6 @@ input,textarea{
 }
 textarea{ min-height:140px; resize:vertical; }
 
-/* Footer */
 footer{
   padding:40px 0;
   color:#a9b1bd;
