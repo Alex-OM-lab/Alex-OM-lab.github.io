@@ -1,100 +1,41 @@
-/* =====================================================
-   SECCIONES GENERALES — Alejandro Orcajada Meseguer
-   (tema oscuro cálido, consistente con el resto)
-   ===================================================== */
 
 :root{
   --bg:#0b1220;
-  --panel:rgba(255,255,255,0.04);
-  --panel-border:rgba(255,255,255,0.08);
-  --panel-border-strong:rgba(255,255,255,0.14);
+  --panel:rgba(255,255,255,0.05);
+  --panel-border:rgba(255,255,255,0.10);
+  --panel-border-strong:rgba(255,255,255,0.18);
   --text:#e6edf6;
   --muted:#9bb0c3;
   --accent:#ff9f1a;
-  --accent-ink:#0b1220;
-  --accent-soft:rgba(255,159,26,0.16);
 }
 
-/* ===== Secciones base ===== */
-section.custom-section{
-  padding:60px 0;
-  border-top:1px solid rgba(255,255,255,0.06);
-  background:transparent;
-}
+/* layout base (no cambios a tu tema) */
+section.custom-section{padding:60px 0;border-top:1px solid rgba(255,255,255,0.06);background:transparent}
+.section-title{color:var(--accent);margin:0 0 8px}
+.kicker{color:var(--muted);margin:0 0 16px}
 
-.section-title{
-  color:var(--accent);
-  text-shadow:0 0 8px rgba(255,159,26,.25);
-  margin:0 0 8px;
-}
-
-.kicker{
-  color:var(--muted);
-  margin:0 0 20px;
-}
-
-/* ===== Tarjetas genéricas ===== */
+/* CARD general – igual que 'Sobre mí' */
 .card{
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(11,18,32,0.06) 6%), var(--panel);
-  border:1px solid var(--panel-border);
+  background:var(--panel);
+  border:1px solid var(--panel-border-strong);
   border-radius:14px;
-  padding:18px;
-  box-shadow:0 0 0 1px rgba(0,0,0,0.06) inset;
-}
-.card--section{padding:22px 22px}
-
-/* ===== ESPECIALIDADES ===== */
-/* Contenedor gris compartido */
-.specialties-grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:18px;
+  padding:20px;
+  box-shadow:0 0 0 1px rgba(0,0,0,0.08) inset;
 }
 
-.specialty .specialty-title{
-  margin:0 0 10px;
-  font-size:18px;
-  font-weight:800;
-  color:#ffe2b0;
-  line-height:1.2;
-}
-
-/* Estado activo con “píldora” azul debajo del texto del h3 */
-.specialty.is-active .specialty-title{
-  display:inline-block;
-  padding:6px 10px;
-  border-radius:8px;
-  background:#1e5eff;
-  color:white;
-  box-shadow:0 2px 0 0 rgba(0,0,0,.15), 0 0 0 1px rgba(255,255,255,.08) inset;
-  margin-bottom:12px;
-}
-
-.specialty p{
-  margin:0;
-  color:var(--text);
-  opacity:.92;
-}
-
-/* Responsive */
-@media (max-width: 980px){
-  .specialties-grid{grid-template-columns:1fr; gap:14px}
-  .card--section{padding:18px}
-}
-
-/* ===== Utilidades ===== */
-.visually-hidden{position:absolute!important;clip:rect(0,0,0,0)!important;width:1px!important;height:1px!important;overflow:hidden!important;white-space:nowrap!important}
-
-/* Animación de entrada */
-@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-.custom-section.show{animation:fadeUp .8s ease forwards}
-
-/* === Especialidades (tarjeta gris compartida a 3 columnas) === */
-.specialties-wrapper{margin-top:10px}
+/* === ESPECIALIDADES === */
+/* card envolviendo TODAS las columnas */
+.specialties-wrapper{margin-top:8px}
 .specialties-wrapper .card{padding:22px}
-.specialties-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+
+/* grid de 3 columnas dentro de la tarjeta */
+.specialties-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
 .specialty h3{margin:0 0 8px;font-weight:800;color:#f8d8a0}
-.specialty p{margin:0;color:#e6edf6;opacity:.92}
-@media (max-width: 980px){
-  .specialties-grid{grid-template-columns:1fr;gap:16px}
+.specialty p{margin:0;color:var(--text);opacity:.92}
+
+/* responsive */
+@media (max-width:980px){
+  .specialties-grid{grid-template-columns:1fr;gap:14px}
+  .specialties-wrapper .card{padding:18px}
 }
+
