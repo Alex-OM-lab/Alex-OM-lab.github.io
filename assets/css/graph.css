@@ -25,6 +25,33 @@
   background:#0c1323;
   overflow:hidden;
   height:680px;
+}/* ===== ÁRBOL VISUAL (SVG) ===== */
+.graph .card{
+  border-radius: var(--radius);
+  border:1px solid rgba(255,255,255,.06);
+  background:linear-gradient(180deg,color-mix(in oklab,var(--panel) 92%,#0f1422 8%),var(--panel));
+  padding:14px;
+}
+.graph-head{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:10px; }
+.graph-head h2{ margin:0 }
+
+/* Botón de tema (Fase 3) */
+.theme-toggle{
+  appearance:none; border:1px solid rgba(255,255,255,.12); background:#0e1730;
+  color:var(--text); padding:8px 12px; border-radius:10px; font-weight:700; cursor:pointer;
+  transition:transform .15s ease, background .2s ease, border-color .2s ease;
+}
+.theme-toggle:hover{ transform:translateY(-2px); background:#12203f; border-color:rgba(255,255,255,.22) }
+.theme-toggle:active{ transform:translateY(0) }
+
+/* escenario */
+.graph-stage{
+  position:relative;
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:12px;
+  background:#0c1323;
+  overflow:hidden;
+  height:680px;
 }
 
 /* breadcrumb (opcional) */
@@ -132,18 +159,18 @@
 .link.l2{ stroke:rgba(143,214,255,.55) }
 .link.l3{ stroke:rgba(155,226,176,.55) }
 
-/* aparición del trazo (una vez) */
+/* aparición del trazo (más lenta) */
 .link.draw{
   stroke-dasharray: 600;
   stroke-dashoffset: 600;
-  animation: draw .6s ease forwards;
+  animation: draw 1.5s ease forwards;
 }
 @keyframes draw{ to{ stroke-dashoffset:0 } }
 
-/* flujo continuo en guiones (constante) */
+/* flujo continuo en guiones (más lento) */
 .link.flow{
   stroke-dasharray: 10 8;
-  animation: flow 2.4s linear infinite;
+  animation: flow 5s linear infinite;
 }
 @keyframes flow{
   to { stroke-dashoffset: -18; }
@@ -211,3 +238,4 @@ body.theme-tech .link.l3{ stroke:rgba(168,255,198,.6) }
   .node, .node .node-in{ transition:none; }
   .node.moving{ transition:none; }
 }
+
