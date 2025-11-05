@@ -61,7 +61,21 @@
 
 /* ===== Nodos ===== */
 .node{ cursor:pointer; opacity:1; }
-.node rect{ rx:10; ry:10; fill:#0e1730; stroke:rgba(255,255,255,.10); stroke-width:1.2; }
+.node rect{
+  rx:10; ry:10; fill:#0e1730; stroke:rgba(255,255,255,.10); stroke-width:1.2;
+  /* degradado sutil superior (simulado con overlay) */
+}
+.node .title{
+  fill:#e9eef6; font-weight:800; font-size:13.8px; letter-spacing:.1px;
+  text-rendering:geometricPrecision;
+}
+.node[data-lvl="2"] .title{ font-size:13.2px; }
+.node[data-lvl="3"] .title{ font-size:12.8px; }
+.node .sub{   fill:#a8b2c2; font-size:12.4px; text-rendering:geometricPrecision; }
+.node .badge{
+  fill:#07101a; font-weight:900; font-size:11px;
+  text-anchor:middle; dominant-baseline:middle; pointer-events:none;
+}
 
 /* Borde + glow por nivel (paleta acorde al sitio) */
 .node[data-lvl="0"] rect{
@@ -79,14 +93,6 @@
 .node[data-lvl="3"] rect{
   fill:rgba(155,226,176,.10); stroke:rgba(155,226,176,.4);
   filter: drop-shadow(0 0 10px rgba(155,226,176,.10)) drop-shadow(0 0 18px rgba(155,226,176,.06));
-}
-
-/* textos */
-.node .title{ fill:#e9eef6; font-weight:800; font-size:13.8px; letter-spacing:.1px; text-rendering:geometricPrecision; }
-.node .sub{   fill:#a8b2c2; font-size:12.4px; text-rendering:geometricPrecision; }
-.node .badge{
-  fill:#07101a; font-weight:900; font-size:11px;
-  text-anchor:middle; dominant-baseline:middle; pointer-events:none;
 }
 
 /* ==== Animación profesional de aparición/expansión ==== */
@@ -194,4 +200,3 @@ body.theme-tech .link.l3{ stroke:rgba(168,255,198,.6) }
   .node, .node .node-in{ transition:none; animation:none; filter:none; transform:none; opacity:1; }
   .node.moving{ transition:none; }
 }
-
