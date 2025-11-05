@@ -56,30 +56,38 @@ section.custom-section {
 .custom-section.show {
   animation: fadeUp 0.8s ease forwards;
 }
-/* ===== Separador superior para títulos de sección ===== */
-.section-title{
-  position: relative;      /* necesario para posicionar la línea */
-  padding-top: 18px;       /* deja hueco para la línea */
-  margin-top: 6px;         /* micro respiro con el bloque anterior */
+/* ===== Separador inferior profesional para títulos de sección ===== */
+.section-title {
+  position: relative;
+  padding-bottom: 18px;      /* deja espacio para la línea */
+  margin-bottom: 22px;       /* separación del contenido siguiente */
 }
 
-.section-title::before{
+/* Línea decorativa inferior */
+.section-title::after {
   content: "";
   position: absolute;
-  left: 0;                 /* si algún título va centrado, ver nota abajo */
-  top: 0;
-  width: min(140px, 30%);  /* línea corta y proporcional en móviles */
+  left: 0;
+  bottom: 0;
+  width: 180px;               /* 🔹 más larga: ajusta aquí si quieres */
   height: 3px;
   border-radius: 999px;
   background: linear-gradient(90deg,
-              rgba(255,159,26,.90) 0%,
-              rgba(255,159,26,.45) 55%,
+              rgba(255,159,26,.9) 0%,
+              rgba(255,215,154,.65) 45%,
               rgba(255,159,26,0) 100%);
-  box-shadow: 0 0 10px rgba(255,159,26,.25);
+  box-shadow:
+    0 0 10px rgba(255,159,26,.25),
+    0 0 20px rgba(255,159,26,.1);
 }
 
-/* Ajuste en pantallas pequeñas */
+/* 🔸 Versión para títulos centrados */
+.section-title.is-center::after {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Responsivo */
 @media (max-width: 720px){
-  .section-title{ padding-top: 14px; }
-  .section-title::before{ width: 110px; height: 2px; }
+  .section-title::after { width: 140px; height: 2px; }
 }
