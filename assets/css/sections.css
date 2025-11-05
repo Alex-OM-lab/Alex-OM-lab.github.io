@@ -98,4 +98,3 @@ section.custom-section{
 @media (max-width: 980px){
   .specialties-grid{grid-template-columns:1fr;gap:16px}
 }
-
