@@ -1,9 +1,22 @@
 /* =========================================================
-   SECTIONS.CSS — Layout y estilos de secciones
+   SECTIONS — estilo base de los bloques de página
+   (mantiene el tema oscuro cálido y no toca nav/hero/tools)
    ========================================================= */
 
-/* ---- Base de secciones ---- */
+:root{
+  --bg:#0b1220;
+  --panel:#111a2d;
+  --text:#e9eef6;
+  --muted:#a8b2c2;
+  --accent:#ff9f1a;
+  --accent-soft:#ffd79a;
+  --radius:14px;
+}
+
+/* contenedor general de contenido (ya existe en index) */
 .container{width:min(1100px,92%);margin:0 auto}
+
+/* secciones estándar */
 section{padding:26px 0}
 .section-title{
   font-size:clamp(24px,3vw,34px);
@@ -11,89 +24,45 @@ section{padding:26px 0}
   color:var(--accent);
   text-shadow:0 0 8px rgba(255,159,26,.25);
 }
-.kicker{color:var(--muted);margin:0 0 20px}
+.kicker{color:var(--muted);margin:0 0 16px}
 
-/* ---- Chips (se usan también en skills) ---- */
-.chips{display:flex;flex-wrap:wrap;gap:10px}
-.chip{
-  padding:8px 12px;border-radius:999px;
-  background:rgba(255,159,26,.12);
-  border:1px solid rgba(255,159,26,.35);
-  color:#ffe2b0;font-weight:600;font-size:14px
-}
-
-/* ---- Grids / tarjetas genéricas ---- */
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+/* Card compartida (mismo estilo que “Sobre mí”) */
 .card{
   background:linear-gradient(180deg,color-mix(in oklab,var(--panel) 92%,#0f1422 8%),var(--panel));
   border:1px solid rgba(255,255,255,.06);
   border-radius:var(--radius);
-  padding:16px
-}
-.project img{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:10px;border:1px solid rgba(255,255,255,.06)}
-.project h4{margin:10px 0 6px}
-.project p{margin:0;color:var(--muted)}
-.contact-box{display:grid;grid-template-columns:1.1fr .9fr;gap:22px}
-form{display:grid;gap:12px}
-input,textarea{background:#0c1323;color:var(--text);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:12px 14px;font-size:16px}
-textarea{min-height:140px;resize:vertical}
-@media (max-width:980px){.grid{grid-template-columns:1fr 1fr}.contact-box{grid-template-columns:1fr}}
-@media (max-width:620px){.grid{grid-template-columns:1fr}}
-
-/* =========================================================
-   ESPECIALIDADES — marco tipo “Sobre mí” SOLO en el texto
-   ========================================================= */
-
-/* Contenedor de tres columnas */
-#especialidades .grid-3{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:18px;
-}
-@media (max-width:980px){#especialidades .grid-3{grid-template-columns:1fr}}
-
-/* Títulos de cada bloque (sin marco) */
-#especialidades .specialty h3{
-  margin:0 0 10px;
-  font-size:18px;
-  color:#ffe2b0;
-  font-weight:700;
+  padding:16px;
 }
 
-/* Texto con el mismo marco que “Sobre mí” */
-#especialidades .specialty p{
-  background:linear-gradient(180deg,color-mix(in oklab,var(--panel) 92%,#0f1422 8%),var(--panel));
-  border:1px solid rgba(255,255,255,.06);
-  border-radius:var(--radius);
-  padding:12px 14px;
-  color:var(--text);
-  box-shadow:inset 0 0 10px rgba(0,0,0,.25);
-  line-height:1.6;
+/* Espaciado de párrafos dentro de cards de texto */
+.card > p{margin:0 0 10px}
+.card > p:last-child{margin-bottom:0}
+
+/* ======= Especialidades (3 columnas) ======= */
+.grid-3{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:18px
 }
 
-/* =========================================================
-   CÓMO INVESTIGO Y TRABAJO — marco SOLO en párrafos
-   (quita el <div class="card"> que envolvía a los <p>)
-   ========================================================= */
-
-#investigacion p{
-  background:linear-gradient(180deg,color-mix(in oklab,var(--panel) 92%,#0f1422 8%),var(--panel));
-  border:1px solid rgba(255,255,255,.06);
-  border-radius:var(--radius);
-  padding:12px 14px;
-  color:var(--text);
-  box-shadow:inset 0 0 10px rgba(0,0,0,.25);
-  line-height:1.7;
-  margin:10px 0;
+/* Título de cada especialidad encima de su caja */
+.specialty{
+  display:flex;flex-direction:column;gap:8px
+}
+.specialty-title{
+  margin:0; font-size:17px; font-weight:800; color:#ffe2b0;
 }
 
-/* Si algún párrafo lleva estilos inline antiguos, los respetamos;
-   pero este selector asegura el aspecto uniforme. */
-#investigacion p[style]{
-  background:linear-gradient(180deg,color-mix(in oklab,var(--panel) 92%,#0f1422 8%),var(--panel)) !important;
-  border:1px solid rgba(255,255,255,.06) !important;
-  border-radius:var(--radius) !important;
-  padding:12px 14px !important;
-  color:var(--text) !important;
-  box-shadow:inset 0 0 10px rgba(0,0,0,.25) !important;
+/* La caja gris sólo rodea el texto descriptivo */
+.specialty-text.card{
+  padding:14px;
+}
+
+/* ======= Cómo investigo y trabajo ======= */
+/* Un único cuadro gris para todo el texto (sin incluir el h2) */
+.investigacion-wrap.card{
+  padding:16px;
+}
+
+/* Responsive */
+@media (max-width:980px){
+  .grid-3{grid-template-columns:1fr}
 }
