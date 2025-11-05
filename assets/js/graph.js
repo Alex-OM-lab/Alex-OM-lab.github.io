@@ -1,10 +1,10 @@
-// /assets/js/graph.js — Versión PRO (Fase 1+2+3)
+// /assets/js/graph.js — Versión PRO (Fase 1+2+3) con ajuste dinámico de ancho de nodos
 // - Layout de columnas responsive
 // - Breadcrumb opcional (#graphBc)
 // - Resaltado de ruta + atenuación
-// - Pan/zoom manual (sin cámara inteligente)
+// - Pan/zoom manual
 // - Partículas ambientales SIN capturar eventos
-// - Micro-expansión (pulse) y flujo de enlaces permanente
+// - Animaciones (reveal + flow líneas)
 // - Toggle de tema (oscuro / técnico)
 
 const SiteGraph = (() => {
@@ -16,8 +16,9 @@ const SiteGraph = (() => {
     state:{ sel0:null, sel1:null, sel2:null },
     // layout dinámico
     colX:[120, 460, 940, 1300],
-    nodeW:[230, 250, 280, 260],
+    nodeW:[230, 250, 280, 260],      // base mínima por columna
     nodeH:56, vGap:22,
+    colStep:260,                     // ancho entre columnas (se recalcula)
     // pan/zoom
     tx:0, ty:0, scale:1, minScale:0.6, maxScale:2.0,
     // data
@@ -34,6 +35,13 @@ const SiteGraph = (() => {
   function ptSvg(x,y){ const p=G.svg.createSVGPoint(); p.x=x; p.y=y; return p; }
   function screenToRoot(x,y){ const p=ptSvg(x,y); const m=G.root.getScreenCTM(); return m ? p.matrixTransform(m.inverse()) : {x,y}; }
 
+  // ancho máximo útil de cada nodo (en función del ancho real entre columnas)
+  function clampNodeWidth(level, wNeeded){
+    const maxPerCol = Math.floor(G.colStep * 0.90);  // deja ~10% de aire entre columnas
+    const minBase   = G.nodeW[level];
+    return Math.max(minBase, Math.min(wNeeded, maxPerCol));
+  }
+
   // recalcula columnas según ancho disponible
   function relayoutColumns(){
     const bb = G.svg.getBoundingClientRect();
@@ -41,8 +49,10 @@ const SiteGraph = (() => {
     const marginX = 100;
     const usable = Math.max(900, bb.width - marginX*2);
     const step = usable / (L-1);
+    G.colStep = step;
     G.colX = Array.from({length:L}, (_,i)=> marginX + i*step);
-    G.nodeW = [230, 250, 280, 260].map(w=> Math.min(w, step*0.70));
+    // base mínima por columna (no el máximo)
+    G.nodeW = [230, 250, 280, 260].map(w=> Math.min(w, Math.floor(step*0.70)));
   }
 
   function ensureLayers(){
@@ -62,7 +72,7 @@ const SiteGraph = (() => {
     if(level<=3) clear(G.layers.links[2]);
   }
 
-  /* ====== Dibujo ====== */
+  /* ---------- DIBUJO DE NODO con ajuste de ancho ---------- */
   function drawNode({level,x,y,w,h,title,sub,onClick,delay=0}){
     const g = document.createElementNS(NS,'g');
     g.classList.add('node'); g.dataset.lvl=String(level);
@@ -73,20 +83,25 @@ const SiteGraph = (() => {
 
     const inner = document.createElementNS(NS,'g'); inner.classList.add('node-in'); g.appendChild(inner);
 
+    // base rect
     const r = document.createElementNS(NS,'rect');
     r.setAttribute('width', w); r.setAttribute('height', h);
     inner.appendChild(r);
 
+    // title
     const t = document.createElementNS(NS,'text');
     t.setAttribute('x', 14); t.setAttribute('y', 22); t.setAttribute('class','title'); t.textContent=title;
     inner.appendChild(t);
 
+    // subtitle opcional
+    let s = null;
     if(sub){
-      const s = document.createElementNS(NS,'text');
+      s = document.createElementNS(NS,'text');
       s.setAttribute('x', 14); s.setAttribute('y', 40); s.setAttribute('class','sub'); s.textContent=sub;
       inner.appendChild(s);
     }
 
+    // badge (nivel)
     const bkg = document.createElementNS(NS,'rect');
     bkg.setAttribute('x', w-34); bkg.setAttribute('y', 8);
     bkg.setAttribute('width', 22); bkg.setAttribute('height', 16);
@@ -98,9 +113,29 @@ const SiteGraph = (() => {
     bt.setAttribute('x', w-23); bt.setAttribute('y', 20); bt.setAttribute('class','badge'); bt.textContent=level;
     inner.appendChild(bt);
 
+    // ---- Ajuste dinámico del ancho según el texto real ----
+    // Medimos el ancho del texto una vez el nodo está en el DOM.
+    // padding: 14 izquierda + 14 derecha; bloque de badge ~34px (22 + 12 de margen)
+    const PAD_L = 14, PAD_R = 14, BADGE_BLOCK = 34;
+    const titleW = t.getBBox().width;
+    const subW   = s ? s.getBBox().width : 0;
+    const textW  = Math.max(titleW, subW);
+
+    let needed = PAD_L + textW + BADGE_BLOCK + PAD_R;
+    let finalW = clampNodeWidth(level, Math.ceil(needed));
+
+    // Aplicamos el ancho final y recolocamos badge
+    r.setAttribute('width', finalW);
+    bkg.setAttribute('x', finalW - BADGE_BLOCK);
+    bt.setAttribute('x', finalW - (BADGE_BLOCK - 11)); // centrado del número dentro de 22px
+
+    // Guardamos
+    const box = {x,y,w:finalW,h, el:g};
     G.layers.cols[level].appendChild(g);
+
+    // entrada diferida (para animación)
     requestAnimationFrame(()=> setTimeout(()=> g.classList.add('is-in'), delay));
-    return {x,y,w,h, el:g};
+    return box;
   }
 
   function drawLink(from,to,level,delay=0){
@@ -110,9 +145,9 @@ const SiteGraph = (() => {
     const dx = Math.max(60, (x2-x1)/2);
     path.setAttribute('d', `M ${x1} ${y1} C ${x1+dx} ${y1}, ${x2-dx} ${y2}, ${x2} ${y2}`);
     path.setAttribute('class', `link l${level}`);
-    path.classList.add('flow');          // flujo permanente
+    path.classList.add('flow');
     G.layers.links[level-1].appendChild(path);
-    setTimeout(()=> path.classList.add('draw'), delay); // aparición
+    setTimeout(()=> path.classList.add('draw'), delay);
     return path;
   }
 
@@ -155,7 +190,7 @@ const SiteGraph = (() => {
       box._link = drawLink(left, box, 1, 60+i*40);
       return box;
     });
-    // micro-pulse cuando aparecen
+    // el 'pulse' aquí no hace nada si no existe en CSS (no rompe)
     setTimeout(()=> { G.colsNodes[1].forEach(b=> b?.el.classList.add('pulse')); setTimeout(()=>G.colsNodes[1].forEach(b=> b?.el.classList.remove('pulse')), 360); }, 90);
   }
 
@@ -309,11 +344,7 @@ const SiteGraph = (() => {
     }
     const ctx = cvs.getContext('2d');
 
-    const P = {
-      w: 0, h: 0, dpr: Math.max(1, Math.min(2, window.devicePixelRatio || 1)),
-      pts: [],
-      tick: 0
-    };
+    const P = { w: 0, h: 0, dpr: Math.max(1, Math.min(2, window.devicePixelRatio || 1)), pts: [], tick: 0 };
 
     function colors(){
       const tech = document.body.classList.contains('theme-tech');
@@ -336,12 +367,9 @@ const SiteGraph = (() => {
 
     function spawn(c1,c2){
       return {
-        x: Math.random()*P.w,
-        y: Math.random()*P.h,
-        r: 0.6 + Math.random()*1.8,
-        a: 0.22 + Math.random()*0.38,
-        vx: (-0.15 + Math.random()*0.3),
-        vy: (-0.15 + Math.random()*0.3),
+        x: Math.random()*P.w, y: Math.random()*P.h,
+        r: 0.6 + Math.random()*1.8, a: 0.22 + Math.random()*0.38,
+        vx: (-0.15 + Math.random()*0.3), vy: (-0.15 + Math.random()*0.3),
         c: (Math.random()<0.5) ? c1 : c2
       };
     }
@@ -367,12 +395,8 @@ const SiteGraph = (() => {
     }
 
     window.addEventListener('resize', resize);
-    // al cambiar de tema, regeneramos colores
     window.addEventListener('graph-theme-change', resize);
-
-    resize();
-    step();
-    G._ambient = { cvs, ctx, resize };
+    resize(); step(); G._ambient = { cvs, ctx, resize };
   }
 
   /* ====== Pan/Zoom ====== */
@@ -418,7 +442,6 @@ const SiteGraph = (() => {
     if(!btn) return;
     const apply = (mode) => {
       document.body.classList.toggle('theme-tech', mode==='tech');
-      // notifica a partículas para recolorear
       window.dispatchEvent(new Event('graph-theme-change'));
       btn.textContent = document.body.classList.contains('theme-tech') ? 'Modo oscuro' : 'Modo técnico';
     };
@@ -426,7 +449,6 @@ const SiteGraph = (() => {
       const tech = !document.body.classList.contains('theme-tech');
       apply(tech ? 'tech' : 'dark');
     });
-    // estado inicial legible del botón
     apply(document.body.classList.contains('theme-tech') ? 'tech' : 'dark');
   }
 
