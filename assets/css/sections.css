@@ -1,122 +1,50 @@
-/* =========================================================
-   SECTIONS.CSS — Fondo restaurado + tarjetas unificadas
-   ========================================================= */
+/* =====================================================
+   SECCIONES GENERALES — Alejandro Orcajada Meseguer
+   (Diseño coherente con el tema oscuro cálido)
+   ===================================================== */
 
-/* ===== Fondo global (restaurado y con gradientes originales) ===== */
-body{
-  background:
-    radial-gradient(1400px 800px at 80% -100px, rgba(255,159,26,.06), transparent 60%),
-    radial-gradient(1200px 700px at -200px 20%, rgba(255,215,154,.05), transparent 60%),
-    #0b1220; /* var(--bg) */
-  color:#e9eef6; /* var(--text) */
-  font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,Inter,"Helvetica Neue",Arial;
-  -webkit-font-smoothing:antialiased;
-  -moz-osx-font-smoothing:grayscale;
+section.custom-section {
+  padding: 60px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-/* ===== Variables base ===== */
-:root{
-  --panel:#111a2d;
-  --text:#e9eef6;
-  --muted:#a8b2c2;
-  --accent:#ff9f1a;
-  --accent-soft:#ffd79a;
-  --radius:14px;
+section.custom-section:nth-of-type(even) {
+  background: rgba(255, 255, 255, 0.02);
 }
 
-/* ===== Contenedores de secciones ===== */
-.container{ width:min(1100px,92%); margin:0 auto; }
-section{ padding:26px 0; }
-
-/* ===== Títulos y subtítulos ===== */
-.section-title{
-  font-size:clamp(24px,3vw,34px);
-  margin:0 0 14px;
-  color:var(--accent);
-  text-shadow:0 0 8px rgba(255,159,26,.25);
-}
-.kicker{ color:var(--muted); margin:0 0 18px; }
-
-/* ===== Card universal (mismo estilo que “Sobre mí”) ===== */
-.card{
-  background:linear-gradient(
-    180deg,
-    color-mix(in oklab, var(--panel) 92%, #0f1422 8%),
-    var(--panel)
-  );
-  border:1px solid rgba(255,255,255,.06);
-  border-radius:12px;
-  padding:18px 20px;
-  box-shadow:0 12px 30px rgba(0,0,0,.35);
+.custom-section .container {
+  width: min(1100px, 92%);
+  margin: 0 auto;
 }
 
-/* ===== Párrafos dentro de cards ===== */
-.card p{ margin:0 0 10px; line-height:1.6; }
-.card p:last-child{ margin-bottom:0; }
-
-/* =========================================================
-   1️⃣  ESPECIALIDADES — UN SOLO CUADRO GRIS PARA TODO EL TEXTO
-   ========================================================= */
-#especialidades .card{
-  /* el marco abarca las tres columnas de texto */
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:18px;
-}
-#especialidades .item{
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-}
-#especialidades .item h3{
-  margin:0;
-  font-size:18px;
-  color:#ffe2b0;
+.custom-section h2.section-title {
+  font-size: clamp(26px, 3vw, 36px);
+  color: var(--accent);
+  margin-bottom: 12px;
+  text-shadow: 0 0 8px rgba(255, 159, 26, 0.3);
 }
 
-/* responsive */
-@media (max-width:980px){
-  #especialidades .card{ grid-template-columns:1fr 1fr; }
-}
-@media (max-width:640px){
-  #especialidades .card{ grid-template-columns:1fr; }
+.custom-section p.kicker {
+  color: var(--muted);
+  margin-bottom: 18px;
+  font-size: 1rem;
 }
 
-/* =========================================================
-   2️⃣  CÓMO INVESTIGO Y TRABAJO — UN SOLO MARCO GRIS
-   ========================================================= */
-#investigacion .card{
-  padding:18px 20px;
+.custom-section .content {
+  font-size: clamp(17px, 1.3vw, 20px);
+  line-height: 1.75;
+  color: var(--text);
+  max-width: 900px;
+  margin: 0 auto;
+  opacity: 0.95;
 }
 
-/* ===== Contacto y otros estilos reutilizables ===== */
-.project img{
-  width:100%;
-  aspect-ratio:16/10;
-  object-fit:cover;
-  border-radius:10px;
-  border:1px solid rgba(255,255,255,.06);
+/* Sutil animación al hacer scroll (scroll reveal base) */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
-.project h4{ margin:10px 0 6px; }
-.project p{ margin:0; color:var(--muted); }
 
-.contact-box{ display:grid; grid-template-columns:1.1fr .9fr; gap:22px; }
-@media (max-width:980px){ .contact-box{ grid-template-columns:1fr } }
-
-input,textarea{
-  background:#0c1323;
-  color:var(--text);
-  border:1px solid rgba(255,255,255,.12);
-  border-radius:10px;
-  padding:12px 14px;
-  font-size:16px;
-}
-textarea{ min-height:140px; resize:vertical; }
-
-footer{
-  padding:40px 0;
-  color:#a9b1bd;
-  text-align:center;
-  border-top:1px solid rgba(255,255,255,.06);
-  margin-top:10px;
+.custom-section.show {
+  animation: fadeUp 0.8s ease forwards;
 }
