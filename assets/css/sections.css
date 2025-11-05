@@ -22,7 +22,7 @@ section{padding:26px 0}
   color:#ffe2b0;font-weight:600;font-size:14px
 }
 
-/* ---- Grids de tarjetas genéricas ---- */
+/* ---- Grids / tarjetas genéricas ---- */
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
 .card{
   background:linear-gradient(180deg,color-mix(in oklab,var(--panel) 92%,#0f1422 8%),var(--panel));
@@ -41,67 +41,59 @@ textarea{min-height:140px;resize:vertical}
 @media (max-width:620px){.grid{grid-template-columns:1fr}}
 
 /* =========================================================
-   ESPECIALIDADES — SOLO EL TEXTO DENTRO DEL PANEL
-   (el h3 queda fuera del fondo)
+   ESPECIALIDADES — marco tipo “Sobre mí” SOLO en el texto
    ========================================================= */
 
-/* Contenedor de tres columnas (si ya lo tienes en HTML, lo respeto) */
-.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-@media (max-width:980px){ .grid-3{grid-template-columns:1fr} }
+/* Contenedor de tres columnas */
+#especialidades .grid-3{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px;
+}
+@media (max-width:980px){#especialidades .grid-3{grid-template-columns:1fr}}
 
-/* Títulos de cada especialidad */
+/* Títulos de cada bloque (sin marco) */
 #especialidades .specialty h3{
   margin:0 0 10px;
-  font-size:18px; line-height:1.3;
+  font-size:18px;
   color:#ffe2b0;
-  position:relative; z-index:2; /* por encima del ::before */
+  font-weight:700;
 }
 
-/* Quitamos el fondo global de la card SOLO aquí y dibujamos
-   un panel que empieza justo debajo del título */
-#especialidades .specialty{
-  position:relative;
-  background:transparent;       /* sin fondo en el contenedor */
-  border:none;                  /* sin borde en el contenedor */
-  padding:16px;                 /* mantiene separación interior */
-}
-
-/* Panel para el texto (excluye el h3) */
-#especialidades .specialty::before{
-  content:"";
-  position:absolute;
-  left:12px; right:12px;
-  /* top = padding superior (16) + altura aprox del título (26) + gap (8) */
-  top:calc(16px + 26px + 8px);
-  bottom:12px;
-  border-radius:12px;
-  background:linear-gradient(180deg,
-              color-mix(in oklab,var(--panel) 92%,#0f1422 8%),
-              var(--panel));
+/* Texto con el mismo marco que “Sobre mí” */
+#especialidades .specialty p{
+  background:linear-gradient(180deg,color-mix(in oklab,var(--panel) 92%,#0f1422 8%),var(--panel));
   border:1px solid rgba(255,255,255,.06);
-  box-shadow:0 8px 20px rgba(0,0,0,.25) inset;
-  pointer-events:none;
+  border-radius:var(--radius);
+  padding:12px 14px;
+  color:var(--text);
+  box-shadow:inset 0 0 10px rgba(0,0,0,.25);
+  line-height:1.6;
 }
 
-/* Asegura que el contenido (párrafos) quede por encima del panel */
-#especialidades .specialty > p{
-  position:relative; z-index:2;
-  margin:0 0 8px; color:var(--text);
+/* =========================================================
+   CÓMO INVESTIGO Y TRABAJO — marco SOLO en párrafos
+   (quita el <div class="card"> que envolvía a los <p>)
+   ========================================================= */
+
+#investigacion p{
+  background:linear-gradient(180deg,color-mix(in oklab,var(--panel) 92%,#0f1422 8%),var(--panel));
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:var(--radius);
+  padding:12px 14px;
+  color:var(--text);
+  box-shadow:inset 0 0 10px rgba(0,0,0,.25);
+  line-height:1.7;
+  margin:10px 0;
 }
-#especialidades .specialty > p:last-child{ margin-bottom:0 }
 
-/* Un poco de “aire” bajo el título, ya lo contamos en el top del ::before,
-   pero añadimos margen visual por si el render de fuentes varía */
-#especialidades .specialty h3 + p{ margin-top:2px }
-
-/* =========================================================
-   SOBRE MÍ — se mantiene con la .card original (sin cambios)
-   ========================================================= */
-
-/* Nada aquí: “Sobre mí” usa .card estándar del bloque de arriba */
-
-
-/* =========================================================
-   “Herramientas y Lenguajes” y otras secciones
-   (no se tocan en este archivo; se estilizan en sus CSS propios)
-   ========================================================= */
+/* Si algún párrafo lleva estilos inline antiguos, los respetamos;
+   pero este selector asegura el aspecto uniforme. */
+#investigacion p[style]{
+  background:linear-gradient(180deg,color-mix(in oklab,var(--panel) 92%,#0f1422 8%),var(--panel)) !important;
+  border:1px solid rgba(255,255,255,.06) !important;
+  border-radius:var(--radius) !important;
+  padding:12px 14px !important;
+  color:var(--text) !important;
+  box-shadow:inset 0 0 10px rgba(0,0,0,.25) !important;
+}
