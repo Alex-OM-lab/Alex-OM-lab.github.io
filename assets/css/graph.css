@@ -107,7 +107,7 @@
   will-change: transform, opacity;
 }
 .node.is-in .node-in{
-  animation: node-in-smooth .81s cubic-bezier(.2,.8,.2,1) forwards; /* puedes ajustar la duración */
+  animation: node-in-smooth .81s cubic-bezier(.2,.8,.2,1) forwards;
 }
 @keyframes node-in-smooth{
   from { opacity:0; transform: translateY(8px); }
@@ -128,7 +128,7 @@
 .graph-stage.panel-on .sleep{ opacity:1 !important; filter:none !important; }
 .graph-stage.panel-on .link.sleep{ animation-play-state: running !important; }
 
-/* Ruta viva: respiro tenue + pulso al cambiar nivel */
+/* Ruta viva */
 .link.breathe{
   animation: link-breathe 4.5s ease-in-out infinite, flow 10s linear infinite;
 }
@@ -145,7 +145,7 @@
   100%{ stroke-width:2; }
 }
 
-/* Atenuación clásica (se mantiene para otros efectos) */
+/* Atenuación clásica */
 .dim-node{ opacity:.34; }
 .dim-link{ opacity:.28; }
 
