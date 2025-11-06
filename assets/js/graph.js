@@ -1,5 +1,5 @@
-// graph.js — sin cambios de lógica salvo:
-// - Nivel 0 visible al inicio (no "sleep" si no hay selección)
+// graph.js — Stagger + Ruta viva + Búsqueda + Breadcrumb + Dormir/Despertar.
+// Entrada sutil: se apoya en los keyframes node-in-smooth del CSS.
 
 const SiteGraph = (() => {
   const NS = 'http://www.w3.org/2000/svg';
@@ -254,7 +254,7 @@ const SiteGraph = (() => {
     G.root.querySelectorAll('.node').forEach(n=>n.classList.add('sleep'));
     G.root.querySelectorAll('.link').forEach(l=>l.classList.add('sleep'));
 
-    // ---- NUEVO: si no hay selección, mantener visibles los de nivel 0 ----
+    // Si no hay selección, mantener visibles los de nivel 0
     if (G.state.sel0 == null && G.colsNodes[0]?.length){
       G.colsNodes[0].forEach(b=> b?.el.classList.remove('sleep'));
     }
@@ -289,8 +289,7 @@ const SiteGraph = (() => {
 
   function rememberSel(){ G.prevSel = { sel0:G.state.sel0, sel1:G.state.sel1, sel2:G.state.sel2 }; }
 
-  /* ===== Breadcrumb / Ruta viva / Búsqueda / Pan-zoom / Tema ===== */
-  // (sin cambios respecto a tu versión previa)
+  /* ===== Breadcrumb ===== */
   function updateBreadcrumb(initial=false){
     if(!G.bcEl) return;
     const parts=[];
@@ -310,6 +309,7 @@ const SiteGraph = (() => {
     else { G.bcEl.classList.remove('bc-in'); requestAnimationFrame(()=> requestAnimationFrame(()=> G.bcEl.classList.add('bc-in'))); }
   }
 
+  /* ===== Ruta viva ===== */
   function routeVibes(){
     G.root.querySelectorAll('.link.breathe').forEach(l=> l.classList.remove('breathe'));
     const actives=[]; if(G.state.sel1!=null){ const n1=G.colsNodes[1][G.state.sel1]; if(n1?._link) actives.push(n1._link); }
@@ -318,6 +318,7 @@ const SiteGraph = (() => {
     actives.forEach(l=> l.classList.add('breathe'));
   }
 
+  /* ===== Búsqueda (⌘/Ctrl+K) ===== */
   function buildSearchUI(){
     const box=document.createElement('div');
     box.className='graph-search';
@@ -352,6 +353,7 @@ const SiteGraph = (() => {
     hits.forEach(n=> n.classList.add('search-hit'));
   }
 
+  /* ===== Pan/Zoom ===== */
   function enablePanZoom(){
     let dragging=false, start, startTx, startTy;
     G.svg.addEventListener('mousedown',(e)=>{
@@ -378,6 +380,7 @@ const SiteGraph = (() => {
     G.stage.addEventListener('dblclick',()=>{ G.scale=1; G.tx=0; G.ty=0; applyTransform(); });
   }
 
+  /* ===== Glow cursor ===== */
   function setupGlow(){
     const defs=document.createElementNS(NS,'defs');
     const grad=document.createElementNS(NS,'radialGradient');
@@ -398,6 +401,7 @@ const SiteGraph = (() => {
     G.stage.addEventListener('mouseleave',()=> c.setAttribute('opacity','0'));
   }
 
+  /* ===== Partículas ===== */
   function ensureAmbientParticles(){
     if (!G.stage || G._ambient) return;
     const cvs=document.createElement('canvas');
@@ -431,6 +435,7 @@ const SiteGraph = (() => {
     resize(); step(); G._ambient={ cvs, ctx, resize };
   }
 
+  /* ===== Toggle de tema ===== */
   function setupThemeToggle(){
     const btn=document.getElementById('graphThemeToggle'); if(!btn) return;
     const apply=(mode)=>{ document.body.classList.toggle('theme-tech', mode==='tech'); window.dispatchEvent(new Event('graph-theme-change')); btn.textContent=document.body.classList.contains('theme-tech')?'Modo oscuro':'Modo técnico'; };
@@ -438,6 +443,7 @@ const SiteGraph = (() => {
     apply(document.body.classList.contains('theme-tech')?'tech':'dark');
   }
 
+  /* ===== API ===== */
   function init({ tree, stageId, svgId, rootId } = {}){
     G.TREE = tree || window.GRAPH_TREE || [];
     const _stage=stageId||'graphStage', _svg=svgId||'graphSvg', _root=rootId||'graphRoot';
@@ -454,10 +460,5 @@ const SiteGraph = (() => {
     });
   }
 
-  /* helpers que usa init */
-  function renderFrom(level){ /* ya definido arriba */ }
-  function renderInit(){ /* ya definido arriba */ }
-
   return { init };
 })();
-
