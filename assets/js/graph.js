@@ -1,3 +1,4 @@
+<script>
 // graph.js — Stagger + Ruta viva + Búsqueda + Breadcrumb + Dormir/Despertar.
 // Entrada sutil: se apoya en los keyframes node-in-smooth del CSS.
 
@@ -117,7 +118,15 @@ const SiteGraph = (() => {
     g.setAttribute('transform',`translate(${x},${y})`);
     g.addEventListener('mouseenter',()=>g.classList.add('hovered'));
     g.addEventListener('mouseleave',()=>g.classList.remove('hovered'));
-    if(onClick) g.addEventListener('click', onClick);
+
+    // Envolvemos el onClick para añadir el "pulso de confirmación"
+    const handleClick = ()=>{
+      // pulso sutil 150ms (CSS .node.confirm)
+      g.classList.add('confirm');
+      setTimeout(()=> g.classList.remove('confirm'), 160);
+      if(onClick) onClick();
+    };
+    if(onClick) g.addEventListener('click', handleClick);
 
     const inner=document.createElementNS(NS,'g'); inner.classList.add('node-in'); g.appendChild(inner);
 
@@ -241,7 +250,7 @@ const SiteGraph = (() => {
     relayoutColumns();
     renderL0();
     applyTransform();
-    setupGlow();
+    setupDefs();       // << añade gradientes para enlaces y glow cursor
     ensureAmbientParticles();
     buildSearchUI();
     updateBreadcrumb(true);
@@ -380,19 +389,45 @@ const SiteGraph = (() => {
     G.stage.addEventListener('dblclick',()=>{ G.scale=1; G.tx=0; G.ty=0; applyTransform(); });
   }
 
-  /* ===== Glow cursor ===== */
-  function setupGlow(){
+  /* ===== Defs: glow cursor + gradientes de enlaces ===== */
+  function setupDefs(){
     const defs=document.createElementNS(NS,'defs');
-    const grad=document.createElementNS(NS,'radialGradient');
-    grad.setAttribute('id','glowGrad'); grad.setAttribute('cx','50%'); grad.setAttribute('cy','50%'); grad.setAttribute('r','50%');
+
+    // Glow del cursor
+    const gradGlow=document.createElementNS(NS,'radialGradient');
+    gradGlow.setAttribute('id','glowGrad'); gradGlow.setAttribute('cx','50%'); gradGlow.setAttribute('cy','50%'); gradGlow.setAttribute('r','50%');
     const s1=document.createElementNS(NS,'stop'); s1.setAttribute('offset','0%'); s1.setAttribute('stop-color','rgba(255,159,26,.14)');
     const s2=document.createElementNS(NS,'stop'); s2.setAttribute('offset','60%'); s2.setAttribute('stop-color','rgba(255,159,26,.06)');
     const s3=document.createElementNS(NS,'stop'); s3.setAttribute('offset','100%'); s3.setAttribute('stop-color','rgba(255,159,26,0)');
-    grad.append(s1,s2,s3); defs.appendChild(grad); G.svg.prepend(defs);
+    gradGlow.append(s1,s2,s3);
+
+    // Gradiente direccional para enlaces activos (modo normal)
+    const gLink=document.createElementNS(NS,'linearGradient');
+    gLink.setAttribute('id','linkGrad');
+    gLink.setAttribute('x1','0%'); gLink.setAttribute('y1','0%');
+    gLink.setAttribute('x2','100%'); gLink.setAttribute('y2','0%');
+    const gls1=document.createElementNS(NS,'stop'); gls1.setAttribute('offset','0%');   gls1.setAttribute('stop-color','rgba(255,159,26,.95)');
+    const gls2=document.createElementNS(NS,'stop'); gls2.setAttribute('offset','100%'); gls2.setAttribute('stop-color','rgba(255,159,26,.45)');
+    gLink.append(gls1,gls2);
+
+    // Gradiente para modo técnico (verde)
+    const gLinkTech=document.createElementNS(NS,'linearGradient');
+    gLinkTech.setAttribute('id','linkGradTech');
+    gLinkTech.setAttribute('x1','0%'); gLinkTech.setAttribute('y1','0%');
+    gLinkTech.setAttribute('x2','100%'); gLinkTech.setAttribute('y2','0%');
+    const gts1=document.createElementNS(NS,'stop'); gts1.setAttribute('offset','0%');   gts1.setAttribute('stop-color','rgba(0,230,118,.95)');
+    const gts2=document.createElementNS(NS,'stop'); gts2.setAttribute('offset','100%'); gts2.setAttribute('stop-color','rgba(0,230,118,.45)');
+    gLinkTech.append(gts1,gts2);
+
+    defs.append(gradGlow, gLink, gLinkTech);
+    G.svg.prepend(defs);
+
+    // Círculo de glow que sigue al cursor
     const c=document.createElementNS(NS,'circle');
     c.setAttribute('id','cursorGlow'); c.setAttribute('r','120'); c.setAttribute('fill','url(#glowGrad)'); c.setAttribute('opacity','0');
     c.style.mixBlendMode='screen'; c.style.pointerEvents='none';
-    G.layers.ui.appendChild(c);
+    ensureLayers(); G.layers.ui.appendChild(c);
+
     G.stage.addEventListener('mousemove',(e)=>{
       const p=screenToRoot(e.clientX,e.clientY);
       c.setAttribute('cx',p.x); c.setAttribute('cy',p.y);
@@ -462,4 +497,4 @@ const SiteGraph = (() => {
 
   return { init };
 })();
-
+</script>
