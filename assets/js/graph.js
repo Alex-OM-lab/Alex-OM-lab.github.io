@@ -1,35 +1,20 @@
-// graph.js — Árbol abierto + límite 6/6 + iluminación por rama + botón “Encender panel”
+// graph.js — Stagger + Ruta viva + Búsqueda + Breadcrumb + Dormir/Despertar.
+// Entrada sutil: se apoya en los keyframes node-in-smooth del CSS.
 
 const SiteGraph = (() => {
   const NS = 'http://www.w3.org/2000/svg';
-  const MAX_L2 = 6; // máximo de carpetas (nivel 2) por cada área
-  const MAX_L3 = 6; // máximo de artículos (nivel 3) por cada carpeta
 
   const G = {
     svg:null, root:null, stage:null,
     layers:null, colsNodes:[[],[],[],[]],
     state:{ sel0:null, sel1:null, sel2:null },
     prevSel:{ sel0:null, sel1:null, sel2:null },
-
-    // mapas global->local
-    mapL1:[], mapL2:[], mapL3:[],
-
-    // Layout
     colX:[120, 460, 940, 1300],
     nodeW:[230, 250, 280, 260],
     nodeH:56, vGap:22, colStep:260,
-
-    // pan/zoom
     tx:0, ty:0, scale:1, minScale:0.6, maxScale:2.0,
-
-    // data
     TREE:null,
-
-    // UI
     bcEl:null, searchUI:null, searchInput:null,
-
-    // flags
-    allOpen:true,
     _ambient:null,
   };
 
@@ -64,13 +49,13 @@ const SiteGraph = (() => {
     const ui=mk('uiLayer');
     G.layers = { cols:[col0,col1,col2,col3], links:[links01,links12,links23], ui };
     G.colsNodes=[[],[],[],[]];
-    G.mapL1=[]; G.mapL2=[]; G.mapL3=[];
   }
 
-  function clearAll(){
-    clear(G.layers.cols[0]); clear(G.layers.cols[1]); clear(G.layers.cols[2]); clear(G.layers.cols[3]);
-    clear(G.layers.links[0]); clear(G.layers.links[1]); clear(G.layers.links[2]);
-    G.colsNodes=[[],[],[],[]]; G.mapL1=[]; G.mapL2=[]; G.mapL3=[];
+  function clearFrom(level){
+    for(let i=level;i<4;i++){ clear(G.layers.cols[i]); G.colsNodes[i]=[]; }
+    if(level<=1) clear(G.layers.links[0]);
+    if(level<=2) clear(G.layers.links[1]);
+    if(level<=3) clear(G.layers.links[2]);
   }
 
   /* ====== Texto (wrap 2 líneas + elipsis + tooltip) ====== */
@@ -125,11 +110,10 @@ const SiteGraph = (() => {
   }
 
   /* ====== Dibujo ====== */
-  function drawNode({level,x,y,w,h,title,sub,onClick,delay=0, parentEl=null}){
+  function drawNode({level,x,y,w,h,title,sub,onClick,delay=0}){
     const g = document.createElementNS(NS,'g');
     g.classList.add('node','sleep');
     g.dataset.lvl=String(level);
-    g._parent = parentEl;               // referencia al padre para iluminar ramas
     g.setAttribute('transform',`translate(${x},${y})`);
     g.addEventListener('mouseenter',()=>g.classList.add('hovered'));
     g.addEventListener('mouseleave',()=>g.classList.remove('hovered'));
@@ -147,9 +131,10 @@ const SiteGraph = (() => {
     G.layers.cols[level].appendChild(g);
     fitNodeContent(g, level, t, s, r, bkg, bt);
 
+    // Entrada (CSS controla duración). Stagger por delay.
     requestAnimationFrame(()=> setTimeout(()=> g.classList.add('is-in'), delay));
 
-    return {x,y,w:parseFloat(r.getAttribute('width')),h, el:g, _parent: parentEl };
+    return {x,y,w:parseFloat(r.getAttribute('width')),h, el:g};
   }
 
   function drawLink(from,to,level,delay=0){
@@ -159,7 +144,6 @@ const SiteGraph = (() => {
     const dx=Math.max(60,(x2-x1)/2);
     path.setAttribute('d',`M ${x1} ${y1} C ${x1+dx} ${y1}, ${x2-dx} ${y2}, ${x2} ${y2}`);
     path.setAttribute('class',`link l${level} sleep`);
-    path._from = from.el; // referencia al nodo padre
     path.classList.add('flow');
     G.layers.links[level-1].appendChild(path);
     setTimeout(()=> path.classList.add('draw'), delay);
@@ -173,152 +157,134 @@ const SiteGraph = (() => {
     return ix=> y0 + ix*(G.nodeH+G.vGap);
   }
 
-  /* ===== Render: TODO ABIERTO con límites ===== */
+  /* ===== Render (stagger) ===== */
   const STAGGER_BASE=30, STAGGER_STEP=30;
 
-  function renderAllOpen(){
-    clearAll();
+  function renderL0(){
+    clearFrom(0);
     if(!G.TREE?.length) return;
-
-    // Totales con límite por nivel
-    const roots = G.TREE.map(r=>r.raiz);
-    const totalAreas = G.TREE.reduce((acc,r)=> acc + (r.areas?.length||0), 0);
-    const totalSubs  = G.TREE.reduce((acc,r)=> acc + (r.areas||[]).reduce((a,ar)=> a + Math.min(MAX_L2, (ar.subcarpetas?.length||0)),0), 0);
-    const totalItems = G.TREE.reduce((acc,r)=> acc + (r.areas||[]).reduce((a,ar)=> a + (ar.subcarpetas||[]).slice(0,MAX_L2).reduce((b,sc)=>{
-      const items = (window.GRAPH_MAKE_SIX ? window.GRAPH_MAKE_SIX(sc) : []);
-      return b + Math.min(MAX_L3, items.length);
-    },0),0), 0);
-
-    const y0 = layoutY(roots.length);
-    const y1 = layoutY(totalAreas);
-    const y2 = layoutY(totalSubs);
-    const y3 = layoutY(totalItems);
-
-    let ix0=0, ix1=0, ix2=0, ix3=0;
-
-    // --- Nivel 0 ---
-    const L0 = G.colsNodes[0] = roots.map((txt,i)=>{
+    const roots=G.TREE.map(r=>r.raiz);
+    const yAt=layoutY(roots.length);
+    G.colsNodes[0]=roots.map((txt,i)=>{
       const box=drawNode({
-        level:0, x:G.colX[0], y:y0(ix0++), w:G.nodeW[0], h:G.nodeH, title:txt,
-        onClick:()=>{ G.state.sel0=i; G.state.sel1=null; G.state.sel2=null; rememberSel(); updateBreadcrumb(); wakeBranch(true); routeVibes(); }
+        level:0, x:G.colX[0], y:yAt(i), w:G.nodeW[0], h:G.nodeH, title:txt,
+        onClick:()=>{ G.state.sel0=i; G.state.sel1=null; G.state.sel2=null; rememberSel(); updateBreadcrumb(); renderFrom(1); wakeBranch(true); routeVibes(); },
+        delay:STAGGER_BASE + i*STAGGER_STEP
       });
       return box;
     });
-
-    // --- Nivel 1 ---
-    G.TREE.forEach((r,ri)=>{
-      (r.areas||[]).forEach((a,aj)=>{
-        const box=drawNode({
-          level:1, x:G.colX[1], y:y1(ix1), w:G.nodeW[1], h:G.nodeH, title:a.nombre,
-          parentEl: L0[ri].el,
-          onClick:()=>{ G.state.sel0=ri; G.state.sel1=ix1; G.state.sel2=null; rememberSel(); updateBreadcrumb(); wakeBranch(true); routeVibes(); },
-          delay: STAGGER_BASE + (ix1%10)*STAGGER_STEP
-        });
-        box._link = drawLink(L0[ri], box, 1, STAGGER_BASE + (ix1%10)*STAGGER_STEP);
-        G.colsNodes[1].push(box);
-        G.mapL1[ix1] = {root:ri, area:aj};
-        ix1++;
-      });
-    });
-
-    // --- Nivel 2 (capado a 6 por área) ---
-    const L1 = G.colsNodes[1];
-    let areaGlobal=0;
-    G.TREE.forEach((r,ri)=>{
-      (r.areas||[]).forEach((a,aj)=>{
-        const left = L1[areaGlobal];
-        (a.subcarpetas||[]).slice(0,MAX_L2).forEach((s,sk)=>{
-          const box=drawNode({
-            level:2, x:G.colX[2], y:y2(ix2), w:G.nodeW[2], h:G.nodeH, title:s,
-            parentEl: left.el,
-            onClick:()=>{ G.state.sel0=ri; G.state.sel1=areaGlobal; G.state.sel2=ix2; rememberSel(); updateBreadcrumb(); wakeBranch(true); routeVibes(); },
-            delay: STAGGER_BASE + (ix2%10)*STAGGER_STEP
-          });
-          box._link = drawLink(left, box, 2, STAGGER_BASE + (ix2%10)*STAGGER_STEP);
-          G.colsNodes[2].push(box);
-          G.mapL2[ix2] = {root:ri, area:aj, sub:sk, areaGlobal};
-          ix2++;
-        });
-        areaGlobal++;
-      });
-    });
-
-    // --- Nivel 3 (capado a 6 por subcarpeta) ---
-    const L2 = G.colsNodes[2];
-    let subGlobal=0;
-    G.TREE.forEach((r,ri)=>{
-      (r.areas||[]).forEach((a,aj)=>{
-        (a.subcarpetas||[]).slice(0,MAX_L2).forEach((s,sk)=>{
-          const left = L2[subGlobal];
-          const allItems = (window.GRAPH_MAKE_SIX ? window.GRAPH_MAKE_SIX(s) : []);
-          allItems.slice(0,MAX_L3).forEach((txt,ti)=>{
-            const box=drawNode({
-              level:3, x:G.colX[3], y:y3(ix3), w:G.nodeW[3], h:G.nodeH, title:txt, sub:"↗",
-              parentEl: left?.el || null,
-              onClick:()=>{/* futuro: abrir enlace */},
-              delay: STAGGER_BASE + (ix3%10)*STAGGER_STEP
-            });
-            if(left){
-              box._link = drawLink(left, box, 3, STAGGER_BASE + (ix3%10)*STAGGER_STEP);
-            }
-            G.colsNodes[3].push(box);
-            G.mapL3[ix3] = {root:ri, area:aj, sub:sk, item:ti, subGlobal};
-            ix3++;
-          });
-          subGlobal++;
-        });
-      });
-    });
-
-    applySleepState();
-    // mantener L0 visible
-    G.colsNodes[0].forEach(b=> b?.el.classList.remove('sleep'));
   }
 
-  /* ===== Dormir/Despertar con filtros por padre ===== */
+  function renderL1(){
+    clearFrom(1);
+    if(G.state.sel0==null) return;
+    const areas=(G.TREE[G.state.sel0].areas||[]).map(a=>a.nombre);
+    const yAt=layoutY(areas.length);
+    const left=G.colsNodes[0][G.state.sel0];
+    G.colsNodes[1]=areas.map((txt,i)=>{
+      const box=drawNode({
+        level:1, x:G.colX[1], y:yAt(i), w:G.nodeW[1], h:G.nodeH, title:txt,
+        onClick:()=>{ G.state.sel1=i; G.state.sel2=null; rememberSel(); updateBreadcrumb(); renderFrom(2); wakeBranch(true); routeVibes(); },
+        delay:STAGGER_BASE + i*STAGGER_STEP
+      });
+      box._link=drawLink(left, box, 1, STAGGER_BASE + i*STAGGER_STEP);
+      return box;
+    });
+  }
+
+  function renderL2(){
+    clearFrom(2);
+    if(G.state.sel0==null || G.state.sel1==null) return;
+    const subs=(G.TREE[G.state.sel0].areas[G.state.sel1].subcarpetas||[]);
+    const yAt=layoutY(subs.length);
+    const left=G.colsNodes[1][G.state.sel1];
+    G.colsNodes[2]=subs.map((txt,i)=>{
+      const box=drawNode({
+        level:2, x:G.colX[2], y:yAt(i), w:G.nodeW[2], h:G.nodeH, title:txt,
+        onClick:()=>{ G.state.sel2=i; rememberSel(); updateBreadcrumb(); renderFrom(3); wakeBranch(true); routeVibes(); },
+        delay:STAGGER_BASE + i*STAGGER_STEP
+      });
+      box._link=drawLink(left, box, 2, STAGGER_BASE + i*STAGGER_STEP);
+      return box;
+    });
+  }
+
+  function renderL3(){
+    clearFrom(3);
+    if(G.state.sel0==null || G.state.sel1==null || G.state.sel2==null) return;
+    const subs=(G.TREE[G.state.sel0].areas[G.state.sel1].subcarpetas||[]);
+    const items=(window.GRAPH_MAKE_SIX ? window.GRAPH_MAKE_SIX(subs[G.state.sel2]) : []);
+    const yAt=layoutY(items.length);
+    const left=G.colsNodes[2][G.state.sel2];
+    G.colsNodes[3]=items.map((txt,i)=>{
+      const box=drawNode({
+        level:3, x:G.colX[3], y:yAt(i), w:G.nodeW[3], h:G.nodeH, title:txt, sub:"↗",
+        onClick:()=>{/* futuro: abrir enlace */},
+        delay:STAGGER_BASE + i*STAGGER_STEP
+      });
+      box._link=drawLink(left, box, 3, STAGGER_BASE + i*STAGGER_STEP);
+      return box;
+    });
+  }
+
+  function renderFrom(level){
+    ensureLayers();
+    if(level<=1) renderL1();
+    if(level<=2) renderL2();
+    if(level<=3) renderL3();
+    applyTransform();
+    applySleepState();
+  }
+
+  function renderInit(){
+    ensureLayers();
+    relayoutColumns();
+    renderL0();
+    applyTransform();
+    setupGlow();
+    ensureAmbientParticles();
+    buildSearchUI();
+    updateBreadcrumb(true);
+    applySleepState();
+  }
+
+  /* ===== Dormir/Despertar ===== */
   function applySleepState(){
+    // Marcar todo como "dormido"
     G.root.querySelectorAll('.node').forEach(n=>n.classList.add('sleep'));
     G.root.querySelectorAll('.link').forEach(l=>l.classList.add('sleep'));
+
+    // Si no hay selección, mantener visibles los de nivel 0
     if (G.state.sel0 == null && G.colsNodes[0]?.length){
       G.colsNodes[0].forEach(b=> b?.el.classList.remove('sleep'));
     }
+
+    // Despertar rama activa (si la hay)
     wakeBranch(false);
   }
 
   function wakeBranch(withEffect=true){
-    // apaga todo
-    G.root.querySelectorAll('.node').forEach(n=>n.classList.add('sleep'));
-    G.root.querySelectorAll('.link').forEach(l=>l.classList.add('sleep'));
-
-    // siempre L0 visible
-    G.colsNodes[0].forEach(b=> b?.el.classList.remove('sleep'));
-
-    const actNodes=[], actLinks=[];
-    const selL0 = G.colsNodes[0][G.state.sel0||0]?.el; // por si hay solo click en L1/L2
-
-    if(G.state.sel0!=null){
-      const n0 = G.colsNodes[0][G.state.sel0];
-      if(n0){ actNodes.push(n0.el); }
-      // áreas hijas de ese L0
-      G.colsNodes[1].forEach(b=>{ if(b && b._parent===n0.el){ actNodes.push(b.el); if(b._link) actLinks.push(b._link); } });
-    }
-
+    const activeNodes=[], activeLinks=[];
+    if(G.state.sel0!=null){ const n0=G.colsNodes[0][G.state.sel0]; if(n0){ activeNodes.push(n0.el); } }
     if(G.state.sel1!=null){
-      const a = G.colsNodes[1][G.state.sel1];
-      if(a){ actNodes.push(a.el); if(a._link) actLinks.push(a._link); }
-      // subcarpetas hijas de esa área
-      G.colsNodes[2].forEach(b=>{ if(b && b._parent===a.el){ actNodes.push(b.el); if(b._link) actLinks.push(b._link); } });
+      const n1=G.colsNodes[1][G.state.sel1]; if(n1){ activeNodes.push(n1.el); if(n1._link) activeLinks.push(n1._link); }
+    } else if(G.state.sel0!=null){
+      G.colsNodes[1].forEach(b=>{ if(b){ activeNodes.push(b.el); if(b._link) activeLinks.push(b._link); } });
     }
-
     if(G.state.sel2!=null){
-      const s = G.colsNodes[2][G.state.sel2];
-      if(s){ actNodes.push(s.el); if(s._link) actLinks.push(s._link); }
-      // items hijos de esa subcarpeta
-      G.colsNodes[3].forEach(b=>{ if(b && b._parent===s.el){ actNodes.push(b.el); if(b._link) actLinks.push(b._link); } });
+      const n2=G.colsNodes[2][G.state.sel2]; if(n2){ activeNodes.push(n2.el); if(n2._link) activeLinks.push(n2._link); }
+      G.colsNodes[3].forEach(b=>{ if(b){ activeNodes.push(b.el); if(b._link) activeLinks.push(b._link); } });
+    } else if(G.state.sel1!=null){
+      G.colsNodes[2].forEach(b=>{ if(b){ activeNodes.push(b.el); if(b._link) activeLinks.push(b._link); } });
     }
-
-    actNodes.forEach(el=>{ el.classList.remove('sleep'); if(withEffect){ el.classList.add('wake'); setTimeout(()=> el.classList.remove('wake'), 420); } });
-    actLinks.forEach(el=>{ el.classList.remove('sleep'); el.classList.add('breathe'); if(withEffect && (changedLevel(0)||changedLevel(1)||changedLevel(2))){ el.classList.add('pulse-once'); setTimeout(()=> el.classList.remove('pulse-once'), 900); } });
+    activeNodes.forEach(el=>{ el.classList.remove('sleep'); if(withEffect){ el.classList.add('wake'); setTimeout(()=> el.classList.remove('wake'), 420); } });
+    activeLinks.forEach(el=>{
+      el.classList.remove('sleep');
+      el.classList.add('breathe');
+      if(withEffect && (changedLevel(0)||changedLevel(1)||changedLevel(2))){
+        el.classList.add('pulse-once'); setTimeout(()=> el.classList.remove('pulse-once'), 900);
+      }
+    });
   }
 
   function rememberSel(){ G.prevSel = { sel0:G.state.sel0, sel1:G.state.sel1, sel2:G.state.sel2 }; }
@@ -327,22 +293,12 @@ const SiteGraph = (() => {
   function updateBreadcrumb(initial=false){
     if(!G.bcEl) return;
     const parts=[];
-    if(G.state.sel0!=null){
-      const r = G.TREE[G.state.sel0];
-      parts.push({t:r.raiz, cb:()=>{ G.state.sel1=null; G.state.sel2=null; rememberSel(); updateBreadcrumb(); wakeBranch(true); routeVibes(); }});
-    }
-    if(G.state.sel1!=null){
-      const map = G.mapL1[G.state.sel1];
-      const r = G.TREE[map.root];
-      const a = r.areas[map.area];
-      parts.push({t:a.nombre, cb:()=>{ G.state.sel2=null; rememberSel(); updateBreadcrumb(); wakeBranch(true); routeVibes(); }});
-    }
+    if(G.state.sel0!=null) parts.push({t:G.TREE[G.state.sel0].raiz, cb:()=>{G.state.sel1=null; G.state.sel2=null; rememberSel(); renderFrom(1); wakeBranch(true); routeVibes(); }});
+    if(G.state.sel1!=null) parts.push({t:G.TREE[G.state.sel0].areas[G.state.sel1].nombre, cb:()=>{G.state.sel2=null; rememberSel(); renderFrom(2); wakeBranch(true); routeVibes(); }});
     if(G.state.sel2!=null){
-      const map = G.mapL2[G.state.sel2];
-      const name = G.TREE[map.root].areas[map.area].subcarpetas[map.sub];
-      parts.push({t:name, cb:()=>{ rememberSel(); updateBreadcrumb(); wakeBranch(true); routeVibes(); }});
+      const name=G.TREE[G.state.sel0].areas[G.state.sel1].subcarpetas[G.state.sel2];
+      parts.push({t:name, cb:()=>{ rememberSel(); renderFrom(3); wakeBranch(true); routeVibes(); }});
     }
-
     G.bcEl.innerHTML=''; if(parts.length===0){ G.bcEl.style.display='none'; return; } G.bcEl.style.display='flex';
     parts.forEach((p,ix)=>{
       const span=document.createElement('span'); span.className='crumb'; span.textContent=p.t; span.tabIndex=0; span.addEventListener('click', p.cb);
@@ -353,16 +309,12 @@ const SiteGraph = (() => {
     else { G.bcEl.classList.remove('bc-in'); requestAnimationFrame(()=> requestAnimationFrame(()=> G.bcEl.classList.add('bc-in'))); }
   }
 
-  /* ===== Ruta viva (solo sobre rama activa) ===== */
+  /* ===== Ruta viva ===== */
   function routeVibes(){
     G.root.querySelectorAll('.link.breathe').forEach(l=> l.classList.remove('breathe'));
-    const actives=[];
-    if(G.state.sel1!=null){ const a=G.colsNodes[1][G.state.sel1]; if(a?._link) actives.push(a._link); }
-    if(G.state.sel2!=null){ const s=G.colsNodes[2][G.state.sel2]; if(s?._link) actives.push(s._link); }
-    // items de la sub seleccionada
-    if(G.state.sel2!=null){
-      G.colsNodes[3].forEach(b=>{ if(b && b._parent===G.colsNodes[2][G.state.sel2].el && b._link) actives.push(b._link); });
-    }
+    const actives=[]; if(G.state.sel1!=null){ const n1=G.colsNodes[1][G.state.sel1]; if(n1?._link) actives.push(n1._link); }
+    if(G.state.sel2!=null){ const n2=G.colsNodes[2][G.state.sel2]; if(n2?._link) actives.push(n2._link); }
+    G.colsNodes[3].forEach(b=>{ if(b?._link) actives.push(b._link); });
     actives.forEach(l=> l.classList.add('breathe'));
   }
 
@@ -428,17 +380,6 @@ const SiteGraph = (() => {
     G.stage.addEventListener('dblclick',()=>{ G.scale=1; G.tx=0; G.ty=0; applyTransform(); });
   }
 
-  /* ===== Botón: Encender/Apagar panel ===== */
-  function setupPanelToggle(){
-    const btn=document.getElementById('graphThemeToggle'); if(!btn) return;
-    const applyLabel=()=>{ btn.textContent = (G.stage.classList.contains('panel-on') ? 'Vista selectiva' : 'Encender panel'); };
-    btn.addEventListener('click',()=>{
-      G.stage.classList.toggle('panel-on');
-      applyLabel();
-    });
-    applyLabel();
-  }
-
   /* ===== Glow cursor ===== */
   function setupGlow(){
     const defs=document.createElementNS(NS,'defs');
@@ -494,18 +435,22 @@ const SiteGraph = (() => {
     resize(); step(); G._ambient={ cvs, ctx, resize };
   }
 
+  /* ===== Toggle de tema ===== */
+  function setupThemeToggle(){
+    const btn=document.getElementById('graphThemeToggle'); if(!btn) return;
+    const apply=(mode)=>{ document.body.classList.toggle('theme-tech', mode==='tech'); window.dispatchEvent(new Event('graph-theme-change')); btn.textContent=document.body.classList.contains('theme-tech')?'Modo oscuro':'Modo técnico'; };
+    btn.addEventListener('click',()=>{ const tech=!document.body.classList.contains('theme-tech'); apply(tech?'tech':'dark'); });
+    apply(document.body.classList.contains('theme-tech')?'tech':'dark');
+  }
+
   /* ===== API ===== */
   function init({ tree, stageId, svgId, rootId } = {}){
     G.TREE = tree || window.GRAPH_TREE || [];
     const _stage=stageId||'graphStage', _svg=svgId||'graphSvg', _root=rootId||'graphRoot';
     G.stage=document.getElementById(_stage); G.svg=document.getElementById(_svg); G.root=document.getElementById(_root); G.bcEl=document.getElementById('graphBc');
     if(!G.stage || !G.svg || !G.root) return;
-
-    ensureLayers(); relayoutColumns(); renderAllOpen();
-    applyTransform(); setupGlow(); ensureAmbientParticles(); buildSearchUI(); updateBreadcrumb(true);
-    enablePanZoom(); setupPanelToggle();
-
-    window.addEventListener('resize', ()=>{ relayoutColumns(); renderAllOpen(); applyTransform(); });
+    renderInit(); enablePanZoom(); setupThemeToggle();
+    window.addEventListener('resize', ()=>{ relayoutColumns(); renderFrom(1); applyTransform(); });
   }
 
   if (typeof window!=='undefined'){
@@ -517,3 +462,4 @@ const SiteGraph = (() => {
 
   return { init };
 })();
+
