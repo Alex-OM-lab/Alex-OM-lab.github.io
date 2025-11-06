@@ -195,17 +195,17 @@ body{
   #tools-pro .filter{order:3; margin-left:0}
 }
 
-/* ---------- FILAS (cajones) — NAVY + AMBER combinados ---------- */
+/* ---------- FILAS (cajones) — NAVY con naranja MUY sutil ---------- */
 #tools-pro .row{
   position:relative;
   display:grid; grid-template-columns:1fr var(--right-col);
   align-items:center; gap:16px;
   height:var(--row-height); padding:0 16px; border-radius:12px;
 
-  /* Degradado elegante: azul → naranja sutil */
+  /* Base azul con un velo ámbar muy sutil (apenas 6%) */
   background:
-    radial-gradient(90% 140% at 110% -10%, rgba(243,154,44,.10), transparent 65%),
-    linear-gradient(135deg, #0f2034 0%, #143354 58%, #2a1b0c 100%);
+    radial-gradient(90% 140% at 110% -10%, rgba(243,154,44,.06), transparent 70%),
+    linear-gradient(135deg, var(--row-bg) 0%, #143354 58%, var(--row-bg-2) 100%);
 
   border:2px solid var(--row-border);
   box-shadow:0 0 0 1px var(--row-inner) inset, 0 2px 0 rgba(0,0,0,.28);
@@ -221,31 +221,32 @@ body{
 }
 #tools-pro .row:hover{
   transform:translateY(-3px);
-  border-color:rgba(243,154,44,.50);
+  border-color:var(--row-hover-border);
   box-shadow:
-    0 0 0 1px rgba(255,180,90,.18) inset,
+    0 0 0 1px rgba(205,225,245,.08) inset,
     0 10px 22px rgba(3,10,22,.70),
-    0 0 22px rgba(243,154,44,.14);
+    0 0 22px rgba(243,154,44,.12);
+  /* Subo el velo ámbar a ~9% para un toque cálido */
   background:
-    radial-gradient(90% 140% at 110% -10%, rgba(243,154,44,.14), transparent 65%),
-    linear-gradient(135deg, #142a46 0%, #1a3b60 60%, #2d2415 100%);
+    radial-gradient(90% 140% at 110% -10%, rgba(243,154,44,.09), transparent 70%),
+    linear-gradient(135deg, #142a46 0%, #1a3b60 60%, #0d1c31 100%);
   color:var(--row-text-hover);
-  filter:saturate(1.03);
+  filter:saturate(1.02);
 }
-#tools-pro .row:hover::before{opacity:1}
+#tools-pro .row:hover::before{opacity:.6}
 #tools-pro .row:active{transform:translateY(-1px)}
 #tools-pro .row:focus-visible{outline:3px solid color-mix(in oklab, var(--accent) 30%, transparent); outline-offset:2px}
 
-/* ---------- SELECCIÓN: navy + glow ámbar sutil ---------- */
+/* ---------- SELECCIÓN: navy + halo ámbar sutil (12–18%) ---------- */
 #tools-pro .row.active{
   background:
-    radial-gradient(88% 120% at 100% 0%, rgba(243,154,44,.16), transparent 70%),
-    linear-gradient(140deg, #18334f 0%, #203f5f 52%, #322415 100%);
-  border-color:rgba(243,154,44,.40);
+    radial-gradient(88% 120% at 100% 0%, rgba(243,154,44,.12), transparent 70%),
+    linear-gradient(140deg, #18334f 0%, #203f5f 52%, #0f243c 100%);
+  border-color:rgba(243,154,44,.28);
   box-shadow:
     0 0 0 2px rgba(243,154,44,.18),
-    0 0 18px rgba(243,154,44,.12),
-    0 12px 28px rgba(5,15,30,.75),
+    0 0 16px rgba(243,154,44,.10),
+    0 12px 24px rgba(5,15,30,.70),
     inset 0 1px 0 rgba(255,255,255,.06);
   color:var(--row-text-hover);
   transform:translateY(-2px);
@@ -254,7 +255,7 @@ body{
 #tools-pro .row.active::after{
   content:"";
   position:absolute; inset:-1px; pointer-events:none; border-radius:12px;
-  background:radial-gradient(16% 36% at 96% 4%, rgba(243,154,44,.16), transparent 60%);
+  background:radial-gradient(16% 36% at 96% 4%, rgba(243,154,44,.18), transparent 60%);
 }
 
 /* Left/Right */
@@ -347,4 +348,3 @@ body{
   #tools-pro .row:hover{transform:none; box-shadow:0 0 0 1px rgba(205,225,245,.06) inset}
   #tools-pro .row.pulse::before, #tools-pro .row.page-enter, #tools-pro .row.page-enter::before { animation:none }
 }
-
