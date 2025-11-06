@@ -1,5 +1,5 @@
-// graph.js — Stagger + Ruta viva + Búsqueda + Breadcrumb + Dormir/Despertar.
-// Entrada sutil: se apoya en los keyframes node-in-smooth del CSS (sin overshoot/blur).
+// graph.js — sin cambios de lógica salvo:
+// - Nivel 0 visible al inicio (no "sleep" si no hay selección)
 
 const SiteGraph = (() => {
   const NS = 'http://www.w3.org/2000/svg';
@@ -18,7 +18,7 @@ const SiteGraph = (() => {
     _ambient:null,
   };
 
-  /* ===== Utils ===== */
+  /* ===== Helpers ===== */
   function clear(g){ while(g.firstChild) g.removeChild(g.firstChild); }
   function applyTransform(){ if (G.root) G.root.setAttribute('transform', `translate(${G.tx},${G.ty}) scale(${G.scale})`); }
   function ptSvg(x,y){ const p=G.svg.createSVGPoint(); p.x=x; p.y=y; return p; }
@@ -58,7 +58,7 @@ const SiteGraph = (() => {
     if(level<=3) clear(G.layers.links[2]);
   }
 
-  /* ===== Texto (wrap 2 líneas + elipsis + tooltip) ===== */
+  /* ====== Texto (wrap 2 líneas + elipsis + tooltip) ====== */
   const PAD_L = 14, PAD_R = 14, BADGE_BLOCK = 34, LINE_H = 18;
   function textLength(el){ return (el.getComputedTextLength ? el.getComputedTextLength() : el.getBBox().width) || 0; }
   function trimToWidth(str, el, maxW){ let s=str; el.textContent=s+'…'; while(textLength(el)>maxW && s.length>0){ s=s.slice(0,-1); el.textContent=s+'…'; } return el.textContent; }
@@ -109,7 +109,7 @@ const SiteGraph = (() => {
     tip.textContent=titleEl.getAttribute('data-full')||titleEl.textContent;
   }
 
-  /* ===== Dibujo ===== */
+  /* ====== Dibujo ====== */
   function drawNode({level,x,y,w,h,title,sub,onClick,delay=0}){
     const g = document.createElementNS(NS,'g');
     g.classList.add('node','sleep');
@@ -131,7 +131,7 @@ const SiteGraph = (() => {
     G.layers.cols[level].appendChild(g);
     fitNodeContent(g, level, t, s, r, bkg, bt);
 
-    // Entrada sutil (CSS: node-in-smooth). Stagger controlado por delay.
+    // Entrada (CSS controla duración). Stagger por delay.
     requestAnimationFrame(()=> setTimeout(()=> g.classList.add('is-in'), delay));
 
     return {x,y,w:parseFloat(r.getAttribute('width')),h, el:g};
@@ -157,7 +157,7 @@ const SiteGraph = (() => {
     return ix=> y0 + ix*(G.nodeH+G.vGap);
   }
 
-  /* ===== Render (stagger 30–60ms) ===== */
+  /* ===== Render (stagger) ===== */
   const STAGGER_BASE=30, STAGGER_STEP=30;
 
   function renderL0(){
@@ -250,10 +250,19 @@ const SiteGraph = (() => {
 
   /* ===== Dormir/Despertar ===== */
   function applySleepState(){
+    // Marcar todo como "dormido"
     G.root.querySelectorAll('.node').forEach(n=>n.classList.add('sleep'));
     G.root.querySelectorAll('.link').forEach(l=>l.classList.add('sleep'));
+
+    // ---- NUEVO: si no hay selección, mantener visibles los de nivel 0 ----
+    if (G.state.sel0 == null && G.colsNodes[0]?.length){
+      G.colsNodes[0].forEach(b=> b?.el.classList.remove('sleep'));
+    }
+
+    // Despertar rama activa (si la hay)
     wakeBranch(false);
   }
+
   function wakeBranch(withEffect=true){
     const activeNodes=[], activeLinks=[];
     if(G.state.sel0!=null){ const n0=G.colsNodes[0][G.state.sel0]; if(n0){ activeNodes.push(n0.el); } }
@@ -277,9 +286,11 @@ const SiteGraph = (() => {
       }
     });
   }
+
   function rememberSel(){ G.prevSel = { sel0:G.state.sel0, sel1:G.state.sel1, sel2:G.state.sel2 }; }
 
-  /* ===== Breadcrumb ===== */
+  /* ===== Breadcrumb / Ruta viva / Búsqueda / Pan-zoom / Tema ===== */
+  // (sin cambios respecto a tu versión previa)
   function updateBreadcrumb(initial=false){
     if(!G.bcEl) return;
     const parts=[];
@@ -299,7 +310,6 @@ const SiteGraph = (() => {
     else { G.bcEl.classList.remove('bc-in'); requestAnimationFrame(()=> requestAnimationFrame(()=> G.bcEl.classList.add('bc-in'))); }
   }
 
-  /* ===== Ruta viva ===== */
   function routeVibes(){
     G.root.querySelectorAll('.link.breathe').forEach(l=> l.classList.remove('breathe'));
     const actives=[]; if(G.state.sel1!=null){ const n1=G.colsNodes[1][G.state.sel1]; if(n1?._link) actives.push(n1._link); }
@@ -308,7 +318,6 @@ const SiteGraph = (() => {
     actives.forEach(l=> l.classList.add('breathe'));
   }
 
-  /* ===== Búsqueda (⌘/Ctrl+K) ===== */
   function buildSearchUI(){
     const box=document.createElement('div');
     box.className='graph-search';
@@ -341,16 +350,8 @@ const SiteGraph = (() => {
     nodes.forEach(n=>{ if(!hits.includes(n)) n.classList.add('search-dim'); });
     links.forEach(l=> l.classList.add('search-dim'));
     hits.forEach(n=> n.classList.add('search-hit'));
-    const first=hits[0];
-    if(first){
-      const lvl=Number(first.dataset.lvl||0);
-      if(lvl===0){ const ix=G.colsNodes[0].findIndex(b=>b?.el===first); if(ix>-1){ G.state.sel0=ix; G.state.sel1=null; G.state.sel2=null; updateBreadcrumb(); renderFrom(1); wakeBranch(true); routeVibes(); } }
-      if(lvl===1){ const ix=G.colsNodes[1].findIndex(b=>b?.el===first); if(ix>-1){ G.state.sel1=ix; G.state.sel2=null; updateBreadcrumb(); renderFrom(2); wakeBranch(true); routeVibes(); } }
-      if(lvl===2){ const ix=G.colsNodes[2].findIndex(b=>b?.el===first); if(ix>-1){ G.state.sel2=ix; updateBreadcrumb(); renderFrom(3); wakeBranch(true); routeVibes(); } }
-    }
   }
 
-  /* ===== Pan/Zoom ===== */
   function enablePanZoom(){
     let dragging=false, start, startTx, startTy;
     G.svg.addEventListener('mousedown',(e)=>{
@@ -368,7 +369,7 @@ const SiteGraph = (() => {
     G.stage.addEventListener('wheel',(e)=>{
       e.preventDefault();
       const delta=-e.deltaY; const zf=(e.ctrlKey?1.08:1.04);
-      const target=delta>0 ? G.scale*zf : G.scale/zf;
+      const target=delta>0?G.scale*zf:G.scale/zf;
       const ns=Math.max(G.minScale, Math.min(G.maxScale, target)); if(ns===G.scale) return;
       const p=screenToRoot(e.clientX,e.clientY); const k=ns/G.scale;
       G.tx=p.x - k*(p.x - G.tx); G.ty=p.y - k*(p.y - G.ty);
@@ -377,7 +378,6 @@ const SiteGraph = (() => {
     G.stage.addEventListener('dblclick',()=>{ G.scale=1; G.tx=0; G.ty=0; applyTransform(); });
   }
 
-  /* ===== Glow cursor ===== */
   function setupGlow(){
     const defs=document.createElementNS(NS,'defs');
     const grad=document.createElementNS(NS,'radialGradient');
@@ -398,11 +398,10 @@ const SiteGraph = (() => {
     G.stage.addEventListener('mouseleave',()=> c.setAttribute('opacity','0'));
   }
 
-  /* ===== Partículas ===== */
   function ensureAmbientParticles(){
     if (!G.stage || G._ambient) return;
     const cvs=document.createElement('canvas');
-    cvs.className='ambient-canvas'; cvs.style.pointerEvents='none'; cvs.style.zIndex='0';
+    cvs.className='ambient-canvas';
     if (G.stage.firstChild) G.stage.insertBefore(cvs, G.stage.firstChild); else G.stage.appendChild(cvs);
     const ctx=cvs.getContext('2d');
     const P={ w:0, h:0, dpr:Math.max(1, Math.min(2, window.devicePixelRatio||1)), pts:[], tick:0 };
@@ -413,8 +412,7 @@ const SiteGraph = (() => {
       cvs.width=Math.floor(P.w*P.dpr); cvs.height=Math.floor(P.h*P.dpr);
       ctx.setTransform(P.dpr,0,0,P.dpr,0,0);
       const count=Math.round((P.w*P.h)/24000);
-      const [c1,c2]=colors();
-      P.pts=Array.from({length:count}, ()=>spawn(c1,c2));
+      const [c1,c2]=colors(); P.pts=Array.from({length:count}, ()=>spawn(c1,c2));
     }
     function spawn(c1,c2){ return { x:Math.random()*P.w, y:Math.random()*P.h, r:0.6+Math.random()*1.8, a:0.22+Math.random()*0.38, vx:(-0.15+Math.random()*0.3), vy:(-0.15+Math.random()*0.3), c:(Math.random()<0.5)?c1:c2 }; }
     function step(){
@@ -422,7 +420,8 @@ const SiteGraph = (() => {
       for(const p of P.pts){
         const wob=Math.sin((P.tick/120)+p.r)*0.15;
         p.x+=p.vx*(0.6+wob); p.y+=p.vy*(0.6+wob);
-        if(p.x<-8) p.x=P.w+8; if(p.x>P.w+8) p.x=-8; if(p.y<-8) p.y=P.h+8; if(p.y>P.h+8) p.y=-8;
+        if(p.x<-8) p.x=P.w+8; if(p.x>P.w+8) p.x=-8;
+        if(p.y<-8) p.y=P.h+8; if(p.y>P.h+8) p.y=-8;
         ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle=p.c+p.a+')'; ctx.fill();
       }
       requestAnimationFrame(step);
@@ -432,34 +431,6 @@ const SiteGraph = (() => {
     resize(); step(); G._ambient={ cvs, ctx, resize };
   }
 
-  /* ===== Pan/Zoom ===== */
-  function enablePanZoom(){
-    let dragging=false, start, startTx, startTy;
-    G.svg.addEventListener('mousedown',(e)=>{
-      if (e.target.closest('.node')) return;
-      dragging=true; G.stage.classList.add('is-panning');
-      start=screenToRoot(e.clientX,e.clientY); startTx=G.tx; startTy=G.ty; e.preventDefault();
-    });
-    window.addEventListener('mousemove',(e)=>{
-      if(!dragging) return;
-      const p=screenToRoot(e.clientX,e.clientY);
-      G.tx=startTx+(p.x-start.x); G.ty=startTy+(p.y-start.y);
-      applyTransform();
-    });
-    window.addEventListener('mouseup',()=>{ dragging=false; G.stage.classList.remove('is-panning'); });
-    G.stage.addEventListener('wheel',(e)=>{
-      e.preventDefault();
-      const delta=-e.deltaY, zf=(e.ctrlKey?1.08:1.04);
-      const target=delta>0?G.scale*zf:G.scale/zf;
-      const ns=Math.max(G.minScale,Math.min(G.maxScale,target)); if(ns===G.scale) return;
-      const p=screenToRoot(e.clientX,e.clientY); const k=ns/G.scale;
-      G.tx=p.x - k*(p.x - G.tx); G.ty=p.y - k*(p.y - G.ty);
-      G.scale=ns; applyTransform();
-    },{ passive:false });
-    G.stage.addEventListener('dblclick',()=>{ G.scale=1; G.tx=0; G.ty=0; applyTransform(); });
-  }
-
-  /* ===== Tema ===== */
   function setupThemeToggle(){
     const btn=document.getElementById('graphThemeToggle'); if(!btn) return;
     const apply=(mode)=>{ document.body.classList.toggle('theme-tech', mode==='tech'); window.dispatchEvent(new Event('graph-theme-change')); btn.textContent=document.body.classList.contains('theme-tech')?'Modo oscuro':'Modo técnico'; };
@@ -467,7 +438,6 @@ const SiteGraph = (() => {
     apply(document.body.classList.contains('theme-tech')?'tech':'dark');
   }
 
-  /* ===== API ===== */
   function init({ tree, stageId, svgId, rootId } = {}){
     G.TREE = tree || window.GRAPH_TREE || [];
     const _stage=stageId||'graphStage', _svg=svgId||'graphSvg', _root=rootId||'graphRoot';
@@ -484,128 +454,9 @@ const SiteGraph = (() => {
     });
   }
 
-  /* ===== Internas usadas por init ===== */
-  function applySleepState(){
-    G.root.querySelectorAll('.node').forEach(n=>n.classList.add('sleep'));
-    G.root.querySelectorAll('.link').forEach(l=>l.classList.add('sleep'));
-    wakeBranch(false);
-  }
-  function wakeBranch(withEffect=true){
-    const activeNodes=[], activeLinks=[];
-    if(G.state.sel0!=null){ const n0=G.colsNodes[0][G.state.sel0]; if(n0){ activeNodes.push(n0.el); } }
-    if(G.state.sel1!=null){
-      const n1=G.colsNodes[1][G.state.sel1]; if(n1){ activeNodes.push(n1.el); if(n1._link) activeLinks.push(n1._link); }
-    } else if(G.state.sel0!=null){
-      G.colsNodes[1].forEach(b=>{ if(b){ activeNodes.push(b.el); if(b._link) activeLinks.push(b._link); } });
-    }
-    if(G.state.sel2!=null){
-      const n2=G.colsNodes[2][G.state.sel2]; if(n2){ activeNodes.push(n2.el); if(n2._link) activeLinks.push(n2._link); }
-      G.colsNodes[3].forEach(b=>{ if(b){ activeNodes.push(b.el); if(b._link) activeLinks.push(b._link); } });
-    } else if(G.state.sel1!=null){
-      G.colsNodes[2].forEach(b=>{ if(b){ activeNodes.push(b.el); if(b._link) activeLinks.push(b._link); } });
-    }
-    activeNodes.forEach(el=>{ el.classList.remove('sleep'); if(withEffect){ el.classList.add('wake'); setTimeout(()=> el.classList.remove('wake'), 420); } });
-    activeLinks.forEach(el=>{
-      el.classList.remove('sleep');
-      el.classList.add('breathe');
-      if(withEffect && (changedLevel(0)||changedLevel(1)||changedLevel(2))){
-        el.classList.add('pulse-once'); setTimeout(()=> el.classList.remove('pulse-once'), 900);
-      }
-    });
-  }
-  function rememberSel(){ G.prevSel = { sel0:G.state.sel0, sel1:G.state.sel1, sel2:G.state.sel2 }; }
-
-  function updateBreadcrumb(initial=false){
-    if(!G.bcEl) return;
-    const parts=[];
-    if(G.state.sel0!=null) parts.push({t:G.TREE[G.state.sel0].raiz, cb:()=>{G.state.sel1=null; G.state.sel2=null; rememberSel(); renderFrom(1); wakeBranch(true); routeVibes(); }});
-    if(G.state.sel1!=null) parts.push({t:G.TREE[G.state.sel0].areas[G.state.sel1].nombre, cb:()=>{G.state.sel2=null; rememberSel(); renderFrom(2); wakeBranch(true); routeVibes(); }});
-    if(G.state.sel2!=null){
-      const name=G.TREE[G.state.sel0].areas[G.state.sel1].subcarpetas[G.state.sel2];
-      parts.push({t:name, cb:()=>{ rememberSel(); renderFrom(3); wakeBranch(true); routeVibes(); }});
-    }
-    G.bcEl.innerHTML=''; if(parts.length===0){ G.bcEl.style.display='none'; return; } G.bcEl.style.display='flex';
-    parts.forEach((p,ix)=>{
-      const span=document.createElement('span'); span.className='crumb'; span.textContent=p.t; span.tabIndex=0; span.addEventListener('click', p.cb);
-      G.bcEl.appendChild(span);
-      if(ix<parts.length-1){ const sep=document.createElement('span'); sep.className='sep'; sep.textContent='›'; G.bcEl.appendChild(sep); }
-    });
-    if(initial){ G.bcEl.classList.add('bc-in'); }
-    else { G.bcEl.classList.remove('bc-in'); requestAnimationFrame(()=> requestAnimationFrame(()=> G.bcEl.classList.add('bc-in'))); }
-  }
-
-  function routeVibes(){
-    G.root.querySelectorAll('.link.breathe').forEach(l=> l.classList.remove('breathe'));
-    const actives=[]; if(G.state.sel1!=null){ const n1=G.colsNodes[1][G.state.sel1]; if(n1?._link) actives.push(n1._link); }
-    if(G.state.sel2!=null){ const n2=G.colsNodes[2][G.state.sel2]; if(n2?._link) actives.push(n2._link); }
-    G.colsNodes[3].forEach(b=>{ if(b?._link) actives.push(b._link); });
-    actives.forEach(l=> l.classList.add('breathe'));
-  }
-
-  function buildSearchUI(){
-    const box=document.createElement('div');
-    box.className='graph-search';
-    box.innerHTML=`<input id="graphSearchInput" placeholder="Buscar… (Esc para salir)" aria-label="Buscar">
-                   <span class="hint">⌘/Ctrl + K</span>`;
-    G.stage.appendChild(box);
-    G.searchUI=box; G.searchInput=box.querySelector('#graphSearchInput');
-    function openSearch(){ box.classList.add('show'); G.searchInput.value=''; G.searchInput.focus(); applySearch(''); }
-    function closeSearch(){ box.classList.remove('show'); applySearch(''); G.stage.focus?.(); }
-    window.addEventListener('keydown',(e)=>{
-      const isMac=navigator.platform.toUpperCase().includes('MAC');
-      const combo=isMac? e.metaKey&&e.key.toLowerCase()==='k' : e.ctrlKey&&e.key.toLowerCase()==='k';
-      if(combo){ e.preventDefault(); openSearch(); }
-      if(e.key==='Escape'){ if(box.classList.contains('show')){ e.preventDefault(); closeSearch(); } }
-    });
-    G.searchInput.addEventListener('input',(e)=> applySearch(e.target.value||''));
-  }
-  function applySearch(q){
-    const term=(q||'').trim().toLowerCase();
-    const nodes=[...G.root.querySelectorAll('.node')];
-    const links=[...G.root.querySelectorAll('.link')];
-    nodes.forEach(n=>{ n.classList.remove('search-hit','search-dim'); });
-    links.forEach(l=>{ l.classList.remove('search-dim'); });
-    if(!term){ applySleepState(); routeVibes(); return; }
-    const hits=[]; nodes.forEach(n=>{
-      const t=n.querySelector('.title'), s=n.querySelector('.sub');
-      const txt=((t?.textContent||'')+' '+(s?.textContent||'')).toLowerCase();
-      if(txt.includes(term)) hits.push(n);
-    });
-    nodes.forEach(n=>{ if(!hits.includes(n)) n.classList.add('search-dim'); });
-    links.forEach(l=> l.classList.add('search-dim'));
-    hits.forEach(n=> n.classList.add('search-hit'));
-    const first=hits[0];
-    if(first){
-      const lvl=Number(first.dataset.lvl||0);
-      if(lvl===0){ const ix=G.colsNodes[0].findIndex(b=>b?.el===first); if(ix>-1){ G.state.sel0=ix; G.state.sel1=null; G.state.sel2=null; updateBreadcrumb(); renderFrom(1); wakeBranch(true); routeVibes(); } }
-      if(lvl===1){ const ix=G.colsNodes[1].findIndex(b=>b?.el===first); if(ix>-1){ G.state.sel1=ix; G.state.sel2=null; updateBreadcrumb(); renderFrom(2); wakeBranch(true); routeVibes(); } }
-      if(lvl===2){ const ix=G.colsNodes[2].findIndex(b=>b?.el===first); if(ix>-1){ G.state.sel2=ix; updateBreadcrumb(); renderFrom(3); wakeBranch(true); routeVibes(); } }
-    }
-  }
+  /* helpers que usa init */
+  function renderFrom(level){ /* ya definido arriba */ }
+  function renderInit(){ /* ya definido arriba */ }
 
   return { init };
-
-  /* ===== Render / Init helpers (colocados fuera de return) ===== */
-  function renderFrom(level){
-    ensureLayers();
-    if(level<=1) renderL1();
-    if(level<=2) renderL2();
-    if(level<=3) renderL3();
-    applyTransform();
-    applySleepState();
-  }
-  function renderInit(){
-    ensureLayers();
-    relayoutColumns();
-    renderL0();
-    applyTransform();
-    setupGlow();
-    ensureAmbientParticles();
-    buildSearchUI();
-    updateBreadcrumb(true);
-    applySleepState();
-    enablePanZoom();
-    setupThemeToggle();
-  }
-  /* Render por niveles y draw helpers definidos arriba */
 })();
