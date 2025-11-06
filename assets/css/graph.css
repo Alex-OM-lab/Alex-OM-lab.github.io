@@ -34,9 +34,15 @@
   border:1px solid rgba(255,255,255,.08);
   background:rgba(8,14,25,.5); backdrop-filter: blur(3px);
   border-radius:999px; color:var(--muted); font-size:13px;
+  opacity:0; transform:translateY(-6px); transition:opacity .24s ease, transform .24s ease;
 }
-.graph-bc .crumb{ cursor:pointer; font-weight:700; color:#cfe6ff; }
-.graph-bc .crumb:hover{ text-decoration:underline; }
+.graph-bc.bc-in{ opacity:1; transform:none; }
+.graph-bc .crumb{
+  cursor:pointer; font-weight:700; color:#cfe6ff; position:relative;
+  background: linear-gradient(currentColor, currentColor) 0 100% / 0 2px no-repeat;
+  transition: background-size .12s ease;
+}
+.graph-bc .crumb:hover{ background-size: 100% 2px; }
 .graph-bc .sep{ opacity:.6 }
 
 /* CAPA DE PARTÍCULAS (decorativa, no interactiva) */
@@ -54,16 +60,15 @@
   color:var(--muted); font-size:13px;
 }
 .graph-legend .dot{ width:10px; height:10px; border-radius:999px; display:inline-block; box-shadow:0 0 10px rgba(0,0,0,.25) }
-.graph-legend .lvl0{ background:var(--accent) }    /* Naranja acento */
-.graph-legend .lvl1{ background:#ffd79a }          /* Dorado suave  */
-.graph-legend .lvl2{ background:#8fd6ff }          /* Azul suave    */
-.graph-legend .lvl3{ background:#9be2b0 }          /* Verde suave   */
+.graph-legend .lvl0{ background:var(--accent) }
+.graph-legend .lvl1{ background:#ffd79a }
+.graph-legend .lvl2{ background:#8fd6ff }
+.graph-legend .lvl3{ background:#9be2b0 }
 
 /* ===== Nodos ===== */
 .node{ cursor:pointer; opacity:1; }
 .node rect{
   rx:10; ry:10; fill:#0e1730; stroke:rgba(255,255,255,.10); stroke-width:1.2;
-  /* degradado sutil superior (simulado con overlay) */
 }
 .node .title{
   fill:#e9eef6; font-weight:800; font-size:13.8px; letter-spacing:.1px;
@@ -77,7 +82,7 @@
   text-anchor:middle; dominant-baseline:middle; pointer-events:none;
 }
 
-/* Borde + glow por nivel (paleta acorde al sitio) */
+/* Borde + glow por nivel (paleta del sitio) */
 .node[data-lvl="0"] rect{
   fill:rgba(255,159,26,.18); stroke:rgba(255,159,26,.55);
   filter: drop-shadow(0 0 10px rgba(255,159,26,.12)) drop-shadow(0 0 20px rgba(255,159,26,.08));
@@ -95,40 +100,52 @@
   filter: drop-shadow(0 0 10px rgba(155,226,176,.10)) drop-shadow(0 0 18px rgba(155,226,176,.06));
 }
 
-/* ==== Animación profesional de aparición/expansión ==== */
+/* ==== ENTRADA SUTIL Y CORTA (sin blur ni overshoot) ==== */
 .node .node-in{
-  opacity:0; transform: translateY(14px) scale(.97); filter: blur(6px);
-  will-change: transform, filter, opacity;
+  opacity:0;
+  transform: translateY(8px);
+  will-change: transform, opacity;
 }
 .node.is-in .node-in{
-  animation:
-    node-reveal .6s cubic-bezier(.2,.8,.2,1) forwards,
-    node-activate .42s cubic-bezier(.22,.61,.36,1) .6s forwards;
+  animation: node-in-smooth .36s cubic-bezier(.2,.8,.2,1) forwards;
 }
-/* NO animación aquí para no pisar el reveal */
+/* nada aquí para no pisar la entrada */
 .node:not(.dim-node) .node-in{}
 
-/* Keyframes */
-@keyframes node-reveal{
-  0%   { opacity:0; transform: translateY(14px) scale(.97); filter: blur(6px); }
-  60%  { opacity:1; transform: translateY(0) scale(1.005); filter: blur(.5px); }
-  100% { opacity:1; transform:none; filter: blur(0); }
-}
-@keyframes node-activate{
-  0%   { transform: translateY(6px) scale(.99); filter: blur(2px); }
-  100% { transform:none; filter: blur(0); }
+/* Keyframes limpios */
+@keyframes node-in-smooth{
+  from { opacity:0; transform: translateY(8px); }
+  to   { opacity:1; transform: translateY(0); }
 }
 
-/* Animación de recolocado y foco */
+/* Hover y foco (sin cambios de escala para evitar saltos) */
 .node.moving{ transition: transform .55s cubic-bezier(.2,.8,.2,1); }
-.node.focus .node-in{ transform:scale(1.02); transition:transform .25s ease; }
 .node.focus rect{ stroke-width:1.8; filter: drop-shadow(0 0 14px rgba(255,159,26,.18)); }
-
-/* Hover sutil */
 .node rect{ transition:filter .2s ease, stroke-width .18s ease; }
 .node.hovered rect{ filter:drop-shadow(0 0 14px rgba(255,159,26,.18)); stroke-width:1.6; }
 
-/* Atenuación */
+/* ===== “Dormido” por defecto y “Despertar” de rama ===== */
+.sleep{ opacity:.18; filter:grayscale(.55); transition:opacity .24s ease, filter .24s ease; }
+.link.sleep{ animation-play-state: paused; }
+
+/* Ruta viva: respiro tenue + pulso al cambiar nivel */
+.link.breathe{
+  animation: link-breathe 4.5s ease-in-out infinite, flow 10s linear infinite;
+}
+@keyframes link-breathe{
+  0%,100%{ filter: drop-shadow(0 0 4px rgba(255,159,26,.12)); opacity:.75; }
+  50%{    filter: drop-shadow(0 0 10px rgba(255,159,26,.22)); opacity:1; }
+}
+.link.pulse-once{
+  animation: link-pulse .9s cubic-bezier(.22,.61,.36,1) 1, flow 10s linear infinite;
+}
+@keyframes link-pulse{
+  0%{   stroke-width:2; }
+  30%{  stroke-width:3.6; }
+  100%{ stroke-width:2; }
+}
+
+/* Atenuación clásica */
 .dim-node{ opacity:.34; }
 .dim-link{ opacity:.28; }
 
@@ -159,6 +176,26 @@
 
 /* flash corto */
 .link.flash{ filter: drop-shadow(0 0 8px rgba(255,255,255,.25)); }
+
+/* ====== BÚSQUEDA (overlay) ====== */
+.graph-search{
+  position:absolute; top:16px; right:16px; z-index:4;
+  display:none; align-items:center; gap:8px;
+  background: rgba(10,16,28,.85); backdrop-filter: blur(6px);
+  border:1px solid rgba(255,255,255,.12); border-radius:10px;
+  padding:8px 10px;
+}
+.graph-search.show{ display:flex; }
+.graph-search input{
+  background:transparent; border:none; outline:none;
+  color:#e9eef6; font-weight:700; font-size:14px; width:220px;
+}
+.graph-search .hint{ color:#9db3d4; font-size:12px; }
+
+/* Resaltar resultados / atenuar no coincidentes */
+.search-hit .title{ fill:#ffffff; }
+.search-dim{ opacity:.12 !important; filter:grayscale(.75); }
+.link.search-dim{ animation-play-state: paused; }
 
 /* Cursores para pan/zoom */
 .graph-stage.is-panning{ cursor:grabbing; }
@@ -197,6 +234,7 @@ body.theme-tech .link.l3{ stroke:rgba(168,255,198,.6) }
 /* Reduce motion */
 @media (prefers-reduced-motion: reduce){
   .link.draw{ animation:none; stroke-dasharray:0; stroke-dashoffset:0; }
-  .node, .node .node-in{ transition:none; animation:none; filter:none; transform:none; opacity:1; }
+  .node, .node .node-in{ transition:none; animation:none; transform:none; opacity:1; }
+  .link.breathe, .link.pulse-once{ animation:none; }
   .node.moving{ transition:none; }
 }
