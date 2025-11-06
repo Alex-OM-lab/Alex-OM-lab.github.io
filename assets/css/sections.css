@@ -203,12 +203,33 @@ body{
   box-shadow:0 0 0 1px rgba(205,225,245,.08) inset,0 10px 20px rgba(3,10,22,.65);
   color:var(--row-text-hover);
 }
+
+/* ---------- SELECCIÓN: overlay ámbar sutil con animación ---------- */
 #tools-pro .row.active{
   z-index:1;
+  /* mantenemos navy, solo realce y halo sutil */
   background:linear-gradient(145deg,#0c1f35,#14324f,#21486f);
   border-color:rgba(243,154,44,.18);
   box-shadow:0 0 0 2px rgba(243,154,44,.10),0 0 20px rgba(243,154,44,.08);
   transform:translateY(-2px);
+}
+#tools-pro .row.active::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:12px;
+  /* velo ámbar MUY sutil encima */
+  background:linear-gradient(180deg,
+            rgba(243,154,44,.10) 0%,
+            rgba(243,154,44,.06) 100%);
+  opacity:0;
+  transform:scale(.985);
+  animation:toolsActiveOrange 220ms ease-out forwards;
+}
+/* Animación de entrada sutil */
+@keyframes toolsActiveOrange{
+  from{ opacity:0; transform:scale(.985); }
+  to  { opacity:1; transform:scale(1); }
 }
 
 /* Contenido de fila siempre por encima de decoraciones */
@@ -262,4 +283,3 @@ body{
 }
 #tools-pro .navbtn:hover{transform:translateY(-2px);filter:brightness(1.03);}
 #tools-pro .navbtn:active{transform:translateY(1px);}
-
