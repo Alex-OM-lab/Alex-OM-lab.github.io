@@ -66,9 +66,7 @@ body{
   --muted:#9fb3c8;
 
   /* Tonos navy (profundos) */
-  --row-bg:#08111f;      /* base casi negra-azulada */
-  --row-bg-mid:#0f2138;  /* intermedio */
-  --row-bg-2:#13294a;    /* más claro arriba */
+  --row-flat:#0e1c30;    /* FONDO PLANO de los cajones */
   --row-border:#182840;
   --row-inner:rgba(16,28,45,.45);
   --row-hover-border:#2b4a6c;
@@ -103,23 +101,19 @@ body{
 
 /* ---------- Cards ---------- */
 #tools-pro .card{
-  position:relative;             /* para stacking control */
-  z-index:0;
+  position:relative; z-index:0;
   background:linear-gradient(145deg,var(--panel),var(--panel-2));
   border-radius:14px;
   border:1px solid rgba(150,180,210,.10);
   padding:18px;
   display:flex;flex-direction:column;
   box-shadow:0 0 0 1px rgba(255,255,255,.02) inset,0 14px 28px rgba(2,8,20,.6);
-  overflow:hidden;               /* contiene overlays decorativos */
-  isolation:isolate;
+  overflow:hidden; isolation:isolate;
 }
 #tools-pro .card::after{
-  content:"";
-  position:absolute;inset:-1px;border-radius:14px;
+  content:""; position:absolute; inset:-1px; border-radius:14px;
   background:linear-gradient(90deg,rgba(243,154,44,.10),rgba(255,202,120,.08));
-  opacity:.18;filter:blur(12px);
-  pointer-events:none;           /* no intercepta clics */
+  opacity:.18; filter:blur(12px); pointer-events:none;
 }
 #tools-pro .card-head{display:flex;align-items:center;gap:10px;color:#ffbf6a;margin-bottom:14px}
 #tools-pro .card-head.tools{font-size:1.22rem;font-weight:900}
@@ -174,65 +168,64 @@ body{
   box-shadow:0 6px 14px rgba(243,154,44,.18);
 }
 
-/* ---------- FILAS (cajones) ---------- */
+/* ---------- FILAS (cajones) — FONDO PLANO ---------- */
 #tools-pro .row{
-  position:relative;              /* asegura stacking propio */
-  z-index:0;                      /* base: debajo de su contenido */
-  display:grid;grid-template-columns:1fr var(--right-col);
-  align-items:center;gap:16px;
+  position:relative; z-index:0;
+  display:grid; grid-template-columns:1fr var(--right-col);
+  align-items:center; gap:16px;
   height:var(--row-height);
   padding:0 16px;
   border-radius:12px;
-  background:linear-gradient(145deg,var(--row-bg),var(--row-bg-mid) 40%,var(--row-bg-2));
+
+  /* FONDO PLANO (sin degradados) */
+  background:var(--row-flat);
+
   border:2px solid var(--row-border);
-  box-shadow:0 0 0 1px var(--row-inner) inset,0 2px 0 rgba(0,0,0,.25);
+  box-shadow:0 0 0 1px var(--row-inner) inset, 0 2px 0 rgba(0,0,0,.25);
   color:var(--row-text);
-  transition:transform .25s,box-shadow .25s,border-color .25s,background .25s,color .2s;
-  overflow:hidden;                /* contiene decoraciones internas */
+  transition:transform .25s, box-shadow .25s, border-color .25s, background .25s, color .2s;
+  overflow:hidden;
 }
 #tools-pro .row::before,
-#tools-pro .row::after{
-  pointer-events:none;            /* nunca bloquea clic */
-}
-#tools-pro .row + .row{margin-top:10px}
+#tools-pro .row::after{ pointer-events:none; }
+#tools-pro .row + .row{ margin-top:10px; }
 #tools-pro .row:hover{
-  z-index:1;                      /* se eleva SIN cubrir vecinas */
+  z-index:1;
   transform:translateY(-3px);
   border-color:var(--row-hover-border);
-  background:linear-gradient(145deg,#0a1a2f,#112c4b,#1b4068);
-  box-shadow:0 0 0 1px rgba(205,225,245,.08) inset,0 10px 20px rgba(3,10,22,.65);
+  /* ligero realce manteniendo fondo plano */
+  background:color-mix(in oklab, var(--row-flat) 92%, white);
+  box-shadow:0 0 0 1px rgba(205,225,245,.08) inset, 0 10px 20px rgba(3,10,22,.65);
   color:var(--row-text-hover);
 }
 
-/* ---------- SELECCIÓN: overlay ámbar sutil con animación ---------- */
+/* ---------- SELECCIÓN: naranja MÁS intenso y limpio ---------- */
 #tools-pro .row.active{
   z-index:1;
-  /* mantenemos navy, solo realce y halo sutil */
-  background:linear-gradient(145deg,#0c1f35,#14324f,#21486f);
-  border-color:rgba(243,154,44,.18);
-  box-shadow:0 0 0 2px rgba(243,154,44,.10),0 0 20px rgba(243,154,44,.08);
+  background:var(--row-flat); /* seguimos con plano azul */
+  border-color:rgba(243,154,44,.42);
+  box-shadow:
+    0 0 0 2px rgba(243,154,44,.42),   /* anillo más marcado */
+    0 0 28px rgba(243,154,44,.18),    /* halo exterior */
+    inset 0 1px 0 rgba(255,255,255,.06);
   transform:translateY(-2px);
 }
 #tools-pro .row.active::after{
   content:"";
-  position:absolute;
-  inset:0;
-  border-radius:12px;
-  /* velo ámbar MUY sutil encima */
+  position:absolute; inset:0; border-radius:12px;
+  /* velo ámbar más intenso pero profesional */
   background:linear-gradient(180deg,
-            rgba(243,154,44,.10) 0%,
-            rgba(243,154,44,.06) 100%);
-  opacity:0;
-  transform:scale(.985);
+            rgba(243,154,44,.16) 0%,
+            rgba(243,154,44,.10) 100%);
+  opacity:0; transform:scale(.985);
   animation:toolsActiveOrange 220ms ease-out forwards;
 }
-/* Animación de entrada sutil */
 @keyframes toolsActiveOrange{
   from{ opacity:0; transform:scale(.985); }
   to  { opacity:1; transform:scale(1); }
 }
 
-/* Contenido de fila siempre por encima de decoraciones */
+/* Contenido de fila por encima */
 #tools-pro .row > *{position:relative;z-index:1}
 
 #tools-pro .left{display:flex;align-items:center;gap:12px;font-weight:800;min-width:0}
@@ -249,16 +242,11 @@ body{
 
 /* ---------- Barras de nivel (3 segmentos tipo píldora) ---------- */
 #tools-pro .level{
-  display:flex;
-  gap:10px;
-  align-items:center;
-  justify-content:flex-end;
+  display:flex; gap:10px; align-items:center; justify-content:flex-end;
 }
 #tools-pro .seg{
-  width:24px;
-  height:10px;
-  border-radius:999px;
-  background:rgba(210,225,245,.08);               /* reposo gris-azulado */
+  width:24px; height:10px; border-radius:999px;
+  background:rgba(210,225,245,.08);
   border:1px solid rgba(190,210,235,.22);
   box-shadow:inset 0 -1px 0 rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.06);
   transition:transform .15s,box-shadow .15s,background .15s,border-color .15s;
