@@ -100,14 +100,15 @@
   filter: drop-shadow(0 0 10px rgba(155,226,176,.10)) drop-shadow(0 0 18px rgba(155,226,176,.06));
 }
 
-/* ==== ENTRADA SUTIL Y CORTA (sin blur ni overshoot) ==== */
+/* ==== ENTRADA SUTIL (50% MÁS LENTA) ==== */
 .node .node-in{
   opacity:0;
   transform: translateY(8px);
   will-change: transform, opacity;
 }
 .node.is-in .node-in{
-  animation: node-in-smooth .36s cubic-bezier(.2,.8,.2,1) forwards;
+  /* antes .36s → ahora .54s (x1.5 más lenta) */
+  animation: node-in-smooth .54s cubic-bezier(.2,.8,.2,1) forwards;
 }
 /* nada aquí para no pisar la entrada */
 .node:not(.dim-node) .node-in{}
