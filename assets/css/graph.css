@@ -114,6 +114,16 @@
   to   { opacity:1; transform: translateY(0); }
 }
 
+/* ===== Pulso de confirmación al seleccionar ===== */
+.node.confirm rect{
+  animation: node-confirm 0.16s cubic-bezier(.22,.61,.36,1) 1;
+}
+@keyframes node-confirm{
+  0%   { stroke-width:1.2; filter: drop-shadow(0 0 10px rgba(255,159,26,.12)); }
+  50%  { stroke-width:2.2; filter: drop-shadow(0 0 14px rgba(255,159,26,.22)); }
+  100% { stroke-width:1.2; filter: drop-shadow(0 0 10px rgba(255,159,26,.12)); }
+}
+
 /* Hover y foco */
 .node.moving{ transition: transform .55s cubic-bezier(.2,.8,.2,1); }
 .node.focus rect{ stroke-width:1.8; filter: drop-shadow(0 0 14px rgba(255,159,26,.18)); }
@@ -128,9 +138,14 @@
 .graph-stage.panel-on .sleep{ opacity:1 !important; filter:none !important; }
 .graph-stage.panel-on .link.sleep{ animation-play-state: running !important; }
 
-/* Ruta viva */
+/* ===== Ruta viva (enlaces activos) ===== */
+/* Añadimos gradiente direccional sutil (izq→der). */
 .link.breathe{
+  stroke: url(#linkGrad);
   animation: link-breathe 4.5s ease-in-out infinite, flow 10s linear infinite;
+}
+body.theme-tech .link.breathe{
+  stroke: url(#linkGradTech);
 }
 @keyframes link-breathe{
   0%,100%{ filter: drop-shadow(0 0 4px rgba(255,159,26,.12)); opacity:.75; }
