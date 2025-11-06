@@ -108,7 +108,7 @@
 }
 .node.is-in .node-in{
   /* antes .36s → ahora .54s (x1.5 más lenta) */
-  animation: node-in-smooth .54s cubic-bezier(.2,.8,.2,1) forwards;
+  animation: node-in-smooth .81s cubic-bezier(.2,.8,.2,1) forwards;
 }
 /* nada aquí para no pisar la entrada */
 .node:not(.dim-node) .node-in{}
