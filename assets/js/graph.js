@@ -1,4 +1,3 @@
-<script>
 // graph.js — Stagger + Ruta viva + Búsqueda + Breadcrumb + Dormir/Despertar.
 // Entrada sutil: se apoya en los keyframes node-in-smooth del CSS.
 
@@ -119,9 +118,8 @@ const SiteGraph = (() => {
     g.addEventListener('mouseenter',()=>g.classList.add('hovered'));
     g.addEventListener('mouseleave',()=>g.classList.remove('hovered'));
 
-    // Envolvemos el onClick para añadir el "pulso de confirmación"
+    // Pulso de confirmación sutil (150–160ms)
     const handleClick = ()=>{
-      // pulso sutil 150ms (CSS .node.confirm)
       g.classList.add('confirm');
       setTimeout(()=> g.classList.remove('confirm'), 160);
       if(onClick) onClick();
@@ -250,7 +248,7 @@ const SiteGraph = (() => {
     relayoutColumns();
     renderL0();
     applyTransform();
-    setupDefs();       // << añade gradientes para enlaces y glow cursor
+    setupDefs();       // gradientes + glow cursor
     ensureAmbientParticles();
     buildSearchUI();
     updateBreadcrumb(true);
@@ -259,16 +257,12 @@ const SiteGraph = (() => {
 
   /* ===== Dormir/Despertar ===== */
   function applySleepState(){
-    // Marcar todo como "dormido"
     G.root.querySelectorAll('.node').forEach(n=>n.classList.add('sleep'));
     G.root.querySelectorAll('.link').forEach(l=>l.classList.add('sleep'));
 
-    // Si no hay selección, mantener visibles los de nivel 0
     if (G.state.sel0 == null && G.colsNodes[0]?.length){
       G.colsNodes[0].forEach(b=> b?.el.classList.remove('sleep'));
     }
-
-    // Despertar rama activa (si la hay)
     wakeBranch(false);
   }
 
@@ -393,7 +387,6 @@ const SiteGraph = (() => {
   function setupDefs(){
     const defs=document.createElementNS(NS,'defs');
 
-    // Glow del cursor
     const gradGlow=document.createElementNS(NS,'radialGradient');
     gradGlow.setAttribute('id','glowGrad'); gradGlow.setAttribute('cx','50%'); gradGlow.setAttribute('cy','50%'); gradGlow.setAttribute('r','50%');
     const s1=document.createElementNS(NS,'stop'); s1.setAttribute('offset','0%'); s1.setAttribute('stop-color','rgba(255,159,26,.14)');
@@ -401,7 +394,6 @@ const SiteGraph = (() => {
     const s3=document.createElementNS(NS,'stop'); s3.setAttribute('offset','100%'); s3.setAttribute('stop-color','rgba(255,159,26,0)');
     gradGlow.append(s1,s2,s3);
 
-    // Gradiente direccional para enlaces activos (modo normal)
     const gLink=document.createElementNS(NS,'linearGradient');
     gLink.setAttribute('id','linkGrad');
     gLink.setAttribute('x1','0%'); gLink.setAttribute('y1','0%');
@@ -410,7 +402,6 @@ const SiteGraph = (() => {
     const gls2=document.createElementNS(NS,'stop'); gls2.setAttribute('offset','100%'); gls2.setAttribute('stop-color','rgba(255,159,26,.45)');
     gLink.append(gls1,gls2);
 
-    // Gradiente para modo técnico (verde)
     const gLinkTech=document.createElementNS(NS,'linearGradient');
     gLinkTech.setAttribute('id','linkGradTech');
     gLinkTech.setAttribute('x1','0%'); gLinkTech.setAttribute('y1','0%');
@@ -422,7 +413,6 @@ const SiteGraph = (() => {
     defs.append(gradGlow, gLink, gLinkTech);
     G.svg.prepend(defs);
 
-    // Círculo de glow que sigue al cursor
     const c=document.createElementNS(NS,'circle');
     c.setAttribute('id','cursorGlow'); c.setAttribute('r','120'); c.setAttribute('fill','url(#glowGrad)'); c.setAttribute('opacity','0');
     c.style.mixBlendMode='screen'; c.style.pointerEvents='none';
@@ -497,4 +487,3 @@ const SiteGraph = (() => {
 
   return { init };
 })();
-</script>
