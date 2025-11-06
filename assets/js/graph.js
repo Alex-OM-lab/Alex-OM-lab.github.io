@@ -1,17 +1,17 @@
-// graph.js — Árbol abierto por defecto + vista selectiva por rama + botón "Encender panel".
-// Mantiene: stagger, ruta viva, búsqueda, pan/zoom, partículas, breadcrumb.
+// graph.js — Árbol abierto + límite 6/6 + iluminación por rama + botón “Encender panel”
 
 const SiteGraph = (() => {
   const NS = 'http://www.w3.org/2000/svg';
+  const MAX_L2 = 6; // máximo de carpetas (nivel 2) por cada área
+  const MAX_L3 = 6; // máximo de artículos (nivel 3) por cada carpeta
 
   const G = {
     svg:null, root:null, stage:null,
     layers:null, colsNodes:[[],[],[],[]],
-    // Selección actual (índices globales en columnas 1–3 cuando allOpen)
     state:{ sel0:null, sel1:null, sel2:null },
     prevSel:{ sel0:null, sel1:null, sel2:null },
 
-    // Mapas de índice global -> índices locales para breadcrumb
+    // mapas global->local
     mapL1:[], mapL2:[], mapL3:[],
 
     // Layout
@@ -29,7 +29,7 @@ const SiteGraph = (() => {
     bcEl:null, searchUI:null, searchInput:null,
 
     // flags
-    allOpen:true,     // << mostrar todo abierto al iniciar
+    allOpen:true,
     _ambient:null,
   };
 
@@ -125,10 +125,11 @@ const SiteGraph = (() => {
   }
 
   /* ====== Dibujo ====== */
-  function drawNode({level,x,y,w,h,title,sub,onClick,delay=0}){
+  function drawNode({level,x,y,w,h,title,sub,onClick,delay=0, parentEl=null}){
     const g = document.createElementNS(NS,'g');
     g.classList.add('node','sleep');
     g.dataset.lvl=String(level);
+    g._parent = parentEl;               // referencia al padre para iluminar ramas
     g.setAttribute('transform',`translate(${x},${y})`);
     g.addEventListener('mouseenter',()=>g.classList.add('hovered'));
     g.addEventListener('mouseleave',()=>g.classList.remove('hovered'));
@@ -148,7 +149,7 @@ const SiteGraph = (() => {
 
     requestAnimationFrame(()=> setTimeout(()=> g.classList.add('is-in'), delay));
 
-    return {x,y,w:parseFloat(r.getAttribute('width')),h, el:g};
+    return {x,y,w:parseFloat(r.getAttribute('width')),h, el:g, _parent: parentEl };
   }
 
   function drawLink(from,to,level,delay=0){
@@ -158,6 +159,7 @@ const SiteGraph = (() => {
     const dx=Math.max(60,(x2-x1)/2);
     path.setAttribute('d',`M ${x1} ${y1} C ${x1+dx} ${y1}, ${x2-dx} ${y2}, ${x2} ${y2}`);
     path.setAttribute('class',`link l${level} sleep`);
+    path._from = from.el; // referencia al nodo padre
     path.classList.add('flow');
     G.layers.links[level-1].appendChild(path);
     setTimeout(()=> path.classList.add('draw'), delay);
@@ -171,18 +173,21 @@ const SiteGraph = (() => {
     return ix=> y0 + ix*(G.nodeH+G.vGap);
   }
 
-  /* ===== Render: TODO ABIERTO ===== */
+  /* ===== Render: TODO ABIERTO con límites ===== */
   const STAGGER_BASE=30, STAGGER_STEP=30;
 
   function renderAllOpen(){
     clearAll();
     if(!G.TREE?.length) return;
 
-    // Cálculos de totales por columna
+    // Totales con límite por nivel
     const roots = G.TREE.map(r=>r.raiz);
     const totalAreas = G.TREE.reduce((acc,r)=> acc + (r.areas?.length||0), 0);
-    const totalSubs  = G.TREE.reduce((acc,r)=> acc + (r.areas||[]).reduce((a,ar)=> a + (ar.subcarpetas?.length||0),0), 0);
-    const totalItems = G.TREE.reduce((acc,r)=> acc + (r.areas||[]).reduce((a,ar)=> a + (ar.subcarpetas||[]).reduce((b,_s)=> b + (window.GRAPH_MAKE_SIX? window.GRAPH_MAKE_SIX(_s).length : 0),0),0), 0);
+    const totalSubs  = G.TREE.reduce((acc,r)=> acc + (r.areas||[]).reduce((a,ar)=> a + Math.min(MAX_L2, (ar.subcarpetas?.length||0)),0), 0);
+    const totalItems = G.TREE.reduce((acc,r)=> acc + (r.areas||[]).reduce((a,ar)=> a + (ar.subcarpetas||[]).slice(0,MAX_L2).reduce((b,sc)=>{
+      const items = (window.GRAPH_MAKE_SIX ? window.GRAPH_MAKE_SIX(sc) : []);
+      return b + Math.min(MAX_L3, items.length);
+    },0),0), 0);
 
     const y0 = layoutY(roots.length);
     const y1 = layoutY(totalAreas);
@@ -205,6 +210,7 @@ const SiteGraph = (() => {
       (r.areas||[]).forEach((a,aj)=>{
         const box=drawNode({
           level:1, x:G.colX[1], y:y1(ix1), w:G.nodeW[1], h:G.nodeH, title:a.nombre,
+          parentEl: L0[ri].el,
           onClick:()=>{ G.state.sel0=ri; G.state.sel1=ix1; G.state.sel2=null; rememberSel(); updateBreadcrumb(); wakeBranch(true); routeVibes(); },
           delay: STAGGER_BASE + (ix1%10)*STAGGER_STEP
         });
@@ -215,15 +221,16 @@ const SiteGraph = (() => {
       });
     });
 
-    // --- Nivel 2 ---
+    // --- Nivel 2 (capado a 6 por área) ---
     const L1 = G.colsNodes[1];
     let areaGlobal=0;
     G.TREE.forEach((r,ri)=>{
       (r.areas||[]).forEach((a,aj)=>{
         const left = L1[areaGlobal];
-        (a.subcarpetas||[]).forEach((s,sk)=>{
+        (a.subcarpetas||[]).slice(0,MAX_L2).forEach((s,sk)=>{
           const box=drawNode({
             level:2, x:G.colX[2], y:y2(ix2), w:G.nodeW[2], h:G.nodeH, title:s,
+            parentEl: left.el,
             onClick:()=>{ G.state.sel0=ri; G.state.sel1=areaGlobal; G.state.sel2=ix2; rememberSel(); updateBreadcrumb(); wakeBranch(true); routeVibes(); },
             delay: STAGGER_BASE + (ix2%10)*STAGGER_STEP
           });
@@ -236,21 +243,24 @@ const SiteGraph = (() => {
       });
     });
 
-    // --- Nivel 3 ---
+    // --- Nivel 3 (capado a 6 por subcarpeta) ---
     const L2 = G.colsNodes[2];
     let subGlobal=0;
     G.TREE.forEach((r,ri)=>{
       (r.areas||[]).forEach((a,aj)=>{
-        (a.subcarpetas||[]).forEach((s,sk)=>{
+        (a.subcarpetas||[]).slice(0,MAX_L2).forEach((s,sk)=>{
           const left = L2[subGlobal];
-          const items = (window.GRAPH_MAKE_SIX ? window.GRAPH_MAKE_SIX(s) : []);
-          items.forEach((txt,ti)=>{
+          const allItems = (window.GRAPH_MAKE_SIX ? window.GRAPH_MAKE_SIX(s) : []);
+          allItems.slice(0,MAX_L3).forEach((txt,ti)=>{
             const box=drawNode({
               level:3, x:G.colX[3], y:y3(ix3), w:G.nodeW[3], h:G.nodeH, title:txt, sub:"↗",
+              parentEl: left?.el || null,
               onClick:()=>{/* futuro: abrir enlace */},
               delay: STAGGER_BASE + (ix3%10)*STAGGER_STEP
             });
-            box._link = drawLink(left, box, 3, STAGGER_BASE + (ix3%10)*STAGGER_STEP);
+            if(left){
+              box._link = drawLink(left, box, 3, STAGGER_BASE + (ix3%10)*STAGGER_STEP);
+            }
             G.colsNodes[3].push(box);
             G.mapL3[ix3] = {root:ri, area:aj, sub:sk, item:ti, subGlobal};
             ix3++;
@@ -260,16 +270,15 @@ const SiteGraph = (() => {
       });
     });
 
-    applySleepState(); // todo dormido...
-    // ...pero Nivel 0 visible al entrar
+    applySleepState();
+    // mantener L0 visible
     G.colsNodes[0].forEach(b=> b?.el.classList.remove('sleep'));
   }
 
-  /* ===== Dormir/Despertar ===== */
+  /* ===== Dormir/Despertar con filtros por padre ===== */
   function applySleepState(){
     G.root.querySelectorAll('.node').forEach(n=>n.classList.add('sleep'));
     G.root.querySelectorAll('.link').forEach(l=>l.classList.add('sleep'));
-    // Al iniciar, si no hay selección, nivel 0 visible
     if (G.state.sel0 == null && G.colsNodes[0]?.length){
       G.colsNodes[0].forEach(b=> b?.el.classList.remove('sleep'));
     }
@@ -277,44 +286,39 @@ const SiteGraph = (() => {
   }
 
   function wakeBranch(withEffect=true){
-    // Apaga todo
+    // apaga todo
     G.root.querySelectorAll('.node').forEach(n=>n.classList.add('sleep'));
     G.root.querySelectorAll('.link').forEach(l=>l.classList.add('sleep'));
-    const actNodes=[], actLinks=[];
 
-    // Siempre mantener L0 visible
+    // siempre L0 visible
     G.colsNodes[0].forEach(b=> b?.el.classList.remove('sleep'));
+
+    const actNodes=[], actLinks=[];
+    const selL0 = G.colsNodes[0][G.state.sel0||0]?.el; // por si hay solo click en L1/L2
 
     if(G.state.sel0!=null){
       const n0 = G.colsNodes[0][G.state.sel0];
       if(n0){ actNodes.push(n0.el); }
+      // áreas hijas de ese L0
+      G.colsNodes[1].forEach(b=>{ if(b && b._parent===n0.el){ actNodes.push(b.el); if(b._link) actLinks.push(b._link); } });
     }
+
     if(G.state.sel1!=null){
-      const n1 = G.colsNodes[1][G.state.sel1];
-      if(n1){ actNodes.push(n1.el); if(n1._link) actLinks.push(n1._link); }
+      const a = G.colsNodes[1][G.state.sel1];
+      if(a){ actNodes.push(a.el); if(a._link) actLinks.push(a._link); }
+      // subcarpetas hijas de esa área
+      G.colsNodes[2].forEach(b=>{ if(b && b._parent===a.el){ actNodes.push(b.el); if(b._link) actLinks.push(b._link); } });
     }
+
     if(G.state.sel2!=null){
-      const n2 = G.colsNodes[2][G.state.sel2];
-      if(n2){ actNodes.push(n2.el); if(n2._link) actLinks.push(n2._link); }
-      // Nivel 3: todos los items hijo del sub seleccionado
-      // (buscar items cuyo _link venga del n2 seleccionado)
-      G.colsNodes[3].forEach(b=>{ if(b && b._link && n2){ actNodes.push(b.el); actLinks.push(b._link); } });
-    } else if(G.state.sel1!=null){
-      // Iluminar todos los sub de ese área
-      G.colsNodes[2].forEach(b=>{ if(b && b._link){ actNodes.push(b.el); actLinks.push(b._link); } });
-    } else if(G.state.sel0!=null){
-      // Iluminar todas las áreas del root
-      G.colsNodes[1].forEach(b=>{ if(b && b._link){ actNodes.push(b.el); actLinks.push(b._link); } });
+      const s = G.colsNodes[2][G.state.sel2];
+      if(s){ actNodes.push(s.el); if(s._link) actLinks.push(s._link); }
+      // items hijos de esa subcarpeta
+      G.colsNodes[3].forEach(b=>{ if(b && b._parent===s.el){ actNodes.push(b.el); if(b._link) actLinks.push(b._link); } });
     }
 
     actNodes.forEach(el=>{ el.classList.remove('sleep'); if(withEffect){ el.classList.add('wake'); setTimeout(()=> el.classList.remove('wake'), 420); } });
-    actLinks.forEach(el=>{
-      el.classList.remove('sleep');
-      el.classList.add('breathe');
-      if(withEffect && (changedLevel(0)||changedLevel(1)||changedLevel(2))){
-        el.classList.add('pulse-once'); setTimeout(()=> el.classList.remove('pulse-once'), 900);
-      }
-    });
+    actLinks.forEach(el=>{ el.classList.remove('sleep'); el.classList.add('breathe'); if(withEffect && (changedLevel(0)||changedLevel(1)||changedLevel(2))){ el.classList.add('pulse-once'); setTimeout(()=> el.classList.remove('pulse-once'), 900); } });
   }
 
   function rememberSel(){ G.prevSel = { sel0:G.state.sel0, sel1:G.state.sel1, sel2:G.state.sel2 }; }
@@ -353,9 +357,12 @@ const SiteGraph = (() => {
   function routeVibes(){
     G.root.querySelectorAll('.link.breathe').forEach(l=> l.classList.remove('breathe'));
     const actives=[];
-    if(G.state.sel1!=null){ const n1=G.colsNodes[1][G.state.sel1]; if(n1?._link) actives.push(n1._link); }
-    if(G.state.sel2!=null){ const n2=G.colsNodes[2][G.state.sel2]; if(n2?._link) actives.push(n2._link); }
-    G.colsNodes[3].forEach(b=>{ if(b?._link) actives.push(b._link); });
+    if(G.state.sel1!=null){ const a=G.colsNodes[1][G.state.sel1]; if(a?._link) actives.push(a._link); }
+    if(G.state.sel2!=null){ const s=G.colsNodes[2][G.state.sel2]; if(s?._link) actives.push(s._link); }
+    // items de la sub seleccionada
+    if(G.state.sel2!=null){
+      G.colsNodes[3].forEach(b=>{ if(b && b._parent===G.colsNodes[2][G.state.sel2].el && b._link) actives.push(b._link); });
+    }
     actives.forEach(l=> l.classList.add('breathe'));
   }
 
@@ -510,3 +517,4 @@ const SiteGraph = (() => {
 
   return { init };
 })();
+
