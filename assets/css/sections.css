@@ -230,16 +230,18 @@ body{
 #tools-pro .row:active{transform:translateY(-1px)}
 #tools-pro .row:focus-visible{outline:3px solid color-mix(in oklab, var(--accent) 30%, transparent); outline-offset:2px}
 
-/* ---------- SELECCIÓN: resalte AZUL con halo ámbar sutil ---------- */
+/* ---------- SELECCIÓN: “naranjita” SUTIL y profesional ---------- */
 #tools-pro .row.active{
+  /* Fondo sigue siendo AZUL, solo realce sutil ámbar */
   background:
     radial-gradient(120% 80% at 0% 0%, rgba(255,255,255,.05), transparent 60%),
-    linear-gradient(180deg, #18344f, #11263b);   /* azul activo más claro */
-  border-color:#2d4a6a;                          /* borde navy visible */
+    linear-gradient(180deg, #18344f, #11263b);
+  border-color:#355773;                          /* navy visible */
   box-shadow:
-    0 0 0 2px rgba(243,154,44,.20),              /* anillo ámbar muy sutil */
-    0 12px 28px rgba(5,15,30,.75),
-    inset 0 1px 0 rgba(255,255,255,.06);
+    0 0 0 2px rgba(243,154,44,.18),              /* anillo ámbar suave */
+    0 0 18px rgba(243,154,44,.10),               /* glow exterior muy sutil */
+    0 12px 28px rgba(5,15,30,.75),               /* profundidad */
+    inset 0 1px 0 rgba(255,255,255,.06);         /* highlight interno */
   color:var(--row-text-hover);
   transform:translateY(-2px);
 }
@@ -247,7 +249,9 @@ body{
 #tools-pro .row.active::after{
   content:"";
   position:absolute; inset:-1px; pointer-events:none; border-radius:12px;
-  background:radial-gradient(16% 30% at 98% 0%, rgba(243,154,44,.18), transparent 60%);
+  /* Halo ámbar MUY suave en la esquina sup.-derecha */
+  background:
+    radial-gradient(16% 36% at 96% 4%, rgba(243,154,44,.16), transparent 60%);
 }
 
 /* Left/Right */
