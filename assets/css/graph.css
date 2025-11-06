@@ -8,7 +8,7 @@
 .graph-head{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:10px; }
 .graph-head h2{ margin:0 }
 
-/* Botón de tema */
+/* Botón (ahora: encender/apagar panel) */
 .theme-toggle{
   appearance:none; border:1px solid rgba(255,255,255,.12); background:#0e1730;
   color:var(--text); padding:8px 12px; border-radius:10px; font-weight:700; cursor:pointer;
@@ -100,34 +100,33 @@
   filter: drop-shadow(0 0 10px rgba(155,226,176,.10)) drop-shadow(0 0 18px rgba(155,226,176,.06));
 }
 
-/* ==== ENTRADA SUTIL (50% MÁS LENTA) ==== */
+/* ==== ENTRADA SUTIL (ajustable) ==== */
 .node .node-in{
   opacity:0;
   transform: translateY(8px);
   will-change: transform, opacity;
 }
 .node.is-in .node-in{
-  /* antes .36s → ahora .54s (x1.5 más lenta) */
-  animation: node-in-smooth .81s cubic-bezier(.2,.8,.2,1) forwards;
+  animation: node-in-smooth .81s cubic-bezier(.2,.8,.2,1) forwards; /* puedes ajustar la duración */
 }
-/* nada aquí para no pisar la entrada */
-.node:not(.dim-node) .node-in{}
-
-/* Keyframes limpios */
 @keyframes node-in-smooth{
   from { opacity:0; transform: translateY(8px); }
   to   { opacity:1; transform: translateY(0); }
 }
 
-/* Hover y foco (sin cambios de escala para evitar saltos) */
+/* Hover y foco */
 .node.moving{ transition: transform .55s cubic-bezier(.2,.8,.2,1); }
 .node.focus rect{ stroke-width:1.8; filter: drop-shadow(0 0 14px rgba(255,159,26,.18)); }
 .node rect{ transition:filter .2s ease, stroke-width .18s ease; }
 .node.hovered rect{ filter:drop-shadow(0 0 14px rgba(255,159,26,.18)); stroke-width:1.6; }
 
-/* ===== “Dormido” por defecto y “Despertar” de rama ===== */
+/* ===== Estados de iluminación ===== */
 .sleep{ opacity:.18; filter:grayscale(.55); transition:opacity .24s ease, filter .24s ease; }
 .link.sleep{ animation-play-state: paused; }
+
+/* Encender panel entero */
+.graph-stage.panel-on .sleep{ opacity:1 !important; filter:none !important; }
+.graph-stage.panel-on .link.sleep{ animation-play-state: running !important; }
 
 /* Ruta viva: respiro tenue + pulso al cambiar nivel */
 .link.breathe{
@@ -146,7 +145,7 @@
   100%{ stroke-width:2; }
 }
 
-/* Atenuación clásica */
+/* Atenuación clásica (se mantiene para otros efectos) */
 .dim-node{ opacity:.34; }
 .dim-link{ opacity:.28; }
 
@@ -212,7 +211,6 @@ body.theme-tech .graph-bc{ background:rgba(6,14,10,.6); }
 body.theme-tech .theme-toggle{ background:#09160f; border-color:rgba(0,230,118,.25); }
 body.theme-tech .theme-toggle:hover{ background:#0b1d15; }
 
-/* Colores por nivel en modo técnico */
 body.theme-tech .graph-legend .lvl0{ background:#00e676 }
 body.theme-tech .graph-legend .lvl1{ background:#b3ffd5 }
 body.theme-tech .graph-legend .lvl2{ background:#77ffd0 }
@@ -239,4 +237,3 @@ body.theme-tech .link.l3{ stroke:rgba(168,255,198,.6) }
   .link.breathe, .link.pulse-once{ animation:none; }
   .node.moving{ transition:none; }
 }
-
