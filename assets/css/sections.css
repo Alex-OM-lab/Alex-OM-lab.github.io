@@ -164,6 +164,7 @@ body{
   background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12);
   border-radius:10px; padding:6px 8px;
   margin-left:auto; /* << empuja los filtros a la derecha */
+  transform: translateX(-2%);
 }
 #tools-pro .tag{
   cursor:pointer; user-select:none;
