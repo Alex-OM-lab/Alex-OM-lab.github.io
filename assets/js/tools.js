@@ -1,243 +1,178 @@
-/* ===========================================================
-   Herramientas y Lenguajes — LÓGICA DE INTERFAZ
-   =========================================================== */
-(function () {
-  "use strict";
-  const $ = (sel, root = document) => root.querySelector(sel);
-  const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+/* Tabla "Ultra PRO v4" — encapsulada, no rompe nada más del sitio */
+(function(){
+  const root = document.getElementById('tools-pro');
+  if(!root) return;
 
-  const root = $("#tools-pro");
-  if (!root) return;
-
-  const els = {
-    toolsCard: $("#toolsCard", root),
-    langsCard: $("#langsCard", root),
-    langsBody: $("#langsBody", root),
-
-    list: $("#toolsList", root),
-    pagerDots: $("#pagerDots", root),
-    pageCounter: $("#pageCounter", root),
-    prevBtn: $("#prevBtn", root),
-    nextBtn: $("#nextBtn", root),
-    resultCount: $("#resultCount", root),
-
-    searchBox: $("#searchBox", root),
-    searchInput: $("#searchInput", root),
-    clearBtn: $("#clearBtn", root),
-    tagButtons: $$(".tag", root),
-  };
-
-  const TOOLS_SRC = [
-    { name: "Ansible", os: "linux" },
-    { name: "Docker", os: "multi" },
-    { name: "Kali / Nmap", os: "linux" },
-    { name: "Burp Suite", os: "windows/linux" },
-    { name: "Metasploit", os: "linux" },
-    { name: "OpenVAS", os: "linux" },
-    { name: "Wireshark", os: "windows/linux" },
-    { name: "pfSense", os: "linux" },
-    { name: "Proxmox", os: "linux" },
-    { name: "VMware/ESXi", os: "windows" },
-    { name: "Azure AD", os: "windows" },
-    { name: "Git/GitHub", os: "multi" },
+  /* ===== Datos ===== */
+  const tools = [
+    { name:"Ansible",     os:"linux",   icon:"fa-brands fa-redhat" },
+    { name:"Docker",      os:"multi",   icon:"fa-brands fa-docker" },
+    { name:"Kali / Nmap", os:"linux",   icon:"fa-solid fa-magnifying-glass" },
+    { name:"Burp Suite",  os:"windows", icon:"fa-solid fa-bug" },
+    { name:"Metasploit",  os:"linux",   icon:"fa-solid fa-skull-crossbones" },
+    { name:"OpenVAS",     os:"linux",   icon:"fa-solid fa-shield-halved" },
+    { name:"Wireshark",   os:"windows", icon:"fa-solid fa-wave-square" },
+    { name:"pfSense",     os:"linux",   icon:"fa-solid fa-network-wired" },
+    { name:"ZAP",         os:"multi",   icon:"fa-solid fa-bolt" },
+    { name:"Terraform",   os:"linux",   icon:"fa-solid fa-cubes" },
+    { name:"Podman",      os:"linux",   icon:"fa-solid fa-boxes-stacked" },
+    { name:"Nessus",      os:"windows", icon:"fa-solid fa-spider" }
   ];
 
-  const ICONS = {
-    default: "fa-solid fa-cube",
-    linux: "fa-brands fa-linux",
-    windows: "fa-brands fa-windows",
-    multi: "fa-solid fa-layer-group",
-    "Ansible": "fa-brands fa-redhat",
-    "Docker": "fa-brands fa-docker",
-    "Kali / Nmap": "fa-solid fa-magnifying-glass",
-    "Burp Suite": "fa-solid fa-bug",
-    "Metasploit": "fa-solid fa-skull-crossbones",
-    "OpenVAS": "fa-solid fa-shield-halved",
-    "Wireshark": "fa-solid fa-wave-square",
-    "pfSense": "fa-solid fa-network-wired",
-    "Proxmox": "fa-solid fa-server",
-    "VMware/ESXi": "fa-solid fa-diagram-project",
-    "Azure AD": "fa-solid fa-cloud",
-    "Git/GitHub": "fa-brands fa-git-alt",
-  };
-
-  const normalizeOS = (raw) => {
-    const s = String(raw || "").toLowerCase();
-    const hasWin = /win/.test(s);
-    const hasLin = /lin/.test(s);
-    if (hasWin && hasLin) return "multi";
-    if (hasWin) return "windows";
-    if (hasLin) return "linux";
-    return "multi";
-  };
-
-  const TOOLS = TOOLS_SRC.map(t => ({ name: t.name, os: normalizeOS(t.os) }));
-
+  /* ===== Estado / refs ===== */
   const state = {
     page: 0,
-    perPage: Math.max(1, $$(".row", els.langsBody).length),
-    query: "",
+    perPage: root.querySelectorAll('#langsBody .row').length,
+    query: '',
     os: new Set(),
-    selected: new Set(),
+    selected: new Set()
   };
 
-  function renderTools(withEntrance = false) {
-    const filtered = applyFilters(TOOLS);
-    const totalPages = Math.max(1, Math.ceil(filtered.length / state.perPage));
-    state.page = Math.min(state.page, totalPages - 1);
+  const list = root.querySelector('#toolsListNew');
+  const dots = root.querySelector('#pagerDots');
+  const counter = root.querySelector('#pageCounter');
+  const prevBtn = root.querySelector('#prevBtn');
+  const nextBtn = root.querySelector('#nextBtn');
+  const toolsCard = root.querySelector('#toolsCard');
+  const langsCard = root.querySelector('#langsCard');
+  const resultCount = root.querySelector('#resultCount');
+  const searchBox = root.querySelector('#searchBox');
+  const searchInput = root.querySelector('#searchInput');
+  const clearBtn = root.querySelector('#clearBtn');
 
-    const start = state.page * state.perPage;
-    const items = filtered.slice(start, start + state.perPage);
+  /* ===== Filtros ===== */
+  let searchTimer = null;
+  searchInput.addEventListener('input', e=>{
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(()=>{
+      state.query = e.target.value.trim().toLowerCase();
+      searchBox.classList.toggle('has-text', !!state.query);
+      state.page = 0; render(true);
+    }, 120);
+  });
+  clearBtn.addEventListener('click', ()=>{
+    searchInput.value=''; state.query=''; searchBox.classList.remove('has-text'); state.page=0; render(true);
+  });
 
-    els.list.innerHTML = items.map(t => {
-      const active = state.selected.has(t.name) ? "active" : "";
-      const icon = ICONS[t.name] || ICONS.default;
-      return `
-        <div class="row ${active}" data-id="${escapeHtml(t.name)}"
-             role="button" tabindex="0" aria-pressed="${active ? "true" : "false"}"
-             title="${escapeHtml(t.name)}">
-          <div class="left"><i class="${icon}"></i> ${escapeHtml(t.name)}</div>
-          <div class="right">${chip(t.os)}</div>
-        </div>`;
-    }).join("");
+  root.querySelectorAll('.tag').forEach(tag=>{
+    tag.addEventListener('click', ()=>{
+      const val = tag.dataset.os;
+      if(tag.classList.toggle('on')) state.os.add(val);
+      else state.os.delete(val);
+      state.page = 0; render(true);
+    });
+  });
 
-    els.pagerDots.innerHTML = Array.from({ length: totalPages }, (_, i) =>
-      `<span class="dot ${i === state.page ? "active" : ""}"></span>`
-    ).join("");
-    els.pageCounter.textContent = `${state.page + 1}/${totalPages}`;
-    els.prevBtn.disabled = state.page === 0;
-    els.nextBtn.disabled = state.page === totalPages - 1;
-
-    els.resultCount.textContent = filtered.length;
-
-    bindSelectableRows(els.list);
-
-    if (withEntrance) {
-      $$(".row", els.list).forEach((row, i) => {
-        row.classList.add("page-enter");
-        row.style.animationDelay = `${i * 40}ms`;
-        row.addEventListener("animationend", () => {
-          row.classList.remove("page-enter");
-          row.style.animationDelay = "";
-        }, { once: true });
-      });
-    }
-
-    lockCardHeights();
-  }
-
-  function applyFilters(items) {
-    let out = items;
-    if (state.query) {
-      const q = state.query;
-      out = out.filter(t => t.name.toLowerCase().includes(q));
-    }
-    if (state.os.size) {
-      out = out.filter(t => state.os.has(t.os));
-    }
-    return out;
-  }
-
-  function chip(os) {
+  function chip(os){
     const map = {
-      linux:   { cls: "chip linux",   label: "Linux",   icon: "fa-brands fa-linux",      tip: "Disponible en Linux" },
-      windows: { cls: "chip windows", label: "Windows", icon: "fa-brands fa-windows",    tip: "Disponible en Windows" },
-      multi:   { cls: "chip multi",   label: "Multi",   icon: "fa-solid fa-layer-group", tip: "Disponible en varios sistemas" },
+      linux:   { cls:'chip linux',   label:'Linux',   icon:'fa-brands fa-linux', tip:'Disponible en Linux' },
+      windows: { cls:'chip windows', label:'Windows', icon:'fa-brands fa-windows', tip:'Disponible en Windows' },
+      multi:   { cls:'chip multi',   label:'Multi',   icon:'fa-solid fa-layer-group', tip:'Disponible en varios sistemas' }
     };
     const d = map[os] || map.multi;
     return `<span class="${d.cls}" data-tooltip="${d.tip}"><i class="${d.icon}"></i>${d.label}</span>`;
   }
 
-  function bindSelectableRows(scope = root) {
-    $$('.row[role="button"]', scope).forEach(row => {
-      const pulse = () => {
-        row.classList.add("pulse");
-        const end = () => { row.classList.remove("pulse"); row.removeEventListener("animationend", end); };
-        row.addEventListener("animationend", end);
+  function applyFilters(items){
+    let out = items;
+    if(state.query){ out = out.filter(t => t.name.toLowerCase().includes(state.query)); }
+    if(state.os.size){ out = out.filter(t => state.os.has(t.os)); }
+    return out;
+  }
+
+  // Selección + pulso
+  function bindSelectableRows(scope=root){
+    scope.querySelectorAll('.row[role="button"]').forEach(row=>{
+      const pulseOnce = ()=>{
+        row.classList.add('pulse');
+        const handler = ()=>{ row.classList.remove('pulse'); row.removeEventListener('animationend', handler); };
+        row.addEventListener('animationend', handler);
       };
-      row.addEventListener("click", () => {
+      row.addEventListener('click', ()=>{
         const id = row.dataset.id;
-        if (state.selected.has(id)) state.selected.delete(id);
-        else state.selected.add(id);
-        row.classList.toggle("active");
-        row.setAttribute("aria-pressed", state.selected.has(id) ? "true" : "false");
-        pulse();
+        if(state.selected.has(id)) state.selected.delete(id); else state.selected.add(id);
+        row.classList.toggle('active');
+        row.setAttribute('aria-pressed', state.selected.has(id) ? 'true' : 'false');
+        pulseOnce();
       });
-      row.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); row.click(); }
+      row.addEventListener('keydown', (e)=>{
+        if(e.key==='Enter' || e.key===' '){ e.preventDefault(); row.click(); }
       });
     });
   }
 
+  // ===== Altura estable =====
   let lockedHeight = 0;
-  function resetLock() {
-    lockedHeight = 0;
-    els.toolsCard?.style.setProperty("--locked-card-height", "auto");
-    els.langsCard?.style.setProperty("--locked-card-height", "auto");
-  }
-  function lockCardHeights() {
-    if (!els.toolsCard || !els.langsCard) return;
-    els.toolsCard.style.setProperty("--locked-card-height", "auto");
-    els.langsCard.style.setProperty("--locked-card-height", "auto");
-    const h = Math.max(els.toolsCard.offsetHeight, els.langsCard.offsetHeight);
+  function lockHeights(){
+    toolsCard.style.setProperty('--locked-card-height','auto');
+    langsCard.style.setProperty('--locked-card-height','auto');
+    const h = Math.max(toolsCard.offsetHeight, langsCard.offsetHeight);
     lockedHeight = Math.max(lockedHeight, h);
-    els.toolsCard.style.setProperty("--locked-card-height", lockedHeight + "px");
-    els.langsCard.style.setProperty("--locked-card-height", lockedHeight + "px");
+    toolsCard.style.setProperty('--locked-card-height', lockedHeight + 'px');
+    langsCard.style.setProperty('--locked-card-height', lockedHeight + 'px');
+  }
+  function resetLock(){
+    lockedHeight = 0;
+    toolsCard.style.setProperty('--locked-card-height','auto');
+    langsCard.style.setProperty('--locked-card-height','auto');
   }
 
-  let searchTimer = null;
-  els.searchInput?.addEventListener("input", (e) => {
-    clearTimeout(searchTimer);
-    searchTimer = setTimeout(() => {
-      state.query = (e.target.value || "").trim().toLowerCase();
-      els.searchBox?.classList.toggle("has-text", !!state.query);
-      state.page = 0;
-      renderTools(true);
-    }, 120);
-  });
-  els.clearBtn?.addEventListener("click", () => {
-    if (!els.searchInput) return;
-    els.searchInput.value = "";
-    state.query = "";
-    els.searchBox?.classList.remove("has-text");
-    state.page = 0;
-    renderTools(true);
-  });
-  els.tagButtons.forEach(tag => {
-    tag.addEventListener("click", () => {
-      const val = (tag.dataset.os || "").trim();
-      if (!val) return;
-      if (tag.classList.toggle("on")) state.os.add(val);
-      else state.os.delete(val);
-      state.page = 0;
-      renderTools(true);
-    });
-  });
-  els.prevBtn?.addEventListener("click", () => {
-    if (state.page > 0) { state.page--; renderTools(true); }
-  });
-  els.nextBtn?.addEventListener("click", () => {
-    const tp = Math.max(1, Math.ceil(applyFilters(TOOLS).length / state.perPage));
-    if (state.page < tp - 1) { state.page++; renderTools(true); }
-  });
+  function render(withEntrance=false){
+    const filtered = applyFilters(tools);
+    const totalPages = Math.max(1, Math.ceil(filtered.length / state.perPage));
+    state.page = Math.min(state.page, totalPages-1);
 
-  window.addEventListener("resize", () => {
-    resetLock();
-    renderTools(false);
-    requestAnimationFrame(lockCardHeights);
-  });
+    const start = state.page * state.perPage;
+    const items = filtered.slice(start, start + state.perPage);
 
-  function escapeHtml(str) {
-    return String(str)
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
+    list.innerHTML = items.map(t => {
+      const active = state.selected.has(t.name) ? 'active' : '';
+      return `
+      <div class="row ${active}" data-id="${t.name}" role="button" aria-pressed="${!!active}" tabindex="0" title="${t.name}">
+        <div class="left"><i class="${t.icon}"></i> ${t.name}</div>
+        <div class="right">${chip(t.os)}</div>
+      </div>`;
+    }).join('');
+
+    dots.innerHTML = Array.from({length: totalPages}, (_,i)=>`<span class="dot ${i===state.page?'active':''}"></span>`).join('');
+    counter.textContent = `${state.page+1}/${totalPages}`;
+    resultCount.textContent = filtered.length;
+
+    prevBtn.disabled = state.page===0;
+    nextBtn.disabled = state.page===totalPages-1;
+
+    bindSelectableRows(list);
+
+    if(withEntrance){
+      const rows = list.querySelectorAll('.row');
+      rows.forEach((row, i)=>{
+        row.classList.add('page-enter');
+        row.style.animationDelay = `${i*40}ms`;
+        row.addEventListener('animationend', ()=>{ row.classList.remove('page-enter'); row.style.animationDelay=''; }, {once:true});
+      });
+    }
+
+    lockHeights();
   }
 
-  window.addEventListener("load", () => {
-    renderTools(true);
-    requestAnimationFrame(lockCardHeights);
+  // Recalcular lock cuando cambien filtros o tamaño de ventana
+  function refitAfterChange(action){
+    resetLock(); action();
+    requestAnimationFrame(()=> lockHeights());
+  }
+
+  prevBtn.addEventListener('click', ()=>{ if(state.page>0){ state.page--; render(true); }});
+  nextBtn.addEventListener('click', ()=>{
+    const filtered = applyFilters(tools);
+    const tp = Math.max(1, Math.ceil(filtered.length/state.perPage));
+    if(state.page<tp-1){ state.page++; render(true); }
+  });
+
+  window.addEventListener('resize', ()=> refitAfterChange(()=>render(false)));
+
+  // Primera carga
+  window.addEventListener('load', ()=>{
+    render(true);
+    requestAnimationFrame(()=> lockHeights());
   });
 })();
