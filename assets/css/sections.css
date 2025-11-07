@@ -137,7 +137,7 @@ body{
 #tools-pro .search{ order:1 }
 #tools-pro .count{
   order:2;
-  margin-left:10px;     /* separación del buscador */
+  margin-left:5px;     /* separación del buscador */
   margin-right:auto;    /* empuja los botones a la derecha */
   align-self:center;
 
