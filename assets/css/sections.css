@@ -298,4 +298,3 @@ body{
 #tools-pro .dot{width:8px;height:8px;border-radius:50%;background:rgba(170,190,215,.28)}
 #tools-pro .dot.active{background:linear-gradient(90deg,var(--accent),var(--accent-2));box-shadow:0 0 10px rgba(243,154,44,.30)}
 #tools-pro .counter{font-size:.82rem;color:var(--muted);margin-left:8px}
-
