@@ -148,7 +148,7 @@ body{
 }
 #tools-pro .filter{
   order:3;
-  margin-left:14px;        /* botones alineados a la derecha por el auto del count */
+  margin-left:20px;        /* botones alineados a la derecha por el auto del count */
   display:flex; gap:10px; align-items:center;
   background:transparent; border:0; border-radius:0; padding:0;
 }
