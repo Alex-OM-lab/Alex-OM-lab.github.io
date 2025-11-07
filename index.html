@@ -14,12 +14,12 @@
   <!-- Iconos necesarios para la tabla -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 
-  <!-- CSS del sitio (nombre SIN números) -->
+  <!-- CSS del sitio -->
   <link rel="stylesheet" href="assets/css/nav.css"/>
   <link rel="stylesheet" href="assets/css/hero-glitch.css"/>
   <link rel="stylesheet" href="assets/css/graph.css"/>
   <link rel="stylesheet" href="assets/css/cubes.css"/>
-  <link rel="stylesheet" href="assets/css/sections.css"/> <!-- ✅ aquí enlaza tu sections.css sin (xx) -->
+  <link rel="stylesheet" href="assets/css/sections.css"/>
 
   <style>
     /* ===== Variables base (global) ===== */
@@ -131,7 +131,7 @@
       </div>
     </section>
 
-    <!-- HERRAMIENTAS Y LENGUAJES (TU TABLA) -->
+    <!-- HERRAMIENTAS Y LENGUAJES (TABLA NUEVA INTEGRADA) -->
     <section id="tools" class="reveal" data-reveal="fade-up" aria-labelledby="tools-title">
       <div id="tools-pro">
         <h2 id="tools-title" class="section-title tools-title"><i class="fa-solid fa-code-branch"></i> Herramientas y Lenguajes</h2>
@@ -207,7 +207,7 @@
           </section>
         </div>
 
-        <!-- Placeholders ocultos por compatibilidad -->
+        <!-- Placeholders ocultos por compatibilidad (no se usan) -->
         <div id="toolsLegacyPlaceholders" hidden>
           <div id="toolsList"></div>
           <div id="langsList"></div>
@@ -289,130 +289,8 @@
   <script src="assets/js/graph-data.js"></script>
   <script src="assets/js/graph.js"></script>
   <script defer src="assets/js/scroll-reveal.js"></script>
-  <script defer src="assets/js/tools.js"></script> <!-- enlace original conservado -->
-
+  <!-- Tabla nueva: JS externo -->
+  <script defer src="assets/js/tools.js"></script>
   <script>document.getElementById('y').textContent = new Date().getFullYear();</script>
-
-  <!-- JS de la nueva tabla (encapsulado a #tools-pro) -->
-  <script>
-  (function(){
-    const root = document.getElementById('tools-pro'); if(!root) return;
-    const tools = [
-      { name:"Ansible",     os:"linux",   icon:"fa-brands fa-redhat" },
-      { name:"Docker",      os:"multi",   icon:"fa-brands fa-docker" },
-      { name:"Kali / Nmap", os:"linux",   icon:"fa-solid fa-magnifying-glass" },
-      { name:"Burp Suite",  os:"windows", icon:"fa-solid fa-bug" },
-      { name:"Metasploit",  os:"linux",   icon:"fa-solid fa-skull-crossbones" },
-      { name:"OpenVAS",     os:"linux",   icon:"fa-solid fa-shield-halved" },
-      { name:"Wireshark",   os:"windows", icon:"fa-solid fa-wave-square" },
-      { name:"pfSense",     os:"linux",   icon:"fa-solid fa-network-wired" },
-      { name:"ZAP",         os:"multi",   icon:"fa-solid fa-bolt" },
-      { name:"Terraform",   os:"linux",   icon:"fa-solid fa-cubes" },
-      { name:"Podman",      os:"linux",   icon:"fa-solid fa-boxes-stacked" },
-      { name:"Nessus",      os:"windows", icon:"fa-solid fa-spider" }
-    ];
-    const state = { page:0, perPage: root.querySelectorAll('#langsBody .row').length, query:'', os:new Set(), selected:new Set() };
-    const list = root.querySelector('#toolsListNew'), dots = root.querySelector('#pagerDots'), counter = root.querySelector('#pageCounter');
-    const prevBtn = root.querySelector('#prevBtn'), nextBtn = root.querySelector('#nextBtn');
-    const toolsCard = root.querySelector('#toolsCard'), langsCard = root.querySelector('#langsCard');
-    const resultCount = root.querySelector('#resultCount');
-    const searchBox = root.querySelector('#searchBox'), searchInput = root.querySelector('#searchInput'), clearBtn = root.querySelector('#clearBtn');
-
-    let searchTimer = null;
-    searchInput.addEventListener('input', e=>{
-      clearTimeout(searchTimer);
-      searchTimer = setTimeout(()=>{
-        state.query = e.target.value.trim().toLowerCase();
-        searchBox.classList.toggle('has-text', !!state.query);
-        state.page = 0; render(true);
-      }, 120);
-    });
-    clearBtn.addEventListener('click', ()=>{ searchInput.value=''; state.query=''; searchBox.classList.remove('has-text'); state.page=0; render(true); });
-    root.querySelectorAll('.tag').forEach(tag=>{
-      tag.addEventListener('click', ()=>{
-        const val = tag.dataset.os;
-        if(tag.classList.toggle('on')) state.os.add(val); else state.os.delete(val);
-        state.page = 0; render(true);
-      });
-    });
-
-    function chip(os){
-      const map = {
-        linux:{cls:'chip linux',label:'Linux',icon:'fa-brands fa-linux',tip:'Disponible en Linux'},
-        windows:{cls:'chip windows',label:'Windows',icon:'fa-brands fa-windows',tip:'Disponible en Windows'},
-        multi:{cls:'chip multi',label:'Multi',icon:'fa-solid fa-layer-group',tip:'Disponible en varios sistemas'}
-      };
-      const d = map[os] || map.multi;
-      return `<span class="${d.cls}" data-tooltip="${d.tip}"><i class="${d.icon}"></i>${d.label}</span>`;
-    }
-    function applyFilters(items){
-      let out = items;
-      if(state.query) out = out.filter(t=>t.name.toLowerCase().includes(state.query));
-      if(state.os.size) out = out.filter(t=>state.os.has(t.os));
-      return out;
-    }
-    function bindSelectableRows(scope=root){
-      scope.querySelectorAll('.row[role="button"]').forEach(row=>{
-        const pulseOnce=()=>{row.classList.add('pulse'); const h=()=>{row.classList.remove('pulse'); row.removeEventListener('animationend',h)}; row.addEventListener('animationend',h);};
-        row.addEventListener('click', ()=>{
-          const id=row.dataset.id;
-          if(state.selected.has(id)) state.selected.delete(id); else state.selected.add(id);
-          row.classList.toggle('active'); row.setAttribute('aria-pressed', state.selected.has(id) ? 'true':'false'); pulseOnce();
-        });
-        row.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); row.click(); } });
-      });
-    }
-
-    let lockedHeight=0;
-    function lockHeights(){
-      toolsCard.style.setProperty('--locked-card-height','auto');
-      langsCard.style.setProperty('--locked-card-height','auto');
-      const h=Math.max(toolsCard.offsetHeight, langsCard.offsetHeight);
-      lockedHeight=Math.max(lockedHeight,h);
-      toolsCard.style.setProperty('--locked-card-height',lockedHeight+'px');
-      langsCard.style.setProperty('--locked-card-height',lockedHeight+'px');
-    }
-    function resetLock(){ lockedHeight=0; toolsCard.style.setProperty('--locked-card-height','auto'); langsCard.style.setProperty('--locked-card-height','auto'); }
-
-    function render(withEntrance=false){
-      const filtered = applyFilters(tools);
-      const totalPages = Math.max(1, Math.ceil(filtered.length / state.perPage));
-      state.page = Math.min(state.page, totalPages-1);
-      const start = state.page * state.perPage;
-      const items = filtered.slice(start, start + state.perPage);
-      list.innerHTML = items.map(t=>{
-        const active = state.selected.has(t.name) ? 'active' : '';
-        return `<div class="row ${active}" data-id="${t.name}" role="button" aria-pressed="${!!active}" tabindex="0" title="${t.name}">
-                  <div class="left"><i class="${t.icon}"></i> ${t.name}</div>
-                  <div class="right">${chip(t.os)}</div>
-                </div>`;
-      }).join('');
-      dots.innerHTML = Array.from({length: totalPages}, (_,i)=>`<span class="dot ${i===state.page?'active':''}"></span>`).join('');
-      counter.textContent = `${state.page+1}/${totalPages}`;
-      resultCount.textContent = filtered.length;
-      prevBtn.disabled = state.page===0; nextBtn.disabled = state.page===totalPages-1;
-      bindSelectableRows(list);
-      if(withEntrance){
-        list.querySelectorAll('.row').forEach((row,i)=>{
-          row.classList.add('page-enter'); row.style.animationDelay = `${i*40}ms`;
-          row.addEventListener('animationend', ()=>{ row.classList.remove('page-enter'); row.style.animationDelay=''; }, {once:true});
-        });
-      }
-      lockHeights();
-    }
-    function refitAfterChange(action){ resetLock(); action(); requestAnimationFrame(()=>lockHeights()); }
-    prevBtn.addEventListener('click', ()=>{ if(state.page>0){ state.page--; render(true); }});
-    nextBtn.addEventListener('click', ()=>{
-      const tp = Math.max(1, Math.ceil(applyFilters(tools).length/state.perPage));
-      if(state.page<tp-1){ state.page++; render(true); }
-    });
-    window.addEventListener('resize', ()=> refitAfterChange(()=>render(false)));
-    window.addEventListener('load', ()=>{ render(true); requestAnimationFrame(()=>lockHeights()); });
-  })();
-  </script>
-</body>
-</html>
-  <script>document.getElementById('y').textContent = new Date().getFullYear();</script>
-  <script src="assets/js/tools.js" defer></script>
 </body>
 </html>
