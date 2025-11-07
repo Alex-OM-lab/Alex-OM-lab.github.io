@@ -64,7 +64,7 @@ body{
   --bg:#0b0f14;
 
   /* Tarjetas */
-  --panel:#0f141a; --panel-2:#121a21; --ink:#e9eff5; --muted:#9fb3c8;
+  --panel:#111a2d; --panel-2:#121a21; --ink:#e9eff5; --muted:#9fb3c8;
   --stroke-card:rgba(255,255,255,.08);
 
   /* Filas */
