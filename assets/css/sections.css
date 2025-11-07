@@ -106,7 +106,7 @@ body{
 
 /* --- Card --- */
 #tools-pro .card{
-  background:linear-gradient(180deg,color-mix(in oklab,var(--panel) 92%,#0f1422 8%),var(--panel));
+  background:linear-gradient(180deg,color-mix(in oklab,var(--panel) 94%,#0f1422 6%),var(--panel));
   border:1px solid var(--stroke-card);
   border-radius:14px; padding:18px;
   display:flex; flex-direction:column;
