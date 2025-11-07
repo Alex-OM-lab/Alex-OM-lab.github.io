@@ -135,7 +135,7 @@ body{
   position:relative;
   display:flex;
   align-items:center;
-  gap:4px;
+  gap:2px;
   border-radius:12px;
   padding:10px 12px;
   min-width: calc(260px * 0.84); /* 👈 antes 0.7 — ahora 20% más ancha */
