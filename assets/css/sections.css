@@ -131,6 +131,21 @@ body{
   display:flex; gap:12px; align-items:center; margin-bottom:10px;
   flex-wrap:nowrap; /* << mantener todo en una línea como en el original */
 }
+/* Contenedor derecho: filtros + número */
+#tools-pro .rightbar{
+  display: grid;
+  grid-template-columns: auto 1fr; /* filtros ocupan su ancho; el hueco restante es 1fr */
+  align-items: center;
+  column-gap: 12px;
+  margin-left: auto;               /* empuja el bloque derecho al extremo */
+  padding-right: 18px;             /* respiración con el borde derecho */
+}
+
+/* El 12 se centra en el hueco entre filtros y borde derecho */
+#tools-pro .rightbar .count{
+  justify-self: center;
+  margin: 0;                       /* anulamos márgenes previos si los hubiera */
+}
 #tools-pro .search{
   position:relative;
   display:flex;
