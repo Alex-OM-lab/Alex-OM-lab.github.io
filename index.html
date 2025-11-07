@@ -145,23 +145,17 @@
   <div class="search" id="searchBox">
     <i class="fa-solid fa-magnifying-glass"></i>
     <input id="searchInput" type="text" placeholder="Buscar herramienta…">
-    <button class="clear" id="clearBtn" title="Limpiar búsqueda">
-      <i class="fa-solid fa-xmark"></i>
-    </button>
+    <button class="clear" id="clearBtn" title="Limpiar búsqueda"><i class="fa-solid fa-xmark"></i></button>
   </div>
 
-  <!-- NUEVO CONTENEDOR DERECHO -->
-  <div class="rightbar">
-    <div class="filter" aria-label="Filtrar por sistema operativo">
-      <span class="tag" data-os="linux">Linux</span>
-      <span class="tag" data-os="windows">Windows</span>
-      <span class="tag" data-os="multi">Multi</span>
-    </div>
-
-    <span class="count" id="resultCount">12</span>
+  <div class="filter" aria-label="Filtrar por sistema operativo">
+    <span class="tag" data-os="linux">Linux</span>
+    <span class="tag" data-os="windows">Windows</span>
+    <span class="tag" data-os="multi">Multi</span>
   </div>
+
+  <span class="count" id="resultCount">12</span>
 </div>
-
             <div class="card-body">
               <div id="toolsListNew"><!-- render JS --></div>
             </div>
