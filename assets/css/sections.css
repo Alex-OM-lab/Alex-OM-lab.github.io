@@ -4,10 +4,10 @@
 
 /* ---------- Variables y resets ---------- */
 :root{
-  --bg:#0b1220;          /* Fondo global del sitio */
+  --bg:#0b1220;
   --text:#e6edf6;
   --muted:#9bb0c3;
-  --accent:#ff9900;      /* Acento global */
+  --accent:#ff9900;
 }
 *{box-sizing:border-box}
 html,body{margin:0}
@@ -102,7 +102,7 @@ body{
 }
 @media (max-width:980px){ #tools-pro .grid{ grid-template-columns:1fr } }
 
-/* --- Card (AHORA igual que la tarjeta “Sobre mí”) --- */
+/* --- Card (igual que la tarjeta “Sobre mí”) --- */
 #tools-pro .card {
   background: linear-gradient(
     180deg,
@@ -300,18 +300,4 @@ body{
 
 @keyframes fadeSlideIn {
   0%   { opacity:0; transform:translateY(6px) }
-  100% { opacity:1; transform:translateY(0) }
-}
-@keyframes accentFade {
-  0%   { opacity:.65 }
-  100% { opacity:0 }
-}
-#tools-pro .row.page-enter { animation: fadeSlideIn 140ms ease both }
-#tools-pro .row.page-enter::before { opacity:.6; animation: accentFade 360ms ease both }
-
-@media (prefers-reduced-motion: reduce){
-  #tools-pro .row, #tools-pro .navbtn, #tools-pro .search::before{transition:none}
-  #tools-pro .row:hover{transform:none; box-shadow:0 0 0 1px rgba(255,255,255,.07) inset}
-  #tools-pro .row.pulse::before, #tools-pro .row.page-enter, #tools-pro .row.page-enter::before { animation:none }
-}
-
+  100% { opacity:1;
