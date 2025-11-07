@@ -138,7 +138,7 @@ body{
 #tools-pro .count{
   order:2;
   margin-left:5px;     /* separación del buscador */
-  margin-right:auto;    /* empuja los botones a la derecha */
+  margin-right:10px;    /* empuja los botones a la derecha */
   align-self:center;
 
   /* estilo existente del contador */
