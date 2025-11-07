@@ -87,6 +87,9 @@ body{
   /* Col derecha fija */
   --right-col:120px;
 
+  /* 👇 NUEVO: altura unificada solo para la toolbar */
+  --toolbar-h: 44px;
+
   background-color: #0b1220; /* 👈 Fondo azul oscuro del bloque de presentación */
 }
 
@@ -128,29 +131,34 @@ body{
 #tools-pro .toolbar{
   display:flex; gap:12px; align-items:center; margin-bottom:10px;
   flex-wrap:nowrap;
+  /* 👇 Alineación vertical perfecta de TODOS los hijos */
 }
+#tools-pro .toolbar > *{ align-self:center }
 
-/* ORDEN Y REPARTO DE ESPACIO EN LA TOOLBAR
-   - search (izquierda)
-   - count  (se queda a la izquierda del hueco)
-   - filter (a la derecha) */
+/* Orden actual: search (izq), count (medio-izq), filter (derecha) */
 #tools-pro .search{ order:1 }
 #tools-pro .count{
   order:2;
-  margin-left:5px;     /* separación del buscador */
-  margin-right:10px;    /* empuja los botones a la derecha */
+  margin-left:5px;      /* separación del buscador */
+  margin-right:10px;    /* hueco antes de los botones */
   align-self:center;
 
-  /* estilo existente del contador */
+  /* estilo existente del contador (no cambiado) */
   font-size:.78rem; font-weight:800; padding:6px 10px; border-radius:999px;
   color:#0f120a; background:linear-gradient(180deg,var(--accent),var(--accent-2));
   box-shadow:0 0 8px rgba(255,165,0,.35), inset 0 0 0 1px rgba(0,0,0,.25);
+
+  /* 👇 NUEVO: misma altura visual que el resto sin alterar diseño */
+  display:flex; align-items:center; min-height:var(--toolbar-h);
 }
 #tools-pro .filter{
   order:3;
-  margin-left:20px;        /* botones alineados a la derecha por el auto del count */
+  margin-left:20px;
   display:flex; gap:10px; align-items:center;
   background:transparent; border:0; border-radius:0; padding:0;
+
+  /* 👇 NUEVO: fuerza altura uniforme sin tocar colores ni paddings internos */
+  min-height:var(--toolbar-h);
 }
 
 #tools-pro .search{
@@ -165,6 +173,9 @@ body{
   background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.03));
   border:1px solid rgba(255,255,255,.14);
   box-shadow:0 1px 0 rgba(255,255,255,.04) inset, 0 2px 0 rgba(0,0,0,.28);
+
+  /* 👇 NUEVO: altura uniforme con los demás */
+  min-height:var(--toolbar-h);
 }
 #tools-pro .search::before{
   content:""; position:absolute; inset:-1px; border-radius:12px; z-index:-1;
@@ -179,6 +190,9 @@ body{
   width: calc(200px * 0.93);
   font:inherit; font-weight:700; font-size:0.95rem; letter-spacing:.2px;
   padding-left:8px; text-indent:-2px;
+
+  /* 👇 NUEVO: centra el texto verticalmente en la altura unificada */
+  height: calc(var(--toolbar-h) - 20px); /* 20px = padding vertical (10+10) */
 }
 #tools-pro .search input::placeholder{color:color-mix(in oklab, var(--muted) 75%, transparent)}
 #tools-pro .search i{opacity:.9}
@@ -202,6 +216,9 @@ body{
   border:1px solid rgba(255,255,255,.18);
   background:rgba(255,255,255,.05);
   transition:.15s;
+
+  /* 👇 NUEVO: altura uniforme sin cambiar su look */
+  display:inline-flex; align-items:center; min-height:var(--toolbar-h);
 }
 #tools-pro .tag.on{
   border-color: color-mix(in oklab, var(--accent) 65%, #5a3d14);
