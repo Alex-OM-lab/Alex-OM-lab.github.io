@@ -99,11 +99,18 @@ body{
   border-bottom:2px solid color-mix(in oklab, var(--accent) 40%, transparent);
   padding-bottom:6px;
 }
-#tools-pro .grid{
-  display:grid; gap:24px; grid-template-columns:repeat(2,minmax(340px,1fr)); align-items:stretch;
+#tools-pro .grid {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: 1.07fr 0.93fr; /* 👈 izquierda 7% más ancha */
+  align-items: stretch;
 }
-@media (max-width:980px){ #tools-pro .grid{ grid-template-columns:1fr } }
 
+@media (max-width: 980px) {
+  #tools-pro .grid {
+    grid-template-columns: 1fr; /* 👈 en móvil sigue una sola columna */
+  }
+}
 /* --- Card --- */
 #tools-pro .card{
   background:linear-gradient(180deg,color-mix(in oklab,var(--panel) 94%,#0f1422 6%),var(--panel));
