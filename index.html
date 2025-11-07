@@ -141,20 +141,21 @@
           <section class="card" id="toolsCard">
             <div class="card-head tools"><i class="fa-solid fa-screwdriver-wrench"></i> Herramientas</div>
 
-            <div class="toolbar">
-              <div class="search" id="searchBox">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input id="searchInput" type="text" placeholder="Buscar herramienta…">
-                <button class="clear" id="clearBtn" title="Limpiar búsqueda"><i class="fa-solid fa-xmark"></i></button>
-              </div>
-              <span class="count" id="resultCount">12</span>
+<div class="toolbar">
+  <div class="search" id="searchBox">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input id="searchInput" type="text" placeholder="Buscar herramienta…">
+    <button class="clear" id="clearBtn" title="Limpiar búsqueda"><i class="fa-solid fa-xmark"></i></button>
+  </div>
 
-              <div class="filter" aria-label="Filtrar por sistema operativo">
-                <span class="tag" data-os="linux">Linux</span>
-                <span class="tag" data-os="windows">Windows</span>
-                <span class="tag" data-os="multi">Multi</span>
-              </div>
-            </div>
+  <div class="filter" aria-label="Filtrar por sistema operativo">
+    <span class="tag" data-os="linux">Linux</span>
+    <span class="tag" data-os="windows">Windows</span>
+    <span class="tag" data-os="multi">Multi</span>
+  </div>
+
+  <span class="count" id="resultCount">12</span>
+</div>
 
             <div class="card-body">
               <div id="toolsListNew"><!-- render JS --></div>
