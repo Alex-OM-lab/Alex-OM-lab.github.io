@@ -160,7 +160,7 @@ body{
   gap:2px;
   border-radius:12px;
   padding:10px 12px;
-  min-width: calc(260px * 0.84);
+  min-width: calc(260px * 0.93);
   isolation:isolate;
   background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.03));
   border:1px solid rgba(255,255,255,.14);
@@ -176,7 +176,7 @@ body{
 #tools-pro .search:focus-within::before{opacity:.45}
 #tools-pro .search input{
   background:transparent; border:0; outline:0; color:var(--ink);
-  width: calc(200px * 0.84);
+  width: calc(200px * 0.93);
   font:inherit; font-weight:700; font-size:0.95rem; letter-spacing:.2px;
   padding-left:8px; text-indent:-2px;
 }
