@@ -102,10 +102,16 @@ body{
 }
 @media (max-width:980px){ #tools-pro .grid{ grid-template-columns:1fr } }
 
-/* --- Card --- */
+/* --- Card (AHORA igual que la tarjeta “Sobre mí”) --- */
 #tools-pro .card{
-  background:linear-gradient(145deg,var(--panel),var(--panel-2));
-  border:1px solid var(--stroke-card);
+  /* Fondo y borde calcados del estilo de tus .card globales */
+  background:linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--panel) 92%, #0f1422 8%),
+    var(--panel)
+  );
+  border:1px solid rgba(255,255,255,.06);
+
   border-radius:14px; padding:18px;
   display:flex; flex-direction:column;
   box-shadow:0 0 10px rgba(0,0,0,.35);
