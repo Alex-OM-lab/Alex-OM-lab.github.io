@@ -176,10 +176,7 @@ body{
   height:var(--row-height);
   padding:0 16px;
   border-radius:12px;
-
-  /* FONDO PLANO (sin degradados) */
   background:var(--row-flat);
-
   border:2px solid var(--row-border);
   box-shadow:0 0 0 1px var(--row-inner) inset, 0 2px 0 rgba(0,0,0,.25);
   color:var(--row-text);
@@ -193,7 +190,6 @@ body{
   z-index:1;
   transform:translateY(-3px);
   border-color:var(--row-hover-border);
-  /* ligero realce manteniendo fondo plano */
   background:color-mix(in oklab, var(--row-flat) 92%, white);
   box-shadow:0 0 0 1px rgba(205,225,245,.08) inset, 0 10px 20px rgba(3,10,22,.65);
   color:var(--row-text-hover);
@@ -202,21 +198,18 @@ body{
 /* ---------- SELECCIÓN: naranja MÁS intenso y limpio ---------- */
 #tools-pro .row.active{
   z-index:1;
-  background:var(--row-flat); /* seguimos con plano azul */
+  background:var(--row-flat);
   border-color:rgba(243,154,44,.42);
   box-shadow:
-    0 0 0 2px rgba(243,154,44,.42),   /* anillo más marcado */
-    0 0 28px rgba(243,154,44,.18),    /* halo exterior */
+    0 0 0 2px rgba(243,154,44,.42),
+    0 0 28px rgba(243,154,44,.18),
     inset 0 1px 0 rgba(255,255,255,.06);
   transform:translateY(-2px);
 }
 #tools-pro .row.active::after{
   content:"";
   position:absolute; inset:0; border-radius:12px;
-  /* velo ámbar más intenso pero profesional */
-  background:linear-gradient(180deg,
-            rgba(243,154,44,.16) 0%,
-            rgba(243,154,44,.10) 100%);
+  background:linear-gradient(180deg, rgba(243,154,44,.16) 0%, rgba(243,154,44,.10) 100%);
   opacity:0; transform:scale(.985);
   animation:toolsActiveOrange 220ms ease-out forwards;
 }
@@ -240,7 +233,7 @@ body{
 #tools-pro .windows{color:var(--chip-win);border-color:var(--chip-win);background:color-mix(in oklab,var(--chip-win) 16%,transparent);}
 #tools-pro .multi{color:#ffd35a;border-color:#ffd35a;background:rgba(255,211,90,.12);}
 
-/* ---------- Barras de nivel (3 segmentos tipo píldora) ---------- */
+/* ---------- Barras de nivel ---------- */
 #tools-pro .level{
   display:flex; gap:10px; align-items:center; justify-content:flex-end;
 }
@@ -258,16 +251,68 @@ body{
 }
 #tools-pro .seg:hover{transform:translateY(-1px)}
 
-/* ---------- Paginación ---------- */
-#tools-pro .nav{display:flex;justify-content:space-between;align-items:center;width:100%}
-#tools-pro .navbtn{
-  padding:10px 16px;border-radius:12px;font-weight:800;cursor:pointer;
-  color:#1a1206;
-  background:linear-gradient(180deg,rgba(243,154,44,.72),rgba(255,202,120,.72));
-  border:1px solid rgba(243,154,44,.46);
-  box-shadow:0 6px 16px rgba(243,154,44,.16),0 2px 0 rgba(0,0,0,.26);
-  display:inline-flex;align-items:center;gap:10px;
-  transition:.2s;
+/* =========================================================
+   Paginación — separación correcta + estados azul/naranja
+   ========================================================= */
+
+#tools-pro .card-foot{padding:8px 6px 0;} /* un poco de aire sobre el borde */
+
+#tools-pro .nav{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  width:100%;
+  gap:12px;                 /* evita que se “pisen” */
+  padding:6px 4px;          /* aire interno */
+  min-height:48px;          /* altura estable */
 }
+
+#tools-pro .navbtn{
+  padding:10px 16px;
+  min-width:130px;          /* tamaño estable, no colisiona */
+  border-radius:12px;
+  font-weight:800;
+  cursor:pointer;
+  border:1px solid transparent;
+  display:inline-flex;align-items:center;gap:10px;
+  transition:.2s, transform .12s ease;
+
+  /* ESTADO POR DEFECTO: AZUL */
+  color:#dbe9ff;
+  background:linear-gradient(180deg,#143a64,#0e2d4f);
+  border-color:rgba(120,170,220,.35);
+  box-shadow:0 2px 0 rgba(0,0,0,.26), inset 0 1px 0 rgba(255,255,255,.04);
+}
+#tools-pro .navbtn:hover{
+  transform:translateY(-2px);
+  filter:brightness(1.05);
+}
+
+/* ESTADO ACTIVO/SELECCIONADO: NARANJA */
+/* Puedes activar con .is-active o aria-pressed="true" o aria-current="true" */
+#tools-pro .navbtn.is-active,
+#tools-pro .navbtn[aria-pressed="true"],
+#tools-pro .navbtn[aria-current="true"]{
+  color:#1a1206;
+  background:linear-gradient(180deg, var(--accent), var(--accent-2));
+  border-color:rgba(243,154,44,.6);
+  box-shadow:0 8px 18px rgba(243,154,44,.20), 0 2px 0 rgba(0,0,0,.28);
+}
+
+/* DESHABILITADO */
+#tools-pro .navbtn:disabled{
+  opacity:.55;
+  transform:none;
+  filter:none;
+  cursor:not-allowed;
+  box-shadow:none;
+}
+
+/* Pequeño icono circular (si lo usas) */
+#tools-pro .navbtn .ico{
+  width:22px;height:22px;border-radius:999px;display:grid;place-items:center;
+  background:rgba(255,255,255,.14);
+}
+
 #tools-pro .navbtn:hover{transform:translateY(-2px);filter:brightness(1.03);}
 #tools-pro .navbtn:active{transform:translateY(1px);}
