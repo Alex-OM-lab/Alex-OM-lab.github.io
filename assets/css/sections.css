@@ -140,11 +140,17 @@ body{
 }
 #tools-pro .search:focus-within::before{opacity:.45}
 #tools-pro .search input{
-  background:transparent; border:0; outline:0; color:var(--ink);
+  background:transparent;
+  border:0;
+  outline:0;
+  color:var(--ink);
   width: calc(200px * 0.7);
-  font:inherit; font-weight:700; font-size:0.95rem; /* 👈 1–2 px más pequeño */
+  font:inherit;
+  font-weight:700;
+  font-size:0.95rem;      /* un poco más pequeño */
   letter-spacing:.2px;
-  padding-left:4px; /* 👈 mueve el texto un poco a la izquierda */
+  padding-left:8px;       /* 👈 mueve el texto más a la izquierda */
+  text-indent: -2px;      /* 👈 empuja el texto aún más cerca del icono */
 }
 #tools-pro .search input::placeholder{color:color-mix(in oklab, var(--muted) 75%, transparent)}
 #tools-pro .search i{opacity:.9}
