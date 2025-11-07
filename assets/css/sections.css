@@ -219,17 +219,22 @@ body{
 }
 }
 #tools-pro .tag{
-  cursor:pointer; user-select:none;
-  padding:6px 10px; border-radius:999px; font-weight:800; font-size:.85rem;
-  border:1px solid rgba(255,255,255,.18); background:rgba(255,255,255,.05);
-  transition:.15s
+  cursor:pointer;
+  user-select:none;
+  padding:6px 10px;
+  border-radius:999px;
+  font-weight:800;
+  font-size:.85rem;
+  border:1px solid rgba(255,255,255,.18);
+  background:rgba(255,255,255,.05);
+  transition:.15s;
 }
+
 #tools-pro .tag.on{
   border-color: color-mix(in oklab, var(--accent) 65%, #5a3d14);
   background:linear-gradient(180deg, #201407, #1a1208);
   box-shadow:0 0 0 1px rgba(255,180,85,.2) inset, 0 6px 14px rgba(255,153,0,.18);
 }
-
 /* --- Filas --- */
 #tools-pro .row{
   position:relative;
