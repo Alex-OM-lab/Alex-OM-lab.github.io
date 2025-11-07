@@ -102,7 +102,7 @@ body{
 #tools-pro .grid {
   display: grid;
   gap: 24px;
-  grid-template-columns: 1.07fr 0.93fr; /* 👈 izquierda 7% más ancha */
+  grid-template-columns: 1.05fr 0.95fr; /* 👈 izquierda 7% más ancha */
   align-items: stretch;
 }
 
