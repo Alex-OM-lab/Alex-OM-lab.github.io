@@ -175,11 +175,14 @@ body{
   box-shadow:0 0 8px rgba(255,165,0,.35), inset 0 0 0 1px rgba(0,0,0,.25);
 }
 #tools-pro .filter{
-  display:flex; gap:8px; align-items:center;
-  background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12);
-  border-radius:10px; padding:6px 8px;
-  margin-left:auto; /* << empuja los filtros a la derecha */
-  transform: translateX(-2%);
+  display:flex; gap:10px; align-items:center;
+  background:transparent;
+  border:0; border-radius:0; padding:0;
+  margin-left:0; /* ahora van a la izquierda */
+}
+
+#tools-pro .count{
+  margin-left:auto; /* el número se va a la derecha */
 }
 #tools-pro .tag{
   cursor:pointer; user-select:none;
