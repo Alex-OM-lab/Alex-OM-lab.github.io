@@ -4,10 +4,10 @@
 
 /* ---------- Variables y resets ---------- */
 :root{
-  --bg:#0b1220;
+  --bg:#0b1220;          /* Fondo global del sitio */
   --text:#e6edf6;
   --muted:#9bb0c3;
-  --accent:#ff9900;
+  --accent:#ff9900;      /* Acento global */
 }
 *{box-sizing:border-box}
 html,body{margin:0}
@@ -102,19 +102,13 @@ body{
 }
 @media (max-width:980px){ #tools-pro .grid{ grid-template-columns:1fr } }
 
-/* --- Card (igual que la tarjeta “Sobre mí”) --- */
-#tools-pro .card {
-  background: linear-gradient(
-    180deg,
-    color-mix(in oklab, #0f141a 96%, #0d1117 4%),
-    #0f141a
-  );
-  border: 1px solid rgba(255,255,255,.06);
-  border-radius: 14px;
-  padding: 18px;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 0 10px rgba(0,0,0,.35);
+/* --- Card --- */
+#tools-pro .card{
+  background:linear-gradient(145deg,var(--panel),var(--panel-2));
+  border:1px solid var(--stroke-card);
+  border-radius:14px; padding:18px;
+  display:flex; flex-direction:column;
+  box-shadow:0 0 10px rgba(0,0,0,.35);
   min-height: var(--locked-card-height, auto);
 }
 #tools-pro .card-head{display:flex;align-items:center;gap:10px;color:#ffc06a;margin-bottom:14px}
@@ -300,4 +294,18 @@ body{
 
 @keyframes fadeSlideIn {
   0%   { opacity:0; transform:translateY(6px) }
-  100% { opacity:1;
+  100% { opacity:1; transform:translateY(0) }
+}
+@keyframes accentFade {
+  0%   { opacity:.65 }
+  100% { opacity:0 }
+}
+#tools-pro .row.page-enter { animation: fadeSlideIn 140ms ease both }
+#tools-pro .row.page-enter::before { opacity:.6; animation: accentFade 360ms ease both }
+
+@media (prefers-reduced-motion: reduce){
+  #tools-pro .row, #tools-pro .navbtn, #tools-pro .search::before{transition:none}
+  #tools-pro .row:hover{transform:none; box-shadow:0 0 0 1px rgba(255,255,255,.07) inset}
+  #tools-pro .row.pulse::before, #tools-pro .row.page-enter, #tools-pro .row.page-enter::before { animation:none }
+}
+
