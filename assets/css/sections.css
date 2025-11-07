@@ -120,7 +120,10 @@ body{
 #tools-pro .card-foot{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
 
 /* --- Toolbar / búsqueda --- */
-#tools-pro .toolbar{display:flex;gap:12px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+#tools-pro .toolbar{
+  display:flex; gap:12px; align-items:center; margin-bottom:10px;
+  flex-wrap:nowrap; /* << mantener todo en una línea como en el original */
+}
 #tools-pro .search{
   position:relative; display:flex; align-items:center; gap:8px;
   border-radius:12px; padding:10px 12px; min-width:260px; isolation:isolate;
@@ -161,6 +164,7 @@ body{
   display:flex; gap:8px; align-items:center;
   background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12);
   border-radius:10px; padding:6px 8px;
+  margin-left:auto; /* << empuja los filtros a la derecha */
 }
 #tools-pro .tag{
   cursor:pointer; user-select:none;
@@ -311,3 +315,8 @@ body{
   #tools-pro .row.pulse::before, #tools-pro .row.page-enter, #tools-pro .row.page-enter::before { animation:none }
 }
 
+/* --- Responsivo específico para la toolbar --- */
+@media (max-width:700px){
+  #tools-pro .toolbar{ flex-wrap:wrap }
+  #tools-pro .filter{ margin-left:0 }
+}
