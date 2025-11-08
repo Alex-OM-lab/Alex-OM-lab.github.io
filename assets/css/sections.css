@@ -161,7 +161,7 @@ body{
   margin-left:-8px; 
 }
 
-/* ====== BÚSQUEDA — versión más oscura (idle) y +20% brillo al activar ====== */
+/* ====== BÚSQUEDA — idle más oscura y +30% al activar ====== */
 #tools-pro .search{
   position:relative;
   display:flex;
@@ -176,8 +176,6 @@ body{
   background:linear-gradient(180deg, rgba(255,255,255,.056), rgba(255,255,255,.024));
   border:1px solid rgba(255,255,255,.112);
   box-shadow:0 1px 0 rgba(255,255,255,.03) inset, 0 2px 0 rgba(0,0,0,.28);
-
-  /* transiciones suaves */
   transition: background .25s ease, border-color .25s ease, box-shadow .25s ease, filter .25s ease;
 }
 #tools-pro .search::before{
@@ -187,20 +185,22 @@ body{
     color-mix(in oklab, var(--accent-2) 55%, transparent));
   opacity:.24; filter:blur(10px); transition:.25s;
 }
-/* ✨ Activada (focus o con texto): ~20% más brillante */
+/* ✨ Activada (focus / con texto): ~30% más intensa que idle */
 #tools-pro .search:focus-within,
 #tools-pro .search.has-text{
-  background:linear-gradient(180deg, rgba(255,255,255,.085), rgba(255,255,255,.045));
-  border-color:rgba(255,255,255,.20);
-  box-shadow:0 1px 0 rgba(255,255,255,.05) inset, 0 2px 0 rgba(0,0,0,.28), 0 0 0 1px rgba(255,255,255,.06);
+  background:linear-gradient(180deg, rgba(255,255,255,.115), rgba(255,255,255,.065));
+  border-color:rgba(255,255,255,.24);
+  box-shadow:0 1px 0 rgba(255,255,255,.06) inset, 0 2px 0 rgba(0,0,0,.28), 0 0 0 1px rgba(255,255,255,.08);
 }
-#tools-pro .search:focus-within::before{opacity:.45}
+#tools-pro .search:focus-within::before{opacity:.50}
 
+/* 👉 Input: más espacio a la derecha para que no se corte el texto */
 #tools-pro .search input{
   background:transparent; border:0; outline:0; color:var(--ink);
   width: calc(200px * 0.93);
   font:inherit; font-weight:700; font-size:0.95rem; letter-spacing:.2px;
   padding-left:8px; text-indent:-2px;
+  padding-right:18px; /* nuevo margen a la derecha */
 }
 #tools-pro .search input::placeholder{color:color-mix(in oklab, var(--muted) 75%, transparent)}
 #tools-pro .search:focus-within input::placeholder{color:color-mix(in oklab, var(--muted) 60%, transparent)}
