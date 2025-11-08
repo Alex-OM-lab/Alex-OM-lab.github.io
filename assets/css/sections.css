@@ -198,11 +198,10 @@ body{
   background:transparent; border:0; outline:0; color:var(--ink);
   width: calc(200px * 0.93);
   font:inherit; font-weight:700; font-size:0.95rem; letter-spacing:.2px;
-  padding-left:4px;  /* 🔧 antes 8px → ahora más pegado a la izquierda */
-  text-indent:-1px;  /* ligero ajuste para compensar */
-  padding-right:18px; /* lo de la derecha queda igual */
+  padding-left:2px;   /* 🔧 aún más a la izquierda */
+  text-indent:0;      /* elimina compensación */
+  padding-right:18px; /* igual que antes */
 }
-
 #tools-pro .search input::placeholder{color:color-mix(in oklab, var(--muted) 75%, transparent)}
 #tools-pro .search:focus-within input::placeholder{color:color-mix(in oklab, var(--muted) 60%, transparent)}
 #tools-pro .search i{opacity:.9}
