@@ -198,7 +198,7 @@ body{
   background:transparent; border:0; outline:0; color:var(--ink);
   width: calc(200px * 0.93);
   font:inherit; font-weight:700; font-size:0.95rem; letter-spacing:.2px;
-  padding-left:0;   /* 🔧 aún más pegado al borde izquierdo */
+  padding-left:2px;   /* 🔧 aún más pegado al borde izquierdo */
   text-indent:2px;  /* ligera compensación visual */
   padding-right:18px; /* no tocar */
 }
