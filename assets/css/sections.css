@@ -159,7 +159,7 @@ body{
   box-shadow:0 1px 0 rgba(255,255,255,.04) inset, 0 2px 0 rgba(0,0,0,.28);
 
   /* Mantén su posición actual (ajusta si quieres moverla) */
-  margin-left:2px; 
+  margin-left:-8px; 
 }
 
 #tools-pro .search{
