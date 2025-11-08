@@ -146,6 +146,7 @@ body{
   flex:0 0 auto;        /* 👈 no se estira ni encoge: mantiene su tamaño */
 }
 #tools-pro .filter{
+  order: 3;               /* ✅ mantiene los botones a la derecha del buscador y del 12 */
   display:flex; 
   gap:10px; 
   align-items:center;
@@ -160,7 +161,6 @@ body{
   /* Mantén su posición actual (ajusta si quieres moverla) */
   margin-left:2px; 
 }
-
 
 #tools-pro .search{
   position:relative;
