@@ -147,7 +147,7 @@ body{
 }
 #tools-pro .filter{
   order:3;
-  margin-left:6px;
+  margin-left:2px;
   display:flex; gap:10px; align-items:center;
   background:transparent; border:0; border-radius:0; padding:0;
   flex:0 1 auto;        /* 👈 puede encoger un poco si hiciera falta, sin romper */
