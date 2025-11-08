@@ -197,10 +197,12 @@ body{
 /* 👉 Input: más espacio a la derecha para que no se corte el texto */
 #tools-pro .search input{
   background:transparent; border:0; outline:0; color:var(--ink);
-  width: calc(200px * 0.93);
+  flex: 1 1 auto;
+  width:auto; /* evita que se corte el texto */
   font:inherit; font-weight:700; font-size:0.95rem; letter-spacing:.2px;
-  padding-left:8px; text-indent:-2px;
-  padding-right:18px; /* nuevo margen a la derecha */
+  padding-left:8px; 
+  padding-right:26px; /* más margen para que no se corte */
+  text-indent:-2px;
 }
 #tools-pro .search input::placeholder{color:color-mix(in oklab, var(--muted) 75%, transparent)}
 #tools-pro .search:focus-within input::placeholder{color:color-mix(in oklab, var(--muted) 60%, transparent)}
