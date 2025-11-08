@@ -324,28 +324,6 @@ body{
   box-shadow:0 0 8px rgba(255,165,0,.35), inset 0 0 0 1px rgba(0,0,0,.25);
 }
 
-/* === Botones de paginación ACTIVOS (despiertos) — tono naranja más sutil ===
-   Alta especificidad y !important para ganar a cualquier regla previa.
-   Cubre <button>, <a role="button"> y variantes con aria-disabled. */
-#tools-pro .nav .navbtn:not(:disabled):not([aria-disabled="true"]),
-#tools-pro .navbtn:not(:disabled):not([aria-disabled="true"]){
-  background: linear-gradient(180deg, #ffb957, #ff9720) !important;
-  border: 1px solid rgba(255,170,70,.45) !important;
-  color: #0f120a !important;
-  box-shadow:
-    0 2px 0 rgba(0,0,0,.28),
-    0 0 8px rgba(255,150,0,.25),
-    inset 0 0 0 1px rgba(0,0,0,.25) !important;
-}
-#tools-pro .nav .navbtn:not(:disabled):not([aria-disabled="true"])::after,
-#tools-pro .navbtn:not(:disabled):not([aria-disabled="true"])::after{
-  opacity:.30 !important; /* halo suave en activos */
-}
-#tools-pro .nav .navbtn:not(:disabled):not([aria-disabled="true"]) .ico,
-#tools-pro .navbtn:not(:disabled):not([aria-disabled="true"]) .ico{
-  background: linear-gradient(180deg, #ffb957, #ff9720) !important;
-}
-
 /* --- Dots / contador --- */
 #tools-pro .dots{display:flex;gap:6px;align-items:center}
 #tools-pro .dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.22)}
@@ -383,3 +361,40 @@ body{
   #tools-pro .filter{ margin-left:0 }
 }
 
+/* =========================================================
+   Paginación activa — SOLUCIÓN DEFINITIVA
+   (botón oscuro, solo la burbuja .ico naranja)
+   ========================================================= */
+
+/* Botón ACTIVO (no deshabilitado) — alta especificidad para ganar a cualquier regla previa */
+#tools-pro .nav .navbtn:not(:disabled):not([aria-disabled="true"]),
+#tools-pro .navbtn:not(:disabled):not([aria-disabled="true"]){
+  background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03)) !important;
+  border: 1px solid rgba(255,255,255,.18) !important;
+  color: #e6edf6 !important;
+  box-shadow: 0 2px 0 rgba(0,0,0,.28) !important;
+}
+
+/* Halo exterior sutil del botón activo */
+#tools-pro .nav .navbtn:not(:disabled):not([aria-disabled="true"])::after,
+#tools-pro .navbtn:not(:disabled):not([aria-disabled="true"])::after{
+  opacity:.28 !important;
+}
+
+/* Burbuja de la flecha en naranja con glow */
+#tools-pro .nav .navbtn:not(:disabled):not([aria-disabled="true"]) .ico,
+#tools-pro .navbtn:not(:disabled):not([aria-disabled="true"]) .ico{
+  background: linear-gradient(180deg, var(--accent), var(--accent-2)) !important;
+  color:#1a1206 !important;
+  box-shadow:
+    0 0 12px rgba(255,165,0,.55),
+    inset 0 0 0 1px rgba(0,0,0,.25) !important;
+}
+
+/* Hover: refuerza solo la burbuja */
+#tools-pro .nav .navbtn:not(:disabled):not([aria-disabled="true"]):hover .ico,
+#tools-pro .navbtn:not(:disabled):not([aria-disabled="true"]):hover .ico{
+  box-shadow:
+    0 0 16px rgba(255,165,0,.65),
+    inset 0 0 0 1px rgba(0,0,0,.25) !important;
+}
