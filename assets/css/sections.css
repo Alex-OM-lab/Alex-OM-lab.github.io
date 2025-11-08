@@ -146,12 +146,21 @@ body{
   flex:0 0 auto;        /* 👈 no se estira ni encoge: mantiene su tamaño */
 }
 #tools-pro .filter{
-  order:3;
-  margin-left:2px;
-  display:flex; gap:10px; align-items:center;
-  background:transparent; border:0; border-radius:0; padding:0;
-  flex:0 1 auto;        /* 👈 puede encoger un poco si hiciera falta, sin romper */
+  display:flex; 
+  gap:10px; 
+  align-items:center;
+
+  /* 👉 Tarjeta gris-azulada */
+  padding:6px 8px;
+  border-radius:12px;
+  background:linear-gradient(180deg, rgba(18,27,39,.75), rgba(14,22,33,.75));
+  border:1px solid rgba(160,190,220,.14);
+  box-shadow:0 1px 0 rgba(255,255,255,.04) inset, 0 2px 0 rgba(0,0,0,.28);
+
+  /* Mantén su posición actual (ajusta si quieres moverla) */
+  margin-left:2px; 
 }
+
 
 #tools-pro .search{
   position:relative;
