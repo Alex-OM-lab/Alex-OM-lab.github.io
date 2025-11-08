@@ -324,20 +324,25 @@ body{
   box-shadow:0 0 8px rgba(255,165,0,.35), inset 0 0 0 1px rgba(0,0,0,.25);
 }
 
-/* === Botones de paginación ACTIVOS (despiertos) — tono naranja más sutil === */
-#tools-pro .navbtn:not(:disabled) {
-  background: linear-gradient(180deg, #ffb957, #ff9720) !important; /* menos intenso */
-  border: 1px solid rgba(255, 170, 70, .45) !important;
+/* === Botones de paginación ACTIVOS (despiertos) — tono naranja más sutil ===
+   Alta especificidad y !important para ganar a cualquier regla previa.
+   Cubre <button>, <a role="button"> y variantes con aria-disabled. */
+#tools-pro .nav .navbtn:not(:disabled):not([aria-disabled="true"]),
+#tools-pro .navbtn:not(:disabled):not([aria-disabled="true"]){
+  background: linear-gradient(180deg, #ffb957, #ff9720) !important;
+  border: 1px solid rgba(255,170,70,.45) !important;
   color: #0f120a !important;
   box-shadow:
     0 2px 0 rgba(0,0,0,.28),
     0 0 8px rgba(255,150,0,.25),
     inset 0 0 0 1px rgba(0,0,0,.25) !important;
 }
-#tools-pro .navbtn:not(:disabled)::after{
-  opacity:.30; /* halo suave en activos */
+#tools-pro .nav .navbtn:not(:disabled):not([aria-disabled="true"])::after,
+#tools-pro .navbtn:not(:disabled):not([aria-disabled="true"])::after{
+  opacity:.30 !important; /* halo suave en activos */
 }
-#tools-pro .navbtn:not(:disabled) .ico{
+#tools-pro .nav .navbtn:not(:disabled):not([aria-disabled="true"]) .ico,
+#tools-pro .navbtn:not(:disabled):not([aria-disabled="true"]) .ico{
   background: linear-gradient(180deg, #ffb957, #ff9720) !important;
 }
 
@@ -377,3 +382,4 @@ body{
   #tools-pro .toolbar{ flex-wrap:wrap }
   #tools-pro .filter{ margin-left:0 }
 }
+
