@@ -387,17 +387,17 @@ body{
     0 0 18px rgba(255,165,0,.55),
     inset 0 0 0 1px rgba(0,0,0,.25);
 }
-/* --- Botones de paginación activos (más suaves) --- */
+/* --- Botones de paginación ACTIVOS (despiertos, estilo sutil) --- */
 #tools-pro .navbtn:enabled {
-  background: linear-gradient(180deg, #ffb84a, #ff9a26) !important; /* 🔸 15% menos brillante */
-  border: 1px solid rgba(255, 165, 0, 0.35) !important;
+  background: linear-gradient(180deg, #ffb957, #ff9720) !important; /* 🔸 naranja cálido, menos intenso */
+  border: 1px solid rgba(255, 170, 70, 0.4) !important;
   box-shadow:
     0 2px 0 rgba(0, 0, 0, 0.25),
     0 0 8px rgba(255, 150, 0, 0.25),
     inset 0 0 0 1px rgba(0, 0, 0, 0.25) !important;
 }
 
-/* Ícono interior del botón (círculo naranja) */
+/* --- Icono circular interior (flecha) a juego --- */
 #tools-pro .navbtn:enabled .ico {
-  background: linear-gradient(180deg, #ffb84a, #ff9a26) !important;
+  background: linear-gradient(180deg, #ffb957, #ff9720) !important;
 }
