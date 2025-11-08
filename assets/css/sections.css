@@ -194,14 +194,15 @@ body{
 }
 #tools-pro .search:focus-within::before{opacity:.50}
 
-/* 👉 Input: más espacio a la derecha para que no se corte el texto */
 #tools-pro .search input{
   background:transparent; border:0; outline:0; color:var(--ink);
   width: calc(200px * 0.93);
   font:inherit; font-weight:700; font-size:0.95rem; letter-spacing:.2px;
-  padding-left:8px; text-indent:-2px;
-  padding-right:18px; /* nuevo margen a la derecha */
+  padding-left:4px;  /* 🔧 antes 8px → ahora más pegado a la izquierda */
+  text-indent:-1px;  /* ligero ajuste para compensar */
+  padding-right:18px; /* lo de la derecha queda igual */
 }
+
 #tools-pro .search input::placeholder{color:color-mix(in oklab, var(--muted) 75%, transparent)}
 #tools-pro .search:focus-within input::placeholder{color:color-mix(in oklab, var(--muted) 60%, transparent)}
 #tools-pro .search i{opacity:.9}
