@@ -110,8 +110,8 @@
 /* Popover base */
 .sub{
   position:absolute;
-  /* 🔸 abrir 3px por debajo de la barra naranja */
-  top:calc(100% + var(--topwrap-pad-y) + var(--bar-height) + 3px);
+  /* 🔸 abrir 6px por debajo de la barra naranja */
+  top:calc(100% + var(--topwrap-pad-y) + var(--bar-height) + 6px);
   left:0;
   min-width:360px;
   padding-top:0;
@@ -133,7 +133,19 @@
   transform-origin:top left; transform:scaleY(.92);
   opacity:0; max-height:0; overflow:hidden;
   transition:transform .2s ease, opacity .2s ease, max-height .32s ease;
+  position: relative; /* 🔸 para la micro-máscara */
 }
+/* 🔸 Micro-máscara anti-glow (separación óptica de la línea) */
+.sub>ul::before{
+  content:"";
+  position:absolute;
+  left:0; right:0; top:-6px; height:6px; /* mismo gap que arriba */
+  background: rgba(17,26,45,.98); /* mismo fondo del popover */
+  border-top-left-radius:12px; 
+  border-top-right-radius:12px;
+  pointer-events:none;
+}
+
 .sub a{
   display:flex; align-items:center; justify-content:space-between; gap:10px;
   padding:10px 12px; border-radius:8px;
