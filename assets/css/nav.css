@@ -17,6 +17,7 @@
   background:rgba(9,14,26,.74);
   border-bottom:1px solid rgba(255,255,255,.06);
   animation:topbarDrop .6s ease both;
+  isolation:isolate; /* 🔸 crea stacking context para controlar capas */
 }
 @keyframes topbarDrop{
   from{ transform:translateY(-8px); opacity:0 }
@@ -34,6 +35,7 @@
   --topwrap-pad-y: calc((var(--nav-pad-y) - 2px) * 0.6);
   padding:var(--topwrap-pad-y) 0; 
   position:relative;
+  z-index:1; /* 🔸 por delante de la línea */
 }
 
 /* Marca */
@@ -108,11 +110,12 @@
 /* Popover base */
 .sub{
   position:absolute;
-  /* Alinear el borde superior del popover EXACTAMENTE con la barra naranja */
-  top:calc(100% + var(--topwrap-pad-y)); /* 🔸ajuste correcto */
+  /* 🔸 borde superior del popover EXACTO en la línea naranja */
+  top:calc(100% + var(--topwrap-pad-y) - var(--bar-height));
   left:0;
   min-width:360px;
   padding-top:0;
+  z-index:2; /* 🔸 por delante del título y de la línea */
 }
 .sub::before{ content:""; position:absolute; top:-10px; left:0; right:0; height:12px }
 .sub::after{
@@ -272,6 +275,7 @@
   opacity:.95;
   will-change:transform;
   animation:beamSingle var(--beam-duration) cubic-bezier(.22,.61,.36,1) forwards;
+  z-index:0; /* 🔸 la línea queda detrás del contenido del header */
 }
 
 @keyframes beamSingle{
