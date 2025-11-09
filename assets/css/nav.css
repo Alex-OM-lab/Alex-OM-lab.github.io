@@ -5,6 +5,7 @@
 /* Variables de control */
 :root{
   --beam-duration: 3s;      /* velocidad de la línea (más rápida) */
+  --bar-height: 3px;        /* altura de la barra naranja (coherente) */
 }
 
 /* ——— Topbar sticky con entrada suave ——— */
@@ -29,7 +30,9 @@
   display:flex;
   align-items:center;
   justify-content:space-between;
-  padding:calc((var(--nav-pad-y) - 2px) * 0.6) 0; 
+  /* Guarda el padding vertical reducido para alinear la apertura del submenú con la barra */
+  --topwrap-pad-y: calc((var(--nav-pad-y) - 2px) * 0.6);
+  padding:var(--topwrap-pad-y) 0; 
   position:relative;
 }
 
@@ -103,7 +106,14 @@
 }
 
 /* Popover base */
-.sub{ position:absolute; top:100%; left:0; min-width:360px; padding-top:0 }
+.sub{
+  position:absolute;
+  /* Alinear el borde superior del popover EXACTAMENTE con la barra naranja */
+  top:calc(100% + var(--topwrap-pad-y) - var(--bar-height));
+  left:0;
+  min-width:360px;
+  padding-top:0;
+}
 .sub::before{ content:""; position:absolute; top:-10px; left:0; right:0; height:12px }
 .sub::after{
   content:""; position:absolute; top:0; left:100%; width:20px; height:100%;
@@ -246,7 +256,7 @@
 
 .topbar::after{
   content:"";
-  position:absolute; left:0; right:0; bottom:0; height:3px; /* ← ajustado */
+  position:absolute; left:0; right:0; bottom:0; height:var(--bar-height); /* usa la variable */
   background:
     radial-gradient(200px 6px at 50% 50%, rgba(255,215,154,.85), rgba(255,159,26,0) 70%),
     linear-gradient(90deg,
