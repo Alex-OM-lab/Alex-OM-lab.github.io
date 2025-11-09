@@ -110,12 +110,12 @@
 /* Popover base */
 .sub{
   position:absolute;
-  /* 🔸 borde superior del popover EXACTO en la línea naranja */
-  top:calc(100% + var(--topwrap-pad-y) - var(--bar-height));
+  /* 🔸 abrir 3px por debajo de la barra naranja */
+  top:calc(100% + var(--topwrap-pad-y) + var(--bar-height) + 3px);
   left:0;
   min-width:360px;
   padding-top:0;
-  z-index:2; /* 🔸 por delante del título y de la línea */
+  z-index:1; /* 🔸 debajo de la línea (la línea va delante) */
 }
 .sub::before{ content:""; position:absolute; top:-10px; left:0; right:0; height:12px }
 .sub::after{
@@ -275,7 +275,7 @@
   opacity:.95;
   will-change:transform;
   animation:beamSingle var(--beam-duration) cubic-bezier(.22,.61,.36,1) forwards;
-  z-index:0; /* 🔸 la línea queda detrás del contenido del header */
+  z-index:2; /* 🔸 la línea por delante: el submenú queda debajo */
 }
 
 @keyframes beamSingle{
