@@ -29,7 +29,7 @@
   display:flex;
   align-items:center;
   justify-content:space-between;
-  padding:calc(var(--nav-pad-y) - 2px) 0;
+  padding:calc((var(--nav-pad-y) - 2px) * 0.6) 0; 
   position:relative;
 }
 
