@@ -246,7 +246,7 @@
 
 .topbar::after{
   content:"";
-  position:absolute; left:0; right:0; bottom:8px; height:3px;
+  position:absolute; left:0; right:0; bottom:0; height:3px; /* ← ajustado */
   background:
     radial-gradient(200px 6px at 50% 50%, rgba(255,215,154,.85), rgba(255,159,26,0) 70%),
     linear-gradient(90deg,
