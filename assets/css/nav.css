@@ -109,7 +109,7 @@
 .sub{
   position:absolute;
   /* Alinear el borde superior del popover EXACTAMENTE con la barra naranja */
-  top:calc(100% + var(--topwrap-pad-y) - var(--bar-height));
+  top:calc(100% + var(--topwrap-pad-y)); /* 🔸ajuste correcto */
   left:0;
   min-width:360px;
   padding-top:0;
