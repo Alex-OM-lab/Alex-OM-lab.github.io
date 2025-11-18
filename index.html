@@ -91,11 +91,14 @@
       margin-top:4px;
     }
 
-    /* Intro dentro de la tarjeta grande */
+    /* Intro dentro de la tarjeta grande
+       -> mismo estilo que el texto de la tarjeta de "Sobre mí"
+       y más espacio antes de las tarjetas */
     #especialidades .spec-shell .spec-intro{
-      margin:0 0 14px;
-      color:var(--muted);
-      font-size:0.95rem;
+      margin:0 0 22px;          /* más hueco antes de las cards */
+      color:var(--text);        /* mismo color que el texto principal */
+      font-size:1rem;           /* tamaño estándar como arriba */
+      line-height:1.6;          /* misma sensación de bloque de texto */
       max-width:62ch;
     }
 
@@ -216,7 +219,7 @@
       </div>
     </section>
 
-    <!-- ESPECIALIDADES (NUEVA FILA DE 4 TARJETAS CON ICONO) -->
+    <!-- ESPECIALIDADES -->
     <section id="especialidades" class="custom-section" aria-labelledby="especialidades-title">
       <h2 id="especialidades-title" class="section-title">Especialidades</h2>
       <p class="kicker">Áreas con especialización práctica y enfoque técnico.</p>
@@ -287,7 +290,7 @@
       </div>
     </section>
 
-    <!-- HERRAMIENTAS Y LENGUAJES (TABLA NUEVA INTEGRADA) -->
+    <!-- HERRAMIENTAS Y LENGUAJES -->
     <section id="tools" class="reveal" data-reveal="fade-up" aria-labelledby="tools-title">
       <div id="tools-pro">
         <h2 id="tools-title" class="section-title tools-title"><i class="fa-solid fa-code-branch"></i> Herramientas y Lenguajes</h2>
