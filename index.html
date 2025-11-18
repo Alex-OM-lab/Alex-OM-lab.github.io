@@ -67,8 +67,13 @@
     .skill-btn:active{transform:translateY(-2px)}
     @media (max-width:980px){.grid-3{grid-template-columns:1fr}.skills-grid{grid-template-columns:1fr}}
 
-    /* OVERRIDE para quitar fondo gris en Especialidades/Investigación antiguos */
-    #especialidades .card, #investigacion .card{background:transparent!important;border:none!important;box-shadow:none!important;padding:0!important}
+    /* OVERRIDE solo para Investigación (ya no tocamos Especialidades) */
+    #investigacion .card{
+      background:transparent!important;
+      border:none!important;
+      box-shadow:none!important;
+      padding:0!important;
+    }
     #especialidades .specialty{padding:10px 0}
     #investigacion .card > * {margin-top:8px}
     #investigacion .card > *:first-child {margin-top:0}
@@ -78,6 +83,12 @@
     #especialidades .section-title {
       color: var(--accent);
       text-shadow: 0 0 8px rgba(255,159,26,.25);
+    }
+
+    /* Tarjeta grande que agrupa las 4 */
+    .spec-shell{
+      padding:18px 18px 20px;
+      margin-top:4px;
     }
 
     #especialidades .spec-grid {
@@ -202,62 +213,65 @@
       <h2 id="especialidades-title" class="section-title">Especialidades</h2>
       <p class="kicker">Áreas con especialización práctica y enfoque técnico.</p>
 
-      <div class="spec-grid">
-        <!-- 1. Seguridad en la Nube -->
-        <article class="spec-card">
-          <div class="spec-header">
-            <div class="spec-icon">
-              <img src="https://unpkg.com/lucide-static@latest/icons/cloud-cog.svg"
-                   alt="Seguridad en la nube" loading="lazy">
+      <!-- Tarjeta grande que agrupa las 4 -->
+      <div class="card spec-shell">
+        <div class="spec-grid">
+          <!-- 1. Seguridad en la Nube -->
+          <article class="spec-card">
+            <div class="spec-header">
+              <div class="spec-icon">
+                <img src="https://unpkg.com/lucide-static@latest/icons/cloud-cog.svg"
+                     alt="Seguridad en la nube" loading="lazy">
+              </div>
+              <h3 class="spec-title">Seguridad en la Nube</h3>
             </div>
-            <h3 class="spec-title">Seguridad en la Nube</h3>
-          </div>
-          <p class="spec-body">
-            Diseño y administro entornos virtualizados y servicios en la nube, con redes seguras, backups y alta disponibilidad.
-          </p>
-        </article>
+            <p class="spec-body">
+              Diseño y administro entornos virtualizados y servicios en la nube, con redes seguras, backups y alta disponibilidad.
+            </p>
+          </article>
 
-        <!-- 2. Red Team & Vulnerabilidades -->
-        <article class="spec-card">
-          <div class="spec-header">
-            <div class="spec-icon">
-              <img src="https://unpkg.com/lucide-static@latest/icons/crosshair.svg"
-                   alt="Red Team y vulnerabilidades" loading="lazy">
+          <!-- 2. Red Team & Vulnerabilidades -->
+          <article class="spec-card">
+            <div class="spec-header">
+              <div class="spec-icon">
+                <img src="https://unpkg.com/lucide-static@latest/icons/crosshair.svg"
+                     alt="Red Team y vulnerabilidades" loading="lazy">
+              </div>
+              <h3 class="spec-title">Red Team &amp; Vulnerabilidades</h3>
             </div>
-            <h3 class="spec-title">Red Team &amp; Vulnerabilidades</h3>
-          </div>
-          <p class="spec-body">
-            Identifico vulnerabilidades, evalúo vectores de ataque y documento hallazgos accionables mediante pruebas controladas.
-          </p>
-        </article>
+            <p class="spec-body">
+              Identifico vulnerabilidades, evalúo vectores de ataque y documento hallazgos accionables mediante pruebas controladas.
+            </p>
+          </article>
 
-        <!-- 3. Bases de Datos: Administración -->
-        <article class="spec-card">
-          <div class="spec-header">
-            <div class="spec-icon">
-              <img src="https://unpkg.com/lucide-static@latest/icons/database.svg"
-                   alt="Administración de bases de datos" loading="lazy">
+          <!-- 3. Bases de Datos: Administración -->
+          <article class="spec-card">
+            <div class="spec-header">
+              <div class="spec-icon">
+                <img src="https://unpkg.com/lucide-static@latest/icons/database.svg"
+                     alt="Administración de bases de datos" loading="lazy">
+              </div>
+              <h3 class="spec-title">Administración de Bases de Datos</h3>
             </div>
-            <h3 class="spec-title">Administración de Bases de Datos</h3>
-          </div>
-          <p class="spec-body">
-            Gestiono SQL, integridad de datos, copias de seguridad y mantenimiento de bases relacionales orientadas a disponibilidad y rendimiento.
-          </p>
-        </article>
+            <p class="spec-body">
+              Gestiono SQL, integridad de datos, copias de seguridad y mantenimiento de bases relacionales orientadas a disponibilidad y rendimiento.
+            </p>
+          </article>
 
-        <!-- 4. Hardening de Sistemas -->
-        <article class="spec-card">
-          <div class="spec-header">
-            <div class="spec-icon">
-              <img src="https://unpkg.com/lucide-static@latest/icons/shield-check.svg"
-                   alt="Hardening de sistemas" loading="lazy">
+          <!-- 4. Hardening de Sistemas -->
+          <article class="spec-card">
+            <div class="spec-header">
+              <div class="spec-icon">
+                <img src="https://unpkg.com/lucide-static@latest/icons/shield-check.svg"
+                     alt="Hardening de sistemas" loading="lazy">
+              </div>
+              <h3 class="spec-title">Hardening de Sistemas</h3>
             </div>
-            <h3 class="spec-title">Hardening de Sistemas</h3>
-          </div>
-          <p class="spec-body">
-            Endurezco sistemas Windows y Linux, reduzco la superficie de ataque y fortalezco entornos estables y verificables.
-          </p>
-        </article>
+            <p class="spec-body">
+              Endurezco sistemas Windows y Linux, reduzco la superficie de ataque y fortalezco entornos estables y verificables.
+            </p>
+          </article>
+        </div>
       </div>
     </section>
 
