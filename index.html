@@ -67,11 +67,94 @@
     .skill-btn:active{transform:translateY(-2px)}
     @media (max-width:980px){.grid-3{grid-template-columns:1fr}.skills-grid{grid-template-columns:1fr}}
 
-    /* OVERRIDE para quitar fondo gris en Especialidades/Investigación */
+    /* OVERRIDE para quitar fondo gris en Especialidades/Investigación antiguos */
     #especialidades .card, #investigacion .card{background:transparent!important;border:none!important;box-shadow:none!important;padding:0!important}
     #especialidades .specialty{padding:10px 0}
     #investigacion .card > * {margin-top:8px}
     #investigacion .card > *:first-child {margin-top:0}
+
+    /* ====== NUEVA PARRILLA DE 4 ESPECIALIDADES CON ICONOS ====== */
+
+    #especialidades .section-title {
+      color: var(--accent);
+      text-shadow: 0 0 8px rgba(255,159,26,.25);
+    }
+
+    #especialidades .spec-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .spec-card {
+      background: linear-gradient(180deg,
+        color-mix(in oklab, var(--panel) 92%, #0f1422 8%),
+        var(--panel)
+      );
+      border-radius: var(--radius);
+      border: 1px solid rgba(255,255,255,.06);
+      padding: 18px 18px 20px;
+      box-shadow: 0 14px 30px rgba(0,0,0,.55);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .spec-card:hover {
+      box-shadow: 0 18px 40px rgba(0,0,0,.65);
+      border-color: rgba(255,159,26,.7);
+      background: linear-gradient(135deg, rgba(255,159,26,.08), var(--panel));
+    }
+
+    .spec-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 8px;
+    }
+
+    .spec-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.25);
+      flex-shrink: 0;
+    }
+
+    .spec-icon img {
+      width: 27px;
+      height: 27px;
+      filter: invert(1) brightness(1.4);
+      display: block;
+    }
+
+    .spec-title {
+      font-size: 1.02rem;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .spec-body {
+      font-size: 0.92rem;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-top: 6px;
+    }
+
+    @media (max-width: 980px) {
+      #especialidades .spec-grid {
+        grid-template-columns: repeat(2, minmax(0,1fr));
+      }
+    }
+
+    @media (max-width: 620px) {
+      #especialidades .spec-grid {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
@@ -107,27 +190,67 @@
       </div>
     </section>
 
-    <!-- ESPECIALIDADES -->
+    <!-- ESPECIALIDADES (NUEVA FILA DE 4 TARJETAS CON ICONO) -->
     <section id="especialidades" class="custom-section" aria-labelledby="especialidades-title">
       <h2 id="especialidades-title" class="section-title">Especialidades</h2>
       <p class="kicker">Áreas con especialización práctica y enfoque técnico.</p>
-      <div class="specialties-wrapper">
-        <div class="specialties-card">
-          <div class="specialties-grid">
-            <div class="specialty">
-              <h3>Administración y gestión de BBDD</h3>
-              <p>SQL, MariaDB, PostgreSQL. Hardening, backups, replicación y automatización de tareas críticas para disponibilidad, rendimiento y seguridad.</p>
+
+      <div class="spec-grid">
+        <!-- 1. Seguridad en la Nube -->
+        <article class="spec-card">
+          <div class="spec-header">
+            <div class="spec-icon">
+              <img src="https://unpkg.com/lucide-static@latest/icons/cloud-cog.svg"
+                   alt="Seguridad en la nube" loading="lazy">
             </div>
-            <div class="specialty">
-              <h3>Red Team y Pentesting</h3>
-              <p>Nmap, Burp, Metasploit, OpenVAS. Enfoque profesional en informes, PoC y recomendaciones accionables para mitigar riesgos.</p>
-            </div>
-            <div class="specialty">
-              <h3>Automatización de procesos</h3>
-              <p>Backups, despliegues y pipelines repetibles con Ansible, PowerShell y Bash. Estándares y control de cambios para fiabilidad.</p>
-            </div>
+            <h3 class="spec-title">Seguridad en la Nube</h3>
           </div>
-        </div>
+          <p class="spec-body">
+            Diseño y administro entornos virtualizados y servicios en la nube, con redes seguras, backups y alta disponibilidad.
+          </p>
+        </article>
+
+        <!-- 2. Red Team & Vulnerabilidades -->
+        <article class="spec-card">
+          <div class="spec-header">
+            <div class="spec-icon">
+              <img src="https://unpkg.com/lucide-static@latest/icons/crosshair.svg"
+                   alt="Red Team y vulnerabilidades" loading="lazy">
+            </div>
+            <h3 class="spec-title">Red Team &amp; Vulnerabilidades</h3>
+          </div>
+          <p class="spec-body">
+            Identifico vulnerabilidades, evalúo vectores de ataque y documento hallazgos accionables mediante pruebas controladas.
+          </p>
+        </article>
+
+        <!-- 3. Bases de Datos: Administración -->
+        <article class="spec-card">
+          <div class="spec-header">
+            <div class="spec-icon">
+              <img src="https://unpkg.com/lucide-static@latest/icons/database.svg"
+                   alt="Administración de bases de datos" loading="lazy">
+            </div>
+            <h3 class="spec-title">Administración de Bases de Datos</h3>
+          </div>
+          <p class="spec-body">
+            Gestiono SQL, integridad de datos, copias de seguridad y mantenimiento de bases relacionales orientadas a disponibilidad y rendimiento.
+          </p>
+        </article>
+
+        <!-- 4. Hardening de Sistemas -->
+        <article class="spec-card">
+          <div class="spec-header">
+            <div class="spec-icon">
+              <img src="https://unpkg.com/lucide-static@latest/icons/shield-check.svg"
+                   alt="Hardening de sistemas" loading="lazy">
+            </div>
+            <h3 class="spec-title">Hardening de Sistemas</h3>
+          </div>
+          <p class="spec-body">
+            Endurezco sistemas Windows y Linux, reduzco la superficie de ataque y fortalezco entornos estables y verificables.
+          </p>
+        </article>
       </div>
     </section>
 
@@ -141,21 +264,21 @@
           <section class="card" id="toolsCard">
             <div class="card-head tools"><i class="fa-solid fa-screwdriver-wrench"></i> Herramientas</div>
 
-<div class="toolbar">
-  <div class="search" id="searchBox">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <input id="searchInput" type="text" placeholder="Buscar herramienta…">
-    <button class="clear" id="clearBtn" title="Limpiar búsqueda"><i class="fa-solid fa-xmark"></i></button>
-  </div>
+            <div class="toolbar">
+              <div class="search" id="searchBox">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input id="searchInput" type="text" placeholder="Buscar herramienta…">
+                <button class="clear" id="clearBtn" title="Limpiar búsqueda"><i class="fa-solid fa-xmark"></i></button>
+              </div>
 
-  <div class="filter" aria-label="Filtrar por sistema operativo">
-    <span class="tag" data-os="linux">Linux</span>
-    <span class="tag" data-os="windows">Windows</span>
-    <span class="tag" data-os="multi">Multi</span>
-  </div>
+              <div class="filter" aria-label="Filtrar por sistema operativo">
+                <span class="tag" data-os="linux">Linux</span>
+                <span class="tag" data-os="windows">Windows</span>
+                <span class="tag" data-os="multi">Multi</span>
+              </div>
 
-  <span class="count" id="resultCount">12</span>
-</div>
+              <span class="count" id="resultCount">12</span>
+            </div>
             <div class="card-body">
               <div id="toolsListNew"><!-- render JS --></div>
             </div>
